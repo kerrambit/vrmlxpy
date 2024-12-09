@@ -28,22 +28,10 @@
 #include "USENode.hpp"
 #include "VRMLNodeManager.hpp"
 
+#include "CommentSkipper.hpp"
+
 namespace qi = boost::spirit::qi;
 namespace ascii = boost::spirit::ascii;
-
-// Inspired by https://stackoverflow.com/questions/44529864/how-to-skip-line-block-nested-block-comments-in-boost-spirit.
-struct CommentSkipper : qi::grammar<std::string::iterator> {
-    CommentSkipper() : CommentSkipper::base_type(start) {
-        single_line_comment = '#' >> *(qi::char_ - qi::eol) >> (qi::eol | qi::eoi);
-        start = ascii::space | single_line_comment;
-
-        BOOST_SPIRIT_DEBUG_NODE(single_line_comment);
-        BOOST_SPIRIT_DEBUG_NODE(start);
-    }
-
-    qi::rule<std::string::iterator> single_line_comment;
-    qi::rule<std::string::iterator> start;
-};
 
 // -----------------------------------------------------------
 
@@ -69,9 +57,9 @@ struct Vec3fGrammar : qi::grammar<Iterator, Vec3f(), Skipper> {
 bool vrml_proc::parseVec3f(std::string& text) {
 
     auto it = text.begin();
-    Vec3fGrammar <std::string::iterator, CommentSkipper> grammar;
+    Vec3fGrammar <std::string::iterator, vrml_proc::parser::CommentSkipper> grammar;
     Vec3f data;
-    CommentSkipper skipper;
+    vrml_proc::parser::CommentSkipper skipper;
     bool success = qi::phrase_parse(it, text.end(), grammar, skipper, data);
 
     if (success && it == text.end()) {
@@ -113,9 +101,9 @@ struct Vec3fArrayGrammar : qi::grammar<Iterator, Vec3fArray(), Skipper> {
 bool vrml_proc::parseVec3fArray(std::string& text) {
 
     auto it = text.begin();
-    Vec3fArrayGrammar <std::string::iterator, CommentSkipper> grammar;
+    Vec3fArrayGrammar <std::string::iterator, vrml_proc::parser::CommentSkipper> grammar;
     Vec3fArray data;
-    CommentSkipper skipper;
+    vrml_proc::parser::CommentSkipper skipper;
     bool success = qi::phrase_parse(it, text.end(), grammar, skipper, data);
 
     if (success && it == text.end()) {
@@ -153,9 +141,9 @@ struct Int32ArrayGrammar : qi::grammar<Iterator, Int32Array(), Skipper> {
 bool vrml_proc::parseInt32Array(std::string& text) {
 
     auto it = text.begin();
-    Int32ArrayGrammar <std::string::iterator, CommentSkipper> grammar;
+    Int32ArrayGrammar <std::string::iterator, vrml_proc::parser::CommentSkipper> grammar;
     Int32Array data;
-    CommentSkipper skipper;
+    vrml_proc::parser::CommentSkipper skipper;
     bool success = qi::phrase_parse(it, text.end(), grammar, skipper, data);
 
     if (success && it == text.end()) {
@@ -262,9 +250,9 @@ bool vrml_proc::parseVRMLFile(std::string& text) {
     VRMLNodeManager manager;
 
     auto it = text.begin();
-    VRMLGrammar <std::string::iterator, CommentSkipper> grammar(manager);
+    VRMLGrammar <std::string::iterator, vrml_proc::parser::CommentSkipper> grammar(manager);
     std::vector<VRMLNode> data;
-    CommentSkipper skipper;
+    vrml_proc::parser::CommentSkipper skipper;
 
     bool success = qi::phrase_parse(it, text.end(), grammar, skipper, data);
 

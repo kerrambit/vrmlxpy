@@ -16,40 +16,46 @@ FetchContent_MakeAvailable(Catch2)
 
 # Add source files and vendor dependencies.
 include_directories(
-    ${CMAKE_CURRENT_SOURCE_DIR}/src
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/parser
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/models
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/interfaces
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/grammars
     ${CMAKE_CURRENT_SOURCE_DIR}/../vendor/pybind11/include/pybind11
     ${CMAKE_CURRENT_SOURCE_DIR}/../vendor/boost_1_86_0
 )
 
 # Create the DLL.
 add_library(vrmlproc SHARED
-    "src/vrml_processing.hpp"
-    "src/vrml_processing.cpp"
+    "src/parser/vrml_processing.hpp"
+    "src/parser/vrml_processing.cpp"
 
-    "src/VRMLUnits.hpp"
+    "src/parser/models/VRMLUnits.hpp"
 
-    "src/VRMLField.hpp"
-    "src/VRMLField.cpp"
+    "src/parser/models/VRMLField.hpp"
+    "src/parser/models/VRMLField.cpp"
 
-    "src/Vec3f.hpp"
-    "src/Vec3f.cpp"
+    "src/parser/models/Vec3f.hpp"
+    "src/parser/models/Vec3f.cpp"
 
-    "src/Vec3fArray.hpp"
-    "src/Vec3fArray.cpp"
+    "src/parser/models/Vec3fArray.hpp"
+    "src/parser/models/Vec3fArray.cpp"
 
-    "src/Int32Array.hpp"
-    "src/Int32Array.cpp"
+    "src/parser/models/Int32Array.hpp"
+    "src/parser/models/Int32Array.cpp"
 
-    "src/VRMLNode.hpp"
-    "src/VRMLNode.cpp"
+    "src/parser/models/VRMLNode.hpp"
+    "src/parser/models/VRMLNode.cpp"
 
-    "src/USENode.hpp"
-    "src/USENode.cpp"
+    "src/parser/models/USENode.hpp"
+    "src/parser/models/USENode.cpp"
 
-    "src/VRMLNodeManager.hpp"
+    "src/parser/VRMLNodeManager.hpp"
 
-    "src/Printable.hpp"
-    "src/Printable.cpp"
+    "src/parser/interfaces/Printable.hpp"
+    "src/parser/interfaces/Printable.cpp"
+
+    "src/parser/VRMLParser.cpp"
+    "src/parser/grammars/CommentSkipper.hpp"
 )
 
 # --------------------------------------------------------------------------------------- #
