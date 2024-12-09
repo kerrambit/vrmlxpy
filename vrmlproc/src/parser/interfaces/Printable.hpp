@@ -25,7 +25,7 @@ public:
 		return std::string(ONE_INDENTATION_LEVEL_LENGTH * indentation_level, ' ');
 	}
 protected:
-	/*inline */std::ostream* AccessStreamPointer() const {
+	inline std::ostream* AccessStreamPointer() const {
 		return m_stream;
 	}
 private:
