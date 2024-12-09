@@ -1,0 +1,89 @@
+cmake_minimum_required(VERSION 3.10)
+set(CMAKE_CXX_STANDARD 20)
+
+project(vrmlproc)
+
+# Add Catch2 unit tests using FetchContent.
+include(FetchContent)
+FetchContent_Declare(
+    Catch2
+    GIT_REPOSITORY https://github.com/catchorg/Catch2.git
+    GIT_TAG v3.4.0
+)
+FetchContent_MakeAvailable(Catch2)
+
+# --------------------------------------------------------------------------------------- #
+
+# Add source files and vendor dependencies.
+include_directories(
+    ${CMAKE_CURRENT_SOURCE_DIR}/src
+    ${CMAKE_CURRENT_SOURCE_DIR}/../vendor/pybind11/include/pybind11
+    ${CMAKE_CURRENT_SOURCE_DIR}/../vendor/boost_1_86_0
+)
+
+# Create the DLL.
+add_library(vrmlproc SHARED
+    "src/vrml_processing.hpp"
+    "src/vrml_processing.cpp"
+
+    "src/VRMLUnits.hpp"
+
+    "src/VRMLField.hpp"
+    "src/VRMLField.cpp"
+
+    "src/Vec3f.hpp"
+    "src/Vec3f.cpp"
+
+    "src/Vec3fArray.hpp"
+    "src/Vec3fArray.cpp"
+
+    "src/Int32Array.hpp"
+    "src/Int32Array.cpp"
+
+    "src/VRMLNode.hpp"
+    "src/VRMLNode.cpp"
+
+    "src/USENode.hpp"
+    "src/USENode.cpp"
+
+    "src/VRMLNodeManager.hpp"
+
+    "src/Printable.hpp"
+    "src/Printable.cpp"
+)
+
+# --------------------------------------------------------------------------------------- #
+
+# Create the Python bindings module.
+#pybind11_add_module(pypyvrml SHARED bindings/MyLibBindings.cpp)
+
+# Link pybind11 and Python libraries to the bindings module.
+#target_link_libraries(pypyvrml PRIVATE
+#    pyvrml
+#)
+
+# Add include directories for the bindings module.
+#target_include_directories(pypyvrml PRIVATE
+#    ${CMAKE_CURRENT_SOURCE_DIR}/src
+#)
+
+# --------------------------------------------------------------------------------------- #
+
+# Add the test executables.
+add_executable(VRMLFileGrammarUnitTests "tests/VRMLFileGrammarTest.cpp")
+add_executable(Vec3fGrammarUnitTests "tests/Vec3fGrammarTest.cpp")
+add_executable(Vec3fArrayGrammarUnitTests "tests/Vec3fArrayGrammarTest.cpp")
+add_executable(Int32ArrayGrammarUnitTests "tests/Int32ArrayGrammarTest.cpp")
+
+# Link Catch2 with the test executables.
+target_link_libraries(VRMLFileGrammarUnitTests PRIVATE Catch2::Catch2WithMain vrmlproc)
+target_link_libraries(Vec3fGrammarUnitTests PRIVATE Catch2::Catch2WithMain vrmlproc)
+target_link_libraries(Vec3fArrayGrammarUnitTests PRIVATE Catch2::Catch2WithMain vrmlproc)
+target_link_libraries(Int32ArrayGrammarUnitTests PRIVATE Catch2::Catch2WithMain vrmlproc)
+
+# Enable testing (use CTest to run the unit tests).
+enable_testing()
+add_test(NAME VRMLFileGrammarUnitTests COMMAND VRMLFileGrammarUnitTests)
+add_test(NAME Vec3fGrammarUnitTests COMMAND Vec3fGrammarUnitTests)
+add_test(NAME Vec3fArrayGrammarUnitTests COMMAND Vec3fArrayGrammarUnitTests)
+add_test(NAME Int32ArrayGrammarUnitTests COMMAND Int32ArrayGrammarUnitTests)
