@@ -22,6 +22,7 @@
 #include "vrml_processing.hpp"
 #include "VRMLField.hpp"
 #include "Vec3f.hpp"
+#include "Vec4f.hpp"
 #include "Vec3fArray.hpp"
 #include "Int32Array.hpp"
 #include "VRMLNode.hpp"
@@ -59,6 +60,46 @@ bool vrml_proc::parseVec3f(std::string& text) {
     auto it = text.begin();
     Vec3fGrammar <std::string::iterator, vrml_proc::parser::CommentSkipper> grammar;
     vrml_proc::parser::Vec3f data;
+    vrml_proc::parser::CommentSkipper skipper;
+    bool success = qi::phrase_parse(it, text.end(), grammar, skipper, data);
+
+    if (success && it == text.end()) {
+        std::cout << data << std::endl;
+        return true;
+    }
+    else {
+        std::cerr << "Parsing failed at: " << std::string(it, text.end()) << "\n";
+        return false;
+    }
+}
+
+// -----------------------------------------------------------
+
+BOOST_FUSION_ADAPT_STRUCT(
+    vrml_proc::parser::Vec4f,
+    (vrml_proc::parser::float32_t, x)
+    (vrml_proc::parser::float32_t, y)
+    (vrml_proc::parser::float32_t, z)
+    (vrml_proc::parser::float32_t, w)
+)
+
+template<typename Iterator, typename Skipper>
+struct Vec4fGrammar : qi::grammar<Iterator, vrml_proc::parser::Vec4f(), Skipper> {
+
+    Vec4fGrammar() : Vec4fGrammar::base_type(start) {
+        start = qi::float_ >> qi::float_ >> qi::float_ >> qi::float_;
+
+        BOOST_SPIRIT_DEBUG_NODE(start);
+    }
+
+    qi::rule<Iterator, vrml_proc::parser::Vec4f(), Skipper> start;
+};
+
+bool vrml_proc::parseVec4f(std::string& text) {
+
+    auto it = text.begin();
+    Vec4fGrammar <std::string::iterator, vrml_proc::parser::CommentSkipper> grammar;
+    vrml_proc::parser::Vec4f data;
     vrml_proc::parser::CommentSkipper skipper;
     bool success = qi::phrase_parse(it, text.end(), grammar, skipper, data);
 
