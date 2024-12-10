@@ -9,14 +9,19 @@
 #include "VRMLField.hpp"
 #include "Printable.hpp"
 
-struct VRMLNode : public Printable {
+namespace vrml_proc {
+    namespace parser {
+        struct VRMLNode : public Printable {
 
-    VRMLNode()
-        : Printable(std::cout) {}
+            VRMLNode()
+                : Printable(std::cout) {}
 
-    boost::optional<std::string> definition_name;
-    std::string header;
-    std::vector<VRMLField> fields;
+            boost::optional<std::string> definition_name;
+            std::string header;
+            std::vector<VRMLField> fields;
 
-    void Print(Printable::IndentationLevel indentation_level) const override;
-};
+            void Print(Printable::IndentationLevel indentation_level) const override;
+        };
+    }
+}
+

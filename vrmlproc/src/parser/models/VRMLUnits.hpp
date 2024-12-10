@@ -2,5 +2,8 @@
 
 #include <cstdint>
 
-using float32_t = float;
-using float64_t = double;
+namespace vrml_proc {
+	namespace parser {
+		using float32_t = float;
+	}
+}

@@ -6,16 +6,20 @@
 #include "VRMLUnits.hpp"
 #include "Printable.hpp"
 
-struct Int32Array : public Printable {
+namespace vrml_proc {
+    namespace parser {
+        struct Int32Array : public Printable {
 
-    Int32Array()
-        : Printable(std::cout) { }
+            Int32Array()
+                : Printable(std::cout) { }
 
-    std::vector<int32_t> integers;
+            std::vector<int32_t> integers;
 
-    void Add(int32_t integer) {
-        integers.push_back(integer);
+            void Add(int32_t integer) {
+                integers.push_back(integer);
+            }
+
+            void Print(Printable::IndentationLevel indentation_level) const override;
+        };
     }
-
-    void Print(Printable::IndentationLevel indentation_level) const override;
-};
+}

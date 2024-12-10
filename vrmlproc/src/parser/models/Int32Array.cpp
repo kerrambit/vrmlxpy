@@ -1,6 +1,6 @@
 #include "Int32Array.hpp"
 
-void Int32Array::Print(Printable::IndentationLevel indentation_level) const {
+void vrml_proc::parser::Int32Array::Print(Printable::IndentationLevel indentation_level) const {
     std::string indentation_string = Printable::CreateIndentationString(indentation_level);
     indentation_level++;
 

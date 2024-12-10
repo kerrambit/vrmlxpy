@@ -1,6 +1,6 @@
 #include "Vec3f.hpp"
 
-void Vec3f::Print(Printable::IndentationLevel indentation_level) const {
+void vrml_proc::parser::Vec3f::Print(Printable::IndentationLevel indentation_level) const {
     std::string indentation_string = Printable::CreateIndentationString(indentation_level);
     indentation_level++;
 

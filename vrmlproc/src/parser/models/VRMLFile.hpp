@@ -2,4 +2,8 @@
 
 #include "VRMLNode.hpp"
 
-using VRMLFile = std::vector<VRMLNode>;
+namespace vrml_proc {
+	namespace parser {
+		using VRMLFile = std::vector<VRMLNode>;
+	}
+}

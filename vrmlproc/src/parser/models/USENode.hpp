@@ -5,12 +5,16 @@
 
 #include "Printable.hpp"
 
-struct USENode : public Printable {
+namespace vrml_proc {
+	namespace parser {
+		struct USENode : public Printable {
 
-	USENode()
-		: Printable(std::cout) {}
+			USENode()
+				: Printable(std::cout) {}
 
-	void Print(Printable::IndentationLevel indentation_level) const override;
+			void Print(Printable::IndentationLevel indentation_level) const override;
 
-	std::string identifier;
-};
+			std::string identifier;
+		};
+	}
+}

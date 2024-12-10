@@ -36,14 +36,14 @@ namespace ascii = boost::spirit::ascii;
 // -----------------------------------------------------------
 
 BOOST_FUSION_ADAPT_STRUCT(
-    Vec3f,
-    (float32_t, x)
-    (float32_t, y)
-    (float32_t, z)
+    vrml_proc::parser::Vec3f,
+    (vrml_proc::parser::float32_t, x)
+    (vrml_proc::parser::float32_t, y)
+    (vrml_proc::parser::float32_t, z)
 )
 
 template<typename Iterator, typename Skipper>
-struct Vec3fGrammar : qi::grammar<Iterator, Vec3f(), Skipper> {
+struct Vec3fGrammar : qi::grammar<Iterator, vrml_proc::parser::Vec3f(), Skipper> {
 
     Vec3fGrammar() : Vec3fGrammar::base_type(start) {
         start = qi::float_ >> qi::float_ >> qi::float_;
@@ -51,14 +51,14 @@ struct Vec3fGrammar : qi::grammar<Iterator, Vec3f(), Skipper> {
         BOOST_SPIRIT_DEBUG_NODE(start);
     }
 
-    qi::rule<Iterator, Vec3f(), Skipper> start;
+    qi::rule<Iterator, vrml_proc::parser::Vec3f(), Skipper> start;
 };
 
 bool vrml_proc::parseVec3f(std::string& text) {
 
     auto it = text.begin();
     Vec3fGrammar <std::string::iterator, vrml_proc::parser::CommentSkipper> grammar;
-    Vec3f data;
+    vrml_proc::parser::Vec3f data;
     vrml_proc::parser::CommentSkipper skipper;
     bool success = qi::phrase_parse(it, text.end(), grammar, skipper, data);
 
@@ -76,12 +76,12 @@ bool vrml_proc::parseVec3f(std::string& text) {
 
 
 BOOST_FUSION_ADAPT_STRUCT(
-    Vec3fArray,
-    (std::vector<Vec3f>, vectors)
+    vrml_proc::parser::Vec3fArray,
+    (std::vector<vrml_proc::parser::Vec3f>, vectors)
 )
 
 template <typename Iterator, typename Skipper>
-struct Vec3fArrayGrammar : qi::grammar<Iterator, Vec3fArray(), Skipper> {
+struct Vec3fArrayGrammar : qi::grammar<Iterator, vrml_proc::parser::Vec3fArray(), Skipper> {
 
     Vec3fArrayGrammar() : Vec3fArrayGrammar::base_type(start) {
 
@@ -95,14 +95,14 @@ struct Vec3fArrayGrammar : qi::grammar<Iterator, Vec3fArray(), Skipper> {
     }
 
     std::unique_ptr<Vec3fGrammar<Iterator, Skipper>> vec3f;
-    qi::rule<Iterator, Vec3fArray(), Skipper> start;
+    qi::rule<Iterator, vrml_proc::parser::Vec3fArray(), Skipper> start;
 };
 
 bool vrml_proc::parseVec3fArray(std::string& text) {
 
     auto it = text.begin();
     Vec3fArrayGrammar <std::string::iterator, vrml_proc::parser::CommentSkipper> grammar;
-    Vec3fArray data;
+    vrml_proc::parser::Vec3fArray data;
     vrml_proc::parser::CommentSkipper skipper;
     bool success = qi::phrase_parse(it, text.end(), grammar, skipper, data);
 
@@ -119,12 +119,12 @@ bool vrml_proc::parseVec3fArray(std::string& text) {
 // -----------------------------------------------------------------------------------------
 
 BOOST_FUSION_ADAPT_STRUCT(
-    Int32Array,
+    vrml_proc::parser::Int32Array,
     (std::vector<int32_t>, integers)
 )
 
 template <typename Iterator, typename Skipper>
-struct Int32ArrayGrammar : qi::grammar<Iterator, Int32Array(), Skipper> {
+struct Int32ArrayGrammar : qi::grammar<Iterator, vrml_proc::parser::Int32Array(), Skipper> {
 
     Int32ArrayGrammar() : Int32ArrayGrammar::base_type(start) {
 
@@ -135,14 +135,14 @@ struct Int32ArrayGrammar : qi::grammar<Iterator, Int32Array(), Skipper> {
         BOOST_SPIRIT_DEBUG_NODE(start);
     }
 
-    qi::rule<Iterator, Int32Array(), Skipper> start;
+    qi::rule<Iterator, vrml_proc::parser::Int32Array(), Skipper> start;
 };
 
 bool vrml_proc::parseInt32Array(std::string& text) {
 
     auto it = text.begin();
     Int32ArrayGrammar <std::string::iterator, vrml_proc::parser::CommentSkipper> grammar;
-    Int32Array data;
+    vrml_proc::parser::Int32Array data;
     vrml_proc::parser::CommentSkipper skipper;
     bool success = qi::phrase_parse(it, text.end(), grammar, skipper, data);
 
@@ -159,27 +159,27 @@ bool vrml_proc::parseInt32Array(std::string& text) {
  // -----------------------------------------------------------------------------------------
 
 BOOST_FUSION_ADAPT_STRUCT(
-    VRMLNode,
+    vrml_proc::parser::VRMLNode,
     (boost::optional<std::string>, definition_name)
     (std::string, header)
-    (std::vector<VRMLField>, fields)
+    (std::vector<vrml_proc::parser::VRMLField>, fields)
 )
 
 BOOST_FUSION_ADAPT_STRUCT(
-    USENode,
+    vrml_proc::parser::USENode,
     (std::string, identifier)
 )
 
 BOOST_FUSION_ADAPT_STRUCT(
-    VRMLField,
+    vrml_proc::parser::VRMLField,
     (std::string, name)
-    (VRMLFieldValue, value)
+    (vrml_proc::parser::VRMLFieldValue, value)
 )
 
 template <typename Iterator, typename Skipper>
-struct VRMLGrammar : qi::grammar<Iterator, std::vector<VRMLNode>(), Skipper> {
+struct VRMLGrammar : qi::grammar<Iterator, std::vector<vrml_proc::parser::VRMLNode>(), Skipper> {
 
-    VRMLGrammar(VRMLNodeManager& manager) : VRMLGrammar::base_type(start), manager(manager) {
+    VRMLGrammar(vrml_proc::parser::VRMLNodeManager& manager) : VRMLGrammar::base_type(start), manager(manager) {
 
         identifier = qi::lexeme[qi::alpha >> *qi::alnum]; // TODO: limit it to the VRML 2.0 specs
 
@@ -195,18 +195,18 @@ struct VRMLGrammar : qi::grammar<Iterator, std::vector<VRMLNode>(), Skipper> {
 
         field = (identifier >> field_value)
             [
-                qi::_val = boost::phoenix::construct<VRMLField>(qi::_1, qi::_2)
+                qi::_val = boost::phoenix::construct<vrml_proc::parser::VRMLField>(qi::_1, qi::_2)
             ];
 
         vrml_node = (-(qi::lit("DEF") >> identifier) >> identifier >> qi::lit("{") >> *(field) >> qi::lit("}"))
             [
-                boost::phoenix::bind(&VRMLNode::definition_name, boost::phoenix::ref(qi::_val)) = (qi::_1),
-                boost::phoenix::bind(&VRMLNode::header, boost::phoenix::ref(qi::_val)) = (qi::_2),
-                boost::phoenix::bind(&VRMLNode::fields, boost::phoenix::ref(qi::_val)) = (qi::_3),
+                boost::phoenix::bind(&vrml_proc::parser::VRMLNode::definition_name, boost::phoenix::ref(qi::_val)) = (qi::_1),
+                boost::phoenix::bind(&vrml_proc::parser::VRMLNode::header, boost::phoenix::ref(qi::_val)) = (qi::_2),
+                boost::phoenix::bind(&vrml_proc::parser::VRMLNode::fields, boost::phoenix::ref(qi::_val)) = (qi::_3),
                 boost::phoenix::bind(
-                    [](VRMLNode& node, VRMLNodeManager& manager) {
+                    [](vrml_proc::parser::VRMLNode& node, vrml_proc::parser::VRMLNodeManager& manager) {
                         if (node.definition_name) {
-                            auto node_ptr = std::make_shared<VRMLNode>(node);
+                            auto node_ptr = std::make_shared<vrml_proc::parser::VRMLNode>(node);
                             manager.AddDefinitionNode(*node.definition_name, node_ptr);
                         }
                     },
@@ -230,28 +230,28 @@ struct VRMLGrammar : qi::grammar<Iterator, std::vector<VRMLNode>(), Skipper> {
          BOOST_SPIRIT_DEBUG_NODE(vrml_node);
     }
 
-    qi::rule<Iterator, std::vector<boost::variant<boost::recursive_wrapper<VRMLNode>, boost::recursive_wrapper<USENode>>>(), Skipper> vrml_node_array;
-    qi::rule<Iterator, VRMLNode(), Skipper> vrml_node;
-    qi::rule<Iterator, USENode(), Skipper> use_node;
-    qi::rule<Iterator, std::vector<VRMLNode>(), Skipper> start;
+    qi::rule<Iterator, std::vector<boost::variant<boost::recursive_wrapper<vrml_proc::parser::VRMLNode>, boost::recursive_wrapper<vrml_proc::parser::USENode>>>(), Skipper> vrml_node_array;
+    qi::rule<Iterator, vrml_proc::parser::VRMLNode(), Skipper> vrml_node;
+    qi::rule<Iterator, vrml_proc::parser::USENode(), Skipper> use_node;
+    qi::rule<Iterator, std::vector<vrml_proc::parser::VRMLNode>(), Skipper> start;
     qi::rule<Iterator, std::string(), Skipper> identifier;
     std::unique_ptr<Vec3fGrammar<Iterator, Skipper>> vec3f;
     std::unique_ptr<Vec3fArrayGrammar<Iterator, Skipper>> vec3f_array;
     std::unique_ptr<Int32ArrayGrammar<Iterator, Skipper>> int32_array;
-    qi::rule<Iterator, VRMLField(), Skipper> field;
-    qi::rule<Iterator, VRMLFieldValue(), Skipper> field_value;
+    qi::rule<Iterator, vrml_proc::parser::VRMLField(), Skipper> field;
+    qi::rule<Iterator, vrml_proc::parser::VRMLFieldValue(), Skipper> field_value;
     qi::rule<Iterator, std::string(), Skipper> quoted_string;
 
-    VRMLNodeManager& manager;
+    vrml_proc::parser::VRMLNodeManager& manager;
 };
 
 bool vrml_proc::parseVRMLFile(std::string& text) {
 
-    VRMLNodeManager manager;
+    vrml_proc::parser::VRMLNodeManager manager;
 
     auto it = text.begin();
     VRMLGrammar <std::string::iterator, vrml_proc::parser::CommentSkipper> grammar(manager);
-    std::vector<VRMLNode> data;
+    std::vector<vrml_proc::parser::VRMLNode> data;
     vrml_proc::parser::CommentSkipper skipper;
 
     bool success = qi::phrase_parse(it, text.end(), grammar, skipper, data);

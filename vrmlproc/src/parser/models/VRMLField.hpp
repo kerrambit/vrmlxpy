@@ -14,17 +14,22 @@
 
 #include "Printable.hpp"
 
-struct VRMLNode;
-using VRMLFieldValue = boost::variant<std::string, Vec3fArray, Int32Array, float32_t, int32_t, Vec3f, USENode, boost::recursive_wrapper<struct VRMLNode>, std::vector<boost::variant<boost::recursive_wrapper<struct VRMLNode>, boost::recursive_wrapper<struct USENode>>>>;
+namespace vrml_proc {
+    namespace parser {
 
-struct VRMLField : public Printable {
-    std::string name;
-    VRMLFieldValue value;
+        struct VRMLNode;
+        using VRMLFieldValue = boost::variant<std::string, Vec3fArray, Int32Array, float32_t, int32_t, Vec3f, USENode, boost::recursive_wrapper<struct VRMLNode>, std::vector<boost::variant<boost::recursive_wrapper<struct VRMLNode>, boost::recursive_wrapper<struct USENode>>>>;
 
-    VRMLField()
-        : Printable(std::cout) {}
+        struct VRMLField : public Printable {
+            std::string name;
+            VRMLFieldValue value;
 
-    VRMLField(const std::string& n, const VRMLFieldValue& v) : Printable(std::cout), name(n), value(v) {}
+            VRMLField()
+                : Printable(std::cout) {}
 
-    void Print(Printable::IndentationLevel indentation_level) const override;
-};
+            VRMLField(const std::string& n, const VRMLFieldValue& v) : Printable(std::cout), name(n), value(v) {}
+
+            void Print(Printable::IndentationLevel indentation_level) const override;
+        };
+    }
+}

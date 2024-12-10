@@ -13,15 +13,15 @@ struct Visitor {
         *output_stream << std::endl;
     }
 
-    void operator()(const Vec3fArray& array) const {
+    void operator()(const vrml_proc::parser::Vec3fArray& array) const {
         array.Print(indentation_level);
     }
 
-    void operator()(const Int32Array& array) const {
+    void operator()(const vrml_proc::parser::Int32Array& array) const {
         array.Print(indentation_level);
     }
 
-    void operator()(float32_t value) const {
+    void operator()(vrml_proc::parser::float32_t value) const {
         *output_stream << Printable::CreateIndentationString(indentation_level) << "Float32: <" << value << ">";
         *output_stream << std::endl;
     }
@@ -31,19 +31,19 @@ struct Visitor {
         *output_stream << std::endl;
     }
 
-    void operator()(const Vec3f& vector) const {
+    void operator()(const vrml_proc::parser::Vec3f& vector) const {
         vector.Print(indentation_level);
     }
 
-    void operator()(const USENode& node) const {
+    void operator()(const vrml_proc::parser::USENode& node) const {
         node.Print(indentation_level);
     }
 
-    void operator()(const boost::recursive_wrapper<VRMLNode>& node) const {
+    void operator()(const boost::recursive_wrapper<vrml_proc::parser::VRMLNode>& node) const {
         node.get_pointer()->Print(indentation_level);
     }
 
-    void operator()(const std::vector<boost::variant<boost::recursive_wrapper<VRMLNode>, boost::recursive_wrapper<USENode>>>& nodes) const {
+    void operator()(const std::vector<boost::variant<boost::recursive_wrapper<vrml_proc::parser::VRMLNode>, boost::recursive_wrapper<vrml_proc::parser::USENode>>>& nodes) const {
         *output_stream << Printable::CreateIndentationString(indentation_level) << "VRMLNodeArray:\n";
         *output_stream << Printable::CreateIndentationString(indentation_level + 1) << "[\n";
         
@@ -53,11 +53,11 @@ struct Visitor {
 
             PrintVisitor(std::ostream* output_stream, Printable::IndentationLevel indentation_level) : output_stream(output_stream), indentation_level(indentation_level) {}
 
-            void operator()(const boost::recursive_wrapper<VRMLNode>& node) const {
+            void operator()(const boost::recursive_wrapper<vrml_proc::parser::VRMLNode>& node) const {
                 node.get_pointer()->Print(indentation_level);
             }
 
-            void operator()(const boost::recursive_wrapper<USENode>& node) const {
+            void operator()(const boost::recursive_wrapper<vrml_proc::parser::USENode>& node) const {
                 node.get_pointer()->Print(indentation_level);
             }
         };
@@ -70,7 +70,7 @@ struct Visitor {
     }
 };
 
-void VRMLField::Print(Printable::IndentationLevel indentation_level) const {
+void vrml_proc::parser::VRMLField::Print(Printable::IndentationLevel indentation_level) const {
     std::string indentation_string = Printable::CreateIndentationString(indentation_level);
 
     *Printable::AccessStreamPointer() << indentation_string;
