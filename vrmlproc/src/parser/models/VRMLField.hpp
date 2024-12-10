@@ -8,6 +8,7 @@
 
 #include "VRMLUnits.hpp"
 #include "Vec3f.hpp"
+#include "Vec4f.hpp"
 #include "Vec3fArray.hpp"
 #include "Int32Array.hpp"
 #include "USENode.hpp"
@@ -18,7 +19,7 @@ namespace vrml_proc {
     namespace parser {
 
         struct VRMLNode;
-        using VRMLFieldValue = boost::variant<std::string, Vec3fArray, Int32Array, float32_t, int32_t, Vec3f, USENode, boost::recursive_wrapper<struct VRMLNode>, std::vector<boost::variant<boost::recursive_wrapper<struct VRMLNode>, boost::recursive_wrapper<struct USENode>>>>;
+        using VRMLFieldValue = boost::variant<std::string, bool, Vec3fArray, Int32Array, float32_t, int32_t, Vec4f, Vec3f, USENode, boost::recursive_wrapper<struct VRMLNode>, std::vector<boost::variant<boost::recursive_wrapper<struct VRMLNode>, boost::recursive_wrapper<struct USENode>>>>;
 
         struct VRMLField : public Printable {
             std::string name;

@@ -65,3 +65,27 @@ TEST_CASE("Parse VRMLFile - Valid Input - Node With Switch", "[parsing]") {
     CHECK(parseResult);
 }
 
+TEST_CASE("Parse VRMLFile - Valid Input - Node With Boolean", "[parsing]") {
+
+    bool parseResult = vrml_proc::parseVRMLFile(node_with_boolean);
+    CHECK(parseResult);
+}
+
+TEST_CASE("Parse VRMLFile - Valid Input - Empty node", "[parsing]") {
+
+    bool parseResult = vrml_proc::parseVRMLFile(empty_node);
+    CHECK(parseResult);
+}
+
+TEST_CASE("Parse VRMLFile - Valid Input - Complicated node", "[parsing]") {
+
+    bool parseResult = vrml_proc::parseVRMLFile(complicated_node);
+    CHECK(parseResult);
+}
+
+TEST_CASE("Parse VRMLFile - Valid Input - Complicated node with complicated DEF names", "[parsing]") {
+
+    bool parseResult = vrml_proc::parseVRMLFile(complicated_node_with_complicated_def_names);
+    CHECK(parseResult);
+}
+
