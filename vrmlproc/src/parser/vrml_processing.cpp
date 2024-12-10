@@ -228,13 +228,15 @@ struct VRMLGrammar : qi::grammar<Iterator, std::vector<vrml_proc::parser::VRMLNo
 
         vec3f = std::make_unique<Vec3fGrammar<Iterator, Skipper>>();
 
+        vec4f = std::make_unique<Vec4fGrammar<Iterator, Skipper>>();
+
         vec3f_array = std::make_unique<Vec3fArrayGrammar<Iterator, Skipper>>();
 
         int32_array = std::make_unique<Int32ArrayGrammar<Iterator, Skipper>>();
 
         boolean = (qi::lit("TRUE")[qi::_val = true] | qi::lit("FALSE")[qi::_val = false]);
 
-        field_value = (quoted_string | boolean | vec3f_array->start | int32_array->start | vec3f->start | qi::float_ | qi::int_ | use_node | vrml_node | vrml_node_array);
+        field_value = (quoted_string | boolean | vec3f_array->start | int32_array->start | vec4f->start | vec3f->start | qi::float_ | qi::int_ | use_node | vrml_node | vrml_node_array);
 
         field = (identifier >> field_value)
             [
@@ -279,6 +281,7 @@ struct VRMLGrammar : qi::grammar<Iterator, std::vector<vrml_proc::parser::VRMLNo
     qi::rule<Iterator, std::vector<vrml_proc::parser::VRMLNode>(), Skipper> start;
     qi::rule<Iterator, std::string(), Skipper> identifier;
     std::unique_ptr<Vec3fGrammar<Iterator, Skipper>> vec3f;
+    std::unique_ptr<Vec4fGrammar<Iterator, Skipper>> vec4f;
     std::unique_ptr<Vec3fArrayGrammar<Iterator, Skipper>> vec3f_array;
     std::unique_ptr<Int32ArrayGrammar<Iterator, Skipper>> int32_array;
     qi::rule<Iterator, bool(), Skipper> boolean;

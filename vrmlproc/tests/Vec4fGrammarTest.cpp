@@ -9,3 +9,8 @@ TEST_CASE("Parse Vec4f - Valid Input", "[parsing]") {
     bool parseResult = vrml_proc::parseVec4f(vec4f_simple);
     REQUIRE(parseResult);
 }
+
+TEST_CASE("Parse Vec4f - Ineteger input", "[parsing]") {
+    bool parseResult = vrml_proc::parseVec4f(integer_input);
+    REQUIRE(parseResult);
+}

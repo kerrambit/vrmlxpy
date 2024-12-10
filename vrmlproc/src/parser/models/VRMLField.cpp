@@ -40,6 +40,10 @@ struct Visitor {
         vector.Print(indentation_level);
     }
 
+    void operator()(const vrml_proc::parser::Vec4f& vector) const {
+        vector.Print(indentation_level);
+    }
+
     void operator()(const vrml_proc::parser::USENode& node) const {
         node.Print(indentation_level);
     }
