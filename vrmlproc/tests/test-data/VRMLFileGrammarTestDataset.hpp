@@ -219,3 +219,26 @@ std::string node_with_switch = R"(
                    ]
           }
 )";
+
+std::string node_with_boolean = R"(
+
+	#VRML V2.0 utf8
+
+    Group {
+      shape Shape {
+
+          geometry 
+              IndexedFaceSet {
+                  coordIndex [ 944, 942, 943, -1, 947, 945, 946, -1,
+                      947, 949, 948, -1, 945, 947, 948, -1,
+                      946, 942, 944, -1, 946, 944, 947, -1,
+                      108889, 108856, 182463, -1, 108863, 108433, 182449, -1 ]
+                  ccw TRUE
+                  solid FALSE
+                  convex TRUE
+                  creaseAngle 0
+          }
+      }
+    }
+)";
+

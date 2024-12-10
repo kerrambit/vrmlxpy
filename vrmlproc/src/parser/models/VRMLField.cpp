@@ -13,6 +13,11 @@ struct Visitor {
         *output_stream << std::endl;
     }
 
+    void operator()(const bool& boolean) const {
+        *output_stream << Printable::CreateIndentationString(indentation_level) << "Boolean: <" << std::boolalpha << boolean << ">";
+        *output_stream << std::endl;
+    }
+
     void operator()(const vrml_proc::parser::Vec3fArray& array) const {
         array.Print(indentation_level);
     }

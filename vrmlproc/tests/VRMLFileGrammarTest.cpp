@@ -65,3 +65,8 @@ TEST_CASE("Parse VRMLFile - Valid Input - Node With Switch", "[parsing]") {
     CHECK(parseResult);
 }
 
+TEST_CASE("Parse VRMLFile - Valid Input - Node With Boolean", "[parsing]") {
+
+    bool parseResult = vrml_proc::parseVRMLFile(node_with_boolean);
+    CHECK(parseResult);
+}
