@@ -77,21 +77,15 @@ TEST_CASE("Parse VRMLFile - Valid Input - Empty node", "[parsing]") {
     CHECK(parseResult);
 }
 
-TEST_CASE("Parse VRMLFile - Valid Input - Node With Children Array Without Brackets", "[parsing]") {
+TEST_CASE("Parse VRMLFile - Valid Input - Complicated node", "[parsing]") {
 
-    bool parseResult = vrml_proc::parseVRMLFile(node_with_children_array_without_brackets);
+    bool parseResult = vrml_proc::parseVRMLFile(complicated_node);
     CHECK(parseResult);
 }
 
+TEST_CASE("Parse VRMLFile - Valid Input - Complicated node with complicated DEF names", "[parsing]") {
 
-//TEST_CASE("Parse VRMLFile From File - Valid Input - Classic", "[parsing]") {
-//
-//    using namespace vrml_proc;
-//    LoadFileResult result = LoadFile(R"(C:\Users\marek\Documents\FI_MUNI\sem_05\SBAPR\Datasets\Segmented cells\nucleus - simplified.wrl)");
-//    REQUIRE(result.has_value());
-//
-//    // CHECK(2074 == result.value().size());
-//
-//    bool parseResult = vrml_proc::parseVRMLFile(result.value());
-//    CHECK(parseResult);
-//}
+    bool parseResult = vrml_proc::parseVRMLFile(complicated_node_with_complicated_def_names);
+    CHECK(parseResult);
+}
+

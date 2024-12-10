@@ -30,6 +30,7 @@
 #include "VRMLNodeManager.hpp"
 
 #include "CommentSkipper.hpp"
+#include "IdentifierGrammar.hpp"
 
 namespace qi = boost::spirit::qi;
 namespace ascii = boost::spirit::ascii;
@@ -222,7 +223,7 @@ struct VRMLGrammar : qi::grammar<Iterator, std::vector<vrml_proc::parser::VRMLNo
 
     VRMLGrammar(vrml_proc::parser::VRMLNodeManager& manager) : VRMLGrammar::base_type(start), manager(manager) {
 
-        identifier = qi::lexeme[qi::alpha >> *qi::alnum]; // TODO: limit it to the VRML 2.0 specs
+        identifier = std::make_unique<vrml_proc::parser::IdentifierGrammar<Iterator, Skipper>>();
 
         quoted_string = qi::lexeme['"' >> +(qi::char_ - '"') >> '"'];
 
@@ -238,12 +239,12 @@ struct VRMLGrammar : qi::grammar<Iterator, std::vector<vrml_proc::parser::VRMLNo
 
         field_value = (quoted_string | boolean | vec3f_array->start | int32_array->start | vec4f->start | vec3f->start | qi::float_ | qi::int_ | use_node | vrml_node | vrml_node_array);
 
-        field = (identifier >> field_value)
+        field = (identifier->start >> field_value)
             [
                 qi::_val = boost::phoenix::construct<vrml_proc::parser::VRMLField>(qi::_1, qi::_2)
             ];
 
-        vrml_node = (-(qi::lit("DEF") >> identifier) >> identifier >> qi::lit("{") >> *(field) >> qi::lit("}"))
+        vrml_node = (-(qi::lit("DEF") >> identifier->start) >> identifier->start >> qi::lit("{") >> *(field) >> qi::lit("}"))
             [
                 boost::phoenix::bind(&vrml_proc::parser::VRMLNode::definition_name, boost::phoenix::ref(qi::_val)) = (qi::_1),
                 boost::phoenix::bind(&vrml_proc::parser::VRMLNode::header, boost::phoenix::ref(qi::_val)) = (qi::_2),
@@ -263,12 +264,12 @@ struct VRMLGrammar : qi::grammar<Iterator, std::vector<vrml_proc::parser::VRMLNo
             >> ((vrml_node | use_node) % ",")
             >> "]";
 
-        use_node = qi::lit("USE") >> identifier;
+        use_node = qi::lit("USE") >> identifier->start;
 
         start = *(vrml_node);
 
          BOOST_SPIRIT_DEBUG_NODE(start);
-         BOOST_SPIRIT_DEBUG_NODE(identifier);
+         
          BOOST_SPIRIT_DEBUG_NODE(quoted_string);
          BOOST_SPIRIT_DEBUG_NODE(field_value);
          BOOST_SPIRIT_DEBUG_NODE(field);
@@ -279,7 +280,7 @@ struct VRMLGrammar : qi::grammar<Iterator, std::vector<vrml_proc::parser::VRMLNo
     qi::rule<Iterator, vrml_proc::parser::VRMLNode(), Skipper> vrml_node;
     qi::rule<Iterator, vrml_proc::parser::USENode(), Skipper> use_node;
     qi::rule<Iterator, std::vector<vrml_proc::parser::VRMLNode>(), Skipper> start;
-    qi::rule<Iterator, std::string(), Skipper> identifier;
+    std::unique_ptr<vrml_proc::parser::IdentifierGrammar<Iterator, Skipper>> identifier;
     std::unique_ptr<Vec3fGrammar<Iterator, Skipper>> vec3f;
     std::unique_ptr<Vec4fGrammar<Iterator, Skipper>> vec4f;
     std::unique_ptr<Vec3fArrayGrammar<Iterator, Skipper>> vec3f_array;
