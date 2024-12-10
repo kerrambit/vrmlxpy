@@ -31,5 +31,7 @@
 *.out
 *.app
 
+#Other
 out/
 .vs/
+CmakeSettings.json
