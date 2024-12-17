@@ -19,8 +19,10 @@ Before you can build this project, you'll need to have the Boost libraries insta
      ```
      C:\path\to\your\boost
      ├── boost
+     ├── doc
      ├── libs
-     ├── stage
+     ├── more
+     ├── status
      └── tools
      ```
 
@@ -54,6 +56,7 @@ Before you can build this project, you'll need to have the Boost libraries insta
 
 5. **Verify the setup**:
 - To verify that Boost is correctly set up, you can run the CMake command in your project directory. It should detect Boost automatically if `BOOST_ROOT` is set.
+- Note that you might need to delete CMake cache.
 
 ---
 
