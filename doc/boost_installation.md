@@ -98,7 +98,8 @@ Before you can build this project, you'll need to have the Boost libraries insta
      ```
 
 3. **Set the `BOOST_ROOT` environment variable**:
-- Set the `BOOST_ROOT` environment variable to the Boost installation directory:
+- You might need to set `BOOST_ROOT` environment variable when building Boost from source files.
+- So it you need it, proceed with setting the `BOOST_ROOT` environment variable to the Boost installation directory:
 
 - **Temporarily** (only for the current terminal session):
      ```
@@ -113,6 +114,7 @@ Before you can build this project, you'll need to have the Boost libraries insta
     ```
     source ~/.bashrc  # or `source ~/.zshrc`
     ```
+- If this does not set up the Boost correctly, please use [this](#cmake-configuration) approach.
 
 4. **Verify the setup**:
 - To verify that Boost is correctly set up, you can run the CMake command in your project directory. It should detect Boost automatically if `BOOST_ROOT` is set.
@@ -121,7 +123,15 @@ Before you can build this project, you'll need to have the Boost libraries insta
 
 ## CMake Configuration
 
-Once Boost is installed and the `BOOST_ROOT` environment variable is set, CMake will automatically detect Boost when you run the configuration for your project. If Boost is not found, you may need to specify the path manually using the `BOOST_ROOT` variable in your `CMakeLists.txt`:
+Once Boost is installed and the `BOOST_ROOT` environment variable is set, CMake will automatically detect Boost when you run the configuration for your project.
+
+If Boost is not found, you may need to specify the path manually using the `BOOST_ROOT` variable in your `CMakeLists.txt`:
 
 ```cmake
-set(BOOST_ROOT "C:/path/to/your/boost" CACHE PATH "Path to Boost")
+set(BOOST_ROOT "/path/to/your/boost")
+```
+
+Or if this approach does not work for you, try to run ```cmake``` command like this with your specified path:
+```
+ cmake -DBOOST_ROOT=/path/to/your/boost -DBoost_NO_SYSTEM_PATHS=ON -DBoost_NO_BOOST_CMAKE=ON ..
+```
