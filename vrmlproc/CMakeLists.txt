@@ -16,6 +16,7 @@ FetchContent_MakeAvailable(Catch2)
 
 # Add source files and vendor dependencies.
 include_directories(
+    ${CMAKE_CURRENT_SOURCE_DIR}/src
     ${CMAKE_CURRENT_SOURCE_DIR}/src/parser
     ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/models 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/interfaces
@@ -56,8 +57,10 @@ add_library(vrmlproc SHARED
     "src/parser/interfaces/Printable.hpp"
     "src/parser/interfaces/Printable.cpp"
 
-    "src/parser/VRMLParser.cpp"
+    "src/parser/Parser.hpp"
     "src/parser/ParserResult.hpp"
+    "src/parser/VrmlParser.hpp"
+    "src/parser/VrmlParser.cpp"
 
     "src/parser/grammars/CommentSkipper.hpp"
     "src/parser/grammars/IdentifierGrammar.hpp"
@@ -67,7 +70,7 @@ add_library(vrmlproc SHARED
     "src/parser/grammars/Int32ArrayGrammar.hpp"
     "src/parser/grammars/QuotedStringGrammar.hpp"
     "src/parser/grammars/BooleanGrammar.hpp"
-    "src/parser/grammars/VRMLNodeGrammar.hpp"
+    "src/parser/grammars/VrmlFileGrammar.hpp"
 
     "src/parser/SetupIntegrity.cpp"
 )
