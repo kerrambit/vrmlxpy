@@ -15,14 +15,16 @@
 #include "VRMLNodeManager.hpp"
 
 #include "CommentSkipper.hpp"
-#include "VRMLNodeGrammar.hpp"
+#include "VrmlFileGrammar.hpp"
+
+#include "VrmlParser.hpp"
 
 namespace qi = boost::spirit::qi;
 namespace ascii = boost::spirit::ascii;
 
 // -----------------------------------------------------------
 
-bool vrml_proc::parseVec3f(std::string& text) {
+bool vrml_proc::parser::parseVec3f(std::string& text) {
 
     auto it = text.begin();
     vrml_proc::parser::Vec3fGrammar <std::string::iterator, vrml_proc::parser::CommentSkipper> grammar;
@@ -42,7 +44,7 @@ bool vrml_proc::parseVec3f(std::string& text) {
 
 // -----------------------------------------------------------
 
-bool vrml_proc::parseVec4f(std::string& text) {
+bool vrml_proc::parser::parseVec4f(std::string& text) {
 
     auto it = text.begin();
     vrml_proc::parser::Vec4fGrammar <std::string::iterator, vrml_proc::parser::CommentSkipper> grammar;
@@ -62,7 +64,7 @@ bool vrml_proc::parseVec4f(std::string& text) {
 
 // -----------------------------------------------------------------------------------------
 
-bool vrml_proc::parseVec3fArray(std::string& text) {
+bool vrml_proc::parser::parseVec3fArray(std::string& text) {
 
     auto it = text.begin();
     vrml_proc::parser::Vec3fArrayGrammar <std::string::iterator, vrml_proc::parser::CommentSkipper> grammar;
@@ -82,7 +84,7 @@ bool vrml_proc::parseVec3fArray(std::string& text) {
 
 // -----------------------------------------------------------------------------------------
 
-bool vrml_proc::parseInt32Array(std::string& text) {
+bool vrml_proc::parser::parseInt32Array(std::string& text) {
 
     auto it = text.begin();
     vrml_proc::parser::Int32ArrayGrammar <std::string::iterator, vrml_proc::parser::CommentSkipper> grammar;
@@ -102,22 +104,18 @@ bool vrml_proc::parseInt32Array(std::string& text) {
 
 // -----------------------------------------------------------------------------------------
 
-bool vrml_proc::parseVRMLFile(std::string& text) {
+vrml_proc::parser::ParserResult<vrml_proc::parser::VRMLFile> vrml_proc::parser::ParseVrmlFile(std::string& text) {
 
     vrml_proc::parser::VRMLNodeManager manager;
+    vrml_proc::parser::VrmlParser parser(manager);
 
-    auto it = text.begin();
-    vrml_proc::parser::VRMLNodeGrammar <std::string::iterator, vrml_proc::parser::CommentSkipper> grammar(manager);
-    std::vector<vrml_proc::parser::VRMLNode> data;
-    vrml_proc::parser::CommentSkipper skipper;
-
-    bool success = qi::phrase_parse(it, text.end(), grammar, skipper, data);
-
-    if (success && it == text.end()) {
+    auto result = parser.Parse(text);
+    
+    if (result.has_value()) {
         std::cout << "Parsing passed:\n";
         
         uint16_t node_index = 1;
-        for (const auto& node : data) {
+        for (const auto& node : result.value()) {
             std::cout << node_index << ". Node\n";
             std::cout << "------------------------------------------\n";
             std::cout << node << "\n";
@@ -129,16 +127,15 @@ bool vrml_proc::parseVRMLFile(std::string& text) {
         std::cout << "\nVRMLNodeManager after parsing: \n";
         manager.Display(std::cout);
         std::cout << "\n" << std::endl;
-
-        return true;
     }
     else {
-        std::cerr << "Parsing failed at: " << std::string(it, text.end()) << "\n";
-        return false;
+        std::cerr << "Parsing failed at!" << std::endl;
     }
+
+    return result;
 }
 
-namespace vrml_proc {
+namespace vrml_proc::parser {
     LoadFileResult LoadFile(const std::string& filepath) {
 
         std::ifstream file(filepath, std::ios::in);

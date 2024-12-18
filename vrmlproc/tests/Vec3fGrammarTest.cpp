@@ -6,6 +6,6 @@
 #include "test-data/Vec3fGrammarTestDataset.hpp"
 
 TEST_CASE("Parse Vec3f - Valid Input", "[parsing]") {
-    bool parseResult = vrml_proc::parseVec3f(vec3f_simple);
+    bool parseResult = vrml_proc::parser::parseVec3f(vec3f_simple);
     REQUIRE(parseResult);
 }

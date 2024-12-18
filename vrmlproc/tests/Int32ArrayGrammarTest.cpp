@@ -6,6 +6,6 @@
 #include "test-data/Int32ArrayGrammarTestDataset.hpp"
 
 TEST_CASE("Parse Int32Array - Valid Input", "[parsing]") {
-    bool parseResult = vrml_proc::parseInt32Array(int32_array_simple);
+    bool parseResult = vrml_proc::parser::parseInt32Array(int32_array_simple);
     REQUIRE(parseResult);
 }
