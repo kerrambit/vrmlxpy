@@ -21,6 +21,7 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/models 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/interfaces
     ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/grammars
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/services
     ${CMAKE_CURRENT_SOURCE_DIR}/../vendor/pybind11/include/pybind11
 )
 
@@ -52,7 +53,7 @@ add_library(vrmlproc SHARED
     "src/parser/models/USENode.hpp"
     "src/parser/models/USENode.cpp"
 
-    "src/parser/VRMLNodeManager.hpp"
+    "src/parser/services/VRMLNodeManager.hpp"
 
     "src/parser/interfaces/Printable.hpp"
     "src/parser/interfaces/Printable.cpp"

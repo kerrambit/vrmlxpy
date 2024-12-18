@@ -1,13 +1,19 @@
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
+#include <vector>
+
 #include <boost/variant.hpp>
 
 #include <vrml_processing.hpp>
+#include <VRMLNode.hpp>
 #include <Vec3fArray.hpp>
+#include <Vec3f.hpp>
 #include <VRMLUnits.hpp>
 
 #include "test-data/VRMLFileGrammarTestDataset.hpp"
+
+#define BOOST_VARIANT_USE_RELAXED_GET_BY_DEFAULT
 
 TEST_CASE("Parse VRML File - Valid Input - Simple VRML File", "[parsing][valid]") {
 
@@ -157,10 +163,75 @@ TEST_CASE("Parse VRML File - Valid Input - Quite Deep Recursive Nodes", "[parsin
     }
 }
 
-TEST_CASE("Parse VRMLFile - Valid Input - Group With Nodes Array", "[parsing]") {
+TEST_CASE("Parse VRMLFile - Valid Input - Group With Nodes Array", "[parsing][valid]") {
 
     auto parseResult = vrml_proc::parser::ParseVrmlFile(group_with_nodes_array);
-    CHECK(parseResult);
+    REQUIRE(parseResult);
+
+    {
+        vrml_proc::parser::VRMLNode root = parseResult.value().at(0);
+        CHECK(root.header == "Group");
+
+        auto field = root.fields.at(0);
+        CHECK(field.name == "children");
+
+        auto* value = boost::get<std::vector<boost::variant<boost::recursive_wrapper<vrml_proc::parser::VRMLNode>, boost::recursive_wrapper<vrml_proc::parser::USENode>>>>(&field.value);
+        REQUIRE(value != nullptr);
+
+        {
+            auto& first_variant = value->at(0);
+
+            struct VrmlNodeVisitor : public boost::static_visitor<void> {
+                void operator()(vrml_proc::parser::VRMLNode& vrml_node) const {
+
+                    REQUIRE(vrml_node.header == "Group");
+                    auto field = vrml_node.fields.at(0);
+                    CHECK(field.name == "bboxCenter");
+
+                    REQUIRE(boost::get<vrml_proc::parser::Vec3f>(&field.value) != nullptr);
+                    auto bboxCenter = boost::get<vrml_proc::parser::Vec3f>(&field.value);
+
+                    CHECK_THAT(bboxCenter->x, Catch::Matchers::WithinAbs(0.058, 0.01));
+                    CHECK_THAT(bboxCenter->y, Catch::Matchers::WithinAbs(0.0, 0.0));
+                    CHECK_THAT(bboxCenter->z, Catch::Matchers::WithinAbs(15.0, 0.0));
+                }
+
+                void operator()(vrml_proc::parser::USENode& use_node) const {
+                    FAIL("Unexpected type inside the variant.");
+                }
+            };
+
+            VrmlNodeVisitor visitor;
+            boost::apply_visitor(visitor, first_variant);
+        }
+
+        {
+            auto& second_variant = value->at(1);
+
+            struct SecondVrmlNodeVisitor : public boost::static_visitor<void> {
+                void operator()(vrml_proc::parser::VRMLNode& vrml_node) const {
+
+                    REQUIRE(vrml_node.header == "Group");
+                    auto field = vrml_node.fields.at(0);
+                    CHECK(field.name == "bboxSize");
+
+                    REQUIRE(boost::get<vrml_proc::parser::Vec3f>(&field.value) != nullptr);
+                    auto bboxCenter = boost::get<vrml_proc::parser::Vec3f>(&field.value);
+
+                    CHECK_THAT(bboxCenter->x, Catch::Matchers::WithinAbs(-1.0, 0.0));
+                    CHECK_THAT(bboxCenter->y, Catch::Matchers::WithinAbs(-1.0, 0.0));
+                    CHECK_THAT(bboxCenter->z, Catch::Matchers::WithinAbs(-1.0, 0.0));
+                }
+
+                void operator()(vrml_proc::parser::USENode& use_node) const {
+                    FAIL("Unexpected type inside the variant.");
+                }
+            };
+
+            SecondVrmlNodeVisitor visitor;
+            boost::apply_visitor(visitor, second_variant);
+        }
+    }
 }
 
 TEST_CASE("Parse VRMLFile - Valid Input - Simple DEF", "[parsing]") {
@@ -181,11 +252,6 @@ TEST_CASE("Parse VRMLFile - Valid Input - Children With Both USE, DEF And Normal
     CHECK(parseResult);
 }
 
-TEST_CASE("Parse VRMLFile - Valid Input - Classic", "[parsing]") {
-
-    auto parseResult = vrml_proc::parser::ParseVrmlFile(classic);
-    CHECK(parseResult);
-}
 
 TEST_CASE("Parse VRMLFile - Valid Input - Node With Switch", "[parsing]") {
 
@@ -202,6 +268,12 @@ TEST_CASE("Parse VRMLFile - Valid Input - Node With Boolean", "[parsing]") {
 TEST_CASE("Parse VRMLFile - Valid Input - Empty node", "[parsing]") {
 
     auto parseResult = vrml_proc::parser::ParseVrmlFile(empty_node);
+    CHECK(parseResult);
+}
+
+TEST_CASE("Parse VRMLFile - Valid Input - Classic", "[parsing]") {
+
+    auto parseResult = vrml_proc::parser::ParseVrmlFile(classic);
     CHECK(parseResult);
 }
 
