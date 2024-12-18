@@ -57,6 +57,7 @@ add_library(vrmlproc SHARED
     "src/parser/interfaces/Printable.cpp"
 
     "src/parser/VRMLParser.cpp"
+    "src/parser/ParserResult.hpp"
 
     "src/parser/grammars/CommentSkipper.hpp"
     "src/parser/grammars/IdentifierGrammar.hpp"
