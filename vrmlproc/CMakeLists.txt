@@ -21,7 +21,6 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/interfaces
     ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/grammars
     ${CMAKE_CURRENT_SOURCE_DIR}/../vendor/pybind11/include/pybind11
-    ${CMAKE_CURRENT_SOURCE_DIR}/../vendor/boost_1_86_0
 )
 
 # Create the DLL.
@@ -61,7 +60,8 @@ add_library(vrmlproc SHARED
 
     "src/parser/grammars/CommentSkipper.hpp"
     "src/parser/grammars/IdentifierGrammar.hpp"
-    
+
+    "src/parser/SetupIntegrity.cpp"
 )
 
 # --------------------------------------------------------------------------------------- #
@@ -82,6 +82,7 @@ add_library(vrmlproc SHARED
 # --------------------------------------------------------------------------------------- #
 
 # Add the test executables.
+add_executable(SetupIntegrityTests "tests/SetupIntegrityTest.cpp")
 add_executable(VRMLFileGrammarUnitTests "tests/VRMLFileGrammarTest.cpp")
 add_executable(Vec3fGrammarUnitTests "tests/Vec3fGrammarTest.cpp")
 add_executable(Vec4fGrammarUnitTests "tests/Vec4fGrammarTest.cpp")
@@ -89,6 +90,7 @@ add_executable(Vec3fArrayGrammarUnitTests "tests/Vec3fArrayGrammarTest.cpp")
 add_executable(Int32ArrayGrammarUnitTests "tests/Int32ArrayGrammarTest.cpp")
 
 # Link Catch2 with the test executables.
+target_link_libraries(SetupIntegrityTests PRIVATE Catch2::Catch2WithMain vrmlproc)
 target_link_libraries(VRMLFileGrammarUnitTests PRIVATE Catch2::Catch2WithMain vrmlproc)
 target_link_libraries(Vec3fGrammarUnitTests PRIVATE Catch2::Catch2WithMain vrmlproc)
 target_link_libraries(Vec4fGrammarUnitTests PRIVATE Catch2::Catch2WithMain vrmlproc)
@@ -97,6 +99,7 @@ target_link_libraries(Int32ArrayGrammarUnitTests PRIVATE Catch2::Catch2WithMain 
 
 # Enable testing (use CTest to run the unit tests).
 enable_testing()
+add_test(NAME SetupIntegrityTests COMMAND SetupIntegrityTests)
 add_test(NAME VRMLFileGrammarUnitTests COMMAND VRMLFileGrammarUnitTests)
 add_test(NAME Vec3fGrammarUnitTests COMMAND Vec3fGrammarUnitTests)
 add_test(NAME Vec4fGrammarUnitTests COMMAND Vec4fGrammarUnitTests)
