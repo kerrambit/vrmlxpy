@@ -2,7 +2,6 @@
 
 #include <string>
 
-//#define BOOST_SPIRIT_DEBUG
 #include <boost/spirit/include/qi.hpp>
 
 namespace vrml_proc {

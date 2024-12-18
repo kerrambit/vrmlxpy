@@ -60,6 +60,13 @@ add_library(vrmlproc SHARED
 
     "src/parser/grammars/CommentSkipper.hpp"
     "src/parser/grammars/IdentifierGrammar.hpp"
+    "src/parser/grammars/Vec3fGrammar.hpp"
+    "src/parser/grammars/Vec3fArrayGrammar.hpp"
+    "src/parser/grammars/Vec4fGrammar.hpp"
+    "src/parser/grammars/Int32ArrayGrammar.hpp"
+    "src/parser/grammars/QuotedStringGrammar.hpp"
+    "src/parser/grammars/BooleanGrammar.hpp"
+    "src/parser/grammars/VRMLNodeGrammar.hpp"
 
     "src/parser/SetupIntegrity.cpp"
 )
