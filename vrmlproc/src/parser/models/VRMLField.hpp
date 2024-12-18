@@ -14,6 +14,7 @@
 #include "USENode.hpp"
 
 #include "Printable.hpp"
+#include "VrmlProcessingExport.hpp"
 
 namespace vrml_proc {
     namespace parser {
@@ -21,7 +22,7 @@ namespace vrml_proc {
         struct VRMLNode;
         using VRMLFieldValue = boost::variant<std::string, bool, Vec3fArray, Int32Array, float32_t, int32_t, Vec4f, Vec3f, USENode, boost::recursive_wrapper<struct VRMLNode>, std::vector<boost::variant<boost::recursive_wrapper<struct VRMLNode>, boost::recursive_wrapper<struct USENode>>>>;
 
-        struct VRMLField : public Printable {
+        struct VRMLPROCESSING_API VRMLField : public Printable {
             std::string name;
             VRMLFieldValue value;
 

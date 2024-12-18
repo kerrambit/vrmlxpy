@@ -9,9 +9,11 @@
 #include "VRMLField.hpp"
 #include "Printable.hpp"
 
+#include "VrmlProcessingExport.hpp"
+
 namespace vrml_proc {
     namespace parser {
-        struct VRMLNode : public Printable {
+        struct VRMLPROCESSING_API VRMLNode : public Printable {
 
             VRMLNode()
                 : Printable(std::cout) {}
