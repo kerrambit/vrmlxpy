@@ -1,3 +1,5 @@
+#pragma once
+
 #include <memory>
 #include <string>
 
@@ -46,9 +48,9 @@ namespace vrml_proc {
     namespace parser {
 
         template <typename Iterator, typename Skipper>
-        struct VRMLNodeGrammar : boost::spirit::qi::grammar<Iterator, std::vector<VRMLNode>(), Skipper> {
+        struct VrmlFileGrammar : boost::spirit::qi::grammar<Iterator, std::vector<VRMLNode>(), Skipper> {
 
-            VRMLNodeGrammar(VRMLNodeManager& manager) : VRMLNodeGrammar::base_type(start), manager(manager) {
+            VrmlFileGrammar(VRMLNodeManager& manager) : VrmlFileGrammar::base_type(start), manager(manager) {
 
                 identifier = std::make_unique<IdentifierGrammar<Iterator, Skipper>>();
 
