@@ -27,6 +27,5 @@ namespace vrml_proc {
 
     VRMLPROCESSING_API LoadFileResult LoadFile(const std::string& filepath);
 
-
-    VRMLPROCESSING_API void test_boost();
+    VRMLPROCESSING_API std::string test_boost();
 }

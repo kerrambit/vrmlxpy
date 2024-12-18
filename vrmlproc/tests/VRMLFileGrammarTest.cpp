@@ -9,7 +9,6 @@ TEST_CASE("Parse VRMLFile - Valid Input - Simple VRML File", "[parsing]") {
 
     bool parseResult = vrml_proc::parseVRMLFile(simple);
     CHECK(parseResult);
-    vrml_proc::test_boost();
 }
 
 TEST_CASE("Parse VRMLFile - Valid Input - Two Simple Nodes", "[parsing]") {

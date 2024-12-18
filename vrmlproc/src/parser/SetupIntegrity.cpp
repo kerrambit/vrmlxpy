@@ -3,7 +3,7 @@
 #include <boost/filesystem.hpp>
 #include <iostream>
 
-void vrml_proc::test_boost() {
+std::string vrml_proc::test_boost() {
     boost::filesystem::path p(".");
-    std::cout << "Current path is: " << p << std::endl;
+    return p.string();
 }
