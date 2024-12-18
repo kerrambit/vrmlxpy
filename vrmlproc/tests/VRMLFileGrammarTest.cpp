@@ -5,6 +5,7 @@
 
 #include <vrml_processing.hpp>
 #include <Vec3fArray.hpp>
+#include <VRMLUnits.hpp>
 
 #include "test-data/VRMLFileGrammarTestDataset.hpp"
 
@@ -91,16 +92,69 @@ TEST_CASE("Parse VRML File - Valid Input - Two Simple Nodes", "[parsing][valid]"
     }
 }
 
-TEST_CASE("Parse VRMLFile - Valid Input - Node In Node", "[parsing]") {
+TEST_CASE("Parse VRML File - Valid Input - Node In Node", "[parsing][valid]") {
 
     auto parseResult = vrml_proc::parser::ParseVrmlFile(node_in_node);
-    CHECK(parseResult);
+    REQUIRE(parseResult);
+
+    {
+        vrml_proc::parser::VRMLNode root = parseResult.value().at(0);
+        CHECK(root.header == "Shape");
+
+        auto field = root.fields.at(0);
+        CHECK(field.name == "appearance");
+
+        auto* value = boost::get<vrml_proc::parser::VRMLNode>(&field.value);
+        REQUIRE(value != nullptr);
+            
+        CHECK(value->header == "Appearence");
+        {
+            auto field = value->fields.at(0);
+            CHECK(field.name == "ambientIntensity");
+            REQUIRE(boost::get<vrml_proc::parser::float32_t>(&field.value) != nullptr);
+            auto value = boost::get<vrml_proc::parser::float32_t>(field.value);
+            CHECK_THAT(value, Catch::Matchers::WithinAbs(0.02, 0.1));
+        }
+    }
 }
 
-TEST_CASE("Parse VRMLFile - Valid Input - Quite Deep Recursive Nodes", "[parsing]") {
+TEST_CASE("Parse VRML File - Valid Input - Quite Deep Recursive Nodes", "[parsing][valid]") {
 
     auto parseResult = vrml_proc::parser::ParseVrmlFile(quite_deep_recursive_nodes);
-    CHECK(parseResult);
+    REQUIRE(parseResult);
+
+    {
+        vrml_proc::parser::VRMLNode root = parseResult.value().at(0);
+        CHECK(root.header == "Shape");
+
+        auto field = root.fields.at(0);
+        CHECK(field.name == "appearance");
+
+        auto* value = boost::get<vrml_proc::parser::VRMLNode>(&field.value);
+        REQUIRE(value != nullptr);
+
+        CHECK(value->header == "Appearence");
+        {
+            auto field = value->fields.at(0);
+            CHECK(field.name == "ambientIntensity");
+            REQUIRE(boost::get<vrml_proc::parser::float32_t>(&field.value) != nullptr);
+            auto ambientIntensity = boost::get<vrml_proc::parser::float32_t>(field.value);
+            CHECK_THAT(ambientIntensity, Catch::Matchers::WithinAbs(0.02, 0.1));
+
+            {
+                auto field = value->fields.at(1);
+                CHECK(field.name == "appearance");
+                auto* value = boost::get<vrml_proc::parser::VRMLNode>(&field.value);
+                REQUIRE(value != nullptr);
+                CHECK(value->header == "Appearence");
+                auto inner_field = value->fields.at(0);
+                CHECK(inner_field.name == "lightExposure");
+                REQUIRE(boost::get<int32_t>(&inner_field.value) != nullptr);
+                auto lightExposure = boost::get<int32_t>(inner_field.value);
+                CHECK(lightExposure == 42);
+            }
+        }
+    }
 }
 
 TEST_CASE("Parse VRMLFile - Valid Input - Group With Nodes Array", "[parsing]") {

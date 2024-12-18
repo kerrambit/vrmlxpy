@@ -45,7 +45,7 @@ std::string node_in_node = R"(
 
     Shape {
 		appearance Appearence  {
-			ambientIntensity  0.2
+			ambientIntensity  0.2E-1
 		}
 	}
 
@@ -57,7 +57,7 @@ std::string quite_deep_recursive_nodes = R"(
 
     Shape {
 		appearance Appearence  {
-			ambientIntensity  0.2456456
+			ambientIntensity  0.2E-1
 			appearance Appearence {
 				lightExposure 42
 			}
