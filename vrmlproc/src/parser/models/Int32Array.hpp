@@ -5,10 +5,11 @@
 
 #include "VRMLUnits.hpp"
 #include "Printable.hpp"
+#include "VrmlProcessingExport.hpp"
 
 namespace vrml_proc {
     namespace parser {
-        struct Int32Array : public Printable {
+        struct VRMLPROCESSING_API Int32Array : public Printable {
 
             Int32Array()
                 : Printable(std::cout) { }

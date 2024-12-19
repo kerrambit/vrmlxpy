@@ -1,6 +1,6 @@
 #include <string>
 
-std::string vec3f_array_simple = R"(
+std::string vec3fArray = R"(
 		
     [
 

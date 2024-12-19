@@ -1,16 +1,46 @@
 #include <catch2/catch_test_macros.hpp>
+#include <catch2/matchers/catch_matchers_floating_point.hpp>
+
+#include <optional>
 #include <string>
 
-#include <vrml_processing.hpp>
-
+#include "CommentSkipper.hpp"
 #include "test-data/Vec4fGrammarTestDataset.hpp"
+#include "Vec4f.hpp"
+#include "Vec4fGrammar.hpp"
 
-TEST_CASE("Parse Vec4f - Valid Input", "[parsing]") {
-    bool parseResult = vrml_proc::parseVec4f(vec4f_simple);
-    REQUIRE(parseResult);
+static std::optional<vrml_proc::parser::Vec4f> ParseVec4f(std::string& text) {
+
+    auto iterator = text.begin();
+
+    vrml_proc::parser::Vec4fGrammar <std::string::iterator, vrml_proc::parser::CommentSkipper> grammar;
+    vrml_proc::parser::Vec4f data;
+    vrml_proc::parser::CommentSkipper skipper;
+
+    bool success = boost::spirit::qi::phrase_parse(iterator, text.end(), grammar, skipper, data);
+    if (success) {
+        return data;
+    }
+
+    return {};
 }
 
-TEST_CASE("Parse Vec4f - Ineteger input", "[parsing]") {
-    bool parseResult = vrml_proc::parseVec4f(integer_input);
-    REQUIRE(parseResult);
+TEST_CASE("Parse Vec4f - Valid Input", "[parsing][valid]") {
+    auto parseResult = ParseVec4f(vecf4);
+    REQUIRE(parseResult.has_value());
+
+    CHECK_THAT(parseResult.value().x, Catch::Matchers::WithinAbs(100.001001, 0.001));
+    CHECK_THAT(parseResult.value().y, Catch::Matchers::WithinAbs(5.55317, 0.001));
+    CHECK_THAT(parseResult.value().z, Catch::Matchers::WithinAbs(-0.0305561, 0.001));
+    CHECK_THAT(parseResult.value().w, Catch::Matchers::WithinAbs(1.00, 0.0));
+}
+
+TEST_CASE("Parse Vec4f - Ineteger input", "[parsing][valid]") {
+    auto parseResult = ParseVec4f(vecf4AsInts);
+    REQUIRE(parseResult.has_value());
+
+    CHECK_THAT(parseResult.value().x, Catch::Matchers::WithinAbs(0.0, 0.0));
+    CHECK_THAT(parseResult.value().y, Catch::Matchers::WithinAbs(0.0, 0.0));
+    CHECK_THAT(parseResult.value().z, Catch::Matchers::WithinAbs(1.0, 0.0));
+    CHECK_THAT(parseResult.value().w, Catch::Matchers::WithinAbs(0.00, 0.0));
 }

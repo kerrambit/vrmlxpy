@@ -1,3 +1,5 @@
+#pragma once
+
 #include <memory>
 #include <string>
 
@@ -45,10 +47,16 @@ BOOST_FUSION_ADAPT_STRUCT(
 namespace vrml_proc {
     namespace parser {
 
-        template <typename Iterator, typename Skipper>
-        struct VRMLNodeGrammar : boost::spirit::qi::grammar<Iterator, std::vector<VRMLNode>(), Skipper> {
+        // https://www.boost.org/doc/libs/1_87_0/libs/spirit/doc/html/spirit/qi/reference/numeric/real.html
+        struct float_policy : boost::spirit::qi::real_policies<float>
+        {
+            static bool const expect_dot = true;
+        };
 
-            VRMLNodeGrammar(VRMLNodeManager& manager) : VRMLNodeGrammar::base_type(start), manager(manager) {
+        template <typename Iterator, typename Skipper>
+        struct VrmlFileGrammar : boost::spirit::qi::grammar<Iterator, std::vector<VRMLNode>(), Skipper> {
+
+            VrmlFileGrammar(VRMLNodeManager& manager) : VrmlFileGrammar::base_type(start), manager(manager) {
 
                 identifier = std::make_unique<IdentifierGrammar<Iterator, Skipper>>();
 
@@ -64,7 +72,7 @@ namespace vrml_proc {
 
                 boolean = std::make_unique<BooleanGrammar<Iterator, Skipper>>();
 
-                field_value = (quoted_string->start | boolean->start | vec3f_array->start | int32_array->start | vec4f->start | vec3f->start | boost::spirit::qi::float_ | boost::spirit::qi::int_ | use_node | vrml_node | vrml_node_array);
+                field_value = (quoted_string->start | boolean->start | vec3f_array->start | int32_array->start | vec4f->start | vec3f->start | boost::spirit::qi::real_parser<float, float_policy>() | boost::spirit::qi::int_ | use_node | vrml_node | vrml_node_array);
 
                 field = (identifier->start >> field_value)
                     [

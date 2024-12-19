@@ -4,9 +4,11 @@
 #include <string>
 #include <cstdint>
 
+#include "VrmlProcessingExport.hpp"
+
 #define ONE_INDENTATION_LEVEL_LENGTH 2
 
-class Printable {
+class VRMLPROCESSING_API Printable {
 
 public:
 

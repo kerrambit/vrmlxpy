@@ -5,10 +5,11 @@
 
 #include "Vec3f.hpp"
 #include "Printable.hpp"
+#include "VrmlProcessingExport.hpp"
 
 namespace vrml_proc {
     namespace parser {
-        struct Vec3fArray : Printable {
+        struct VRMLPROCESSING_API Vec3fArray : Printable {
 
             Vec3fArray()
                 : Printable(std::cout) { }

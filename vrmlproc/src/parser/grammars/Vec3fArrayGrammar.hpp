@@ -7,6 +7,7 @@
 
 #include "Vec3f.hpp"
 #include "Vec3fArray.hpp"
+#include "Vec3fGrammar.hpp"
 
 BOOST_FUSION_ADAPT_STRUCT(
     vrml_proc::parser::Vec3fArray,

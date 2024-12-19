@@ -1,6 +1,6 @@
 #include <string>
 
-std::string int32_array_simple = R"(
+std::string int32Array = R"(
 
 	[   2, 0, 1, -1, 5, 3, 4, -1,
         8, 6, 7, -1, 11, 9, 10, -1,
