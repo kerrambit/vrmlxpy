@@ -4,11 +4,12 @@
 #include "VRMLFile.hpp"
 #include "VrmlFileGrammar.hpp"
 #include "CommentSkipper.hpp"
+#include "VrmlProcessingExport.hpp"
 
 namespace vrml_proc {
     namespace parser {
 
-        class VrmlParser : public Parser<VRMLFile> {
+        class VRMLPROCESSING_API VrmlParser : public Parser<VRMLFile> {
         public:
             VrmlParser() = delete;
 
