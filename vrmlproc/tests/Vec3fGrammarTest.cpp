@@ -1,11 +1,36 @@
 #include <catch2/catch_test_macros.hpp>
+#include <catch2/matchers/catch_matchers_floating_point.hpp>
+
+#include <optional>
 #include <string>
 
-#include <vrml_processing.hpp>
-
+#include "CommentSkipper.hpp"
+#include "Vec3f.hpp"
+#include "Vec3fGrammar.hpp"
 #include "test-data/Vec3fGrammarTestDataset.hpp"
 
-TEST_CASE("Parse Vec3f - Valid Input", "[parsing]") {
-    bool parseResult = vrml_proc::parser::parseVec3f(vec3f_simple);
-    REQUIRE(parseResult);
+static std::optional<vrml_proc::parser::Vec3f> ParseVec3f(std::string& text) {
+
+    auto iterator = text.begin();
+
+    vrml_proc::parser::Vec3fGrammar <std::string::iterator, vrml_proc::parser::CommentSkipper> grammar;
+    vrml_proc::parser::Vec3f data;
+    vrml_proc::parser::CommentSkipper skipper;
+
+    bool success = boost::spirit::qi::phrase_parse(iterator, text.end(), grammar, skipper, data);
+    if (success) {
+        return data;
+    }
+
+    return {};
+}
+
+
+TEST_CASE("Parse Vec3f - Valid Input", "[parsing][valid]") {
+    auto parseResult = ParseVec3f(vec3f);
+    REQUIRE(parseResult.has_value());
+
+    CHECK_THAT(parseResult.value().x, Catch::Matchers::WithinAbs(100.001001, 0.001));
+    CHECK_THAT(parseResult.value().y, Catch::Matchers::WithinAbs(5.55317, 0.001));
+    CHECK_THAT(parseResult.value().z, Catch::Matchers::WithinAbs(-0.0305561, 0.001));
 }
