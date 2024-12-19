@@ -6,21 +6,21 @@
 
 #include <boost/optional.hpp>
 
-#include "VRMLField.hpp"
+#include "VrmlField.hpp"
 #include "Printable.hpp"
 
 #include "VrmlProcessingExport.hpp"
 
 namespace vrml_proc {
     namespace parser {
-        struct VRMLPROCESSING_API VRMLNode : public Printable {
+        struct VRMLPROCESSING_API VrmlNode : public Printable {
 
-            VRMLNode()
+            VrmlNode()
                 : Printable(std::cout) {}
 
             boost::optional<std::string> definitionName;
             std::string header;
-            std::vector<VRMLField> fields;
+            std::vector<VrmlField> fields;
 
             void Print(Printable::IndentationLevel indentationLevel) const override;
         };

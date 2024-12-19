@@ -30,10 +30,11 @@ add_library(vrmlproc SHARED
     "src/parser/vrml_processing.hpp"
     "src/parser/vrml_processing.cpp"
 
-    "src/parser/models/VRMLUnits.hpp"
+    "src/parser/models/VrmlUnits.hpp"
+    "src/parser/models/VrmlFile.hpp"
 
-    "src/parser/models/VRMLField.hpp"
-    "src/parser/models/VRMLField.cpp"
+    "src/parser/models/VrmlField.hpp"
+    "src/parser/models/VrmlField.cpp"
 
     "src/parser/models/Vec3f.hpp"
     "src/parser/models/Vec3f.cpp"
@@ -47,13 +48,13 @@ add_library(vrmlproc SHARED
     "src/parser/models/Int32Array.hpp"
     "src/parser/models/Int32Array.cpp"
 
-    "src/parser/models/VRMLNode.hpp"
-    "src/parser/models/VRMLNode.cpp"
+    "src/parser/models/VrmlNode.hpp"
+    "src/parser/models/VrmlNode.cpp"
 
-    "src/parser/models/USENode.hpp"
-    "src/parser/models/USENode.cpp"
+    "src/parser/models/UseNode.hpp"
+    "src/parser/models/UseNode.cpp"
 
-    "src/parser/services/VRMLNodeManager.hpp"
+    "src/parser/services/VrmlNodeManager.hpp"
 
     "src/parser/interfaces/Printable.hpp"
     "src/parser/interfaces/Printable.cpp"

@@ -5,20 +5,20 @@
 #include <memory>
 #include <iostream>
 
-#include "VRMLNode.hpp"
+#include "VrmlNode.hpp"
 
 namespace vrml_proc {
     namespace parser {
 
-        class VRMLNodeManager {
+        class VrmlNodeManager {
         public:
-            VRMLNodeManager() = default;
+            VrmlNodeManager() = default;
 
-            void AddDefinitionNode(const std::string& id, std::shared_ptr<VRMLNode> node) {
+            void AddDefinitionNode(const std::string& id, std::shared_ptr<VrmlNode> node) {
                 m_definitionNodes[id] = node;
             }
 
-            std::shared_ptr<VRMLNode> GetDefinitionNode(const std::string& id) const {
+            std::shared_ptr<VrmlNode> GetDefinitionNode(const std::string& id) const {
                 auto it = m_definitionNodes.find(id);
                 if (it != m_definitionNodes.end()) {
                     return it->second;
@@ -43,7 +43,7 @@ namespace vrml_proc {
             }
 
         private:
-            std::unordered_map<std::string, std::shared_ptr<VRMLNode>> m_definitionNodes;
+            std::unordered_map<std::string, std::shared_ptr<VrmlNode>> m_definitionNodes;
         };
     }
 }

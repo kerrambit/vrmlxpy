@@ -13,11 +13,11 @@
 #include <boost/variant/variant.hpp>
 #include <boost/variant/recursive_wrapper.hpp>
 
-#include "VRMLField.hpp"
-#include "VRMLFile.hpp"
-#include "VRMLNode.hpp"
-#include "USENode.hpp"
-#include "VRMLNodeManager.hpp"
+#include "VrmlField.hpp"
+#include "VrmlFile.hpp"
+#include "VrmlNode.hpp"
+#include "UseNode.hpp"
+#include "VrmlNodeManager.hpp"
 
 #include "IdentifierGrammar.hpp"
 #include "Vec3fGrammar.hpp"
@@ -29,21 +29,21 @@
 #include "BaseGrammar.hpp"
 
 BOOST_FUSION_ADAPT_STRUCT(
-    vrml_proc::parser::VRMLNode,
+    vrml_proc::parser::VrmlNode,
     (boost::optional<std::string>, definitionName)
     (std::string, header)
-    (std::vector<vrml_proc::parser::VRMLField>, fields)
+    (std::vector<vrml_proc::parser::VrmlField>, fields)
 )
 
 BOOST_FUSION_ADAPT_STRUCT(
-    vrml_proc::parser::USENode,
+    vrml_proc::parser::UseNode,
     (std::string, identifier)
 )
 
 BOOST_FUSION_ADAPT_STRUCT(
-    vrml_proc::parser::VRMLField,
+    vrml_proc::parser::VrmlField,
     (std::string, name)
-    (vrml_proc::parser::VRMLFieldValue, value)
+    (vrml_proc::parser::VrmlFieldValue, value)
 )
 
 namespace vrml_proc {
@@ -57,11 +57,11 @@ namespace vrml_proc {
 
         template <typename Iterator, typename Skipper>
         class VrmlFileGrammar
-            : public boost::spirit::qi::grammar<Iterator, VRMLFile(), Skipper>,
-            public BaseGrammar <Iterator, VRMLFile(), Skipper> {
+            : public boost::spirit::qi::grammar<Iterator, VrmlFile(), Skipper>,
+            public BaseGrammar <Iterator, VrmlFile(), Skipper> {
 
         public:
-            VrmlFileGrammar(VRMLNodeManager& manager) : VrmlFileGrammar::base_type(this->m_start), m_manager(manager) {
+            VrmlFileGrammar(VrmlNodeManager& manager) : VrmlFileGrammar::base_type(this->m_start), m_manager(manager) {
 
                 m_identifier = std::make_unique<IdentifierGrammar<Iterator, Skipper>>();
 
@@ -81,18 +81,18 @@ namespace vrml_proc {
 
                 m_vrmlField = (m_identifier->GetStartRule() >> m_vrmlFieldValue)
                     [
-                        boost::spirit::qi::_val = boost::phoenix::construct<vrml_proc::parser::VRMLField>(boost::spirit::qi::_1, boost::spirit::qi::_2)
+                        boost::spirit::qi::_val = boost::phoenix::construct<vrml_proc::parser::VrmlField>(boost::spirit::qi::_1, boost::spirit::qi::_2)
                     ];
 
                 m_vrmlNode = (-(boost::spirit::qi::lit("DEF") >> m_identifier->GetStartRule()) >> m_identifier->GetStartRule() >> boost::spirit::qi::lit("{") >> *(m_vrmlField) >> boost::spirit::qi::lit("}"))
                     [
-                        boost::phoenix::bind(&VRMLNode::definitionName, boost::phoenix::ref(boost::spirit::qi::_val)) = (boost::spirit::qi::_1),
-                            boost::phoenix::bind(&VRMLNode::header, boost::phoenix::ref(boost::spirit::qi::_val)) = (boost::spirit::qi::_2),
-                            boost::phoenix::bind(&VRMLNode::fields, boost::phoenix::ref(boost::spirit::qi::_val)) = (boost::spirit::qi::_3),
+                        boost::phoenix::bind(&VrmlNode::definitionName, boost::phoenix::ref(boost::spirit::qi::_val)) = (boost::spirit::qi::_1),
+                            boost::phoenix::bind(&VrmlNode::header, boost::phoenix::ref(boost::spirit::qi::_val)) = (boost::spirit::qi::_2),
+                            boost::phoenix::bind(&VrmlNode::fields, boost::phoenix::ref(boost::spirit::qi::_val)) = (boost::spirit::qi::_3),
                             boost::phoenix::bind(
-                                [](VRMLNode& node, VRMLNodeManager& manager) {
+                                [](VrmlNode& node, VrmlNodeManager& manager) {
                                     if (node.definitionName.has_value()) {
-                                        auto node_ptr = std::make_shared<VRMLNode>(node);
+                                        auto node_ptr = std::make_shared<VrmlNode>(node);
                                         manager.AddDefinitionNode(node.definitionName.value(), node_ptr);
                                     }
                                 },
@@ -115,11 +115,11 @@ namespace vrml_proc {
             }
 
         private:
-            boost::spirit::qi::rule<Iterator, VRMLNode(), Skipper> m_vrmlNode;
-            boost::spirit::qi::rule<Iterator, USENode(), Skipper> m_useNode;
-            boost::spirit::qi::rule<Iterator, VRMLField(), Skipper> m_vrmlField;
-            boost::spirit::qi::rule<Iterator, VRMLFieldValue(), Skipper> m_vrmlFieldValue;
-            boost::spirit::qi::rule<Iterator, std::vector<boost::variant<boost::recursive_wrapper<VRMLNode>, boost::recursive_wrapper<USENode>>>(), Skipper> m_vrmlNodeArray;
+            boost::spirit::qi::rule<Iterator, VrmlNode(), Skipper> m_vrmlNode;
+            boost::spirit::qi::rule<Iterator, UseNode(), Skipper> m_useNode;
+            boost::spirit::qi::rule<Iterator, VrmlField(), Skipper> m_vrmlField;
+            boost::spirit::qi::rule<Iterator, VrmlFieldValue(), Skipper> m_vrmlFieldValue;
+            boost::spirit::qi::rule<Iterator, std::vector<boost::variant<boost::recursive_wrapper<VrmlNode>, boost::recursive_wrapper<UseNode>>>(), Skipper> m_vrmlNodeArray;
 
             std::unique_ptr<IdentifierGrammar<Iterator, Skipper>> m_identifier;
             std::unique_ptr<Vec3fGrammar<Iterator, Skipper>> m_vec3f;
@@ -129,7 +129,7 @@ namespace vrml_proc {
             std::unique_ptr<QuotedStringGrammar<Iterator, Skipper>> m_quotedString;
             std::unique_ptr<BooleanGrammar<Iterator, Skipper>> m_boolean;
 
-            VRMLNodeManager& m_manager;
+            VrmlNodeManager& m_manager;
         };
     }
 }

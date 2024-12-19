@@ -1,5 +1,5 @@
-#include "VRMLField.hpp"
-#include "VRMLNode.hpp"
+#include "VrmlField.hpp"
+#include "VrmlNode.hpp"
 
 struct Visitor {
 
@@ -44,15 +44,15 @@ struct Visitor {
         vector.Print(indentationLevel);
     }
 
-    void operator()(const vrml_proc::parser::USENode& node) const {
+    void operator()(const vrml_proc::parser::UseNode& node) const {
         node.Print(indentationLevel);
     }
 
-    void operator()(const boost::recursive_wrapper<vrml_proc::parser::VRMLNode>& node) const {
+    void operator()(const boost::recursive_wrapper<vrml_proc::parser::VrmlNode>& node) const {
         node.get_pointer()->Print(indentationLevel);
     }
 
-    void operator()(const std::vector<boost::variant<boost::recursive_wrapper<vrml_proc::parser::VRMLNode>, boost::recursive_wrapper<vrml_proc::parser::USENode>>>& nodes) const {
+    void operator()(const std::vector<boost::variant<boost::recursive_wrapper<vrml_proc::parser::VrmlNode>, boost::recursive_wrapper<vrml_proc::parser::UseNode>>>& nodes) const {
         *outputStream << Printable::CreateIndentationString(indentationLevel) << "VRMLNodeArray:\n";
         *outputStream << Printable::CreateIndentationString(indentationLevel + 1) << "[\n";
         
@@ -62,11 +62,11 @@ struct Visitor {
 
             PrintVisitor(std::ostream* outputStream, Printable::IndentationLevel indentationLevel) : outputStream(outputStream), indentationLevel(indentationLevel) {}
 
-            void operator()(const boost::recursive_wrapper<vrml_proc::parser::VRMLNode>& node) const {
+            void operator()(const boost::recursive_wrapper<vrml_proc::parser::VrmlNode>& node) const {
                 node.get_pointer()->Print(indentationLevel);
             }
 
-            void operator()(const boost::recursive_wrapper<vrml_proc::parser::USENode>& node) const {
+            void operator()(const boost::recursive_wrapper<vrml_proc::parser::UseNode>& node) const {
                 node.get_pointer()->Print(indentationLevel);
             }
         };
@@ -79,7 +79,7 @@ struct Visitor {
     }
 };
 
-void vrml_proc::parser::VRMLField::Print(Printable::IndentationLevel indentationLevel) const {
+void vrml_proc::parser::VrmlField::Print(Printable::IndentationLevel indentationLevel) const {
     std::string indentation_string = Printable::CreateIndentationString(indentationLevel);
     *Printable::AccessStreamPointer() << indentation_string;
     *Printable::AccessStreamPointer() << "VRMLField:\n";

@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-#include "VRMLUnits.hpp"
+#include "VrmlUnits.hpp"
 #include "Printable.hpp"
 #include "VrmlProcessingExport.hpp"
 

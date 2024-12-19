@@ -1,6 +1,6 @@
-#include "USENode.hpp"
+#include "UseNode.hpp"
 
-void vrml_proc::parser::USENode::Print(Printable::IndentationLevel indentationLevel) const {
+void vrml_proc::parser::UseNode::Print(Printable::IndentationLevel indentationLevel) const {
     std::string indentationString = Printable::CreateIndentationString(indentationLevel);
     indentationLevel++;
 

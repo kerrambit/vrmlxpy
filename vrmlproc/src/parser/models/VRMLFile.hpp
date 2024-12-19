@@ -1,9 +1,9 @@
 #include <vector>
 
-#include "VRMLNode.hpp"
+#include "VrmlNode.hpp"
 
 namespace vrml_proc {
 	namespace parser {
-		using VRMLFile = std::vector<VRMLNode>;
+		using VrmlFile = std::vector<VrmlNode>;
 	}
 }
