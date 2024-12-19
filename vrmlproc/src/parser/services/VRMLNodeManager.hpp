@@ -26,6 +26,10 @@ namespace vrml_proc {
                 return nullptr;
             }
 
+            size_t GetDefNodesTotalCount() const {
+                return m_definition_nodes.size();
+            }
+
             void Display(std::ostream &output_stream) {
                 if (m_definition_nodes.size() == 0) {
                     output_stream << "There are no DEF nodes stored." << std::endl;
