@@ -182,11 +182,11 @@ TEST_CASE("Parse VRML File - Valid Input - Quite Deep Recursive Nodes", "[parsin
                 REQUIRE(value != nullptr);
                 CHECK(value->header == "Appearence");
 
-                auto &inner_field = value->fields.at(0);
-                CHECK(inner_field.name == "lightExposure");
+                auto &innerField = value->fields.at(0);
+                CHECK(innerField.name == "lightExposure");
 
-                REQUIRE(boost::get<int32_t>(&inner_field.value) != nullptr);
-                auto lightExposure = boost::get<int32_t>(inner_field.value);
+                REQUIRE(boost::get<int32_t>(&innerField.value) != nullptr);
+                auto lightExposure = boost::get<int32_t>(innerField.value);
                 CHECK(lightExposure == 42);
             }
         }
@@ -212,13 +212,13 @@ TEST_CASE("Parse VRMLFile - Valid Input - Group With Nodes Array", "[parsing][va
         REQUIRE(value != nullptr);
 
         {
-            auto& first_variant = value->at(0);
+            auto& firstVariant = value->at(0);
 
             struct VrmlNodeVisitor : public boost::static_visitor<void> {
-                void operator()(vrml_proc::parser::VRMLNode& vrml_node) const {
+                void operator()(vrml_proc::parser::VRMLNode& vrmlNode) const {
 
-                    REQUIRE(vrml_node.header == "Group");
-                    auto &field = vrml_node.fields.at(0);
+                    REQUIRE(vrmlNode.header == "Group");
+                    auto &field = vrmlNode.fields.at(0);
                     CHECK(field.name == "bboxCenter");
 
                     REQUIRE(boost::get<vrml_proc::parser::Vec3f>(&field.value) != nullptr);
@@ -229,23 +229,23 @@ TEST_CASE("Parse VRMLFile - Valid Input - Group With Nodes Array", "[parsing][va
                     CHECK_THAT(bboxCenter->z, Catch::Matchers::WithinAbs(15.0, 0.0));
                 }
 
-                void operator()(vrml_proc::parser::USENode& use_node) const {
+                void operator()(vrml_proc::parser::USENode& useNode) const {
                     FAIL("Unexpected type inside the variant.");
                 }
             };
 
             VrmlNodeVisitor visitor;
-            boost::apply_visitor(visitor, first_variant);
+            boost::apply_visitor(visitor, firstVariant);
         }
 
         {
-            auto& second_variant = value->at(1);
+            auto& secondVariant = value->at(1);
 
             struct SecondVrmlNodeVisitor : public boost::static_visitor<void> {
-                void operator()(vrml_proc::parser::VRMLNode& vrml_node) const {
+                void operator()(vrml_proc::parser::VRMLNode& vrmlNode) const {
 
-                    REQUIRE(vrml_node.header == "Group");
-                    auto &&field = vrml_node.fields.at(0);
+                    REQUIRE(vrmlNode.header == "Group");
+                    auto &&field = vrmlNode.fields.at(0);
                     CHECK(field.name == "bboxSize");
 
                     REQUIRE(boost::get<vrml_proc::parser::Vec3f>(&field.value) != nullptr);
@@ -256,13 +256,13 @@ TEST_CASE("Parse VRMLFile - Valid Input - Group With Nodes Array", "[parsing][va
                     CHECK_THAT(bboxCenter->z, Catch::Matchers::WithinAbs(-1.0, 0.0));
                 }
 
-                void operator()(vrml_proc::parser::USENode& use_node) const {
+                void operator()(vrml_proc::parser::USENode& useNode) const {
                     FAIL("Unexpected type inside the variant.");
                 }
             };
 
             SecondVrmlNodeVisitor visitor;
-            boost::apply_visitor(visitor, second_variant);
+            boost::apply_visitor(visitor, secondVariant);
         }
     }
 
@@ -289,13 +289,13 @@ TEST_CASE("Parse VRML File - Valid Input - Simple DEF Node", "[parsing][valid]")
             auto& variant = value->at(0);
 
             struct VrmlNodeVisitor : public boost::static_visitor<void> {
-                void operator()(vrml_proc::parser::VRMLNode& vrml_node) const {
+                void operator()(vrml_proc::parser::VRMLNode& vrmlNode) const {
 
-                    REQUIRE(vrml_node.header == "Group");
-                    auto &field = vrml_node.fields.at(0);
+                    REQUIRE(vrmlNode.header == "Group");
+                    auto &field = vrmlNode.fields.at(0);
 
-                    REQUIRE(vrml_node.definition_name.has_value());
-                    CHECK(vrml_node.definition_name.value() == "id");
+                    REQUIRE(vrmlNode.definition_name.has_value());
+                    CHECK(vrmlNode.definition_name.value() == "id");
 
                     CHECK(field.name == "bboxCenter");
 
@@ -307,7 +307,7 @@ TEST_CASE("Parse VRML File - Valid Input - Simple DEF Node", "[parsing][valid]")
                     CHECK_THAT(bboxCenter->z, Catch::Matchers::WithinAbs(15.0, 0.0));
                 }
 
-                void operator()(vrml_proc::parser::USENode& use_node) const {
+                void operator()(vrml_proc::parser::USENode& useNode) const {
                     FAIL("Unexpected type inside the variant.");
                 }
             };
@@ -341,13 +341,13 @@ TEST_CASE("Parse VRML File - Valid Input - Simple USE Node", "[parsing][valid]")
             auto& variant = value->at(0);
 
             struct VrmlNodeVisitor : public boost::static_visitor<void> {
-                void operator()(vrml_proc::parser::VRMLNode& vrml_node) const {
+                void operator()(vrml_proc::parser::VRMLNode& vrmlNode) const {
 
-                    REQUIRE(vrml_node.header == "Group");
-                    auto &field = vrml_node.fields.at(0);
+                    REQUIRE(vrmlNode.header == "Group");
+                    auto &field = vrmlNode.fields.at(0);
 
-                    REQUIRE(vrml_node.definition_name.has_value());
-                    CHECK(vrml_node.definition_name.value() == "id");
+                    REQUIRE(vrmlNode.definition_name.has_value());
+                    CHECK(vrmlNode.definition_name.value() == "id");
 
                     CHECK(field.name == "bboxCenter");
 
@@ -359,7 +359,7 @@ TEST_CASE("Parse VRML File - Valid Input - Simple USE Node", "[parsing][valid]")
                     CHECK_THAT(bboxCenter->z, Catch::Matchers::WithinAbs(15.0, 0.0));
                 }
 
-                void operator()(vrml_proc::parser::USENode& use_node) const {
+                void operator()(vrml_proc::parser::USENode& useNode) const {
                     FAIL("Unexpected type inside the variant.");
                 }
             };
@@ -405,14 +405,14 @@ TEST_CASE("Parse VRM LFile - Valid Input - Node With Switch", "[parsing][valid]"
         auto& variant = children->at(0);
 
         struct VrmlNodeVisitor : public boost::static_visitor<void> {
-            void operator()(vrml_proc::parser::VRMLNode& vrml_node) const {
+            void operator()(vrml_proc::parser::VRMLNode& vrmlNode) const {
 
-                REQUIRE(vrml_node.definition_name.has_value());
-                CHECK(vrml_node.definition_name.value() == "A1");
-                CHECK(vrml_node.header == "Switch");
+                REQUIRE(vrmlNode.definition_name.has_value());
+                CHECK(vrmlNode.definition_name.value() == "A1");
+                CHECK(vrmlNode.header == "Switch");
 
                 {
-                    auto &field = vrml_node.fields.at(0);
+                    auto &field = vrmlNode.fields.at(0);
                     CHECK(field.name == "whichChoice");
 
                     REQUIRE(boost::get<int32_t>(&field.value) != nullptr);
@@ -421,7 +421,7 @@ TEST_CASE("Parse VRM LFile - Valid Input - Node With Switch", "[parsing][valid]"
                 }
 
                 {
-                    auto &field = vrml_node.fields.at(1);
+                    auto &field = vrmlNode.fields.at(1);
                     CHECK(field.name == "choice");
 
                     REQUIRE(boost::get<vrml_proc::parser::VRMLNode>(&field.value) != nullptr);
@@ -434,7 +434,7 @@ TEST_CASE("Parse VRM LFile - Valid Input - Node With Switch", "[parsing][valid]"
                 }
             }
 
-            void operator()(vrml_proc::parser::USENode& use_node) const {
+            void operator()(vrml_proc::parser::USENode& useNode) const {
                 FAIL("Unexpected type inside the variant.");
             }
         };
