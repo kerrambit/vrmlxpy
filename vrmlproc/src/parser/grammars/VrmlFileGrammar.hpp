@@ -25,6 +25,7 @@
 #include "Int32ArrayGrammar.hpp"
 #include "QuotedStringGrammar.hpp"
 #include "BooleanGrammar.hpp"
+#include "BaseGrammar.hpp"
 
 BOOST_FUSION_ADAPT_STRUCT(
     vrml_proc::parser::VRMLNode,
@@ -47,84 +48,87 @@ BOOST_FUSION_ADAPT_STRUCT(
 namespace vrml_proc {
     namespace parser {
 
-        // https://www.boost.org/doc/libs/1_87_0/libs/spirit/doc/html/spirit/qi/reference/numeric/real.html
-        struct float_policy : boost::spirit::qi::real_policies<float>
+        // For more information, see: https://www.boost.org/doc/libs/1_87_0/libs/spirit/doc/html/spirit/qi/reference/numeric/real.html.
+        struct Float32Policy : boost::spirit::qi::real_policies<float32_t>
         {
             static bool const expect_dot = true;
         };
 
         template <typename Iterator, typename Skipper>
-        struct VrmlFileGrammar : boost::spirit::qi::grammar<Iterator, std::vector<VRMLNode>(), Skipper> {
+        class VrmlFileGrammar
+            : public boost::spirit::qi::grammar<Iterator, std::vector<VRMLNode>(), Skipper>,
+            public BaseGrammar <Iterator, std::vector<VRMLNode>(), Skipper> {
 
-            VrmlFileGrammar(VRMLNodeManager& manager) : VrmlFileGrammar::base_type(start), manager(manager) {
+        public:
+            VrmlFileGrammar(VRMLNodeManager& manager) : VrmlFileGrammar::base_type(this->m_start), m_manager(manager) {
 
-                identifier = std::make_unique<IdentifierGrammar<Iterator, Skipper>>();
+                m_identifier = std::make_unique<IdentifierGrammar<Iterator, Skipper>>();
 
-                quoted_string = std::make_unique<QuotedStringGrammar<Iterator, Skipper>>();
+                m_quotedString = std::make_unique<QuotedStringGrammar<Iterator, Skipper>>();
 
-                vec3f = std::make_unique<Vec3fGrammar<Iterator, Skipper>>();
+                m_vec3f = std::make_unique<Vec3fGrammar<Iterator, Skipper>>();
 
-                vec4f = std::make_unique<Vec4fGrammar<Iterator, Skipper>>();
+                m_vec4f = std::make_unique<Vec4fGrammar<Iterator, Skipper>>();
 
-                vec3f_array = std::make_unique<Vec3fArrayGrammar<Iterator, Skipper>>();
+                m_vec3fArray = std::make_unique<Vec3fArrayGrammar<Iterator, Skipper>>();
 
-                int32_array = std::make_unique<Int32ArrayGrammar<Iterator, Skipper>>();
+                m_int32Array = std::make_unique<Int32ArrayGrammar<Iterator, Skipper>>();
 
-                boolean = std::make_unique<BooleanGrammar<Iterator, Skipper>>();
+                m_boolean = std::make_unique<BooleanGrammar<Iterator, Skipper>>();
 
-                field_value = (quoted_string->start | boolean->start | vec3f_array->start | int32_array->start | vec4f->start | vec3f->start | boost::spirit::qi::real_parser<float, float_policy>() | boost::spirit::qi::int_ | use_node | vrml_node | vrml_node_array);
+                m_vrmlFieldValue = (m_quotedString->GetStartRule() | m_boolean->GetStartRule() | m_vec3fArray->GetStartRule() | m_int32Array->GetStartRule() | m_vec4f->GetStartRule() | m_vec3f->GetStartRule() | boost::spirit::qi::real_parser<float32_t, Float32Policy>() | boost::spirit::qi::int_ | m_useNode | m_vrmlNode | m_vrmlNodeArray);
 
-                field = (identifier->start >> field_value)
+                m_vrmlField = (m_identifier->GetStartRule() >> m_vrmlFieldValue)
                     [
                         boost::spirit::qi::_val = boost::phoenix::construct<vrml_proc::parser::VRMLField>(boost::spirit::qi::_1, boost::spirit::qi::_2)
                     ];
 
-                vrml_node = (-(boost::spirit::qi::lit("DEF") >> identifier->start) >> identifier->start >> boost::spirit::qi::lit("{") >> *(field) >> boost::spirit::qi::lit("}"))
+                m_vrmlNode = (-(boost::spirit::qi::lit("DEF") >> m_identifier->GetStartRule()) >> m_identifier->GetStartRule() >> boost::spirit::qi::lit("{") >> *(m_vrmlField) >> boost::spirit::qi::lit("}"))
                     [
                         boost::phoenix::bind(&VRMLNode::definition_name, boost::phoenix::ref(boost::spirit::qi::_val)) = (boost::spirit::qi::_1),
                             boost::phoenix::bind(&VRMLNode::header, boost::phoenix::ref(boost::spirit::qi::_val)) = (boost::spirit::qi::_2),
                             boost::phoenix::bind(&VRMLNode::fields, boost::phoenix::ref(boost::spirit::qi::_val)) = (boost::spirit::qi::_3),
                             boost::phoenix::bind(
                                 [](VRMLNode& node, VRMLNodeManager& manager) {
-                                    if (node.definition_name) {
+                                    if (node.definition_name.has_value()) {
                                         auto node_ptr = std::make_shared<VRMLNode>(node);
-                                        manager.AddDefinitionNode(*node.definition_name, node_ptr);
+                                        manager.AddDefinitionNode(node.definition_name.value(), node_ptr);
                                     }
                                 },
                                 boost::spirit::qi::_val, boost::phoenix::ref(manager)
                             )
                     ];
 
-                vrml_node_array = "["
-                    >> ((vrml_node | use_node) % ",")
+                m_vrmlNodeArray = "["
+                    >> ((m_vrmlNode | m_useNode) % ",")
                     >> "]";
 
-                use_node = boost::spirit::qi::lit("USE") >> identifier->start;
+                m_useNode = boost::spirit::qi::lit("USE") >> m_identifier->GetStartRule();
 
-                start = *(vrml_node);
+                this->m_start = *(m_vrmlNode);
 
-                BOOST_SPIRIT_DEBUG_NODE(start);
-                BOOST_SPIRIT_DEBUG_NODE(field_value);
-                BOOST_SPIRIT_DEBUG_NODE(field);
-                BOOST_SPIRIT_DEBUG_NODE(vrml_node);
+                BOOST_SPIRIT_DEBUG_NODE(this->m_start);
+                BOOST_SPIRIT_DEBUG_NODE(m_vrmlFieldValue);
+                BOOST_SPIRIT_DEBUG_NODE(m_vrmlField);
+                BOOST_SPIRIT_DEBUG_NODE(m_vrmlNode);
             }
 
-            boost::spirit::qi::rule<Iterator, std::vector<VRMLNode>(), Skipper> start;
-            boost::spirit::qi::rule<Iterator, VRMLNode(), Skipper> vrml_node;
-            boost::spirit::qi::rule<Iterator, USENode(), Skipper> use_node;
-            boost::spirit::qi::rule<Iterator, VRMLField(), Skipper> field;
-            boost::spirit::qi::rule<Iterator, VRMLFieldValue(), Skipper> field_value;
-            boost::spirit::qi::rule<Iterator, std::vector<boost::variant<boost::recursive_wrapper<VRMLNode>, boost::recursive_wrapper<USENode>>>(), Skipper> vrml_node_array;
+        private:
+            boost::spirit::qi::rule<Iterator, VRMLNode(), Skipper> m_vrmlNode;
+            boost::spirit::qi::rule<Iterator, USENode(), Skipper> m_useNode;
+            boost::spirit::qi::rule<Iterator, VRMLField(), Skipper> m_vrmlField;
+            boost::spirit::qi::rule<Iterator, VRMLFieldValue(), Skipper> m_vrmlFieldValue;
+            boost::spirit::qi::rule<Iterator, std::vector<boost::variant<boost::recursive_wrapper<VRMLNode>, boost::recursive_wrapper<USENode>>>(), Skipper> m_vrmlNodeArray;
 
-            std::unique_ptr<IdentifierGrammar<Iterator, Skipper>> identifier;
-            std::unique_ptr<Vec3fGrammar<Iterator, Skipper>> vec3f;
-            std::unique_ptr<Vec4fGrammar<Iterator, Skipper>> vec4f;
-            std::unique_ptr<Vec3fArrayGrammar<Iterator, Skipper>> vec3f_array;
-            std::unique_ptr<Int32ArrayGrammar<Iterator, Skipper>> int32_array;
-            std::unique_ptr<QuotedStringGrammar<Iterator, Skipper>> quoted_string;
-            std::unique_ptr<BooleanGrammar<Iterator, Skipper>> boolean;
+            std::unique_ptr<IdentifierGrammar<Iterator, Skipper>> m_identifier;
+            std::unique_ptr<Vec3fGrammar<Iterator, Skipper>> m_vec3f;
+            std::unique_ptr<Vec4fGrammar<Iterator, Skipper>> m_vec4f;
+            std::unique_ptr<Vec3fArrayGrammar<Iterator, Skipper>> m_vec3fArray;
+            std::unique_ptr<Int32ArrayGrammar<Iterator, Skipper>> m_int32Array;
+            std::unique_ptr<QuotedStringGrammar<Iterator, Skipper>> m_quotedString;
+            std::unique_ptr<BooleanGrammar<Iterator, Skipper>> m_boolean;
 
-            VRMLNodeManager& manager;
+            VRMLNodeManager& m_manager;
         };
     }
 }

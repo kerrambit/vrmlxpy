@@ -1,4 +1,4 @@
-#include "VRMLParser.hpp"
+#include "VrmlParser.hpp"
 
 #include <boost/spirit/include/qi.hpp>
 
