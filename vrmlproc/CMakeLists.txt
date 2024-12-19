@@ -63,6 +63,7 @@ add_library(vrmlproc SHARED
     "src/parser/VrmlParser.hpp"
     "src/parser/VrmlParser.cpp"
 
+    "src/parser/grammars/BaseGrammar.hpp"
     "src/parser/grammars/CommentSkipper.hpp"
     "src/parser/grammars/IdentifierGrammar.hpp"
     "src/parser/grammars/Vec3fGrammar.hpp"
@@ -75,6 +76,22 @@ add_library(vrmlproc SHARED
 
     "src/parser/SetupIntegrity.cpp"
 )
+
+# Two build types - Debug and Release.
+if(MSVC)
+  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /Zi")
+  set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /O2 /DNDEBUG")
+else()
+  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g")
+  set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -DNDEBUG")
+endif()
+
+# Offer two macros based on the build type.
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    add_compile_definitions(DEBUG)
+elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
+    add_compile_definitions(RELEASE)
+endif()
 
 # --------------------------------------------------------------------------------------- #
 

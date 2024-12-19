@@ -34,7 +34,6 @@
 # Other
 out/
 .vs/
-CmakeSettings.json
 vendor/boost_1_86_0
 vendor/boost_1_87_0
 vendor/pybind11
