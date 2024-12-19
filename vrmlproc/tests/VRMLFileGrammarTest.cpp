@@ -294,8 +294,8 @@ TEST_CASE("Parse VRML File - Valid Input - Simple DEF Node", "[parsing][valid]")
                     REQUIRE(vrmlNode.header == "Group");
                     auto &field = vrmlNode.fields.at(0);
 
-                    REQUIRE(vrmlNode.definition_name.has_value());
-                    CHECK(vrmlNode.definition_name.value() == "id");
+                    REQUIRE(vrmlNode.definitionName.has_value());
+                    CHECK(vrmlNode.definitionName.value() == "id");
 
                     CHECK(field.name == "bboxCenter");
 
@@ -346,8 +346,8 @@ TEST_CASE("Parse VRML File - Valid Input - Simple USE Node", "[parsing][valid]")
                     REQUIRE(vrmlNode.header == "Group");
                     auto &field = vrmlNode.fields.at(0);
 
-                    REQUIRE(vrmlNode.definition_name.has_value());
-                    CHECK(vrmlNode.definition_name.value() == "id");
+                    REQUIRE(vrmlNode.definitionName.has_value());
+                    CHECK(vrmlNode.definitionName.value() == "id");
 
                     CHECK(field.name == "bboxCenter");
 
@@ -407,8 +407,8 @@ TEST_CASE("Parse VRM LFile - Valid Input - Node With Switch", "[parsing][valid]"
         struct VrmlNodeVisitor : public boost::static_visitor<void> {
             void operator()(vrml_proc::parser::VRMLNode& vrmlNode) const {
 
-                REQUIRE(vrmlNode.definition_name.has_value());
-                CHECK(vrmlNode.definition_name.value() == "A1");
+                REQUIRE(vrmlNode.definitionName.has_value());
+                CHECK(vrmlNode.definitionName.value() == "A1");
                 CHECK(vrmlNode.header == "Switch");
 
                 {
@@ -428,8 +428,8 @@ TEST_CASE("Parse VRM LFile - Valid Input - Node With Switch", "[parsing][valid]"
                     auto *child = boost::get<vrml_proc::parser::VRMLNode>(&field.value);
 
                     CHECK(child->header == "Empty");
-                    REQUIRE(child->definition_name.has_value());
-                    CHECK(child->definition_name.value() == "C2");
+                    REQUIRE(child->definitionName.has_value());
+                    CHECK(child->definitionName.value() == "C2");
                     CHECK(child->fields.empty());
                 }
             }
@@ -470,7 +470,7 @@ TEST_CASE("Parse VRMLFile - Valid Input - Node With Boolean", "[parsing][valid]"
     REQUIRE(shape != nullptr);
 
     CHECK(shape->header == "Shape");
-    CHECK_FALSE(shape->definition_name.has_value());
+    CHECK_FALSE(shape->definitionName.has_value());
     CHECK(shape->fields.size() == 1);
     CHECK(shape->fields.at(0).name == "geometry");
 
@@ -478,7 +478,7 @@ TEST_CASE("Parse VRMLFile - Valid Input - Node With Boolean", "[parsing][valid]"
     REQUIRE(indexedFaceSet != nullptr);
 
     CHECK(indexedFaceSet->header == "IndexedFaceSet");
-    CHECK_FALSE(indexedFaceSet->definition_name.has_value());
+    CHECK_FALSE(indexedFaceSet->definitionName.has_value());
     CHECK(indexedFaceSet->fields.size() == 3);
 
     {

@@ -18,11 +18,11 @@ namespace vrml_proc {
             VRMLNode()
                 : Printable(std::cout) {}
 
-            boost::optional<std::string> definition_name;
+            boost::optional<std::string> definitionName;
             std::string header;
             std::vector<VRMLField> fields;
 
-            void Print(Printable::IndentationLevel indentation_level) const override;
+            void Print(Printable::IndentationLevel indentationLevel) const override;
         };
     }
 }

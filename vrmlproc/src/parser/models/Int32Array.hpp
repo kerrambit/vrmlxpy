@@ -16,7 +16,7 @@ namespace vrml_proc {
 
             std::vector<int32_t> integers;
 
-            void Print(Printable::IndentationLevel indentation_level) const override;
+            void Print(Printable::IndentationLevel indentationLevel) const override;
         };
     }
 }

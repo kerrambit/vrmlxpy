@@ -18,7 +18,7 @@ namespace vrml_proc {
             float32_t z = 0.0f;
             float32_t w = 0.0f;
 
-            void Print(Printable::IndentationLevel indentation_level) const override;
+            void Print(Printable::IndentationLevel indentationLevel) const override;
         };
     }
 }

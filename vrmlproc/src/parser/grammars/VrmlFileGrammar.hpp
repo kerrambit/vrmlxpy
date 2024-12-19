@@ -14,6 +14,7 @@
 #include <boost/variant/recursive_wrapper.hpp>
 
 #include "VRMLField.hpp"
+#include "VRMLFile.hpp"
 #include "VRMLNode.hpp"
 #include "USENode.hpp"
 #include "VRMLNodeManager.hpp"
@@ -29,7 +30,7 @@
 
 BOOST_FUSION_ADAPT_STRUCT(
     vrml_proc::parser::VRMLNode,
-    (boost::optional<std::string>, definition_name)
+    (boost::optional<std::string>, definitionName)
     (std::string, header)
     (std::vector<vrml_proc::parser::VRMLField>, fields)
 )
@@ -56,8 +57,8 @@ namespace vrml_proc {
 
         template <typename Iterator, typename Skipper>
         class VrmlFileGrammar
-            : public boost::spirit::qi::grammar<Iterator, std::vector<VRMLNode>(), Skipper>,
-            public BaseGrammar <Iterator, std::vector<VRMLNode>(), Skipper> {
+            : public boost::spirit::qi::grammar<Iterator, VRMLFile(), Skipper>,
+            public BaseGrammar <Iterator, VRMLFile(), Skipper> {
 
         public:
             VrmlFileGrammar(VRMLNodeManager& manager) : VrmlFileGrammar::base_type(this->m_start), m_manager(manager) {
@@ -85,14 +86,14 @@ namespace vrml_proc {
 
                 m_vrmlNode = (-(boost::spirit::qi::lit("DEF") >> m_identifier->GetStartRule()) >> m_identifier->GetStartRule() >> boost::spirit::qi::lit("{") >> *(m_vrmlField) >> boost::spirit::qi::lit("}"))
                     [
-                        boost::phoenix::bind(&VRMLNode::definition_name, boost::phoenix::ref(boost::spirit::qi::_val)) = (boost::spirit::qi::_1),
+                        boost::phoenix::bind(&VRMLNode::definitionName, boost::phoenix::ref(boost::spirit::qi::_val)) = (boost::spirit::qi::_1),
                             boost::phoenix::bind(&VRMLNode::header, boost::phoenix::ref(boost::spirit::qi::_val)) = (boost::spirit::qi::_2),
                             boost::phoenix::bind(&VRMLNode::fields, boost::phoenix::ref(boost::spirit::qi::_val)) = (boost::spirit::qi::_3),
                             boost::phoenix::bind(
                                 [](VRMLNode& node, VRMLNodeManager& manager) {
-                                    if (node.definition_name.has_value()) {
+                                    if (node.definitionName.has_value()) {
                                         auto node_ptr = std::make_shared<VRMLNode>(node);
-                                        manager.AddDefinitionNode(node.definition_name.value(), node_ptr);
+                                        manager.AddDefinitionNode(node.definitionName.value(), node_ptr);
                                     }
                                 },
                                 boost::spirit::qi::_val, boost::phoenix::ref(manager)

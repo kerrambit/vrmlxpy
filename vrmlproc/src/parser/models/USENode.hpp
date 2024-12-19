@@ -13,7 +13,7 @@ namespace vrml_proc {
 			USENode()
 				: Printable(std::cout) {}
 
-			void Print(Printable::IndentationLevel indentation_level) const override;
+			void Print(Printable::IndentationLevel indentationLevel) const override;
 
 			std::string identifier;
 		};

@@ -31,7 +31,7 @@ namespace vrml_proc {
 
             VRMLField(const std::string& n, const VRMLFieldValue& v) : Printable(std::cout), name(n), value(v) {}
 
-            void Print(Printable::IndentationLevel indentation_level) const override;
+            void Print(Printable::IndentationLevel indentationLevel) const override;
         };
     }
 }

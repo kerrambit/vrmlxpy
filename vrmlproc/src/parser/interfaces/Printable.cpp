@@ -2,8 +2,8 @@
 
 std::ostream& operator<<(std::ostream& os, const Printable& obj) {
 
-    Printable::IndentationLevel indentation_level = { 0 };
-    obj.Print(indentation_level);
+    Printable::IndentationLevel indentationLevel = { 0 };
+    obj.Print(indentationLevel);
 
     return os;
 

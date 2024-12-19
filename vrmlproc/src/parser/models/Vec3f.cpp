@@ -1,10 +1,10 @@
 #include "Vec3f.hpp"
 
-void vrml_proc::parser::Vec3f::Print(Printable::IndentationLevel indentation_level) const {
-    std::string indentation_string = Printable::CreateIndentationString(indentation_level);
-    indentation_level++;
+void vrml_proc::parser::Vec3f::Print(Printable::IndentationLevel indentationLevel) const {
+    std::string indentationString = Printable::CreateIndentationString(indentationLevel);
+    indentationLevel++;
 
-    *Printable::AccessStreamPointer() << indentation_string;
+    *Printable::AccessStreamPointer() << indentationString;
     *Printable::AccessStreamPointer() << "Vec3f:\n";
-    *Printable::AccessStreamPointer() << Printable::CreateIndentationString(indentation_level) << "( <" << x << "> <" << y << "> <" << z << "> )" << std::endl;
+    *Printable::AccessStreamPointer() << Printable::CreateIndentationString(indentationLevel) << "( <" << x << "> <" << y << "> <" << z << "> )" << std::endl;
 }
