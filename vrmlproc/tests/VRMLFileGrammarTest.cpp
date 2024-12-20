@@ -13,17 +13,17 @@
 #include <boost/variant/detail/apply_visitor_unary.hpp>
 #include <Int32Array.hpp>
 #include <ParserResult.hpp>
-#include <USENode.hpp>
+#include <UseNode.hpp>
 #include <Vec3f.hpp>
 #include <Vec3fArray.hpp>
-#include <VRMLField.hpp>
-#include <VRMLFile.hpp>
-#include <VRMLNode.hpp>
-#include <VRMLNodeManager.hpp>
+#include <VrmlField.hpp>
+#include <VrmlFile.hpp>
+#include <VrmlNode.hpp>
+#include <VrmlNodeManager.hpp>
 #include <VrmlParser.hpp>
-#include <VRMLUnits.hpp>
+#include <VrmlUnits.hpp>
 
-static vrml_proc::parser::ParserResult<vrml_proc::parser::VRMLFile> ParseVrmlFile(std::string& text, vrml_proc::parser::VRMLNodeManager& manager) {
+static vrml_proc::parser::ParserResult<vrml_proc::parser::VrmlFile> ParseVrmlFile(std::string& text, vrml_proc::parser::VrmlNodeManager& manager) {
 
     vrml_proc::parser::VrmlParser parser(manager);
     return parser.Parse(text);
@@ -31,11 +31,11 @@ static vrml_proc::parser::ParserResult<vrml_proc::parser::VRMLFile> ParseVrmlFil
 
 TEST_CASE("Parse VRML File - Valid Input - Simple VRML File", "[parsing][valid]") {
 
-    vrml_proc::parser::VRMLNodeManager manager;
+    vrml_proc::parser::VrmlNodeManager manager;
     auto parseResult = ParseVrmlFile(simple, manager);
     REQUIRE(parseResult);
 
-    vrml_proc::parser::VRMLNode root = parseResult.value().at(0);
+    vrml_proc::parser::VrmlNode root = parseResult.value().at(0);
     CHECK(root.header == "WorldInfo");
 
     {
@@ -61,12 +61,12 @@ TEST_CASE("Parse VRML File - Valid Input - Simple VRML File", "[parsing][valid]"
 
 TEST_CASE("Parse VRML File - Valid Input - Two Simple Nodes", "[parsing][valid]") {
 
-    vrml_proc::parser::VRMLNodeManager manager;
+    vrml_proc::parser::VrmlNodeManager manager;
     auto parseResult = ParseVrmlFile(twoSimpleNodes, manager);
     REQUIRE(parseResult);
 
     {
-        vrml_proc::parser::VRMLNode firstNode = parseResult.value().at(0);
+        vrml_proc::parser::VrmlNode firstNode = parseResult.value().at(0);
         CHECK(firstNode.header == "WorldInfo");
 
         {
@@ -89,7 +89,7 @@ TEST_CASE("Parse VRML File - Valid Input - Two Simple Nodes", "[parsing][valid]"
     }
 
     {
-        vrml_proc::parser::VRMLNode secondNode = parseResult.value().at(1);
+        vrml_proc::parser::VrmlNode secondNode = parseResult.value().at(1);
         CHECK(secondNode.header == "Group");
 
         {
@@ -120,18 +120,18 @@ TEST_CASE("Parse VRML File - Valid Input - Two Simple Nodes", "[parsing][valid]"
 
 TEST_CASE("Parse VRML File - Valid Input - Node In Node", "[parsing][valid]") {
 
-    vrml_proc::parser::VRMLNodeManager manager;
+    vrml_proc::parser::VrmlNodeManager manager;
     auto parseResult = ParseVrmlFile(nodeInNode, manager);
     REQUIRE(parseResult);
 
     {
-        vrml_proc::parser::VRMLNode root = parseResult.value().at(0);
+        vrml_proc::parser::VrmlNode root = parseResult.value().at(0);
         CHECK(root.header == "Shape");
 
         auto &field = root.fields.at(0);
         CHECK(field.name == "appearance");
 
-        auto* value = boost::get<vrml_proc::parser::VRMLNode>(&field.value);
+        auto* value = boost::get<vrml_proc::parser::VrmlNode>(&field.value);
         REQUIRE(value != nullptr);
             
         CHECK(value->header == "Appearence");
@@ -151,18 +151,18 @@ TEST_CASE("Parse VRML File - Valid Input - Node In Node", "[parsing][valid]") {
 
 TEST_CASE("Parse VRML File - Valid Input - Quite Deep Recursive Nodes", "[parsing][valid]") {
 
-    vrml_proc::parser::VRMLNodeManager manager;
+    vrml_proc::parser::VrmlNodeManager manager;
     auto parseResult = ParseVrmlFile(quiteDeepRecursiveNode, manager);
     REQUIRE(parseResult);
 
     {
-        vrml_proc::parser::VRMLNode root = parseResult.value().at(0);
+        vrml_proc::parser::VrmlNode root = parseResult.value().at(0);
         CHECK(root.header == "Shape");
 
         auto &field = root.fields.at(0);
         CHECK(field.name == "appearance");
 
-        auto* value = boost::get<vrml_proc::parser::VRMLNode>(&field.value);
+        auto* value = boost::get<vrml_proc::parser::VrmlNode>(&field.value);
         REQUIRE(value != nullptr);
 
         CHECK(value->header == "Appearence");
@@ -178,15 +178,15 @@ TEST_CASE("Parse VRML File - Valid Input - Quite Deep Recursive Nodes", "[parsin
                 auto &field = value->fields.at(1);
                 CHECK(field.name == "appearance");
 
-                auto* value = boost::get<vrml_proc::parser::VRMLNode>(&field.value);
+                auto* value = boost::get<vrml_proc::parser::VrmlNode>(&field.value);
                 REQUIRE(value != nullptr);
                 CHECK(value->header == "Appearence");
 
-                auto &inner_field = value->fields.at(0);
-                CHECK(inner_field.name == "lightExposure");
+                auto &innerField = value->fields.at(0);
+                CHECK(innerField.name == "lightExposure");
 
-                REQUIRE(boost::get<int32_t>(&inner_field.value) != nullptr);
-                auto lightExposure = boost::get<int32_t>(inner_field.value);
+                REQUIRE(boost::get<int32_t>(&innerField.value) != nullptr);
+                auto lightExposure = boost::get<int32_t>(innerField.value);
                 CHECK(lightExposure == 42);
             }
         }
@@ -197,28 +197,28 @@ TEST_CASE("Parse VRML File - Valid Input - Quite Deep Recursive Nodes", "[parsin
 
 TEST_CASE("Parse VRMLFile - Valid Input - Group With Nodes Array", "[parsing][valid]") {
 
-    vrml_proc::parser::VRMLNodeManager manager;
+    vrml_proc::parser::VrmlNodeManager manager;
     auto parseResult = ParseVrmlFile(groupWithNodesArray, manager);
     REQUIRE(parseResult);
 
     {
-        vrml_proc::parser::VRMLNode root = parseResult.value().at(0);
+        vrml_proc::parser::VrmlNode root = parseResult.value().at(0);
         CHECK(root.header == "Group");
 
         auto &field = root.fields.at(0);
         CHECK(field.name == "children");
 
-        auto* value = boost::get<std::vector<boost::variant<boost::recursive_wrapper<vrml_proc::parser::VRMLNode>, boost::recursive_wrapper<vrml_proc::parser::USENode>>>>(&field.value);
+        auto* value = boost::get<std::vector<boost::variant<boost::recursive_wrapper<vrml_proc::parser::VrmlNode>, boost::recursive_wrapper<vrml_proc::parser::UseNode>>>>(&field.value);
         REQUIRE(value != nullptr);
 
         {
-            auto& first_variant = value->at(0);
+            auto& firstVariant = value->at(0);
 
             struct VrmlNodeVisitor : public boost::static_visitor<void> {
-                void operator()(vrml_proc::parser::VRMLNode& vrml_node) const {
+                void operator()(vrml_proc::parser::VrmlNode& vrmlNode) const {
 
-                    REQUIRE(vrml_node.header == "Group");
-                    auto &field = vrml_node.fields.at(0);
+                    REQUIRE(vrmlNode.header == "Group");
+                    auto &field = vrmlNode.fields.at(0);
                     CHECK(field.name == "bboxCenter");
 
                     REQUIRE(boost::get<vrml_proc::parser::Vec3f>(&field.value) != nullptr);
@@ -229,23 +229,23 @@ TEST_CASE("Parse VRMLFile - Valid Input - Group With Nodes Array", "[parsing][va
                     CHECK_THAT(bboxCenter->z, Catch::Matchers::WithinAbs(15.0, 0.0));
                 }
 
-                void operator()(vrml_proc::parser::USENode& use_node) const {
+                void operator()(vrml_proc::parser::UseNode& useNode) const {
                     FAIL("Unexpected type inside the variant.");
                 }
             };
 
             VrmlNodeVisitor visitor;
-            boost::apply_visitor(visitor, first_variant);
+            boost::apply_visitor(visitor, firstVariant);
         }
 
         {
-            auto& second_variant = value->at(1);
+            auto& secondVariant = value->at(1);
 
             struct SecondVrmlNodeVisitor : public boost::static_visitor<void> {
-                void operator()(vrml_proc::parser::VRMLNode& vrml_node) const {
+                void operator()(vrml_proc::parser::VrmlNode& vrmlNode) const {
 
-                    REQUIRE(vrml_node.header == "Group");
-                    auto &&field = vrml_node.fields.at(0);
+                    REQUIRE(vrmlNode.header == "Group");
+                    auto &&field = vrmlNode.fields.at(0);
                     CHECK(field.name == "bboxSize");
 
                     REQUIRE(boost::get<vrml_proc::parser::Vec3f>(&field.value) != nullptr);
@@ -256,13 +256,13 @@ TEST_CASE("Parse VRMLFile - Valid Input - Group With Nodes Array", "[parsing][va
                     CHECK_THAT(bboxCenter->z, Catch::Matchers::WithinAbs(-1.0, 0.0));
                 }
 
-                void operator()(vrml_proc::parser::USENode& use_node) const {
+                void operator()(vrml_proc::parser::UseNode& useNode) const {
                     FAIL("Unexpected type inside the variant.");
                 }
             };
 
             SecondVrmlNodeVisitor visitor;
-            boost::apply_visitor(visitor, second_variant);
+            boost::apply_visitor(visitor, secondVariant);
         }
     }
 
@@ -271,31 +271,31 @@ TEST_CASE("Parse VRMLFile - Valid Input - Group With Nodes Array", "[parsing][va
 
 TEST_CASE("Parse VRML File - Valid Input - Simple DEF Node", "[parsing][valid]") {
 
-    vrml_proc::parser::VRMLNodeManager manager;
+    vrml_proc::parser::VrmlNodeManager manager;
     auto parseResult = ParseVrmlFile(simpleDefNode, manager);
     REQUIRE(parseResult);
 
     {
-        vrml_proc::parser::VRMLNode root = parseResult.value().at(0);
+        vrml_proc::parser::VrmlNode root = parseResult.value().at(0);
         CHECK(root.header == "Group");
 
         auto &field = root.fields.at(0);
         CHECK(field.name == "children");
 
-        auto* value = boost::get<std::vector<boost::variant<boost::recursive_wrapper<vrml_proc::parser::VRMLNode>, boost::recursive_wrapper<vrml_proc::parser::USENode>>>>(&field.value);
+        auto* value = boost::get<std::vector<boost::variant<boost::recursive_wrapper<vrml_proc::parser::VrmlNode>, boost::recursive_wrapper<vrml_proc::parser::UseNode>>>>(&field.value);
         REQUIRE(value != nullptr);
 
         {
             auto& variant = value->at(0);
 
             struct VrmlNodeVisitor : public boost::static_visitor<void> {
-                void operator()(vrml_proc::parser::VRMLNode& vrml_node) const {
+                void operator()(vrml_proc::parser::VrmlNode& vrmlNode) const {
 
-                    REQUIRE(vrml_node.header == "Group");
-                    auto &field = vrml_node.fields.at(0);
+                    REQUIRE(vrmlNode.header == "Group");
+                    auto &field = vrmlNode.fields.at(0);
 
-                    REQUIRE(vrml_node.definition_name.has_value());
-                    CHECK(vrml_node.definition_name.value() == "id");
+                    REQUIRE(vrmlNode.definitionName.has_value());
+                    CHECK(vrmlNode.definitionName.value() == "id");
 
                     CHECK(field.name == "bboxCenter");
 
@@ -307,7 +307,7 @@ TEST_CASE("Parse VRML File - Valid Input - Simple DEF Node", "[parsing][valid]")
                     CHECK_THAT(bboxCenter->z, Catch::Matchers::WithinAbs(15.0, 0.0));
                 }
 
-                void operator()(vrml_proc::parser::USENode& use_node) const {
+                void operator()(vrml_proc::parser::UseNode& useNode) const {
                     FAIL("Unexpected type inside the variant.");
                 }
             };
@@ -323,31 +323,31 @@ TEST_CASE("Parse VRML File - Valid Input - Simple DEF Node", "[parsing][valid]")
 
 TEST_CASE("Parse VRML File - Valid Input - Simple USE Node", "[parsing][valid]") {
 
-    vrml_proc::parser::VRMLNodeManager manager;
+    vrml_proc::parser::VrmlNodeManager manager;
     auto parseResult = ParseVrmlFile(simpleUseNode, manager);
     REQUIRE(parseResult);
 
     {
-        vrml_proc::parser::VRMLNode root = parseResult.value().at(0);
+        vrml_proc::parser::VrmlNode root = parseResult.value().at(0);
         CHECK(root.header == "Group");
 
         auto &field = root.fields.at(0);
         CHECK(field.name == "children");
 
-        auto* value = boost::get<std::vector<boost::variant<boost::recursive_wrapper<vrml_proc::parser::VRMLNode>, boost::recursive_wrapper<vrml_proc::parser::USENode>>>>(&field.value);
+        auto* value = boost::get<std::vector<boost::variant<boost::recursive_wrapper<vrml_proc::parser::VrmlNode>, boost::recursive_wrapper<vrml_proc::parser::UseNode>>>>(&field.value);
         REQUIRE(value != nullptr);
 
         {
             auto& variant = value->at(0);
 
             struct VrmlNodeVisitor : public boost::static_visitor<void> {
-                void operator()(vrml_proc::parser::VRMLNode& vrml_node) const {
+                void operator()(vrml_proc::parser::VrmlNode& vrmlNode) const {
 
-                    REQUIRE(vrml_node.header == "Group");
-                    auto &field = vrml_node.fields.at(0);
+                    REQUIRE(vrmlNode.header == "Group");
+                    auto &field = vrmlNode.fields.at(0);
 
-                    REQUIRE(vrml_node.definition_name.has_value());
-                    CHECK(vrml_node.definition_name.value() == "id");
+                    REQUIRE(vrmlNode.definitionName.has_value());
+                    CHECK(vrmlNode.definitionName.value() == "id");
 
                     CHECK(field.name == "bboxCenter");
 
@@ -359,7 +359,7 @@ TEST_CASE("Parse VRML File - Valid Input - Simple USE Node", "[parsing][valid]")
                     CHECK_THAT(bboxCenter->z, Catch::Matchers::WithinAbs(15.0, 0.0));
                 }
 
-                void operator()(vrml_proc::parser::USENode& use_node) const {
+                void operator()(vrml_proc::parser::UseNode& useNode) const {
                     FAIL("Unexpected type inside the variant.");
                 }
             };
@@ -370,13 +370,13 @@ TEST_CASE("Parse VRML File - Valid Input - Simple USE Node", "[parsing][valid]")
     }
 
     {
-        vrml_proc::parser::VRMLNode root = parseResult.value().at(1);
+        vrml_proc::parser::VrmlNode root = parseResult.value().at(1);
         CHECK(root.header == "Group");
 
         auto &field = root.fields.at(0);
         CHECK(field.name == "instance");
 
-        auto* value = boost::get<vrml_proc::parser::USENode>(&field.value);
+        auto* value = boost::get<vrml_proc::parser::UseNode>(&field.value);
         REQUIRE(value != nullptr);
 
         CHECK(value->identifier == "id");
@@ -388,31 +388,31 @@ TEST_CASE("Parse VRML File - Valid Input - Simple USE Node", "[parsing][valid]")
 
 TEST_CASE("Parse VRM LFile - Valid Input - Node With Switch", "[parsing][valid]") {
 
-    vrml_proc::parser::VRMLNodeManager manager;
+    vrml_proc::parser::VrmlNodeManager manager;
     auto parseResult = ParseVrmlFile(nodeWithSwitch, manager);
     REQUIRE(parseResult);
 
-    vrml_proc::parser::VRMLNode root = parseResult.value().at(0);
+    vrml_proc::parser::VrmlNode root = parseResult.value().at(0);
     CHECK(root.header == "Group");
 
     auto &field = root.fields.at(0);
     CHECK(field.name == "children");
 
-    auto* children = boost::get<std::vector<boost::variant<boost::recursive_wrapper<vrml_proc::parser::VRMLNode>, boost::recursive_wrapper<vrml_proc::parser::USENode>>>>(&field.value);
+    auto* children = boost::get<std::vector<boost::variant<boost::recursive_wrapper<vrml_proc::parser::VrmlNode>, boost::recursive_wrapper<vrml_proc::parser::UseNode>>>>(&field.value);
     REQUIRE(children != nullptr);
 
     {
         auto& variant = children->at(0);
 
         struct VrmlNodeVisitor : public boost::static_visitor<void> {
-            void operator()(vrml_proc::parser::VRMLNode& vrml_node) const {
+            void operator()(vrml_proc::parser::VrmlNode& vrmlNode) const {
 
-                REQUIRE(vrml_node.definition_name.has_value());
-                CHECK(vrml_node.definition_name.value() == "A1");
-                CHECK(vrml_node.header == "Switch");
+                REQUIRE(vrmlNode.definitionName.has_value());
+                CHECK(vrmlNode.definitionName.value() == "A1");
+                CHECK(vrmlNode.header == "Switch");
 
                 {
-                    auto &field = vrml_node.fields.at(0);
+                    auto &field = vrmlNode.fields.at(0);
                     CHECK(field.name == "whichChoice");
 
                     REQUIRE(boost::get<int32_t>(&field.value) != nullptr);
@@ -421,20 +421,20 @@ TEST_CASE("Parse VRM LFile - Valid Input - Node With Switch", "[parsing][valid]"
                 }
 
                 {
-                    auto &field = vrml_node.fields.at(1);
+                    auto &field = vrmlNode.fields.at(1);
                     CHECK(field.name == "choice");
 
-                    REQUIRE(boost::get<vrml_proc::parser::VRMLNode>(&field.value) != nullptr);
-                    auto *child = boost::get<vrml_proc::parser::VRMLNode>(&field.value);
+                    REQUIRE(boost::get<vrml_proc::parser::VrmlNode>(&field.value) != nullptr);
+                    auto *child = boost::get<vrml_proc::parser::VrmlNode>(&field.value);
 
                     CHECK(child->header == "Empty");
-                    REQUIRE(child->definition_name.has_value());
-                    CHECK(child->definition_name.value() == "C2");
+                    REQUIRE(child->definitionName.has_value());
+                    CHECK(child->definitionName.value() == "C2");
                     CHECK(child->fields.empty());
                 }
             }
 
-            void operator()(vrml_proc::parser::USENode& use_node) const {
+            void operator()(vrml_proc::parser::UseNode& useNode) const {
                 FAIL("Unexpected type inside the variant.");
             }
         };
@@ -456,29 +456,29 @@ TEST_CASE("Parse VRM LFile - Valid Input - Node With Switch", "[parsing][valid]"
 
 TEST_CASE("Parse VRMLFile - Valid Input - Node With Boolean", "[parsing][valid]") {
 
-    vrml_proc::parser::VRMLNodeManager manager;
+    vrml_proc::parser::VrmlNodeManager manager;
     auto parseResult = ParseVrmlFile(nodeWithBoolean, manager);
     REQUIRE(parseResult);
 
-    vrml_proc::parser::VRMLNode root = parseResult.value().at(0);
+    vrml_proc::parser::VrmlNode root = parseResult.value().at(0);
     CHECK(root.header == "Group");
 
     auto &field = root.fields.at(0);
     CHECK(field.name == "shape");
 
-    auto* shape = boost::get<vrml_proc::parser::VRMLNode>(&field.value);
+    auto* shape = boost::get<vrml_proc::parser::VrmlNode>(&field.value);
     REQUIRE(shape != nullptr);
 
     CHECK(shape->header == "Shape");
-    CHECK_FALSE(shape->definition_name.has_value());
+    CHECK_FALSE(shape->definitionName.has_value());
     CHECK(shape->fields.size() == 1);
     CHECK(shape->fields.at(0).name == "geometry");
 
-    auto* indexedFaceSet = boost::get<vrml_proc::parser::VRMLNode>(&shape->fields.at(0).value);
+    auto* indexedFaceSet = boost::get<vrml_proc::parser::VrmlNode>(&shape->fields.at(0).value);
     REQUIRE(indexedFaceSet != nullptr);
 
     CHECK(indexedFaceSet->header == "IndexedFaceSet");
-    CHECK_FALSE(indexedFaceSet->definition_name.has_value());
+    CHECK_FALSE(indexedFaceSet->definitionName.has_value());
     CHECK(indexedFaceSet->fields.size() == 3);
 
     {
@@ -521,7 +521,7 @@ TEST_CASE("Parse VRMLFile - Valid Input - Node With Boolean", "[parsing][valid]"
 
 TEST_CASE("Parse VRML File - Valid Input - Empty node", "[parsing][valid]") {
 
-    vrml_proc::parser::VRMLNodeManager manager;
+    vrml_proc::parser::VrmlNodeManager manager;
     auto parseResult = ParseVrmlFile(emptyNode, manager);
     REQUIRE(parseResult);
 
@@ -532,7 +532,7 @@ TEST_CASE("Parse VRML File - Valid Input - Empty node", "[parsing][valid]") {
     const auto& subgroupField = root.fields.at(0);
     CHECK(subgroupField.name == "subgroup");
 
-    const auto* subgroup = boost::get<vrml_proc::parser::VRMLNode>(&subgroupField.value);
+    const auto* subgroup = boost::get<vrml_proc::parser::VrmlNode>(&subgroupField.value);
     REQUIRE(subgroup != nullptr);
     CHECK(subgroup->header == "Group");
 
@@ -540,7 +540,7 @@ TEST_CASE("Parse VRML File - Valid Input - Empty node", "[parsing][valid]") {
     const auto& subsubgroupField = subgroup->fields.at(0);
     CHECK(subsubgroupField.name == "subsubgroup");
 
-    const auto* subsubgroup = boost::get<vrml_proc::parser::VRMLNode>(&subsubgroupField.value);
+    const auto* subsubgroup = boost::get<vrml_proc::parser::VrmlNode>(&subsubgroupField.value);
     REQUIRE(subsubgroup != nullptr);
     CHECK(subsubgroup->header == "Group");
 
@@ -549,14 +549,14 @@ TEST_CASE("Parse VRML File - Valid Input - Empty node", "[parsing][valid]") {
 
 TEST_CASE("Parse VRML File - Valid Input - Complicated node", "[parsing][valid]") {
 
-    vrml_proc::parser::VRMLNodeManager manager;
+    vrml_proc::parser::VrmlNodeManager manager;
     auto parseResult = ParseVrmlFile(complicatedNode, manager);
     REQUIRE(parseResult);
 }
 
 TEST_CASE("Parse VRML File - Valid Input - Complicated node with complicated DEF names", "[parsing][valid]") {
 
-    vrml_proc::parser::VRMLNodeManager manager;
+    vrml_proc::parser::VrmlNodeManager manager;
     auto parseResult = ParseVrmlFile(complicatedNodeWithComplicatedDefNodeNames, manager);
     REQUIRE(parseResult);
 }

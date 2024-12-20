@@ -1,4 +1,4 @@
-#include "VRMLParser.hpp"
+#include "VrmlParser.hpp"
 
 #include <boost/spirit/include/qi.hpp>
 
@@ -6,10 +6,10 @@ namespace vrml_proc {
 
 	namespace parser {
 
-        ParserResult<VRMLFile> VrmlParser::Parse(std::string& string)
+        ParserResult<VrmlFile> VrmlParser::Parse(std::string& string)
 		{
             auto iterator = string.begin();
-            std::vector<VRMLNode> parsedData;
+            std::vector<VrmlNode> parsedData;
 
             bool success = boost::spirit::qi::phrase_parse(iterator, string.end(), m_grammar, m_skipper, parsedData);
 

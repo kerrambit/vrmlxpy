@@ -1,11 +1,11 @@
-#include "USENode.hpp"
+#include "UseNode.hpp"
 
-void vrml_proc::parser::USENode::Print(Printable::IndentationLevel indentation_level) const {
-    std::string indentation_string = Printable::CreateIndentationString(indentation_level);
-    indentation_level++;
+void vrml_proc::parser::UseNode::Print(Printable::IndentationLevel indentationLevel) const {
+    std::string indentationString = Printable::CreateIndentationString(indentationLevel);
+    indentationLevel++;
 
-    *Printable::AccessStreamPointer() << indentation_string;
+    *Printable::AccessStreamPointer() << indentationString;
     *Printable::AccessStreamPointer() << "USENode:\n";
-    *Printable::AccessStreamPointer() << Printable::CreateIndentationString(indentation_level) << "Identifier: <" << identifier << ">";
+    *Printable::AccessStreamPointer() << Printable::CreateIndentationString(indentationLevel) << "Identifier: <" << identifier << ">";
     *Printable::AccessStreamPointer() << std::endl;
 }

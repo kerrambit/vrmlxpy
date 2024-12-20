@@ -1,26 +1,25 @@
 #pragma once
+#include <string>
 
 #include <boost/spirit/include/qi.hpp>
-#include <string>
+#include "BaseGrammar.hpp"
 
 namespace vrml_proc {
     namespace parser {
 
         template<typename Iterator, typename Skipper>
-        struct IdentifierGrammar : boost::spirit::qi::grammar<Iterator, std::string(), Skipper> {
+        class IdentifierGrammar : public boost::spirit::qi::grammar<Iterator, std::string(), Skipper>, public BaseGrammar<Iterator, std::string(), Skipper> {
+            public:
+                IdentifierGrammar()
+                    : IdentifierGrammar::base_type(this->m_start) {
 
-            IdentifierGrammar()
-                : IdentifierGrammar::base_type(start) {
+                    this->m_start = boost::spirit::qi::lexeme[
+                        (boost::spirit::qi::char_("!$%&()*;:<=>?@^_`|~") | boost::spirit::qi::alpha) >>
+                            *(boost::spirit::qi::alnum | boost::spirit::qi::char_("!$%&()*;:<=>?@^_`|~"))
+                    ];
 
-                start = boost::spirit::qi::lexeme[
-                    (boost::spirit::qi::char_("!$%&()*;:<=>?@^_`|~") | boost::spirit::qi::alpha) >>
-                        *(boost::spirit::qi::alnum | boost::spirit::qi::char_("!$%&()*;:<=>?@^_`|~"))
-                ];
-
-                BOOST_SPIRIT_DEBUG_NODE(start);
-            }
-
-            boost::spirit::qi::rule<Iterator, std::string(), Skipper> start;
+                    BOOST_SPIRIT_DEBUG_NODE(this->m_start);
+                }
         };
     }
 }

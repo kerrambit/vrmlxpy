@@ -2,8 +2,8 @@
 
 #include <iostream>
 #include <vector>
+#include <cstdint>
 
-#include "VRMLUnits.hpp"
 #include "Printable.hpp"
 #include "VrmlProcessingExport.hpp"
 
@@ -16,11 +16,7 @@ namespace vrml_proc {
 
             std::vector<int32_t> integers;
 
-            void Add(int32_t integer) {
-                integers.push_back(integer);
-            }
-
-            void Print(Printable::IndentationLevel indentation_level) const override;
+            void Print(Printable::IndentationLevel indentationLevel) const override;
         };
     }
 }

@@ -8,12 +8,12 @@
 
 namespace vrml_proc {
 	namespace parser {
-		struct VRMLPROCESSING_API USENode : public Printable {
+		struct VRMLPROCESSING_API UseNode : public Printable {
 
-			USENode()
+			UseNode()
 				: Printable(std::cout) {}
 
-			void Print(Printable::IndentationLevel indentation_level) const override;
+			void Print(Printable::IndentationLevel indentationLevel) const override;
 
 			std::string identifier;
 		};

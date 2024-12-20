@@ -1,9 +1,8 @@
-#include <vrml_processing.hpp>
+#include <SetupIntegrity.hpp>
 
 #include <boost/filesystem.hpp>
-#include <iostream>
 
 std::string vrml_proc::parser::test_boost() {
-    boost::filesystem::path p(".");
-    return p.string();
+    boost::filesystem::path path(".");
+    return path.string();
 }

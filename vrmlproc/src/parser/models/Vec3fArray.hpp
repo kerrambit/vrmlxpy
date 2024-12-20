@@ -20,7 +20,7 @@ namespace vrml_proc {
                 vectors.push_back(vector);
             }
 
-            void Print(Printable::IndentationLevel indentation_level) const override;
+            void Print(Printable::IndentationLevel indentationLevel) const override;
         };
     }
 }

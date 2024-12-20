@@ -17,6 +17,7 @@ FetchContent_MakeAvailable(Catch2)
 # Add source files and vendor dependencies.
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/src
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/core
     ${CMAKE_CURRENT_SOURCE_DIR}/src/parser
     ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/models 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/interfaces
@@ -27,13 +28,16 @@ include_directories(
 
 # Create the DLL.
 add_library(vrmlproc SHARED
-    "src/parser/vrml_processing.hpp"
-    "src/parser/vrml_processing.cpp"
 
-    "src/parser/models/VRMLUnits.hpp"
+    "src/core/FileReader.hpp"
+    "src/core/SimpleFileReader.hpp"
+    "src/core/SimpleFileReader.cpp"
 
-    "src/parser/models/VRMLField.hpp"
-    "src/parser/models/VRMLField.cpp"
+    "src/parser/models/VrmlUnits.hpp"
+    "src/parser/models/VrmlFile.hpp"
+
+    "src/parser/models/VrmlField.hpp"
+    "src/parser/models/VrmlField.cpp"
 
     "src/parser/models/Vec3f.hpp"
     "src/parser/models/Vec3f.cpp"
@@ -47,13 +51,14 @@ add_library(vrmlproc SHARED
     "src/parser/models/Int32Array.hpp"
     "src/parser/models/Int32Array.cpp"
 
-    "src/parser/models/VRMLNode.hpp"
-    "src/parser/models/VRMLNode.cpp"
+    "src/parser/models/VrmlNode.hpp"
+    "src/parser/models/VrmlNode.cpp"
 
-    "src/parser/models/USENode.hpp"
-    "src/parser/models/USENode.cpp"
+    "src/parser/models/UseNode.hpp"
+    "src/parser/models/UseNode.cpp"
 
-    "src/parser/services/VRMLNodeManager.hpp"
+    "src/parser/services/VrmlNodeManager.hpp"
+    "src/parser/services/VrmlNodeManager.cpp"
 
     "src/parser/interfaces/Printable.hpp"
     "src/parser/interfaces/Printable.cpp"
@@ -63,6 +68,7 @@ add_library(vrmlproc SHARED
     "src/parser/VrmlParser.hpp"
     "src/parser/VrmlParser.cpp"
 
+    "src/parser/grammars/BaseGrammar.hpp"
     "src/parser/grammars/CommentSkipper.hpp"
     "src/parser/grammars/IdentifierGrammar.hpp"
     "src/parser/grammars/Vec3fGrammar.hpp"
@@ -73,8 +79,25 @@ add_library(vrmlproc SHARED
     "src/parser/grammars/BooleanGrammar.hpp"
     "src/parser/grammars/VrmlFileGrammar.hpp"
 
+    "src/parser/SetupIntegrity.hpp"
     "src/parser/SetupIntegrity.cpp"
 )
+
+# Two build types - Debug and Release.
+if(MSVC)
+  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /Zi")
+  set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /O2 /DNDEBUG")
+else()
+  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g")
+  set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -DNDEBUG")
+endif()
+
+# Offer two macros based on the build type.
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    add_compile_definitions(DEBUG)
+elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
+    add_compile_definitions(RELEASE)
+endif()
 
 # --------------------------------------------------------------------------------------- #
 
@@ -100,6 +123,7 @@ add_executable(Vec3fGrammarUnitTests "tests/Vec3fGrammarTest.cpp")
 add_executable(Vec4fGrammarUnitTests "tests/Vec4fGrammarTest.cpp")
 add_executable(Vec3fArrayGrammarUnitTests "tests/Vec3fArrayGrammarTest.cpp")
 add_executable(Int32ArrayGrammarUnitTests "tests/Int32ArrayGrammarTest.cpp")
+add_executable(IdentifierGrammarUnitTests "tests/IdentifierGrammarTest.cpp")
 
 # Link Catch2 with the test executables.
 target_link_libraries(SetupIntegrityTests PRIVATE Catch2::Catch2WithMain vrmlproc)
@@ -108,6 +132,7 @@ target_link_libraries(Vec3fGrammarUnitTests PRIVATE Catch2::Catch2WithMain vrmlp
 target_link_libraries(Vec4fGrammarUnitTests PRIVATE Catch2::Catch2WithMain vrmlproc)
 target_link_libraries(Vec3fArrayGrammarUnitTests PRIVATE Catch2::Catch2WithMain vrmlproc)
 target_link_libraries(Int32ArrayGrammarUnitTests PRIVATE Catch2::Catch2WithMain vrmlproc)
+target_link_libraries(IdentifierGrammarUnitTests PRIVATE Catch2::Catch2WithMain vrmlproc)
 
 # Enable testing (use CTest to run the unit tests).
 enable_testing()
@@ -117,3 +142,4 @@ add_test(NAME Vec3fGrammarUnitTests COMMAND Vec3fGrammarUnitTests)
 add_test(NAME Vec4fGrammarUnitTests COMMAND Vec4fGrammarUnitTests)
 add_test(NAME Vec3fArrayGrammarUnitTests COMMAND Vec3fArrayGrammarUnitTests)
 add_test(NAME Int32ArrayGrammarUnitTests COMMAND Int32ArrayGrammarUnitTests)
+add_test(NAME IdentifierGrammarUnitTests COMMAND IdentifierGrammarUnitTests)
