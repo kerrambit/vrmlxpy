@@ -21,7 +21,7 @@ public:
 
 	virtual void Print(IndentationLevel indentationLevel) const = 0;
 
-	friend std::ostream& operator<<(std::ostream& os, const Printable& obj);
+	VRMLPROCESSING_API friend std::ostream& operator<<(std::ostream& os, const Printable& obj);
 
 	inline static std::string CreateIndentationString(IndentationLevel indentationLevel) {
 		return std::string(ONE_INDENTATION_LEVEL_LENGTH * indentationLevel, ' ');
