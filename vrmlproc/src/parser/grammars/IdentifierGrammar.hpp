@@ -8,7 +8,7 @@ namespace vrml_proc {
     namespace parser {
 
         template<typename Iterator, typename Skipper>
-        class IdentifierGrammar : boost::spirit::qi::grammar<Iterator, std::string(), Skipper>, public BaseGrammar<Iterator, std::string(), Skipper> {
+        class IdentifierGrammar : public boost::spirit::qi::grammar<Iterator, std::string(), Skipper>, public BaseGrammar<Iterator, std::string(), Skipper> {
             public:
                 IdentifierGrammar()
                     : IdentifierGrammar::base_type(this->m_start) {

@@ -7,7 +7,7 @@ namespace vrml_proc {
     namespace parser {
 
         template<typename Iterator, typename Skipper>
-        class BooleanGrammar : boost::spirit::qi::grammar<Iterator, bool(), Skipper>, public BaseGrammar<Iterator, bool(), Skipper> {
+        class BooleanGrammar : public boost::spirit::qi::grammar<Iterator, bool(), Skipper>, public BaseGrammar<Iterator, bool(), Skipper> {
             public:
                 BooleanGrammar()
                     : BooleanGrammar::base_type(this->m_start) {
