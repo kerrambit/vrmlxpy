@@ -17,6 +17,7 @@ FetchContent_MakeAvailable(Catch2)
 # Add source files and vendor dependencies.
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/src
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/core
     ${CMAKE_CURRENT_SOURCE_DIR}/src/parser
     ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/models 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/interfaces
@@ -29,6 +30,10 @@ include_directories(
 add_library(vrmlproc SHARED
     "src/parser/vrml_processing.hpp"
     "src/parser/vrml_processing.cpp"
+
+    "src/core/FileReader.hpp"
+    "src/core/SimpleFileReader.hpp"
+    "src/core/SimpleFileReader.cpp"
 
     "src/parser/models/VrmlUnits.hpp"
     "src/parser/models/VrmlFile.hpp"
