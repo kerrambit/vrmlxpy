@@ -28,8 +28,6 @@ include_directories(
 
 # Create the DLL.
 add_library(vrmlproc SHARED
-    "src/parser/vrml_processing.hpp"
-    "src/parser/vrml_processing.cpp"
 
     "src/core/FileReader.hpp"
     "src/core/SimpleFileReader.hpp"
@@ -81,6 +79,7 @@ add_library(vrmlproc SHARED
     "src/parser/grammars/BooleanGrammar.hpp"
     "src/parser/grammars/VrmlFileGrammar.hpp"
 
+    "src/parser/SetupIntegrity.hpp"
     "src/parser/SetupIntegrity.cpp"
 )
 
