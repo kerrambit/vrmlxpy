@@ -1,5 +1,7 @@
 #pragma once
 
+// #define BOOST_SPIRIT_DEBUG
+
 #include "Parser.hpp"
 #include "VrmlFile.hpp"
 #include "VrmlFileGrammar.hpp"
