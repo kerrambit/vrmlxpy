@@ -14,8 +14,8 @@ namespace vrml_proc {
                     : IdentifierGrammar::base_type(this->m_start) {
 
                     this->m_start = boost::spirit::qi::lexeme[
-                        (boost::spirit::qi::char_("!$%&()*;:<=>?@^_`|~") | boost::spirit::qi::alpha) >>
-                            *(boost::spirit::qi::alnum | boost::spirit::qi::char_("!$%&()*;:<=>?@^_`|~"))
+                        +(boost::spirit::qi::char_ - (boost::spirit::qi::char_(0x00, 0x20) | boost::spirit::qi::char_(0x30, 0x39) | boost::spirit::qi::char_("\"'+,-.[]{}\\"))) >>
+                        *(boost::spirit::qi::char_ - (boost::spirit::qi::char_(0x00, 0x20) | boost::spirit::qi::char_("\"'+,-.[]{}\\")))
                     ];
 
                     BOOST_SPIRIT_DEBUG_NODE(this->m_start);
