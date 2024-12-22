@@ -1,11 +1,41 @@
-#include <string>
+﻿#include <string>
 
 
-std::string simple = R"(
+std::string simpleValid = R"(
 
 	#VRML V2.0 utf8
 
 	WorldInfo {
+
+	   title "cube.wrl"
+
+	   info "VRML file."
+
+	}
+
+
+)";
+
+std::string simpleInvalidChar = R"(
+
+	#VRML V2.0 utf8
+
+	World+Info {
+
+	   title "cube.wrl"
+
+	   info "VRML file."
+
+	}
+
+
+)";
+
+std::string simpleInvalidStartingWithNumber = R"(
+
+	#VRML V2.0 utf8
+
+	9WorldInfo {
 
 	   title "cube.wrl"
 
@@ -155,6 +185,25 @@ std::string nodeWithBoolean = R"(
                       108889, 108856, 182463, -1, 108863, 108433, 182449, -1 ]
                   ccw TRUE
                   solid FALSE
+          }
+      }
+    }
+)";
+
+std::string nodeWithUtf8 = R"(
+
+	#VRML V2.0 utf8
+    # Tento dokument je skutečně v kódování UTF-8.
+
+    ČeskáSkupina {
+      políčko Tvar {
+
+          ß 
+              开儿艾诶开伊艾艾西吉艾艾伊娜伊 {
+                  koordináty [ 944, 942, 943, -1, 947, 945, 946, -1,
+                      947, 949, 948, -1, 945, 947, 948, -1,
+                      946, 942, 944, -1, 946, 944, 947, -1,
+                      108889, 108856, 182463, -1, 108863, 108433, 182449, -1 ]
           }
       }
     }

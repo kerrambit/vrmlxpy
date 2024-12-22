@@ -1,4 +1,4 @@
-#include <catch2/catch_test_macros.hpp>
+﻿#include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
 #include <vector>
@@ -22,6 +22,7 @@
 #include <VrmlNodeManager.hpp>
 #include <VrmlParser.hpp>
 #include <VrmlUnits.hpp>
+#include <SimpleFileReader.hpp>
 
 static vrml_proc::parser::ParserResult<vrml_proc::parser::VrmlFile> ParseVrmlFile(std::string& text, vrml_proc::parser::VrmlNodeManager& manager) {
 
@@ -29,10 +30,24 @@ static vrml_proc::parser::ParserResult<vrml_proc::parser::VrmlFile> ParseVrmlFil
     return parser.Parse(text);
 }
 
+static vrml_proc::parser::ParserResult<vrml_proc::parser::VrmlFile> ParseVrmlFile(const std::filesystem::path& filepath, vrml_proc::parser::VrmlNodeManager& manager) {
+
+    vrml_proc::core::SimpleFileReader reader;
+    auto readResult = reader.LoadFile(filepath);
+    if (!readResult.has_value()) {
+        return {};
+    }
+
+    vrml_proc::parser::VrmlParser parser(manager);
+    return parser.Parse(readResult.value());
+}
+
+// ------------------------------------------------------------------------------------------------------------------------------------------------ //
+
 TEST_CASE("Parse VRML File - Valid Input - Simple VRML File", "[parsing][valid]") {
 
     vrml_proc::parser::VrmlNodeManager manager;
-    auto parseResult = ParseVrmlFile(simple, manager);
+    auto parseResult = ParseVrmlFile(simpleValid, manager);
     REQUIRE(parseResult);
 
     vrml_proc::parser::VrmlNode root = parseResult.value().at(0);
@@ -57,6 +72,20 @@ TEST_CASE("Parse VRML File - Valid Input - Simple VRML File", "[parsing][valid]"
     }
 
     CHECK(manager.GetDefNodesTotalCount() == 0);
+}
+
+TEST_CASE("Parse VRML File - Valid Input - Simple VRML File Ivalid", "[parsing][invalid]") {
+
+    vrml_proc::parser::VrmlNodeManager manager;
+    auto parseResult = ParseVrmlFile(simpleInvalidChar, manager);
+    REQUIRE_FALSE(parseResult);
+}
+
+TEST_CASE("Parse VRML File - Valid Input - Simple VRML File Ivalid Starting With Number", "[parsing][invalid]") {
+
+    vrml_proc::parser::VrmlNodeManager manager;
+    auto parseResult = ParseVrmlFile(simpleInvalidStartingWithNumber, manager);
+    REQUIRE_FALSE(parseResult);
 }
 
 TEST_CASE("Parse VRML File - Valid Input - Two Simple Nodes", "[parsing][valid]") {
@@ -516,6 +545,55 @@ TEST_CASE("Parse VRMLFile - Valid Input - Node With Boolean", "[parsing][valid]"
 
         auto data = boost::get<bool>(child.value);
         CHECK_FALSE(data);
+    }
+}
+
+TEST_CASE("Parse VRMLFile - Valid Input - Node With UTF8", "[parsing][valid]") {
+
+    vrml_proc::parser::VrmlNodeManager manager;
+    auto parseResult = ParseVrmlFile(nodeWithUtf8, manager);
+    REQUIRE(parseResult);
+
+    vrml_proc::parser::VrmlNode root = parseResult.value().at(0);
+    CHECK(root.header == "ČeskáSkupina");
+
+    auto& field = root.fields.at(0);
+    CHECK(field.name == "políčko");
+
+    auto* shape = boost::get<vrml_proc::parser::VrmlNode>(&field.value);
+    REQUIRE(shape != nullptr);
+
+    CHECK(shape->header == "Tvar");
+    CHECK_FALSE(shape->definitionName.has_value());
+    CHECK(shape->fields.size() == 1);
+    CHECK(shape->fields.at(0).name == "ß");
+
+    auto* indexedFaceSet = boost::get<vrml_proc::parser::VrmlNode>(&shape->fields.at(0).value);
+    REQUIRE(indexedFaceSet != nullptr);
+
+    CHECK(indexedFaceSet->header == "开儿艾诶开伊艾艾西吉艾艾伊娜伊");
+    CHECK_FALSE(indexedFaceSet->definitionName.has_value());
+    CHECK(indexedFaceSet->fields.size() == 1);
+
+    {
+        auto& child = indexedFaceSet->fields.at(0);
+        CHECK(child.name == "koordináty");
+
+        auto* data = boost::get<vrml_proc::parser::Int32Array>(&child.value);
+        REQUIRE(data != nullptr);
+
+        std::vector<int> expectedValues = {
+            944, 942, 943, -1, 947, 945, 946, -1,
+            947, 949, 948, -1, 945, 947, 948, -1,
+            946, 942, 944, -1, 946, 944, 947, -1,
+            108889, 108856, 182463, -1, 108863, 108433, 182449, -1
+        };
+
+        REQUIRE(data->integers.size() == expectedValues.size());
+
+        for (size_t i = 0; i < expectedValues.size(); ++i) {
+            CHECK(data->integers.at(i) == expectedValues.at(i));
+        }
     }
 }
 
