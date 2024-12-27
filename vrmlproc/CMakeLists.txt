@@ -33,6 +33,8 @@ add_library(vrmlproc SHARED
     "src/core/FileReader.hpp"
     "src/core/SimpleFileReader.hpp"
     "src/core/SimpleFileReader.cpp"
+    "src/core/MemoryMappedFileReader.hpp"
+    "src/core/MemoryMappedFileReader.cpp"
 
     "src/core/utils/ScopedTimer.hpp"
 
