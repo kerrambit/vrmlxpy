@@ -18,6 +18,7 @@ FetchContent_MakeAvailable(Catch2)
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/src
     ${CMAKE_CURRENT_SOURCE_DIR}/src/core
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/core/utils
     ${CMAKE_CURRENT_SOURCE_DIR}/src/parser
     ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/models 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/interfaces
@@ -32,6 +33,8 @@ add_library(vrmlproc SHARED
     "src/core/FileReader.hpp"
     "src/core/SimpleFileReader.hpp"
     "src/core/SimpleFileReader.cpp"
+
+    "src/core/utils/ScopedTimer.hpp"
 
     "src/parser/models/VrmlUnits.hpp"
     "src/parser/models/VrmlFile.hpp"
