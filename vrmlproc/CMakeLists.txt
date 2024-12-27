@@ -25,6 +25,7 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/grammars
     ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/services
     ${CMAKE_CURRENT_SOURCE_DIR}/src/conversion_context
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/traversors
     ${CMAKE_CURRENT_SOURCE_DIR}/src/traversors/utils
     ${CMAKE_CURRENT_SOURCE_DIR}/../vendor/pybind11/include/pybind11
 )
@@ -90,6 +91,8 @@ add_library(vrmlproc SHARED
     "src/conversion_context/VectorConversionContext.hpp"
     "src/conversion_context/MeshConversionContext.hpp"
     "src/conversion_context/StlBaseStructure.hpp"
+    "src/traversors/VrmlFileTraversor.hpp"
+    "src/traversors/VrmlNodeTraversor.hpp"
     "src/traversors/utils/VrmlFieldExtractor.hpp"
 )
 
