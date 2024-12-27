@@ -24,6 +24,7 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/interfaces
     ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/grammars
     ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/services
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/conversion_context
     ${CMAKE_CURRENT_SOURCE_DIR}/../vendor/pybind11/include/pybind11
 )
 
@@ -84,6 +85,10 @@ add_library(vrmlproc SHARED
     "src/parser/grammars/QuotedStringGrammar.hpp"
     "src/parser/grammars/BooleanGrammar.hpp"
     "src/parser/grammars/VrmlFileGrammar.hpp"
+
+    "src/conversion_context/VectorConversionContext.hpp"
+    "src/conversion_context/MeshConversionContext.hpp"
+    "src/conversion_context/StlBaseStructure.hpp"
 )
 
 # Two build types - Debug and Release.
