@@ -31,6 +31,7 @@ include_directories(
 add_library(vrmlproc SHARED
 
     "src/core/FileReader.hpp"
+    "src/core/FileWriter.hpp"
     "src/core/SimpleFileReader.hpp"
     "src/core/SimpleFileReader.cpp"
     "src/core/MemoryMappedFileReader.hpp"
