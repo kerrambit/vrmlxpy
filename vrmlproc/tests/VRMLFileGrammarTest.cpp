@@ -23,6 +23,7 @@
 #include <VrmlParser.hpp>
 #include <VrmlUnits.hpp>
 #include <SimpleFileReader.hpp>
+#include <MemoryMappedFileReader.hpp>
 
 static vrml_proc::parser::ParserResult<vrml_proc::parser::VrmlFile> ParseVrmlFile(std::string& text, vrml_proc::parser::VrmlNodeManager& manager) {
 
@@ -32,7 +33,7 @@ static vrml_proc::parser::ParserResult<vrml_proc::parser::VrmlFile> ParseVrmlFil
 
 static vrml_proc::parser::ParserResult<vrml_proc::parser::VrmlFile> ParseVrmlFile(const std::filesystem::path& filepath, vrml_proc::parser::VrmlNodeManager& manager) {
 
-    vrml_proc::core::SimpleFileReader reader;
+    vrml_proc::core::MemoryMappedFileReader reader;
     auto readResult = reader.LoadFile(filepath);
     if (!readResult.has_value()) {
         return {};
