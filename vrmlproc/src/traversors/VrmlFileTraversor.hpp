@@ -38,21 +38,11 @@ namespace vrml_proc {
 					}
 					else if (root.header == "Group") {
 						std::cout << "Found Group" << std::endl;
-
 						std::shared_ptr<vrml_proc::conversion_context::BaseConversionContext> result =
 							vrml_proc::traversor::VrmlNodeTraversor::Traverse(vrml_proc::traversor::FullParsedVrmlNodeContext(root, context.manager));
-
 					}
 					else if (root.header == "Transform") {
 						std::cout << "Found Transform" << std::endl;
-						vrml_proc::conversion_context::StlBaseStructure structure(
-							{ 58.5f, 0.001f, 78.5f },
-							{ { 1.0f, 1.0f, 1.0f }, { 1.0f, 1.0f, 1.0f }, { 1.0f, 1.0f, 1.0f } }
-						);
-
-						std::shared_ptr<vrml_proc::conversion_context::MeshConversionContext> mesh = std::make_shared<vrml_proc::conversion_context::MeshConversionContext>();
-						mesh->Add(structure);
-						return mesh;
 					}
 					else if (root.header == "WorldInfo") {
 						std::cout << "Found WorldInfo" << std::endl;
