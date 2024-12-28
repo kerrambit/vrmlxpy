@@ -12,12 +12,10 @@ std::string onlyWorldInfo = R"(
 	   info "VRML file."
 
 	}
-
-
 )";
 
 
-std::string emptyChildren = R"(
+std::string validGroup = R"(
 
 	#VRML V2.0 utf8
 
@@ -31,13 +29,15 @@ std::string emptyChildren = R"(
 
     Group {
 
-        ambientIntensity  0.2E-1
+        bboxCenter 4.5 10.47 -1.0E1
 
-        shape Shape {
-			   ambientIntensity  0.2E-1
-	        }
+        bboxSize -2 -2 -2
 
-        children []
+        children [
+            Spotlight {
+                ambientIntensity  -1.0
+            }
+        ]
     }
 
 )";
