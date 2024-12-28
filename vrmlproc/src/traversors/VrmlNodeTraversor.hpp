@@ -30,24 +30,54 @@ namespace vrml_proc {
 
 				if (context.node.header == "Group") {
 
-					auto result = vrml_proc::traversors::utils::VrmlFieldExtractor::ExtractByName<std::vector<boost::variant<boost::recursive_wrapper<vrml_proc::parser::VrmlNode>, boost::recursive_wrapper<vrml_proc::parser::UseNode>>>>("children", context.node.fields);
-					if (result.has_value()) {
-													
+					std::cout << "VRML Node - Group" << std::endl;
+
+					// TODO: check if fields are empty, then skip all the checking
+
+					auto children = vrml_proc::traversor::utils::VrmlFieldExtractor::ExtractByName<std::vector<boost::variant<boost::recursive_wrapper<vrml_proc::parser::VrmlNode>, boost::recursive_wrapper<vrml_proc::parser::UseNode>>>>("children", context.node.fields);
+					if (children.has_value()) {
+
+						std::cout << "children " << std::endl;
+
+						for (const auto& child : children.value()) {
+
+							auto vrmlNode = vrml_proc::traversor::utils::VrmlFieldExtractor::ExtractFromVariant<boost::recursive_wrapper<vrml_proc::parser::VrmlNode>>(child);
+							if (vrmlNode.has_value()) {
+								// VRML node
+								std::cout << "VRML Node child " << vrmlNode.value().get() << std::endl;
+								// return vrml_proc::traversor::VrmlNodeTraversor::Traverse({vrmlNode.value().get(), context.manager});
+							}
+							auto useNode = vrml_proc::traversor::utils::VrmlFieldExtractor::ExtractFromVariant<boost::recursive_wrapper<vrml_proc::parser::UseNode>>(child);
+							if (useNode.has_value()) {
+								// USE node
+								std::cout << "USE Node child " << useNode.value().get() << std::endl;
+								// I have found USE node, I will need the aproproate action for it and take the covnersion conetxt and nodes manager.
+								// I will look for the node in the manager, when it is found, I will verify what it is.
+								// It should be VRML node - so I should traverse it again, or it has been already traversed, look for the data associated with it.
+							}
+						}
 					}
 
-					auto result3 = vrml_proc::traversors::utils::VrmlFieldExtractor::ExtractByName<boost::recursive_wrapper<vrml_proc::parser::VrmlNode>>("shape", context.node.fields);
-					if (result3.has_value()) {
-
+					auto bboxCentre = vrml_proc::traversor::utils::VrmlFieldExtractor::ExtractByName<vrml_proc::parser::Vec3f>("bboxCenter", context.node.fields);
+					if (bboxCentre.has_value()) {
+						std::cout << "bboxCenter " << bboxCentre.value() << std::endl;
 					}
 
-					auto result2 = vrml_proc::traversors::utils::VrmlFieldExtractor::ExtractByName<float>("ambientIntensity", context.node.fields);
-					if (result2.has_value()) {
-
+					auto bboxSize = vrml_proc::traversor::utils::VrmlFieldExtractor::ExtractByName<vrml_proc::parser::Vec3f>("bboxSize", context.node.fields);
+					if (bboxSize.has_value()) {
+						std::cout << "bboxSize " << bboxSize.value() << std::endl;
 					}
+
 
 				}
-				else if (context.node.header == "Shape") {
-					auto result2 = vrml_proc::traversors::utils::VrmlFieldExtractor::ExtractByName<float>("ambientIntensity", context.node.fields);
+				else if (context.node.header == "Spotlight") {
+
+					std::cout << "VRML Node - Spotlight" << std::endl;
+
+					auto ambientIntensity = vrml_proc::traversor::utils::VrmlFieldExtractor::ExtractByName<float>("ambientIntensity", context.node.fields);
+					if (ambientIntensity.has_value()) {
+						std::cout << "ambientIntensity" << ambientIntensity.value() << std::endl;
+					}
 				}
 
 				return nullptr;
