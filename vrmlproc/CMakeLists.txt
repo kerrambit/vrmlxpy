@@ -25,6 +25,7 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/grammars
     ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/services
     ${CMAKE_CURRENT_SOURCE_DIR}/src/conversion_context
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/actions
     ${CMAKE_CURRENT_SOURCE_DIR}/src/traversors
     ${CMAKE_CURRENT_SOURCE_DIR}/src/traversors/utils
     ${CMAKE_CURRENT_SOURCE_DIR}/../vendor/pybind11/include/pybind11
@@ -95,6 +96,9 @@ add_library(vrmlproc SHARED
     "src/traversors/VrmlFileTraversor.hpp"
     "src/traversors/VrmlNodeTraversor.hpp"
     "src/traversors/utils/VrmlFieldExtractor.hpp"
+    "src/actions/BaseConversionContextActionMap.hpp"
+    "src/actions/BaseConversionContextAction.hpp"
+    "src/actions/SpotlightAction.hpp"
 )
 
 # Two build types - Debug and Release.
