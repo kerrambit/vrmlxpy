@@ -11,6 +11,9 @@
 #include "VrmlNodeManager.hpp"
 #include "VrmlFieldExtractor.hpp"
 #include "BaseConversionContext.hpp"
+#include "StlBaseStructure.hpp"
+#include "BaseConversionContextActionMap.hpp"
+#include "BaseConversionContextActionExecutor.hpp"
 
 namespace vrml_proc {
 	namespace traversor {
@@ -26,13 +29,35 @@ namespace vrml_proc {
 
 		class VrmlNodeTraversor {
 		public:
-			static std::shared_ptr<vrml_proc::conversion_context::BaseConversionContext> Traverse(FullParsedVrmlNodeContext context) {
+			static std::shared_ptr<vrml_proc::conversion_context::BaseConversionContext> Traverse(FullParsedVrmlNodeContext context, const vrml_proc::action::BaseConversionContextActionMap& actionMap) {
 
-				if (context.node.header == "Group") {
+				if (context.node.header == "WorldInfo") {
+					std::cout << "VRML Node - WorldInfo" << std::endl;
 
+					auto info = vrml_proc::traversor::utils::VrmlFieldExtractor::ExtractByName<std::string>("info", context.node.fields);
+					if (info.has_value()) {
+						std::cout << "info" << info.value() << std::endl;
+					}
+
+					auto title = vrml_proc::traversor::utils::VrmlFieldExtractor::ExtractByName<std::string>("title", context.node.fields);
+					if (title.has_value()) {
+						std::cout << "title" << title.value() << std::endl;
+					}
+
+					if (info.has_value() && title.has_value()) {
+						return vrml_proc::traversor::utils::BaseConversionContextActionExecutor::TryToExecute<vrml_proc::conversion_context::MeshConversionContext>(actionMap, "WorldInfo", { info.value(), title.value()});
+					}
+
+					return std::make_shared<vrml_proc::conversion_context::MeshConversionContext>();
+				}
+				else if (context.node.header == "Group") {
 					std::cout << "VRML Node - Group" << std::endl;
 
-					// TODO: check if fields are empty, then skip all the checking
+					auto result = std::make_shared<vrml_proc::conversion_context::MeshConversionContext>();
+
+					if (context.node.fields.empty()) {
+						return result;
+					}
 
 					auto children = vrml_proc::traversor::utils::VrmlFieldExtractor::ExtractByName<std::vector<boost::variant<boost::recursive_wrapper<vrml_proc::parser::VrmlNode>, boost::recursive_wrapper<vrml_proc::parser::UseNode>>>>("children", context.node.fields);
 					if (children.has_value()) {
@@ -45,8 +70,17 @@ namespace vrml_proc {
 							if (vrmlNode.has_value()) {
 								// VRML node
 								std::cout << "VRML Node child " << vrmlNode.value().get() << std::endl;
-								// return vrml_proc::traversor::VrmlNodeTraversor::Traverse({vrmlNode.value().get(), context.manager});
+
+							    auto vrmlNodeTraversorResult = vrml_proc::traversor::VrmlNodeTraversor::Traverse({vrmlNode.value().get(), context.manager}, actionMap);
+								if (vrmlNodeTraversorResult != nullptr) {
+									std::shared_ptr<vrml_proc::conversion_context::MeshConversionContext> meshContextPtr = std::dynamic_pointer_cast<vrml_proc::conversion_context::MeshConversionContext>(vrmlNodeTraversorResult);
+									if (meshContextPtr != nullptr) {
+										result->Merge(meshContextPtr.get());
+										meshContextPtr.reset();
+									}
+								}
 							}
+
 							auto useNode = vrml_proc::traversor::utils::VrmlFieldExtractor::ExtractFromVariant<boost::recursive_wrapper<vrml_proc::parser::UseNode>>(child);
 							if (useNode.has_value()) {
 								// USE node
@@ -68,6 +102,7 @@ namespace vrml_proc {
 						std::cout << "bboxSize " << bboxSize.value() << std::endl;
 					}
 
+					return result;
 
 				}
 				else if (context.node.header == "Spotlight") {
@@ -77,11 +112,14 @@ namespace vrml_proc {
 					auto ambientIntensity = vrml_proc::traversor::utils::VrmlFieldExtractor::ExtractByName<float>("ambientIntensity", context.node.fields);
 					if (ambientIntensity.has_value()) {
 						std::cout << "ambientIntensity" << ambientIntensity.value() << std::endl;
+						return vrml_proc::traversor::utils::BaseConversionContextActionExecutor::TryToExecute<vrml_proc::conversion_context::MeshConversionContext>(actionMap, "Spotlight", { ambientIntensity.value() });
 					}
+
+					return std::make_shared<vrml_proc::conversion_context::MeshConversionContext>();
 				}
 
+				std::cout << "Error! Unknown VRML Node." << std::endl;
 				return nullptr;
-
 			}
 		};
 	}
