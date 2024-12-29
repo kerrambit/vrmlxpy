@@ -8,6 +8,7 @@
 #include "BaseConversionContext.hpp"
 #include "MeshConversionContext.hpp"
 #include "VrmlNodeTraversor.hpp"
+#include "BaseConversionContextActionMap.hpp"
 
 namespace vrml_proc {
 	namespace traversor {
@@ -23,35 +24,22 @@ namespace vrml_proc {
 
 		class VRMLPROCESSING_API VrmlFileTraversor {
 		public:
-			static std::shared_ptr<vrml_proc::conversion_context::BaseConversionContext> Traverse(FullParsedVrmlFileContext context) {
+			static std::shared_ptr<vrml_proc::conversion_context::BaseConversionContext> Traverse(FullParsedVrmlFileContext context, const vrml_proc::action::BaseConversionContextActionMap& actionMap) {
+
+				// TODO: make parallel for-loop. VrmlNodeManager has to be made thread-safe.
+
+				std::shared_ptr<vrml_proc::conversion_context::BaseConversionContext> traversedFile = std::make_shared<vrml_proc::conversion_context::MeshConversionContext>();
 
 				for (const auto& root : context.file) {
 
-					if (root.header == "Anchor") {
-						std::cout << "Found Anchor" << std::endl;
-					}
-					else if (root.header == "Billboard") {
-						std::cout << "Found Billboard" << std::endl;
-					}
-					else if (root.header == "Collision") {
-						std::cout << "Found Collision" << std::endl;
-					}
-					else if (root.header == "Group") {
-						std::cout << "Found Group" << std::endl;
-						std::shared_ptr<vrml_proc::conversion_context::BaseConversionContext> result =
-							vrml_proc::traversor::VrmlNodeTraversor::Traverse(vrml_proc::traversor::FullParsedVrmlNodeContext(root, context.manager));
-					}
-					else if (root.header == "Transform") {
-						std::cout << "Found Transform" << std::endl;
-					}
-					else if (root.header == "WorldInfo") {
-						std::cout << "Found WorldInfo" << std::endl;
-					}
-					else {
-						std::cout << "Invalid grouping/children node!" << std::endl;
-						return nullptr;
-					}
+					std::cout << "Found root node of type " << root.header << std::endl;
+					std::shared_ptr<vrml_proc::conversion_context::BaseConversionContext> result =
+						vrml_proc::traversor::VrmlNodeTraversor::Traverse(vrml_proc::traversor::FullParsedVrmlNodeContext(root, context.manager), actionMap);
+					
+					traversedFile->Merge(result.get());
 				}
+
+				return traversedFile;
 			}
 		};
 	}
