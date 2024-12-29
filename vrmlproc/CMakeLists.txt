@@ -89,13 +89,17 @@ add_library(vrmlproc SHARED
     "src/parser/grammars/BooleanGrammar.hpp"
     "src/parser/grammars/VrmlFileGrammar.hpp"
 
+    "src/conversion_context/BaseConversionContext.hpp"
     "src/conversion_context/Mergeable.hpp"
     "src/conversion_context/VectorConversionContext.hpp"
     "src/conversion_context/MeshConversionContext.hpp"
     "src/conversion_context/StlBaseStructure.hpp"
+
     "src/traversors/VrmlFileTraversor.hpp"
     "src/traversors/VrmlNodeTraversor.hpp"
     "src/traversors/utils/VrmlFieldExtractor.hpp"
+    "src/traversors/utils/BaseConversionContextActionExecutor.hpp"
+
     "src/actions/BaseConversionContextActionMap.hpp"
     "src/actions/BaseConversionContextAction.hpp"
     "src/actions/SpotlightAction.hpp"
