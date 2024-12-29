@@ -23,6 +23,23 @@ namespace vrml_proc {
 				this->m_data.push_back(entity);
 			}
 
+			inline bool IsEmpty() const {
+				return m_data.empty();
+			}
+
+			void Merge(Mergeable* other) override {
+
+				auto* otherContext = dynamic_cast<VectorConversionContext<T>*>(other);
+				if (otherContext) {
+					m_data.insert(m_data.end(), std::make_move_iterator(otherContext->m_data.begin()), std::make_move_iterator(otherContext->m_data.end()));
+					otherContext->m_data.clear();
+				}
+				else {
+					// Wish not to use exceptions, this could be replaces by returning bool, or Result type in the future
+					throw std::runtime_error("Merge called with incompatible type!");
+				}
+			}
+
 		protected:
 			std::vector<T> m_data;
 

@@ -1,9 +1,11 @@
 #pragma once
 
+#include "Mergeable.hpp"
+
 namespace vrml_proc {
 	namespace conversion_context {
 
-		class BaseConversionContext {
+		class BaseConversionContext : public Mergeable {
 		public:
 			virtual ~BaseConversionContext() = default;
 		protected:
