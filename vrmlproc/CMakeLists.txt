@@ -99,6 +99,7 @@ add_library(vrmlproc SHARED
     "src/traversors/VrmlNodeTraversor.hpp"
     "src/traversors/utils/VrmlFieldExtractor.hpp"
     "src/traversors/utils/BaseConversionContextActionExecutor.hpp"
+    "src/traversors/utils/VrmlFieldChecker.hpp"
 
     "src/actions/BaseConversionContextActionMap.hpp"
     "src/actions/BaseConversionContextAction.hpp"
