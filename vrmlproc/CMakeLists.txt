@@ -24,6 +24,10 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/interfaces
     ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/grammars
     ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/services
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/conversion_context
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/actions
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/traversors
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/traversors/utils
     ${CMAKE_CURRENT_SOURCE_DIR}/../vendor/pybind11/include/pybind11
 )
 
@@ -31,6 +35,7 @@ include_directories(
 add_library(vrmlproc SHARED
 
     "src/core/FileReader.hpp"
+    "src/core/FileWriter.hpp"
     "src/core/SimpleFileReader.hpp"
     "src/core/SimpleFileReader.cpp"
     "src/core/MemoryMappedFileReader.hpp"
@@ -83,6 +88,23 @@ add_library(vrmlproc SHARED
     "src/parser/grammars/QuotedStringGrammar.hpp"
     "src/parser/grammars/BooleanGrammar.hpp"
     "src/parser/grammars/VrmlFileGrammar.hpp"
+
+    "src/conversion_context/BaseConversionContext.hpp"
+    "src/conversion_context/Mergeable.hpp"
+    "src/conversion_context/VectorConversionContext.hpp"
+    "src/conversion_context/MeshConversionContext.hpp"
+    "src/conversion_context/StlBaseStructure.hpp"
+
+    "src/traversors/VrmlFileTraversor.hpp"
+    "src/traversors/VrmlNodeTraversor.hpp"
+    "src/traversors/utils/VrmlFieldExtractor.hpp"
+    "src/traversors/utils/BaseConversionContextActionExecutor.hpp"
+    "src/traversors/utils/VrmlFieldChecker.hpp"
+
+    "src/actions/BaseConversionContextActionMap.hpp"
+    "src/actions/BaseConversionContextAction.hpp"
+    "src/actions/SpotlightAction.hpp"
+    "src/actions/GroupAction.hpp"
 )
 
 # Two build types - Debug and Release.
@@ -100,6 +122,9 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
     add_compile_definitions(RELEASE)
 endif()
+
+# Explicitly link Boost::iostreams (problems with compilation on Linux with GNU 11.4.0).
+target_link_libraries(vrmlproc PRIVATE Boost::iostreams)
 
 # --------------------------------------------------------------------------------------- #
 
@@ -124,6 +149,7 @@ add_executable(Vec3fGrammarUnitTests "tests/Vec3fGrammarTest.cpp")
 add_executable(Vec4fGrammarUnitTests "tests/Vec4fGrammarTest.cpp")
 add_executable(Vec3fArrayGrammarUnitTests "tests/Vec3fArrayGrammarTest.cpp")
 add_executable(Int32ArrayGrammarUnitTests "tests/Int32ArrayGrammarTest.cpp")
+add_executable(VrmlFileTraversorUnitTests "tests/VrmlFileTraversorTest.cpp")
 
 # Link Catch2 with the test executables.
 target_link_libraries(VRMLFileGrammarUnitTests PRIVATE Catch2::Catch2WithMain vrmlproc)
@@ -131,6 +157,7 @@ target_link_libraries(Vec3fGrammarUnitTests PRIVATE Catch2::Catch2WithMain vrmlp
 target_link_libraries(Vec4fGrammarUnitTests PRIVATE Catch2::Catch2WithMain vrmlproc)
 target_link_libraries(Vec3fArrayGrammarUnitTests PRIVATE Catch2::Catch2WithMain vrmlproc)
 target_link_libraries(Int32ArrayGrammarUnitTests PRIVATE Catch2::Catch2WithMain vrmlproc)
+target_link_libraries(VrmlFileTraversorUnitTests PRIVATE Catch2::Catch2WithMain vrmlproc)
 
 # Enable testing (use CTest to run the unit tests).
 enable_testing()
@@ -139,3 +166,4 @@ add_test(NAME Vec3fGrammarUnitTests COMMAND Vec3fGrammarUnitTests)
 add_test(NAME Vec4fGrammarUnitTests COMMAND Vec4fGrammarUnitTests)
 add_test(NAME Vec3fArrayGrammarUnitTests COMMAND Vec3fArrayGrammarUnitTests)
 add_test(NAME Int32ArrayGrammarUnitTests COMMAND Int32ArrayGrammarUnitTests)
+add_test(NAME VrmlFileTraversorUnitTests COMMAND VrmlFileTraversorUnitTests)
