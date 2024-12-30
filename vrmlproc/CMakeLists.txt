@@ -123,6 +123,9 @@ elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
     add_compile_definitions(RELEASE)
 endif()
 
+# Explicitly link Boost::iostreams (problems with compilation on Linux with GNU 11.4.0).
+target_link_libraries(vrmlproc PRIVATE Boost::iostreams)
+
 # --------------------------------------------------------------------------------------- #
 
 # Create the Python bindings module.
