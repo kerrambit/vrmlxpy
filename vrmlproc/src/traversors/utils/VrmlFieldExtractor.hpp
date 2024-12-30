@@ -46,7 +46,7 @@ template <typename T>
 struct ExtractorVisitor : public boost::static_visitor<std::optional<T>> {
 
     std::optional<T> operator()(const std::string& value) const {
-        std::cout << "I am here string" << std::endl;
+        //std::cout << "I am here string" << std::endl;
         if constexpr (std::is_same<T, std::string>::value) {
             return value;
         }
@@ -54,7 +54,7 @@ struct ExtractorVisitor : public boost::static_visitor<std::optional<T>> {
     }
 
     std::optional<T> operator()(bool value) const {
-        std::cout << "I am here bool" << std::endl;
+        //std::cout << "I am here bool" << std::endl;
         if constexpr (std::is_same<T, bool>::value) {
             return value;
         }
@@ -62,7 +62,7 @@ struct ExtractorVisitor : public boost::static_visitor<std::optional<T>> {
     }
 
     std::optional<T> operator()(const vrml_proc::parser::Vec3fArray& value) const {
-        std::cout << "I am here vec3f array" << std::endl;
+        //std::cout << "I am here vec3f array" << std::endl;
         if (value.vectors.size() == 0) {
             if constexpr (std::is_same<T, vrml_proc::parser::Vec3fArray>::value) {
                 return value;
@@ -85,7 +85,7 @@ struct ExtractorVisitor : public boost::static_visitor<std::optional<T>> {
     }
 
     std::optional<T> operator()(const vrml_proc::parser::Int32Array& value) const {
-        std::cout << "I am here intarray" << std::endl;
+        //std::cout << "I am here intarray" << std::endl;
         if constexpr (std::is_same<T, vrml_proc::parser::Int32Array>::value) {
             return value;
         }
@@ -93,7 +93,7 @@ struct ExtractorVisitor : public boost::static_visitor<std::optional<T>> {
     }
 
     std::optional<T> operator()(float value) const {
-        std::cout << "I am here float" << std::endl;
+        //std::cout << "I am here float" << std::endl;
         if constexpr (std::is_same<T, float>::value) {
             return value;
         }
@@ -101,7 +101,7 @@ struct ExtractorVisitor : public boost::static_visitor<std::optional<T>> {
     }
 
     std::optional<T> operator()(int32_t value) const {
-        std::cout << "int32" << std::endl;
+        //std::cout << "int32" << std::endl;
         if constexpr (std::is_same<T, int32_t>::value) {
             return value;
         }
@@ -109,7 +109,7 @@ struct ExtractorVisitor : public boost::static_visitor<std::optional<T>> {
     }
 
     std::optional<T> operator()(const vrml_proc::parser::Vec3f& value) const {
-        std::cout << "vec3f" << std::endl;
+        //std::cout << "vec3f" << std::endl;
         if constexpr (std::is_same<T, vrml_proc::parser::Vec3f>::value) {
             return value;
         }
@@ -117,7 +117,7 @@ struct ExtractorVisitor : public boost::static_visitor<std::optional<T>> {
     }
 
     std::optional<T> operator()(const vrml_proc::parser::Vec4f& value) const {
-        std::cout << "I am here vec4f" << std::endl;
+        //std::cout << "I am here vec4f" << std::endl;
         if constexpr (std::is_same<T, vrml_proc::parser::Vec4f>::value) {
             return value;
         }
@@ -125,15 +125,20 @@ struct ExtractorVisitor : public boost::static_visitor<std::optional<T>> {
     }
 
     std::optional<T> operator()(const vrml_proc::parser::UseNode& value) const {
-        std::cout << "I am here usenode" << std::endl;
+        //std::cout << "I am here usenode" << std::endl;
         if constexpr (std::is_same<T, vrml_proc::parser::UseNode>::value) {
             return value;
         }
         return {};
     }
 
+    /**
+     * @todo Maybe I will need to create also std::optional<T> operator()(const boost::recursive_wrapper<vrml_proc::parser::UseNode>& node) const;
+     * @see See the same fucntion for VrmlNode.
+     */
+
     std::optional<T> operator()(const boost::recursive_wrapper<vrml_proc::parser::VrmlNode>& node) const {
-        std::cout << "I am here vrmlnode (recursive wrapper)" << std::endl;
+        //std::cout << "I am here vrmlnode (recursive wrapper)" << std::endl;
 
         if constexpr (std::is_same<T, boost::recursive_wrapper<vrml_proc::parser::VrmlNode>>::value) {
             return node;
@@ -143,7 +148,7 @@ struct ExtractorVisitor : public boost::static_visitor<std::optional<T>> {
     }
 
     std::optional<T> operator()(const vrml_proc::parser::VrmlNode& node) const {
-        std::cout << "I am here vrmlnode (non-recursive)" << std::endl;
+        //std::cout << "I am here vrmlnode (non-recursive)" << std::endl;
 
         if constexpr (std::is_same<T, vrml_proc::parser::VrmlNode>::value) {
             return node;
@@ -158,7 +163,7 @@ struct ExtractorVisitor : public boost::static_visitor<std::optional<T>> {
 
 
     std::optional<T> operator()(const std::vector<boost::variant<boost::recursive_wrapper<vrml_proc::parser::VrmlNode>, boost::recursive_wrapper<vrml_proc::parser::UseNode>>>& value) const {
-        std::cout << "I am her arraay" << std::endl;
+        //std::cout << "I am her arraay" << std::endl;
         if constexpr (std::is_same<T, std::vector<boost::variant<boost::recursive_wrapper<vrml_proc::parser::VrmlNode>, boost::recursive_wrapper<vrml_proc::parser::UseNode>>>>::value) {
             return value;
         }
@@ -178,7 +183,7 @@ template <typename T>
 struct VariantVisitor : public boost::static_visitor<std::optional<T>> {
 
     std::optional<T> operator()(const vrml_proc::parser::UseNode& node) const {
-        std::cout << "I am here usenode" << std::endl;
+        //std::cout << "I am here usenode" << std::endl;
         if constexpr (std::is_same<T, vrml_proc::parser::UseNode>::value) {
             return node;
         }
@@ -191,7 +196,7 @@ struct VariantVisitor : public boost::static_visitor<std::optional<T>> {
     }
 
     std::optional<T> operator()(const boost::recursive_wrapper<vrml_proc::parser::UseNode>& node) const {
-        std::cout << "I am here udenode (recursive wrapper)" << std::endl;
+        //std::cout << "I am here udenode (recursive wrapper)" << std::endl;
 
         if constexpr (std::is_same<T, boost::recursive_wrapper<vrml_proc::parser::UseNode>>::value) {
             return node;
@@ -201,7 +206,7 @@ struct VariantVisitor : public boost::static_visitor<std::optional<T>> {
     }
 
     std::optional<T> operator()(const boost::recursive_wrapper<vrml_proc::parser::VrmlNode>& node) const {
-        std::cout << "I am here vrmlnode (recursive wrapper)" << std::endl;
+        //std::cout << "I am here vrmlnode (recursive wrapper)" << std::endl;
 
         if constexpr (std::is_same<T, boost::recursive_wrapper<vrml_proc::parser::VrmlNode>>::value) {
             return node;
@@ -211,7 +216,7 @@ struct VariantVisitor : public boost::static_visitor<std::optional<T>> {
     }
 
     std::optional<T> operator()(const vrml_proc::parser::VrmlNode& node) const {
-        std::cout << "I am here vrmlnode (non-recursive)" << std::endl;
+        //std::cout << "I am here vrmlnode (non-recursive)" << std::endl;
 
         if constexpr (std::is_same<T, vrml_proc::parser::VrmlNode>::value) {
             return node;

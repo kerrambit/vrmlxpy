@@ -2,17 +2,16 @@
 
 #include <memory>
 
+#include "BaseConversionContext.hpp"
+#include "BaseConversionContextActionMap.hpp"
+#include "MeshConversionContext.hpp"
 #include "VrmlFile.hpp"
 #include "VrmlNodeManager.hpp"
-#include "VrmlProcessingExport.hpp"
-#include "BaseConversionContext.hpp"
-#include "MeshConversionContext.hpp"
 #include "VrmlNodeTraversor.hpp"
-#include "BaseConversionContextActionMap.hpp"
+#include "VrmlProcessingExport.hpp"
 
 namespace vrml_proc {
 	namespace traversor {
-
 		struct VRMLPROCESSING_API FullParsedVrmlFileContext {
 
 			FullParsedVrmlFileContext(const vrml_proc::parser::VrmlFile& file, const vrml_proc::parser::VrmlNodeManager& manager)

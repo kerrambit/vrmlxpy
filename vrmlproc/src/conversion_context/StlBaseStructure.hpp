@@ -5,13 +5,23 @@
 
 namespace vrml_proc {
 	namespace conversion_context {
-
+		/**
+		 * @brief Representation of STL file, or rather a basic data entity in it.
+		 * 
+		 * @implements Printable
+		 */
 		struct StlBaseStructure : public Printable {
-
-			vrml_proc::parser::Vec3f facetNormal;
-
+			/**
+			 * @brief Internal StlBaseStructure structure representing a part of basic STL data entity.
+			 */
 			struct OuterLoopVertices {
-
+				/**
+				 * @brief Default constructor.
+				 * 
+				 * @param x first vector `Vec3f`
+				 * @param y second vector `Vec3f`
+				 * @param z third vector `Vec3f` 
+				 */
 				OuterLoopVertices(vrml_proc::parser::Vec3f x, vrml_proc::parser::Vec3f y, vrml_proc::parser::Vec3f z)
 					: x(x), y(y), z(z) {}
 
@@ -20,12 +30,24 @@ namespace vrml_proc {
 				vrml_proc::parser::Vec3f z;
 			};
 
+			vrml_proc::parser::Vec3f facetNormal;
 			OuterLoopVertices outerLoopVertices;
 
+			/**
+			 * @brief Default constructor.
+			 * 
+			 * @param facetNormal
+			 * @param outerLoopVertices
+			 */
 			StlBaseStructure(vrml_proc::parser::Vec3f facetNormal, const OuterLoopVertices& outerLoopVertices)
 				: Printable(std::cout), facetNormal(facetNormal), outerLoopVertices(outerLoopVertices) {}
 
-			// TODO: move into .cpp file
+			/**
+			 * @brief Overriden implementation of interface method. Prints the StlBaseStructure.
+			 * 
+			 * @todo should be moved into .cpp file
+			 * @param indentationLevel indentation level for printing this object
+			 */
 			void Print(Printable::IndentationLevel indentationLevel) const override {
 				std::string indentationString = Printable::CreateIndentationString(indentationLevel);
 				indentationLevel++;

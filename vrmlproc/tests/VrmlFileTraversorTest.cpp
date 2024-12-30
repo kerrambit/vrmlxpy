@@ -1,36 +1,21 @@
 #include <catch2/catch_test_macros.hpp>
-#include <catch2/matchers/catch_matchers_floating_point.hpp>
 
+#include <any>
 #include <memory>
 #include <vector>
-#include <any>
-
-#include <boost/variant/get.hpp>
-#include <boost/variant/recursive_wrapper.hpp>
-#include <boost/variant/static_visitor.hpp>
-#include <boost/variant/variant.hpp>
 
 #include "test-data/VrmlFileTraversorTestDataset.hpp"
-#include <boost/optional/optional.hpp>
-#include <boost/variant/detail/apply_visitor_unary.hpp>
-#include <Int32Array.hpp>
+#include <BaseConversionContextActionMap.hpp>
+#include <GroupAction.hpp>
 #include <MemoryMappedFileReader.hpp>
 #include <MeshConversionContext.hpp>
 #include <ParserResult.hpp>
-#include <SimpleFileReader.hpp>
-#include <UseNode.hpp>
+#include <SpotlightAction.hpp>
 #include <Vec3f.hpp>
-#include <Vec3fArray.hpp>
-#include <VrmlField.hpp>
 #include <VrmlFile.hpp>
 #include <VrmlFileTraversor.hpp>
-#include <VrmlNode.hpp>
 #include <VrmlNodeManager.hpp>
 #include <VrmlParser.hpp>
-#include <VrmlUnits.hpp>
-#include <BaseConversionContextActionMap.hpp>
-#include <SpotlightAction.hpp>
-#include <GroupAction.hpp>
 
 static vrml_proc::parser::ParserResult<vrml_proc::parser::VrmlFile> ParseVrmlFile(std::string& text, vrml_proc::parser::VrmlNodeManager& manager) {
 
