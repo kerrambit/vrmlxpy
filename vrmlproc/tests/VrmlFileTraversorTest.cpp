@@ -30,6 +30,7 @@
 #include <VrmlUnits.hpp>
 #include <BaseConversionContextActionMap.hpp>
 #include <SpotlightAction.hpp>
+#include <GroupAction.hpp>
 
 static vrml_proc::parser::ParserResult<vrml_proc::parser::VrmlFile> ParseVrmlFile(std::string& text, vrml_proc::parser::VrmlNodeManager& manager) {
 
@@ -49,6 +50,36 @@ static vrml_proc::parser::ParserResult<vrml_proc::parser::VrmlFile> ParseVrmlFil
     return parser.Parse(readResult.value());
 }
 
+static vrml_proc::action::BaseConversionContextActionMap& GetActionMap() {
+
+    static vrml_proc::action::BaseConversionContextActionMap actionMap;
+
+    actionMap.AddAction("Spotlight", [](const std::vector<std::any>& args) {
+        if (args.size() == 1 && args[0].type() == typeid(float)) {
+            return std::make_shared<vrml_proc::action::SpotlightAction>(std::any_cast<float>(args[0]));
+        }
+        throw std::invalid_argument("Invalid arguments for SpotlightAction");
+        });
+
+    actionMap.AddAction("Group", [](const std::vector<std::any>& args) {
+
+        if (args.size() == 3 &&
+            args[0].type() == typeid(std::vector<std::shared_ptr<vrml_proc::conversion_context::BaseConversionContext>>) &&
+            args[1].type() == typeid(vrml_proc::parser::Vec3f) &&
+            args[2].type() == typeid(vrml_proc::parser::Vec3f)) {
+
+            auto children = std::any_cast<std::vector<std::shared_ptr<vrml_proc::conversion_context::BaseConversionContext>>>(args[0]);
+            auto bboxCenter = std::any_cast<vrml_proc::parser::Vec3f>(args[1]);
+            auto bboxSize = std::any_cast<vrml_proc::parser::Vec3f>(args[2]);
+
+            return std::make_shared<vrml_proc::action::GroupAction>(children, bboxCenter, bboxSize);
+        }
+
+        throw std::invalid_argument("Invalid arguments for GroupAction"); });
+
+    return actionMap;
+}
+
 // ------------------------------------------------------------------------------------------------------------------------------------------------ //
 
 TEST_CASE("Parse VRML File - Valid Input - Simple VRML File", "[parsing][valid]") {
@@ -57,13 +88,7 @@ TEST_CASE("Parse VRML File - Valid Input - Simple VRML File", "[parsing][valid]"
     auto parseResult = ParseVrmlFile(validGroup, manager);
     REQUIRE(parseResult);
 
-    vrml_proc::action::BaseConversionContextActionMap actionMap;
-    actionMap.AddAction("Spotlight", [](const std::vector<std::any>& args) {
-        if (args.size() == 1 && args[0].type() == typeid(float)) {
-            return std::make_shared<vrml_proc::action::SpotlightAction>(std::any_cast<float>(args[0]));
-        }
-        throw std::invalid_argument("Invalid arguments for SpotlightAction");
-        });
+    vrml_proc::action::BaseConversionContextActionMap actionMap = GetActionMap();
 
     vrml_proc::traversor::VrmlFileTraversor traversor;
     auto traversorResult = traversor.Traverse({ parseResult.value(), manager}, actionMap);
