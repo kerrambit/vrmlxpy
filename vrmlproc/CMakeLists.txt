@@ -103,6 +103,7 @@ add_library(vrmlproc SHARED
     "src/actions/BaseConversionContextActionMap.hpp"
     "src/actions/BaseConversionContextAction.hpp"
     "src/actions/SpotlightAction.hpp"
+    "src/actions/GroupAction.hpp"
 )
 
 # Two build types - Debug and Release.
