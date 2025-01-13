@@ -4,7 +4,7 @@
 #include <memory>
 #include <vector>
 
-#include "test-data/VrmlFileTraversorTestDataset.hpp"
+#include "test_data/VrmlFileTraversorTestDataset.hpp"
 #include <BaseConversionContextActionMap.hpp>
 #include <GroupAction.hpp>
 #include <MemoryMappedFileReader.hpp>

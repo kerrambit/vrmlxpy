@@ -20,4 +20,4 @@ endif()
 include_directories(vendor/pybind11/include)
 
 # Add the pyvrml directory.
-add_subdirectory(vrmlproc)
+add_subdirectory(vrml_proc)

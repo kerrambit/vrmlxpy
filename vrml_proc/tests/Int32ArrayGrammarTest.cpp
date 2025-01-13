@@ -4,7 +4,7 @@
 #include <string>
 
 #include "CommentSkipper.hpp"
-#include "test-data/Int32ArrayGrammarTestDataset.hpp"
+#include "test_data/Int32ArrayGrammarTestDataset.hpp"
 #include "Int32Array.hpp"
 #include "Int32ArrayGrammar.hpp"
 

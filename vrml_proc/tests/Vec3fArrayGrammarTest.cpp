@@ -5,7 +5,7 @@
 #include <string>
 
 #include "CommentSkipper.hpp"
-#include "test-data/Vec3fArrayGrammarTestDataset.hpp"
+#include "test_data/Vec3fArrayGrammarTestDataset.hpp"
 #include "Vec3fArray.hpp"
 #include "Vec3fArrayGrammar.hpp"
 

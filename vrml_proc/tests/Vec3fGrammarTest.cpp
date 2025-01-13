@@ -7,7 +7,7 @@
 #include "CommentSkipper.hpp"
 #include "Vec3f.hpp"
 #include "Vec3fGrammar.hpp"
-#include "test-data/Vec3fGrammarTestDataset.hpp"
+#include "test_data/Vec3fGrammarTestDataset.hpp"
 
 static std::optional<vrml_proc::parser::Vec3f> ParseVec3f(std::string& text) {
 
