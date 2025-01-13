@@ -7,6 +7,8 @@
 
 #include <boost/variant.hpp>
 
+#include <result.hpp>
+
 #include "VrmlField.hpp"
 
 template <typename T>
@@ -20,15 +22,28 @@ namespace vrml_proc {
 		namespace utils {
 			namespace VrmlFieldExtractor {
 
+                enum class ExtractByNameError {
+                    FieldNotFound,
+                    ValidationError
+                };
+
 				template <typename T>
-				static std::optional<T> ExtractByName(const std::string& name, const std::vector<vrml_proc::parser::VrmlField>& fields) {
+				static cpp::result<T, ExtractByNameError> ExtractByName(const std::string& name, const std::vector<vrml_proc::parser::VrmlField>& fields) {
 					for (const auto& field : fields) {
 						if (field.name == name) {
+
 							ExtractorVisitor<T> visitor;
-							return boost::apply_visitor(visitor, field.value);
+                            auto result = boost::apply_visitor(visitor, field.value);
+
+                            if (result.has_value()) {
+                                return result.value();
+                            }
+                            else {
+                                return cpp::fail(ExtractByNameError::ValidationError);
+                            }
 						}
 					}
-					return {};
+					return cpp::fail(ExtractByNameError::FieldNotFound);
 				}
 
                 template <typename T>
