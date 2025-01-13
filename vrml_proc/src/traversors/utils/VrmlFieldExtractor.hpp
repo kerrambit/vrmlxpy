@@ -55,6 +55,38 @@ namespace vrml_proc {
 					return cpp::fail(ExtractByNameError::FieldNotFound);
 				}
 
+                enum class ExtractVrmlNodeError {
+                    FieldNotFound,
+                    ValidationError,
+                    UnknownUseNode
+                };
+
+                static cpp::result<vrml_proc::parser::VrmlNode&, ExtractVrmlNodeError> ExtractVrmlNode(const std::string& name, const std::vector<vrml_proc::parser::VrmlField>& fields, const vrml_proc::parser::VrmlNodeManager& manager) {
+                    if (vrml_proc::traversor::utils::VrmlFieldExtractor::IsNamePresent(name, fields)) {
+
+                        auto vrmlNode = vrml_proc::traversor::utils::VrmlFieldExtractor::ExtractByName<vrml_proc::parser::VrmlNode>(name, fields);
+                        if (vrmlNode.has_value()) {
+                            return vrmlNode.value();
+                        }
+
+                        auto useNode = vrml_proc::traversor::utils::VrmlFieldExtractor::ExtractByName<vrml_proc::parser::UseNode>(name, fields);
+                        if (useNode.has_value()) {
+                            auto managerFound = manager.GetDefinitionNode(useNode.value().identifier);
+                            if (managerFound != nullptr) {
+                                return *managerFound;
+                            }
+                            else {
+                                return cpp::fail(ExtractVrmlNodeError::UnknownUseNode);
+                            }
+                        }
+
+                        return cpp::fail(ExtractVrmlNodeError::ValidationError);
+                    }
+                    else {
+                        return cpp::fail(ExtractVrmlNodeError::FieldNotFound);
+                    }
+                }
+
                 template <typename T>
                 static std::optional<T> ExtractFromVariant(const boost::variant<boost::recursive_wrapper<vrml_proc::parser::VrmlNode>, boost::recursive_wrapper<vrml_proc::parser::UseNode>>& variant) {
 
