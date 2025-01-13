@@ -8,7 +8,7 @@
 #include <boost/variant/static_visitor.hpp>
 #include <boost/variant/variant.hpp>
 
-#include "test-data/VRMLFileGrammarTestDataset.hpp"
+#include "test_data/VRMLFileGrammarTestDataset.hpp"
 #include <boost/optional/optional.hpp>
 #include <boost/variant/detail/apply_visitor_unary.hpp>
 #include <Int32Array.hpp>
