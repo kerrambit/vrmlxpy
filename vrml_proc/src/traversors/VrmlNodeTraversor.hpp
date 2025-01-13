@@ -37,6 +37,14 @@ static std::shared_ptr<vrml_proc::conversion_context::BaseConversionContext> Han
 	vrml_proc::traversor::FullParsedVrmlNodeContext context,
 	const vrml_proc::action::BaseConversionContextActionMap& actionMap);
 
+static std::shared_ptr<vrml_proc::conversion_context::BaseConversionContext> HandleShape(
+	vrml_proc::traversor::FullParsedVrmlNodeContext context,
+	const vrml_proc::action::BaseConversionContextActionMap& actionMap);
+
+static std::shared_ptr<vrml_proc::conversion_context::BaseConversionContext> HandleBox(
+	vrml_proc::traversor::FullParsedVrmlNodeContext context,
+	const vrml_proc::action::BaseConversionContextActionMap& actionMap);
+
 namespace vrml_proc {
 	namespace traversor {
 
@@ -60,6 +68,12 @@ namespace vrml_proc {
 				}
 				else if (context.node.header == "Group") {
 					return HandleGroup(context, actionMap);
+				}
+				else if (context.node.header == "Shape") {
+					return HandleShape(context, actionMap);
+				}
+				else if (context.node.header == "Box") {
+					return HandleBox(context, actionMap);
 				}
 				else if (context.node.header == "Spotlight") {
 					return HandleSpotlight(context, actionMap);
@@ -145,6 +159,75 @@ std::shared_ptr<vrml_proc::conversion_context::BaseConversionContext> HandleGrou
 
 	return vrml_proc::traversor::utils::BaseConversionContextActionExecutor::TryToExecute<vrml_proc::conversion_context::MeshConversionContext>(
 		actionMap, "Group", { resolvedChildren, bboxCentreValue, bboxSizeValue });
+}
+
+std::shared_ptr<vrml_proc::conversion_context::BaseConversionContext> HandleShape(vrml_proc::traversor::FullParsedVrmlNodeContext context, const vrml_proc::action::BaseConversionContextActionMap& actionMap) {
+	std::cout << "VRML Node - Shape" << std::endl;
+
+	auto result = std::make_shared<vrml_proc::conversion_context::MeshConversionContext>();
+
+	if (context.node.fields.empty()) {
+		return result;
+	}
+
+	if (!vrml_proc::traversor::utils::VrmlFieldChecker::CheckFields({ "appearance", "geometry" }, context.node.fields)) {
+		// error propagation
+		return result;
+	}
+
+	vrml_proc::parser::VrmlNode appearance;
+	auto appearanceResult = vrml_proc::traversor::utils::VrmlFieldExtractor::ExtractVrmlNode("appearance", context.node.fields, context.manager);
+	if (appearanceResult.has_value()) {
+		// <check valid node names>
+		// 
+		// </check valid node names>
+	}
+	if (appearanceResult.error() == vrml_proc::traversor::utils::VrmlFieldExtractor::ExtractVrmlNodeError::ValidationError) {
+		// Error propagation and end.
+	}
+
+	auto apperanceTraversorResult = vrml_proc::traversor::VrmlNodeTraversor::Traverse({ appearance, context.manager }, actionMap);
+
+	vrml_proc::parser::VrmlNode geometry;
+	auto geometryResult = vrml_proc::traversor::utils::VrmlFieldExtractor::ExtractVrmlNode("geometry", context.node.fields, context.manager);
+	if (geometryResult.has_value()) {
+		// <check valid node names>
+		// 
+		// </check valid node names>
+	}
+	if (geometryResult.error() == vrml_proc::traversor::utils::VrmlFieldExtractor::ExtractVrmlNodeError::ValidationError) {
+		// Error propagation and end.
+	}
+
+	auto geometryTraversorResult = vrml_proc::traversor::VrmlNodeTraversor::Traverse({ geometry, context.manager }, actionMap);
+
+	return vrml_proc::traversor::utils::BaseConversionContextActionExecutor::TryToExecute<vrml_proc::conversion_context::MeshConversionContext>(actionMap, "Shape", { apperanceTraversorResult, geometryTraversorResult });
+}
+
+std::shared_ptr<vrml_proc::conversion_context::BaseConversionContext> HandleBox(vrml_proc::traversor::FullParsedVrmlNodeContext context, const vrml_proc::action::BaseConversionContextActionMap& actionMap) {
+	std::cout << "VRML Node - Box" << std::endl;
+
+	auto result = std::make_shared<vrml_proc::conversion_context::MeshConversionContext>();
+
+	if (context.node.fields.empty()) {
+		return result;
+	}
+
+	if (!vrml_proc::traversor::utils::VrmlFieldChecker::CheckFields({ "size" }, context.node.fields)) {
+		// error propagation
+	}
+
+	vrml_proc::parser::Vec3f sizeValue = { 2.0f, 2.0f, 2.0f };
+	auto size = vrml_proc::traversor::utils::VrmlFieldExtractor::ExtractByName<vrml_proc::parser::Vec3f>("size", context.node.fields);
+	if (size.has_value()) {
+		std::cout << "size" << size.value() << std::endl;
+		sizeValue = size.value();
+	}
+	if (size.error() == vrml_proc::traversor::utils::VrmlFieldExtractor::ExtractByNameError::ValidationError) {
+		// Return error type, invalid field value
+	}
+
+	return vrml_proc::traversor::utils::BaseConversionContextActionExecutor::TryToExecute<vrml_proc::conversion_context::MeshConversionContext>(actionMap, "Box", { sizeValue });
 }
 
 std::shared_ptr<vrml_proc::conversion_context::BaseConversionContext> HandleSpotlight(vrml_proc::traversor::FullParsedVrmlNodeContext context, const vrml_proc::action::BaseConversionContextActionMap& actionMap) {
