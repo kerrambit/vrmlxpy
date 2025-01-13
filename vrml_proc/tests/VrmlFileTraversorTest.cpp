@@ -7,6 +7,7 @@
 #include "test_data/VrmlFileTraversorTestDataset.hpp"
 #include <BaseConversionContextActionMap.hpp>
 #include <GroupAction.hpp>
+#include <BoxAction.hpp>
 #include <MemoryMappedFileReader.hpp>
 #include <MeshConversionContext.hpp>
 #include <ParserResult.hpp>
@@ -44,6 +45,13 @@ static vrml_proc::action::BaseConversionContextActionMap& GetActionMap() {
             return std::make_shared<vrml_proc::action::SpotlightAction>(std::any_cast<float>(args[0]));
         }
         throw std::invalid_argument("Invalid arguments for SpotlightAction");
+        });
+
+    actionMap.AddAction("Box", [](const std::vector<std::any>& args) {
+        if (args.size() == 1 && args[0].type() == typeid(vrml_proc::parser::Vec3f)) {
+            return std::make_shared<vrml_proc::action::BoxAction>(std::any_cast<vrml_proc::parser::Vec3f>(args[0]));
+        }
+        throw std::invalid_argument("Invalid arguments for BoxAction");
         });
 
     actionMap.AddAction("Group", [](const std::vector<std::any>& args) {
