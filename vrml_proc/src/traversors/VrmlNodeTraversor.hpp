@@ -88,8 +88,6 @@ std::shared_ptr<vrml_proc::conversion_context::BaseConversionContext> HandleGrou
 	}
 
 	std::vector<std::shared_ptr<vrml_proc::conversion_context::BaseConversionContext>> resolvedChildren;
-
-	// TODO: I need to distinguish between the situation that field is there but it has wrong type and between that field is not there
 	auto children = vrml_proc::traversor::utils::VrmlFieldExtractor::ExtractByName<std::vector<boost::variant<boost::recursive_wrapper<vrml_proc::parser::VrmlNode>, boost::recursive_wrapper<vrml_proc::parser::UseNode>>>>("children", context.node.fields);
 	if (children.has_value()) {
 
@@ -112,7 +110,7 @@ std::shared_ptr<vrml_proc::conversion_context::BaseConversionContext> HandleGrou
 				auto managerFound = context.manager.GetDefinitionNode(useNode.value().get_pointer()->identifier);
 				if (managerFound != nullptr) {
 					// Manual dereferencing of managerFound shared pointer.
-					auto useNodeTraversorResult = vrml_proc::traversor::VrmlNodeTraversor::Traverse({ *managerFound, context.manager }, actionMap);
+					auto useNodeTraversorResult = vrml_proc::traversor::VrmlNodeTraversor::Traverse({ *managerFound, context.manager }, actionMap); // TODO: manager must be thread-safe!
 					resolvedChildren.push_back(useNodeTraversorResult);
 				}
 				else {
@@ -121,6 +119,9 @@ std::shared_ptr<vrml_proc::conversion_context::BaseConversionContext> HandleGrou
 			}
 		}
 	}
+	if (children.error() == vrml_proc::traversor::utils::VrmlFieldExtractor::ExtractByNameError::ValidationError) {
+		// Return error type, invalid field value
+	}
 
 	vrml_proc::parser::Vec3f bboxCentreValue = { 0.0f, 0.0f, 0.0f };
 	auto bboxCentre = vrml_proc::traversor::utils::VrmlFieldExtractor::ExtractByName<vrml_proc::parser::Vec3f>("bboxCenter", context.node.fields);
@@ -128,12 +129,18 @@ std::shared_ptr<vrml_proc::conversion_context::BaseConversionContext> HandleGrou
 		std::cout << "bboxCenter " << bboxCentre.value() << std::endl;
 		vrml_proc::parser::Vec3f bboxCentreValue = bboxCentre.value();
 	}
+	if (bboxCentre.error() == vrml_proc::traversor::utils::VrmlFieldExtractor::ExtractByNameError::ValidationError) {
+		// Return error type, invalid field value
+	}
 
 	vrml_proc::parser::Vec3f bboxSizeValue = { -1.0f, -1.0f, -1.0f };
 	auto bboxSize = vrml_proc::traversor::utils::VrmlFieldExtractor::ExtractByName<vrml_proc::parser::Vec3f>("bboxSize", context.node.fields);
 	if (bboxSize.has_value()) {
 		std::cout << "bboxSize " << bboxSize.value() << std::endl;
 		vrml_proc::parser::Vec3f bboxSizeValue = bboxSize.value();
+	}
+	if (bboxSize.error() == vrml_proc::traversor::utils::VrmlFieldExtractor::ExtractByNameError::ValidationError) {
+		// Return error type, invalid field value
 	}
 
 	return vrml_proc::traversor::utils::BaseConversionContextActionExecutor::TryToExecute<vrml_proc::conversion_context::MeshConversionContext>(
@@ -146,10 +153,12 @@ std::shared_ptr<vrml_proc::conversion_context::BaseConversionContext> HandleSpot
 	auto ambientIntensity = vrml_proc::traversor::utils::VrmlFieldExtractor::ExtractByName<float>("ambientIntensity", context.node.fields);
 	if (ambientIntensity.has_value()) {
 		std::cout << "ambientIntensity" << ambientIntensity.value() << std::endl;
-		return vrml_proc::traversor::utils::BaseConversionContextActionExecutor::TryToExecute<vrml_proc::conversion_context::MeshConversionContext>(actionMap, "Spotlight", { ambientIntensity.value() });
+	}
+	if (ambientIntensity.error() == vrml_proc::traversor::utils::VrmlFieldExtractor::ExtractByNameError::ValidationError) {
+		// Return error type, invalid field value
 	}
 
-	return std::make_shared<vrml_proc::conversion_context::MeshConversionContext>();
+	return vrml_proc::traversor::utils::BaseConversionContextActionExecutor::TryToExecute<vrml_proc::conversion_context::MeshConversionContext>(actionMap, "Spotlight", { ambientIntensity.value_or(0.0f) });
 }
 
 std::shared_ptr<vrml_proc::conversion_context::BaseConversionContext> HandleWorldInfo(vrml_proc::traversor::FullParsedVrmlNodeContext context, const vrml_proc::action::BaseConversionContextActionMap& actionMap) {
@@ -159,15 +168,17 @@ std::shared_ptr<vrml_proc::conversion_context::BaseConversionContext> HandleWorl
 	if (info.has_value()) {
 		std::cout << "info" << info.value() << std::endl;
 	}
+	if (info.error() == vrml_proc::traversor::utils::VrmlFieldExtractor::ExtractByNameError::ValidationError) {
+		// Return error type, invalid field value
+	}
 
 	auto title = vrml_proc::traversor::utils::VrmlFieldExtractor::ExtractByName<std::string>("title", context.node.fields);
 	if (title.has_value()) {
 		std::cout << "title" << title.value() << std::endl;
 	}
-
-	if (info.has_value() && title.has_value()) {
-		return vrml_proc::traversor::utils::BaseConversionContextActionExecutor::TryToExecute<vrml_proc::conversion_context::MeshConversionContext>(actionMap, "WorldInfo", { info.value(), title.value() });
+	if (title.error() == vrml_proc::traversor::utils::VrmlFieldExtractor::ExtractByNameError::ValidationError) {
+		// Return error type, invalid field value
 	}
 
-	return std::make_shared<vrml_proc::conversion_context::MeshConversionContext>();
+	return vrml_proc::traversor::utils::BaseConversionContextActionExecutor::TryToExecute<vrml_proc::conversion_context::MeshConversionContext>(actionMap, "WorldInfo", { info.value_or(""), title.value_or("") });
 }
