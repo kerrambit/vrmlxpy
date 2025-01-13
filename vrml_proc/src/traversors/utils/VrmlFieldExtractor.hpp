@@ -22,6 +22,15 @@ namespace vrml_proc {
 		namespace utils {
 			namespace VrmlFieldExtractor {
 
+                static bool IsNamePresent(const std::string& name, const std::vector<vrml_proc::parser::VrmlField>& fields) {
+                    for (const auto& field : fields) {
+                        if (field.name == name) {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+
                 enum class ExtractByNameError {
                     FieldNotFound,
                     ValidationError
