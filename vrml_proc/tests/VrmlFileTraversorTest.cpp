@@ -78,7 +78,7 @@ static vrml_proc::action::BaseConversionContextActionMap& GetActionMap() {
 TEST_CASE("Parse VRML File - Valid Input - Simple VRML File", "[parsing][valid]") {
 
     vrml_proc::parser::VrmlNodeManager manager;
-    auto parseResult = ParseVrmlFile(validGroup, manager);
+    auto parseResult = ParseVrmlFile(sphereWithBox, manager);
     REQUIRE(parseResult);
 
     vrml_proc::action::BaseConversionContextActionMap actionMap = GetActionMap();
