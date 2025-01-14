@@ -29,10 +29,13 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/src/traversors
     ${CMAKE_CURRENT_SOURCE_DIR}/src/traversors/utils
     ${CMAKE_CURRENT_SOURCE_DIR}/../vendor/pybind11/include/pybind11
+    ${CMAKE_CURRENT_SOURCE_DIR}/../vendor/result
 )
 
 # Create the DLL.
 add_library(vrmlproc SHARED
+
+    "${CMAKE_CURRENT_SOURCE_DIR}/../vendor/result/result.hpp"
 
     "src/core/FileReader.hpp"
     "src/core/FileWriter.hpp"
@@ -105,6 +108,7 @@ add_library(vrmlproc SHARED
     "src/actions/BaseConversionContextAction.hpp"
     "src/actions/SpotlightAction.hpp"
     "src/actions/GroupAction.hpp"
+    "src/actions/BoxAction.hpp"
 )
 
 # Two build types - Debug and Release.

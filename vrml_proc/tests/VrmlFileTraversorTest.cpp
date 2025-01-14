@@ -7,6 +7,7 @@
 #include "test_data/VrmlFileTraversorTestDataset.hpp"
 #include <BaseConversionContextActionMap.hpp>
 #include <GroupAction.hpp>
+#include <BoxAction.hpp>
 #include <MemoryMappedFileReader.hpp>
 #include <MeshConversionContext.hpp>
 #include <ParserResult.hpp>
@@ -46,6 +47,13 @@ static vrml_proc::action::BaseConversionContextActionMap& GetActionMap() {
         throw std::invalid_argument("Invalid arguments for SpotlightAction");
         });
 
+    actionMap.AddAction("Box", [](const std::vector<std::any>& args) {
+        if (args.size() == 1 && args[0].type() == typeid(vrml_proc::parser::Vec3f)) {
+            return std::make_shared<vrml_proc::action::BoxAction>(std::any_cast<vrml_proc::parser::Vec3f>(args[0]));
+        }
+        throw std::invalid_argument("Invalid arguments for BoxAction");
+        });
+
     actionMap.AddAction("Group", [](const std::vector<std::any>& args) {
 
         if (args.size() == 3 &&
@@ -70,7 +78,7 @@ static vrml_proc::action::BaseConversionContextActionMap& GetActionMap() {
 TEST_CASE("Parse VRML File - Valid Input - Simple VRML File", "[parsing][valid]") {
 
     vrml_proc::parser::VrmlNodeManager manager;
-    auto parseResult = ParseVrmlFile(validGroup, manager);
+    auto parseResult = ParseVrmlFile(sphereWithBox, manager);
     REQUIRE(parseResult);
 
     vrml_proc::action::BaseConversionContextActionMap actionMap = GetActionMap();

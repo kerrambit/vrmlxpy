@@ -7,6 +7,8 @@
 
 #include <boost/variant.hpp>
 
+#include <result.hpp>
+
 #include "VrmlField.hpp"
 
 template <typename T>
@@ -20,16 +22,70 @@ namespace vrml_proc {
 		namespace utils {
 			namespace VrmlFieldExtractor {
 
+                static bool IsNamePresent(const std::string& name, const std::vector<vrml_proc::parser::VrmlField>& fields) {
+                    for (const auto& field : fields) {
+                        if (field.name == name) {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+
+                enum class ExtractByNameError {
+                    FieldNotFound,
+                    ValidationError
+                };
+
 				template <typename T>
-				static std::optional<T> ExtractByName(const std::string& name, const std::vector<vrml_proc::parser::VrmlField>& fields) {
+				static cpp::result<T, ExtractByNameError> ExtractByName(const std::string& name, const std::vector<vrml_proc::parser::VrmlField>& fields) {
 					for (const auto& field : fields) {
 						if (field.name == name) {
+
 							ExtractorVisitor<T> visitor;
-							return boost::apply_visitor(visitor, field.value);
+                            auto result = boost::apply_visitor(visitor, field.value);
+
+                            if (result.has_value()) {
+                                return result.value();
+                            }
+                            else {
+                                return cpp::fail(ExtractByNameError::ValidationError);
+                            }
 						}
 					}
-					return {};
+					return cpp::fail(ExtractByNameError::FieldNotFound);
 				}
+
+                enum class ExtractVrmlNodeError {
+                    FieldNotFound,
+                    ValidationError,
+                    UnknownUseNode
+                };
+
+                static cpp::result<vrml_proc::parser::VrmlNode&, ExtractVrmlNodeError> ExtractVrmlNode(const std::string& name, const std::vector<vrml_proc::parser::VrmlField>& fields, const vrml_proc::parser::VrmlNodeManager& manager) {
+                    if (vrml_proc::traversor::utils::VrmlFieldExtractor::IsNamePresent(name, fields)) {
+
+                        auto vrmlNode = vrml_proc::traversor::utils::VrmlFieldExtractor::ExtractByName<vrml_proc::parser::VrmlNode>(name, fields);
+                        if (vrmlNode.has_value()) {
+                            return vrmlNode.value();
+                        }
+
+                        auto useNode = vrml_proc::traversor::utils::VrmlFieldExtractor::ExtractByName<vrml_proc::parser::UseNode>(name, fields);
+                        if (useNode.has_value()) {
+                            auto managerFound = manager.GetDefinitionNode(useNode.value().identifier);
+                            if (managerFound != nullptr) {
+                                return *managerFound;
+                            }
+                            else {
+                                return cpp::fail(ExtractVrmlNodeError::UnknownUseNode);
+                            }
+                        }
+
+                        return cpp::fail(ExtractVrmlNodeError::ValidationError);
+                    }
+                    else {
+                        return cpp::fail(ExtractVrmlNodeError::FieldNotFound);
+                    }
+                }
 
                 template <typename T>
                 static std::optional<T> ExtractFromVariant(const boost::variant<boost::recursive_wrapper<vrml_proc::parser::VrmlNode>, boost::recursive_wrapper<vrml_proc::parser::UseNode>>& variant) {

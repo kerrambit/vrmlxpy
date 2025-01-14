@@ -42,6 +42,47 @@ std::string validGroup = R"(
 
 )";
 
+std::string sphereWithBox = R"(
+
+    #VRML V2.0 utf8
+
+    Group {
+        children [
+            DEF id Box {
+                      size 2.0 2.0 2.0
+                   },
+            Shape {
+                geometry USE id
+            }
+        ]
+    }
+
+)";
+
+std::string sphereWithTwoBoxes = R"(
+
+    #VRML V2.0 utf8
+
+	WorldInfo {
+
+	   title "cube.wrl"
+
+	   info "VRML file."
+
+	}
+
+    Group {
+        children [
+            Shape {
+                geometry Box {
+                    size 2.0 2.0 2.0
+                }
+            }
+        ]
+    }
+
+)";
+
 std::string nodeInNode = R"(
 
 	#VRML V2.0 utf8
