@@ -8,6 +8,7 @@
 #include <BaseConversionContextActionMap.hpp>
 #include <GroupAction.hpp>
 #include <BoxAction.hpp>
+#include <ShapeAction.hpp>
 #include <MemoryMappedFileReader.hpp>
 #include <MeshConversionContext.hpp>
 #include <ParserResult.hpp>
@@ -69,6 +70,20 @@ static vrml_proc::action::BaseConversionContextActionMap& GetActionMap() {
         }
 
         throw std::invalid_argument("Invalid arguments for GroupAction"); });
+
+    actionMap.AddAction("Shape", [](const std::vector<std::any>& args) {
+
+        if (args.size() == 2 &&
+            args[0].type() == typeid(std::shared_ptr<vrml_proc::conversion_context::BaseConversionContext>) &&
+            args[1].type() == typeid(std::shared_ptr<vrml_proc::conversion_context::BaseConversionContext>)) {
+
+            auto appearance = std::any_cast<std::shared_ptr<vrml_proc::conversion_context::BaseConversionContext>>(args[0]);
+            auto geometry = std::any_cast<std::shared_ptr<vrml_proc::conversion_context::BaseConversionContext>>(args[1]);
+
+            return std::make_shared<vrml_proc::action::ShapeAction>(appearance, geometry);
+        }
+
+        throw std::invalid_argument("Invalid arguments for ShapeAction"); });
 
     return actionMap;
 }
