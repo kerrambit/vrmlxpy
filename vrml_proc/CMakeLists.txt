@@ -20,7 +20,8 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/src/core
     ${CMAKE_CURRENT_SOURCE_DIR}/src/core/utils
     ${CMAKE_CURRENT_SOURCE_DIR}/src/parser
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/models 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/models
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/models/utils
     ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/interfaces
     ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/grammars
     ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/services
@@ -28,6 +29,7 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/src/actions
     ${CMAKE_CURRENT_SOURCE_DIR}/src/traversors
     ${CMAKE_CURRENT_SOURCE_DIR}/src/traversors/utils
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/traversors/validators
     ${CMAKE_CURRENT_SOURCE_DIR}/../vendor/pybind11/include/pybind11
     ${CMAKE_CURRENT_SOURCE_DIR}/../vendor/result
 )
@@ -70,6 +72,8 @@ add_library(vrmlproc SHARED
     "src/parser/models/UseNode.hpp"
     "src/parser/models/UseNode.cpp"
 
+    "src/parser/models/utils/VrmlFieldExtractor.hpp"
+
     "src/parser/services/VrmlNodeManager.hpp"
     "src/parser/services/VrmlNodeManager.cpp"
 
@@ -100,9 +104,10 @@ add_library(vrmlproc SHARED
 
     "src/traversors/VrmlFileTraversor.hpp"
     "src/traversors/VrmlNodeTraversor.hpp"
-    "src/traversors/utils/VrmlFieldExtractor.hpp"
     "src/traversors/utils/BaseConversionContextActionExecutor.hpp"
-    "src/traversors/utils/VrmlFieldChecker.hpp"
+
+    "src/traversors/validators/NodeValidator.hpp"
+    "src/traversors/validators/ShapeNodeValidator.hpp"
 
     "src/actions/BaseConversionContextActionMap.hpp"
     "src/actions/BaseConversionContextAction.hpp"
