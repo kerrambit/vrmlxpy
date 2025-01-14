@@ -114,6 +114,7 @@ add_library(vrmlproc SHARED
     "src/actions/SpotlightAction.hpp"
     "src/actions/GroupAction.hpp"
     "src/actions/BoxAction.hpp"
+    "src/actions/ShapeAction.hpp"
 )
 
 # Two build types - Debug and Release.
