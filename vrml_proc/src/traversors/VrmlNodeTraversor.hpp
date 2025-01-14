@@ -2,10 +2,11 @@
 
 #include <memory>
 #include <vector>
-#include <bitset>
 
 #include <boost/variant.hpp>
 #include <boost/variant/recursive_wrapper.hpp>
+
+#include <result.hpp>
 
 #include "VrmlNode.hpp"
 #include "UseNode.hpp"
@@ -56,6 +57,25 @@ namespace vrml_proc {
 			const vrml_proc::parser::VrmlNode& node;
 			const vrml_proc::parser::VrmlNodeManager& manager;
 		};
+
+		// tmp
+		struct FieldNotFoundError {
+			std::string field_name;
+		};
+
+		struct ValidationError {
+			int error_code;
+		};
+
+		struct UnknownVrmlNodeError {
+			std::string unknownVrmlNodeName;
+			std::string node;
+		};
+
+		using ExtractError = boost::variant<FieldNotFoundError, ValidationError, UnknownVrmlNodeError>;
+
+		using VrmlNodeTraverorResult = cpp::result<std::shared_ptr<vrml_proc::conversion_context::BaseConversionContext>, ExtractError>;
+		// tmp
 
 		class VrmlNodeTraversor {
 		public:
