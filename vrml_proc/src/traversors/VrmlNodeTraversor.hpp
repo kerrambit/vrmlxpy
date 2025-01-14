@@ -16,7 +16,9 @@
 #include "StlBaseStructure.hpp"
 #include "BaseConversionContextActionMap.hpp"
 #include "BaseConversionContextActionExecutor.hpp"
-#include "VrmlFieldChecker.hpp"
+#include "NodeValidator.hpp"
+
+#include "ShapeNodeValidator.hpp"
 
 // Forward declaration.
 namespace vrml_proc {
@@ -99,6 +101,8 @@ namespace vrml_proc {
 					return HandleSpotlight(context, actionMap);
 				}
 
+				// TODO: empty node is ok, check it here
+
 				std::cout << "Error! Unknown VRML Node." << std::endl;
 				return nullptr;
 			}
@@ -116,13 +120,19 @@ std::shared_ptr<vrml_proc::conversion_context::BaseConversionContext> HandleGrou
 		return result;
 	}
 
-	if (!vrml_proc::traversor::utils::VrmlFieldChecker::CheckFields({ "children", "bboxSize", "bboxCenter" }, context.node.fields)) {
-		// error propagation
-		return result;
+	if (vrml_proc::traversor::validator::NodeValidator::CheckForOnlyUniqueAllowedFieldNames({ "children", "bboxSize", "bboxCenter" }, context.node.fields).has_error()) {
+		// propagate error up
+		// return
+		return nullptr;
 	}
 
+	//if (!vrml_proc::traversor::utils::VrmlFieldChecker::CheckFields({ "children", "bboxSize", "bboxCenter" }, context.node.fields)) {
+	//	// error propagation
+	//	return result;
+	//}
+
 	std::vector<std::shared_ptr<vrml_proc::conversion_context::BaseConversionContext>> resolvedChildren;
-	auto children = vrml_proc::traversor::utils::VrmlFieldExtractor::ExtractByName<std::vector<boost::variant<boost::recursive_wrapper<vrml_proc::parser::VrmlNode>, boost::recursive_wrapper<vrml_proc::parser::UseNode>>>>("children", context.node.fields);
+	auto children = vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractByName<std::vector<boost::variant<boost::recursive_wrapper<vrml_proc::parser::VrmlNode>, boost::recursive_wrapper<vrml_proc::parser::UseNode>>>>("children", context.node.fields);
 	if (children.has_value()) {
 
 		std::cout << "children " << std::endl;
@@ -131,14 +141,14 @@ std::shared_ptr<vrml_proc::conversion_context::BaseConversionContext> HandleGrou
 
 		for (const auto& child : children.value()) {
 
-			auto vrmlNode = vrml_proc::traversor::utils::VrmlFieldExtractor::ExtractFromVariant<boost::recursive_wrapper<vrml_proc::parser::VrmlNode>>(child);
+			auto vrmlNode = vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractFromVariant<boost::recursive_wrapper<vrml_proc::parser::VrmlNode>>(child);
 			if (vrmlNode.has_value()) {
 				std::cout << "VRML Node child " << vrmlNode.value().get() << std::endl;
 				auto vrmlNodeTraversorResult = vrml_proc::traversor::VrmlNodeTraversor::Traverse({ vrmlNode.value().get(), context.manager }, actionMap);
 				resolvedChildren.push_back(vrmlNodeTraversorResult);
 			}
 
-			auto useNode = vrml_proc::traversor::utils::VrmlFieldExtractor::ExtractFromVariant<boost::recursive_wrapper<vrml_proc::parser::UseNode>>(child);
+			auto useNode = vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractFromVariant<boost::recursive_wrapper<vrml_proc::parser::UseNode>>(child);
 			if (useNode.has_value()) {
 				std::cout << "USE Node child " << useNode.value().get() << std::endl;
 				auto managerFound = context.manager.GetDefinitionNode(useNode.value().get_pointer()->identifier);
@@ -153,27 +163,27 @@ std::shared_ptr<vrml_proc::conversion_context::BaseConversionContext> HandleGrou
 			}
 		}
 	}
-	if (children.error() == vrml_proc::traversor::utils::VrmlFieldExtractor::ExtractByNameError::ValidationError) {
+	if (children.error() == vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractByNameError::ValidationError) {
 		// Return error type, invalid field value
 	}
 
 	vrml_proc::parser::Vec3f bboxCentreValue = { 0.0f, 0.0f, 0.0f };
-	auto bboxCentre = vrml_proc::traversor::utils::VrmlFieldExtractor::ExtractByName<vrml_proc::parser::Vec3f>("bboxCenter", context.node.fields);
+	auto bboxCentre = vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractByName<vrml_proc::parser::Vec3f>("bboxCenter", context.node.fields);
 	if (bboxCentre.has_value()) {
 		std::cout << "bboxCenter " << bboxCentre.value() << std::endl;
 		vrml_proc::parser::Vec3f bboxCentreValue = bboxCentre.value();
 	}
-	if (bboxCentre.error() == vrml_proc::traversor::utils::VrmlFieldExtractor::ExtractByNameError::ValidationError) {
+	if (bboxCentre.error() == vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractByNameError::ValidationError) {
 		// Return error type, invalid field value
 	}
 
 	vrml_proc::parser::Vec3f bboxSizeValue = { -1.0f, -1.0f, -1.0f };
-	auto bboxSize = vrml_proc::traversor::utils::VrmlFieldExtractor::ExtractByName<vrml_proc::parser::Vec3f>("bboxSize", context.node.fields);
+	auto bboxSize = vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractByName<vrml_proc::parser::Vec3f>("bboxSize", context.node.fields);
 	if (bboxSize.has_value()) {
 		std::cout << "bboxSize " << bboxSize.value() << std::endl;
 		vrml_proc::parser::Vec3f bboxSizeValue = bboxSize.value();
 	}
-	if (bboxSize.error() == vrml_proc::traversor::utils::VrmlFieldExtractor::ExtractByNameError::ValidationError) {
+	if (bboxSize.error() == vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractByNameError::ValidationError) {
 		// Return error type, invalid field value
 	}
 
@@ -186,40 +196,15 @@ std::shared_ptr<vrml_proc::conversion_context::BaseConversionContext> HandleShap
 
 	auto result = std::make_shared<vrml_proc::conversion_context::MeshConversionContext>();
 
-	if (context.node.fields.empty()) {
-		return result;
+	vrml_proc::traversor::validator::ShapeNodeValidator validator(context.node, context.manager);
+	if (validator.Validate().has_error()) {
+		// here we gonna extend the error type and return it
+		return nullptr;
 	}
 
-	if (!vrml_proc::traversor::utils::VrmlFieldChecker::CheckFields({ "appearance", "geometry" }, context.node.fields)) {
-		// error propagation
-		return result;
-	}
-
-	vrml_proc::parser::VrmlNode appearance;
-	auto appearanceResult = vrml_proc::traversor::utils::VrmlFieldExtractor::ExtractVrmlNode("appearance", context.node.fields, context.manager);
-	if (appearanceResult.has_value()) {
-		// <check valid node names>
-		// 
-		// </check valid node names>
-	}
-	if (appearanceResult.error() == vrml_proc::traversor::utils::VrmlFieldExtractor::ExtractVrmlNodeError::ValidationError) {
-		// Error propagation and end.
-	}
-
-	auto apperanceTraversorResult = vrml_proc::traversor::VrmlNodeTraversor::Traverse({ appearance, context.manager }, actionMap);
-
-	vrml_proc::parser::VrmlNode geometry;
-	auto geometryResult = vrml_proc::traversor::utils::VrmlFieldExtractor::ExtractVrmlNode("geometry", context.node.fields, context.manager);
-	if (geometryResult.has_value()) {
-		// <check valid node names>
-		// 
-		// </check valid node names>
-	}
-	if (geometryResult.error() == vrml_proc::traversor::utils::VrmlFieldExtractor::ExtractVrmlNodeError::ValidationError) {
-		// Error propagation and end.
-	}
-
-	auto geometryTraversorResult = vrml_proc::traversor::VrmlNodeTraversor::Traverse({ geometry, context.manager }, actionMap);
+	auto defaultAppearance = vrml_proc::parser::VrmlNode(); auto defaultGeometry = vrml_proc::parser::VrmlNode();
+	auto apperanceTraversorResult = vrml_proc::traversor::VrmlNodeTraversor::Traverse({ validator.GetCachedAppearance(defaultAppearance), context.manager}, actionMap);
+	auto geometryTraversorResult = vrml_proc::traversor::VrmlNodeTraversor::Traverse({ validator.GetCachedGeometry(defaultGeometry), context.manager}, actionMap);
 
 	return vrml_proc::traversor::utils::BaseConversionContextActionExecutor::TryToExecute<vrml_proc::conversion_context::MeshConversionContext>(actionMap, "Shape", { apperanceTraversorResult, geometryTraversorResult });
 }
@@ -233,17 +218,19 @@ std::shared_ptr<vrml_proc::conversion_context::BaseConversionContext> HandleBox(
 		return result;
 	}
 
-	if (!vrml_proc::traversor::utils::VrmlFieldChecker::CheckFields({ "size" }, context.node.fields)) {
-		// error propagation
+	if (vrml_proc::traversor::validator::NodeValidator::CheckForOnlyUniqueAllowedFieldNames({ "size" }, context.node.fields).has_error()) {
+		// propagate error up
+		// return
+		return nullptr;
 	}
 
 	vrml_proc::parser::Vec3f sizeValue = { 2.0f, 2.0f, 2.0f };
-	auto size = vrml_proc::traversor::utils::VrmlFieldExtractor::ExtractByName<vrml_proc::parser::Vec3f>("size", context.node.fields);
+	auto size = vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractByName<vrml_proc::parser::Vec3f>("size", context.node.fields);
 	if (size.has_value()) {
 		std::cout << "size" << size.value() << std::endl;
 		sizeValue = size.value();
 	}
-	if (size.error() == vrml_proc::traversor::utils::VrmlFieldExtractor::ExtractByNameError::ValidationError) {
+	if (size.error() == vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractByNameError::ValidationError) {
 		// Return error type, invalid field value
 	}
 
@@ -253,11 +240,11 @@ std::shared_ptr<vrml_proc::conversion_context::BaseConversionContext> HandleBox(
 std::shared_ptr<vrml_proc::conversion_context::BaseConversionContext> HandleSpotlight(vrml_proc::traversor::FullParsedVrmlNodeContext context, const vrml_proc::action::BaseConversionContextActionMap& actionMap) {
 	std::cout << "VRML Node - Spotlight" << std::endl;
 
-	auto ambientIntensity = vrml_proc::traversor::utils::VrmlFieldExtractor::ExtractByName<float>("ambientIntensity", context.node.fields);
+	auto ambientIntensity = vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractByName<float>("ambientIntensity", context.node.fields);
 	if (ambientIntensity.has_value()) {
 		std::cout << "ambientIntensity" << ambientIntensity.value() << std::endl;
 	}
-	if (ambientIntensity.error() == vrml_proc::traversor::utils::VrmlFieldExtractor::ExtractByNameError::ValidationError) {
+	if (ambientIntensity.error() == vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractByNameError::ValidationError) {
 		// Return error type, invalid field value
 	}
 
@@ -267,19 +254,19 @@ std::shared_ptr<vrml_proc::conversion_context::BaseConversionContext> HandleSpot
 std::shared_ptr<vrml_proc::conversion_context::BaseConversionContext> HandleWorldInfo(vrml_proc::traversor::FullParsedVrmlNodeContext context, const vrml_proc::action::BaseConversionContextActionMap& actionMap) {
 	std::cout << "VRML Node - WorldInfo" << std::endl;
 
-	auto info = vrml_proc::traversor::utils::VrmlFieldExtractor::ExtractByName<std::string>("info", context.node.fields);
+	auto info = vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractByName<std::string>("info", context.node.fields);
 	if (info.has_value()) {
 		std::cout << "info" << info.value() << std::endl;
 	}
-	if (info.error() == vrml_proc::traversor::utils::VrmlFieldExtractor::ExtractByNameError::ValidationError) {
+	if (info.error() == vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractByNameError::ValidationError) {
 		// Return error type, invalid field value
 	}
 
-	auto title = vrml_proc::traversor::utils::VrmlFieldExtractor::ExtractByName<std::string>("title", context.node.fields);
+	auto title = vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractByName<std::string>("title", context.node.fields);
 	if (title.has_value()) {
 		std::cout << "title" << title.value() << std::endl;
 	}
-	if (title.error() == vrml_proc::traversor::utils::VrmlFieldExtractor::ExtractByNameError::ValidationError) {
+	if (title.error() == vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractByNameError::ValidationError) {
 		// Return error type, invalid field value
 	}
 
