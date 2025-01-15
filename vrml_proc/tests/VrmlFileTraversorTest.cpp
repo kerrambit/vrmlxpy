@@ -49,8 +49,8 @@ static vrml_proc::action::BaseConversionContextActionMap& GetActionMap() {
         });
 
     actionMap.AddAction("Box", [](const std::vector<std::any>& args) {
-        if (args.size() == 1 && args[0].type() == typeid(vrml_proc::parser::Vec3f)) {
-            return std::make_shared<vrml_proc::action::BoxAction>(std::any_cast<vrml_proc::parser::Vec3f>(args[0]));
+        if (args.size() == 2 && args[0].type() == typeid(vrml_proc::parser::Vec3f) && args[1].type() == typeid(bool)) {
+            return std::make_shared<vrml_proc::action::BoxAction>(std::any_cast<vrml_proc::parser::Vec3f>(args[0]), std::any_cast<bool>(args[1]));
         }
         throw std::invalid_argument("Invalid arguments for BoxAction");
         });

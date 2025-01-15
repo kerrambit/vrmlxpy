@@ -55,10 +55,14 @@ namespace vrml_proc {
 		struct FullParsedVrmlNodeContext {
 
 			FullParsedVrmlNodeContext(const vrml_proc::parser::VrmlNode& node, const vrml_proc::parser::VrmlNodeManager& manager)
-				: node(node), manager(manager) {}
+				: node(node), manager(manager), IsDescendantOfShape(false) {}
+
+			FullParsedVrmlNodeContext(const vrml_proc::parser::VrmlNode& node, const vrml_proc::parser::VrmlNodeManager& manager, bool isDescendantOfShape)
+				: node(node), manager(manager), IsDescendantOfShape(isDescendantOfShape) {}
 
 			const vrml_proc::parser::VrmlNode& node;
 			const vrml_proc::parser::VrmlNodeManager& manager;
+			bool IsDescendantOfShape;
 		};
 
 		class VrmlNodeTraversor {
@@ -180,8 +184,8 @@ std::shared_ptr<vrml_proc::conversion_context::BaseConversionContext> HandleShap
 	}
 
 	auto defaultAppearance = vrml_proc::parser::VrmlNode(); auto defaultGeometry = vrml_proc::parser::VrmlNode();
-	auto apperanceTraversorResult = vrml_proc::traversor::VrmlNodeTraversor::Traverse({ validator.GetCachedAppearance(defaultAppearance), context.manager}, actionMap);
-	auto geometryTraversorResult = vrml_proc::traversor::VrmlNodeTraversor::Traverse({ validator.GetCachedGeometry(defaultGeometry), context.manager}, actionMap);
+	auto apperanceTraversorResult = vrml_proc::traversor::VrmlNodeTraversor::Traverse({ validator.GetCachedAppearance(defaultAppearance), context.manager, true}, actionMap);
+	auto geometryTraversorResult = vrml_proc::traversor::VrmlNodeTraversor::Traverse({ validator.GetCachedGeometry(defaultGeometry), context.manager, true}, actionMap);
 
 	return vrml_proc::traversor::utils::BaseConversionContextActionExecutor::TryToExecute<vrml_proc::conversion_context::MeshConversionContext>(actionMap, "Shape", { apperanceTraversorResult, geometryTraversorResult });
 }
@@ -211,7 +215,7 @@ std::shared_ptr<vrml_proc::conversion_context::BaseConversionContext> HandleBox(
 		// Return error type, invalid field value
 	}
 
-	return vrml_proc::traversor::utils::BaseConversionContextActionExecutor::TryToExecute<vrml_proc::conversion_context::MeshConversionContext>(actionMap, "Box", { sizeValue });
+	return vrml_proc::traversor::utils::BaseConversionContextActionExecutor::TryToExecute<vrml_proc::conversion_context::MeshConversionContext>(actionMap, "Box", { sizeValue, context.IsDescendantOfShape });
 }
 
 std::shared_ptr<vrml_proc::conversion_context::BaseConversionContext> HandleSpotlight(vrml_proc::traversor::FullParsedVrmlNodeContext context, const vrml_proc::action::BaseConversionContextActionMap& actionMap) {
