@@ -30,6 +30,7 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/src/traversors
     ${CMAKE_CURRENT_SOURCE_DIR}/src/traversors/utils
     ${CMAKE_CURRENT_SOURCE_DIR}/src/traversors/validators
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/traversors/handlers
     ${CMAKE_CURRENT_SOURCE_DIR}/../vendor/pybind11/include/pybind11
     ${CMAKE_CURRENT_SOURCE_DIR}/../vendor/result
 )
@@ -102,9 +103,23 @@ add_library(vrmlproc SHARED
     "src/conversion_context/MeshConversionContext.hpp"
     "src/conversion_context/StlBaseStructure.hpp"
 
-    "src/traversors/VrmlFileTraversor.hpp"
     "src/traversors/VrmlNodeTraversor.hpp"
+    "src/traversors/VrmlNodeTraversor.cpp"
+    "src/traversors/VrmlFileTraversor.hpp"
+    "src/traversors/FullParsedVrmlNodeContext.hpp"
     "src/traversors/utils/BaseConversionContextActionExecutor.hpp"
+
+    "src/traversors/handlers/ShapeHandler.hpp"
+    "src/traversors/handlers/ShapeHandler.cpp"
+    "src/traversors/handlers/GroupHandler.hpp"
+    "src/traversors/handlers/GroupHandler.cpp"
+    "src/traversors/handlers/WorldInfoHandler.hpp"
+    "src/traversors/handlers/WorldInfoHandler.cpp"
+    "src/traversors/handlers/BoxHandler.hpp"
+    "src/traversors/handlers/BoxHandler.cpp"
+    "src/traversors/handlers/SpotlightHandler.hpp"
+    "src/traversors/handlers/SpotlightHandler.cpp"
+
 
     "src/traversors/validators/NodeValidator.hpp"
     "src/traversors/validators/ShapeNodeValidator.hpp"
