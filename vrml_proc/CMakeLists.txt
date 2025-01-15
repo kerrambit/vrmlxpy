@@ -111,6 +111,7 @@ add_library(vrmlproc SHARED
 
     "src/actions/BaseConversionContextActionMap.hpp"
     "src/actions/BaseConversionContextAction.hpp"
+    "src/actions/GeometryAction.hpp"
     "src/actions/SpotlightAction.hpp"
     "src/actions/GroupAction.hpp"
     "src/actions/BoxAction.hpp"
