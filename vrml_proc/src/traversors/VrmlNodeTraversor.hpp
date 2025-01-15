@@ -13,6 +13,7 @@
 #include "VrmlNodeManager.hpp"
 #include "VrmlFieldExtractor.hpp"
 #include "BaseConversionContext.hpp"
+#include "MeshConversionContext.hpp"
 #include "StlBaseStructure.hpp"
 #include "BaseConversionContextActionMap.hpp"
 #include "BaseConversionContextActionExecutor.hpp"
@@ -60,25 +61,6 @@ namespace vrml_proc {
 			const vrml_proc::parser::VrmlNodeManager& manager;
 		};
 
-		// tmp
-		struct FieldNotFoundError {
-			std::string field_name;
-		};
-
-		struct ValidationError {
-			int error_code;
-		};
-
-		struct UnknownVrmlNodeError {
-			std::string unknownVrmlNodeName;
-			std::string node;
-		};
-
-		using ExtractError = boost::variant<FieldNotFoundError, ValidationError, UnknownVrmlNodeError>;
-
-		using VrmlNodeTraverorResult = cpp::result<std::shared_ptr<vrml_proc::conversion_context::BaseConversionContext>, ExtractError>;
-		// tmp
-
 		class VrmlNodeTraversor {
 		public:
 
@@ -125,11 +107,6 @@ std::shared_ptr<vrml_proc::conversion_context::BaseConversionContext> HandleGrou
 		// return
 		return nullptr;
 	}
-
-	//if (!vrml_proc::traversor::utils::VrmlFieldChecker::CheckFields({ "children", "bboxSize", "bboxCenter" }, context.node.fields)) {
-	//	// error propagation
-	//	return result;
-	//}
 
 	std::vector<std::shared_ptr<vrml_proc::conversion_context::BaseConversionContext>> resolvedChildren;
 	auto children = vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractByName<std::vector<boost::variant<boost::recursive_wrapper<vrml_proc::parser::VrmlNode>, boost::recursive_wrapper<vrml_proc::parser::UseNode>>>>("children", context.node.fields);
