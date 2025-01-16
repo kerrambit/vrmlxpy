@@ -40,7 +40,7 @@ namespace vrml_proc {
                     };
 
                     template <typename T>
-                    static cpp::result<T, ExtractByNameError> ExtractByNameExtended(const std::string& name, const std::vector<vrml_proc::parser::VrmlField>& fields, std::string& out) {
+                    static cpp::result<T, ExtractByNameError> ExtractByNameExtended(const std::string& name, const std::vector<vrml_proc::parser::VrmlField>& fields, std::string& invalidType) {
                         for (const auto& field : fields) {
                             if (field.name == name) {
 
@@ -52,7 +52,7 @@ namespace vrml_proc {
                                 }
                                 else {
                                     if (result.error().has_value()) {
-                                        out = result.error().value();
+                                        invalidType = result.error().value();
                                     }
                                     return cpp::fail(ExtractByNameError::ValidationError);
                                 }
@@ -63,22 +63,8 @@ namespace vrml_proc {
 
                     template <typename T>
                     static cpp::result<T, ExtractByNameError> ExtractByName(const std::string& name, const std::vector<vrml_proc::parser::VrmlField>& fields) {
-                        for (const auto& field : fields) {
-                            if (field.name == name) {
-
-                                ExtractorVisitor<T> visitor;
-                                auto result = boost::apply_visitor(visitor, field.value);
-
-                                if (result.has_value()) {
-                                    return result.value();
-                                }
-                                else {
-                                    
-                                    return cpp::fail(ExtractByNameError::ValidationError);
-                                }
-                            }
-                        }
-                        return cpp::fail(ExtractByNameError::FieldNotFound);
+                        std::string _;
+                        return ExtractByNameExtended(name, fields, _);
                     }
 
                     enum class ExtractVrmlNodeError {
@@ -88,33 +74,11 @@ namespace vrml_proc {
                     };
 
                     static cpp::result<vrml_proc::parser::VrmlNode&, ExtractVrmlNodeError> ExtractVrmlNode(const std::string& name, const std::vector<vrml_proc::parser::VrmlField>& fields, const vrml_proc::parser::VrmlNodeManager& manager) {
-                        if (IsNamePresent(name, fields)) {
-
-                            auto vrmlNode = ExtractByName<vrml_proc::parser::VrmlNode>(name, fields);
-                            if (vrmlNode.has_value()) {
-                                return vrmlNode.value();
-                            }
-
-                            auto useNode = ExtractByName<vrml_proc::parser::UseNode>(name, fields);
-                            if (useNode.has_value()) {
-                                //StaticExtractVrmlNodeUseNodeId = useNode.value().identifier;
-                                auto managerFound = manager.GetDefinitionNode(useNode.value().identifier);
-                                if (managerFound != nullptr) {
-                                    return *managerFound;
-                                }
-                                else {
-                                    return cpp::fail(ExtractVrmlNodeError::UnknownUseNode);
-                                }
-                            }
-
-                            return cpp::fail(ExtractVrmlNodeError::ValidationError);
-                        }
-                        else {
-                            return cpp::fail(ExtractVrmlNodeError::FieldNotFound);
-                        }
+                        std::string invalidType; std::string useId;
+                        return ExtractVrmlNodeExtended(name, fields, manager, invalidType, useId);
                     }
 
-                    static cpp::result<vrml_proc::parser::VrmlNode&, ExtractVrmlNodeError> ExtractVrmlNodeExtended(const std::string& name, const std::vector<vrml_proc::parser::VrmlField>& fields, const vrml_proc::parser::VrmlNodeManager& manager, std::string& out, std::string& useId) {
+                    static cpp::result<vrml_proc::parser::VrmlNode&, ExtractVrmlNodeError> ExtractVrmlNodeExtended(const std::string& name, const std::vector<vrml_proc::parser::VrmlField>& fields, const vrml_proc::parser::VrmlNodeManager& manager, std::string& invalidType, std::string& useId) {
                         if (IsNamePresent(name, fields)) {
 
                             std::string error = "";
@@ -125,7 +89,6 @@ namespace vrml_proc {
 
                             auto useNode = ExtractByName<vrml_proc::parser::UseNode>(name, fields);
                             if (useNode.has_value()) {
-                                //StaticExtractVrmlNodeUseNodeId = useNode.value().identifier;
                                 auto managerFound = manager.GetDefinitionNode(useNode.value().identifier);
                                 if (managerFound != nullptr) {
                                     return *managerFound;
@@ -136,7 +99,7 @@ namespace vrml_proc {
                                 }
                             }
                             
-                            out = error;
+                            invalidType = error;
                             return cpp::fail(ExtractVrmlNodeError::ValidationError);
                         }
                         else {
@@ -146,7 +109,6 @@ namespace vrml_proc {
 
                     template <typename T>
                     static std::optional<T> ExtractFromVariant(const boost::variant<boost::recursive_wrapper<vrml_proc::parser::VrmlNode>, boost::recursive_wrapper<vrml_proc::parser::UseNode>>& variant) {
-                        //StaticExtractFromVariantTypeValue = typeid(T).name();
                         VariantVisitor<T> visitor;
                         return boost::apply_visitor(visitor, variant);
                     }
