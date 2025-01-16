@@ -12,7 +12,7 @@ namespace vrml_proc {
 	namespace core {
 		namespace utils {
 			/**
-			 * @brief Utility function which returns a string representing the name of the type.
+			 * @brief Utility function which returns a string representing the name of the type based on the passed const reference to an entity.
 			 * @note The __cxa_demangle function was found here https://gcc.gnu.org/onlinedocs/libstdc++/libstdc++-html-USERS-4.3/a01696.html.
 			 */
 			template<typename T>
@@ -28,6 +28,25 @@ namespace vrml_proc {
 				}
 #endif
 				return typeid(object).name();
+			}
+
+			/**
+			 * @brief Utility function which returns a string representing the name of the type based on the template typename argument.
+			 * @note The __cxa_demangle function was found here https://gcc.gnu.org/onlinedocs/libstdc++/libstdc++-html-USERS-4.3/a01696.html.
+			 */
+			template<typename T>
+			std::string TypeToString() {
+
+#ifdef __GNUG__
+				int status;
+				char* demangled = abi::__cxa_demangle(typeid(T).name(), nullptr, nullptr, &status);
+				if (status == 0) {
+					std::string result(demangled);
+					std::free(demangled);
+					return result;
+				}
+#endif
+				return typeid(T).name();
 			}
 		}
 	}
