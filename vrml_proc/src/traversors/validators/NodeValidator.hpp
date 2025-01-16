@@ -163,10 +163,13 @@ namespace vrml_proc {
 					return std::optional<std::reference_wrapper<vrml_proc::parser::VrmlNode>>(value.value());
 				}
 
-				template<typename T>
+				/*template<typename T>
 				static cpp::result<std::optional<std::reference_wrapper<T>>, vrml_proc::traversor::validator::error::NodeValidationError> ValidateField(const std::string& name, const std::vector<vrml_proc::parser::VrmlField>& fields, const vrml_proc::parser::VrmlNodeManager& manager) {
 
-				}
+					std::string invalidType = "";
+					auto value = vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractByNameExtended<T>(name, fields, manager, invalidType);
+
+				}*/
 			};
 		}
 	}
