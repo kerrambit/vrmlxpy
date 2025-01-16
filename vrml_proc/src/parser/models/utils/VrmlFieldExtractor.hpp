@@ -63,8 +63,8 @@ namespace vrml_proc {
 
                     template <typename T>
                     static cpp::result<T, ExtractByNameError> ExtractByName(const std::string& name, const std::vector<vrml_proc::parser::VrmlField>& fields) {
-                        std::string _;
-                        return ExtractByNameExtended(name, fields, _);
+                        std::string invalidType;
+                        return ExtractByNameExtended<T>(name, fields, invalidType);
                     }
 
                     enum class ExtractVrmlNodeError {
@@ -73,10 +73,6 @@ namespace vrml_proc {
                         UnknownUseNode
                     };
 
-                    static cpp::result<vrml_proc::parser::VrmlNode&, ExtractVrmlNodeError> ExtractVrmlNode(const std::string& name, const std::vector<vrml_proc::parser::VrmlField>& fields, const vrml_proc::parser::VrmlNodeManager& manager) {
-                        std::string invalidType; std::string useId;
-                        return ExtractVrmlNodeExtended(name, fields, manager, invalidType, useId);
-                    }
 
                     static cpp::result<vrml_proc::parser::VrmlNode&, ExtractVrmlNodeError> ExtractVrmlNodeExtended(const std::string& name, const std::vector<vrml_proc::parser::VrmlField>& fields, const vrml_proc::parser::VrmlNodeManager& manager, std::string& invalidType, std::string& useId) {
                         if (IsNamePresent(name, fields)) {
@@ -105,6 +101,11 @@ namespace vrml_proc {
                         else {
                             return cpp::fail(ExtractVrmlNodeError::FieldNotFound);
                         }
+                    }
+
+                    static cpp::result<vrml_proc::parser::VrmlNode&, ExtractVrmlNodeError> ExtractVrmlNode(const std::string& name, const std::vector<vrml_proc::parser::VrmlField>& fields, const vrml_proc::parser::VrmlNodeManager& manager) {
+                        std::string invalidType; std::string useId;
+                        return ExtractVrmlNodeExtended(name, fields, manager, invalidType, useId);
                     }
 
                     template <typename T>
