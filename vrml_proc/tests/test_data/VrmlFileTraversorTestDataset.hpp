@@ -47,6 +47,7 @@ std::string sphereWithBox = R"(
     #VRML V2.0 utf8
 
     Group {
+        bboxSize 8.5 44.001 0.0
         children [
             DEF id Box {
                       size 2.0 2.0 2.0
