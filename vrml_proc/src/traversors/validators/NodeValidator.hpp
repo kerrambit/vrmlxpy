@@ -4,6 +4,7 @@
 #include <vector>
 #include <unordered_set>
 #include <sstream>
+#include <functional>
 #include <optional>
 
 #include <boost/variant.hpp>
@@ -13,6 +14,8 @@
 
 #include "VrmlField.hpp"
 #include "VrmlNode.hpp"
+#include "VrmlNodeManager.hpp"
+#include "VrmlFieldExtractor.hpp"
 
 namespace vrml_proc {
 	namespace traversor {
@@ -22,6 +25,9 @@ namespace vrml_proc {
 
 				struct InvalidVrmlFieldName {
 					std::string invalidName;
+
+					InvalidVrmlFieldName()
+						: invalidName("") {}
 
 					InvalidVrmlFieldName(std::string invalidName)
 						: invalidName(invalidName) {}
@@ -71,7 +77,14 @@ namespace vrml_proc {
 						: useNodeId(useNodeId) {}
 				};
 
-				using NodeValidationError = boost::variant<InvalidVrmlFieldName, DuplicatedVrmlFieldName, InvalidFieldValueType, MissingDefNodeForUseNode, InvalidVrmlNodeForGivenField>;
+				struct InvalidVrmlNodeVector {
+					boost::variant<InvalidFieldValueType, MissingDefNodeForUseNode> innerError;
+
+					InvalidVrmlNodeVector(boost::variant<InvalidFieldValueType, MissingDefNodeForUseNode> innerError)
+						: innerError(std::move(innerError)) {}
+				};
+
+				using NodeValidationError = boost::variant<InvalidVrmlFieldName, DuplicatedVrmlFieldName, InvalidFieldValueType, MissingDefNodeForUseNode, InvalidVrmlNodeForGivenField, InvalidVrmlNodeVector>;
 
 				/*template<typename T>
 				bool CheckErrorType(const NodeValidationError& error) {
@@ -119,6 +132,40 @@ namespace vrml_proc {
 					}					
 
 					return {};
+				}
+
+				/**
+				 * @brief Validates field entry. Field should be of type VrmlNode (or UseNode which is evaluated to VrmlNode in the aftermath).
+				 * 
+				 * @param name name of the field
+				 * @param fields list of all node's fields
+				 * @param manager manager where associations between UseNodes and VrmlNodes will be looked for
+				 * 
+				 * @returns NodeValidationError if failure occurs (invalid field type, missing VrmlNode for UseNode id); otherwise it returns empty optional (field is missing) or optional containing reference to found VrmlNode
+				 */
+				static cpp::result<std::optional<std::reference_wrapper<vrml_proc::parser::VrmlNode>>, vrml_proc::traversor::validator::error::NodeValidationError> ValidateVrmlNode(const std::string& name, const std::vector<vrml_proc::parser::VrmlField>& fields, const vrml_proc::parser::VrmlNodeManager& manager) {
+
+					std::string invalidType = ""; std::string missingUseId = "";
+					auto value = vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractVrmlNodeExtended(name, fields, manager, invalidType, missingUseId);
+
+					if (value.has_error()) {
+						if (value.error() == vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractVrmlNodeError::FieldNotFound) {
+							return std::optional<std::reference_wrapper<vrml_proc::parser::VrmlNode>>{};
+						}
+						if (value.error() == vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractVrmlNodeError::ValidationError) {
+							return cpp::fail(vrml_proc::traversor::validator::error::InvalidFieldValueType("VrmlNode", invalidType));
+						}
+						if (value.error() == vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractVrmlNodeError::UnknownUseNode) {
+							return cpp::fail(vrml_proc::traversor::validator::error::MissingDefNodeForUseNode(missingUseId));
+						}
+					}
+
+					return std::optional<std::reference_wrapper<vrml_proc::parser::VrmlNode>>(value.value());
+				}
+
+				template<typename T>
+				static cpp::result<std::optional<std::reference_wrapper<T>>, vrml_proc::traversor::validator::error::NodeValidationError> ValidateField(const std::string& name, const std::vector<vrml_proc::parser::VrmlField>& fields, const vrml_proc::parser::VrmlNodeManager& manager) {
+
 				}
 			};
 		}
