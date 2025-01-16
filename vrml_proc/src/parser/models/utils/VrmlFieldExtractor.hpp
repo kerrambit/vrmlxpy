@@ -109,9 +109,24 @@ namespace vrml_proc {
                     }
 
                     template <typename T>
-                    static std::optional<T> ExtractFromVariant(const boost::variant<boost::recursive_wrapper<vrml_proc::parser::VrmlNode>, boost::recursive_wrapper<vrml_proc::parser::UseNode>>& variant) {
+                    static std::optional<T> ExtractFromVariantExtended(const boost::variant<boost::recursive_wrapper<vrml_proc::parser::VrmlNode>, boost::recursive_wrapper<vrml_proc::parser::UseNode>>& variant, std::string& invalidType) {
                         VariantVisitor<T> visitor;
-                        return boost::apply_visitor(visitor, variant);
+                        auto result = boost::apply_visitor(visitor, variant);
+                        if (result.has_value()) {
+                            return result.value();
+                        }
+
+                        if (result.error().has_value()) {
+                            invalidType = result.error().value();
+                        }
+
+                        return {};
+                    }
+
+                    template <typename T>
+                    static std::optional<T> ExtractFromVariant(const boost::variant<boost::recursive_wrapper<vrml_proc::parser::VrmlNode>, boost::recursive_wrapper<vrml_proc::parser::UseNode>>& variant) {
+                        std::string invalidType;
+                        return ExtractFromVariantExtended<T>(variant, invalidType);
                     }
                 }
             }
@@ -252,15 +267,15 @@ struct ExtractorVisitor : public boost::static_visitor<cpp::result<T, std::optio
         std::cout << "Type mismatch: expected '" << typeid(T).name()
             << "' but got '" << typeid(U).name() << "'" << std::endl;
 
-        return cpp::fail(std::optional<std::string>(vrml_proc::core::utils::TypeToString(T)));
+        return cpp::fail(std::optional<std::string>(vrml_proc::core::utils::TypeToString(U)));
     }
 };
 
 
 template <typename T>
-struct VariantVisitor : public boost::static_visitor<std::optional<T>> {
+struct VariantVisitor : public boost::static_visitor<cpp::result<T, std::optional<std::string>>> {
 
-    std::optional<T> operator()(const vrml_proc::parser::UseNode& node) const {
+    cpp::result<T, std::optional<std::string>> operator()(const vrml_proc::parser::UseNode& node) const {
         //std::cout << "I am here usenode" << std::endl;
         if constexpr (std::is_same<T, vrml_proc::parser::UseNode>::value) {
             return node;
@@ -270,30 +285,30 @@ struct VariantVisitor : public boost::static_visitor<std::optional<T>> {
             return boost::recursive_wrapper<vrml_proc::parser::UseNode>(node);
         }
 
-        return {};
+        return cpp::fail(std::optional<std::string>{});
     }
 
-    std::optional<T> operator()(const boost::recursive_wrapper<vrml_proc::parser::UseNode>& node) const {
+    cpp::result<T, std::optional<std::string>> operator()(const boost::recursive_wrapper<vrml_proc::parser::UseNode>& node) const {
         //std::cout << "I am here udenode (recursive wrapper)" << std::endl;
 
         if constexpr (std::is_same<T, boost::recursive_wrapper<vrml_proc::parser::UseNode>>::value) {
             return node;
         }
 
-        return {};
+        return cpp::fail(std::optional<std::string>{});
     }
 
-    std::optional<T> operator()(const boost::recursive_wrapper<vrml_proc::parser::VrmlNode>& node) const {
+    cpp::result<T, std::optional<std::string>> operator()(const boost::recursive_wrapper<vrml_proc::parser::VrmlNode>& node) const {
         //std::cout << "I am here vrmlnode (recursive wrapper)" << std::endl;
 
         if constexpr (std::is_same<T, boost::recursive_wrapper<vrml_proc::parser::VrmlNode>>::value) {
             return node;
         }
 
-        return {};
+        return cpp::fail(std::optional<std::string>{});
     }
 
-    std::optional<T> operator()(const vrml_proc::parser::VrmlNode& node) const {
+    cpp::result<T, std::optional<std::string>> operator()(const vrml_proc::parser::VrmlNode& node) const {
         //std::cout << "I am here vrmlnode (non-recursive)" << std::endl;
 
         if constexpr (std::is_same<T, vrml_proc::parser::VrmlNode>::value) {
@@ -304,13 +319,13 @@ struct VariantVisitor : public boost::static_visitor<std::optional<T>> {
             return boost::recursive_wrapper<vrml_proc::parser::VrmlNode>(node);
         }
 
-        return {};
+        return cpp::fail(std::optional<std::string>{});
     }
 
     template <typename U>
-    std::optional<T> operator()(const U&) const {
+    cpp::result<T, std::optional<std::string>> operator()(const U&) const {
         std::cout << "Type mismatch: expected '" << typeid(T).name()
             << "' but got '" << typeid(U).name() << "'" << std::endl;
-        return {};
+        return cpp::fail(std::optional<std::string>(vrml_proc::core::utils::TypeToString(U)));
     }
 };
