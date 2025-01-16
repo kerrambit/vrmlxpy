@@ -1,17 +1,13 @@
 #pragma once
 
-#include <string>
 #include <vector>
-#include <unordered_set>
-
-#include <boost/variant.hpp>
+#include <optional>
+#include <functional>
 
 #include <result.hpp>
 
-#include "VrmlField.hpp"
-#include "VrmlNode.hpp"
 #include "NodeValidator.hpp"
-#include "VrmlFieldExtractor.hpp"
+#include "VrmlNode.hpp"
 
 namespace vrml_proc {
 	namespace traversor {
@@ -36,16 +32,12 @@ namespace vrml_proc {
 
 					// --------------------------------------------------------
 
-					m_appearance = vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractVrmlNode("appearance", m_node.fields, m_manager);
-
-					if (m_appearance.has_error() && m_appearance.error() != vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractVrmlNodeError::FieldNotFound) {
-						if (m_appearance.error() == vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractVrmlNodeError::ValidationError) {
-							return cpp::fail(vrml_proc::traversor::validator::error::InvalidFieldValueType("VrmlNode", vrml_proc::parser::model::utils::VrmlFieldExtractor::StaticExtractByNameTypeValue));
-						}
-						if (m_appearance.error() == vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractVrmlNodeError::UnknownUseNode) {
-							return cpp::fail(vrml_proc::traversor::validator::error::MissingDefNodeForUseNode(vrml_proc::parser::model::utils::VrmlFieldExtractor::StaticExtractVrmlNodeUseNodeId));
-						}
+					auto appearanceResult = vrml_proc::traversor::validator::NodeValidator::ValidateVrmlNode("appearance", m_node.fields, m_manager);
+					if (appearanceResult.has_error()) {
+						return cpp::fail(appearanceResult.error());
 					}
+			
+					m_appearance = appearanceResult.value();
 
 					if (m_appearance.has_value()) {
 						auto fieldsResult = vrml_proc::traversor::validator::NodeValidator::CheckForOnlyAllowedVrmlNodeHeaders({ "Appearance" }, m_appearance.value(), "appearance");
@@ -56,16 +48,12 @@ namespace vrml_proc {
 
 					// --------------------------------------------------------
 
-					m_geometry = vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractVrmlNode("geometry", m_node.fields, m_manager);
-
-					if (m_geometry.has_error() && m_geometry.error() != vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractVrmlNodeError::FieldNotFound) {
-						if (m_geometry.error() == vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractVrmlNodeError::ValidationError) {
-							return cpp::fail(vrml_proc::traversor::validator::error::InvalidFieldValueType("VrmlNode", vrml_proc::parser::model::utils::VrmlFieldExtractor::StaticExtractByNameTypeValue));
-						}
-						if (m_geometry.error() == vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractVrmlNodeError::UnknownUseNode) {
-							return cpp::fail(vrml_proc::traversor::validator::error::MissingDefNodeForUseNode(vrml_proc::parser::model::utils::VrmlFieldExtractor::StaticExtractVrmlNodeUseNodeId));
-						}
+					auto geometryResult = vrml_proc::traversor::validator::NodeValidator::ValidateVrmlNode("geometry", m_node.fields, m_manager);
+					if (geometryResult.has_error()) {
+						return cpp::fail(geometryResult.error());
 					}
+
+					m_geometry = geometryResult.value();
 
 					if (m_geometry.has_value()) {
 						auto fieldsResult = vrml_proc::traversor::validator::NodeValidator::CheckForOnlyAllowedVrmlNodeHeaders({ "Box",
@@ -82,7 +70,7 @@ namespace vrml_proc {
 
 				vrml_proc::parser::VrmlNode& GetCachedAppearance(vrml_proc::parser::VrmlNode& defaultValue) {
 					if (m_appearance.has_value()) {
-						return m_appearance.value();
+						return m_appearance.value().get();
 					}
 
 					return defaultValue;
@@ -90,7 +78,7 @@ namespace vrml_proc {
 
 				vrml_proc::parser::VrmlNode& GetCachedGeometry(vrml_proc::parser::VrmlNode& defaultValue) {
 					if (m_geometry.has_value()) {
-						return m_geometry.value();
+						return m_geometry.value().get();
 					}
 
 					return defaultValue;
@@ -100,8 +88,8 @@ namespace vrml_proc {
 				const vrml_proc::parser::VrmlNode& m_node;
 				const vrml_proc::parser::VrmlNodeManager& m_manager;
 
-				cpp::result<vrml_proc::parser::VrmlNode&, vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractVrmlNodeError> m_appearance = cpp::fail(vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractVrmlNodeError::ValidationError);
-				cpp::result<vrml_proc::parser::VrmlNode&, vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractVrmlNodeError> m_geometry = cpp::fail(vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractVrmlNodeError::ValidationError);
+				std::optional<std::reference_wrapper<vrml_proc::parser::VrmlNode>> m_appearance = std::optional<std::reference_wrapper<vrml_proc::parser::VrmlNode>>{};
+				std::optional<std::reference_wrapper<vrml_proc::parser::VrmlNode>> m_geometry = std::optional<std::reference_wrapper<vrml_proc::parser::VrmlNode>>{};
 			};
 		}
 	}
