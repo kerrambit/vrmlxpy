@@ -1,5 +1,4 @@
 #include "VrmlNodeManager.hpp"
-#include "VrmlNodeManager.hpp"
 
 void vrml_proc::parser::VrmlNodeManager::AddDefinitionNode(const std::string& id, std::shared_ptr<VrmlNode> node)
 {
