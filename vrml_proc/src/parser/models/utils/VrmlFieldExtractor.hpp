@@ -36,6 +36,8 @@ namespace vrml_proc {
                         return false;
                     }
 
+                    // --------------------------------------------------------
+
                     enum class ExtractByNameError {
                         FieldNotFound,
                         ValidationError
@@ -70,12 +72,13 @@ namespace vrml_proc {
                         return ExtractByNameExtended<T>(name, fields, invalidType);
                     }
 
+                    // --------------------------------------------------------
+
                     enum class ExtractVrmlNodeError {
                         FieldNotFound,
                         ValidationError,
                         UnknownUseNode
                     };
-
 
                     VRMLPROCESSING_API inline cpp::result<std::reference_wrapper<const vrml_proc::parser::VrmlNode>, ExtractVrmlNodeError> ExtractVrmlNodeExtended(const std::string& name, const std::vector<vrml_proc::parser::VrmlField>& fields, const vrml_proc::parser::VrmlNodeManager& manager, std::string& invalidType, std::string& useId) {
                         if (IsNamePresent(name, fields)) {
@@ -111,8 +114,10 @@ namespace vrml_proc {
                         return ExtractVrmlNodeExtended(name, fields, manager, invalidType, useId);
                     }
 
+                    // --------------------------------------------------------
+
                     template <typename T>
-                    VRMLPROCESSING_API inline std::optional<T> ExtractFromVariantExtended(const boost::variant<boost::recursive_wrapper<vrml_proc::parser::VrmlNode>, boost::recursive_wrapper<vrml_proc::parser::UseNode>>& variant, std::string& invalidType) {
+                    VRMLPROCESSING_API inline std::optional<std::reference_wrapper<const T>> ExtractFromVariantExtended(const boost::variant<boost::recursive_wrapper<vrml_proc::parser::VrmlNode>, boost::recursive_wrapper<vrml_proc::parser::UseNode>>& variant, std::string& invalidType) {
                         VariantVisitor<T> visitor;
                         auto result = boost::apply_visitor(visitor, variant);
                         if (result.has_value()) {
@@ -127,9 +132,45 @@ namespace vrml_proc {
                     }
 
                     template <typename T>
-                    VRMLPROCESSING_API inline std::optional<T> ExtractFromVariant(const boost::variant<boost::recursive_wrapper<vrml_proc::parser::VrmlNode>, boost::recursive_wrapper<vrml_proc::parser::UseNode>>& variant) {
+                    VRMLPROCESSING_API inline std::optional<std::reference_wrapper<const T>> ExtractFromVariant(const boost::variant<boost::recursive_wrapper<vrml_proc::parser::VrmlNode>, boost::recursive_wrapper<vrml_proc::parser::UseNode>>& variant) {
                         std::string invalidType;
                         return ExtractFromVariantExtended<T>(variant, invalidType);
+                    }
+
+                    // --------------------------------------------------------
+
+                    enum class ExtractVrmlNodeFromVariantError {
+                        ValidationError,
+                        UnknownUseNode
+                    };
+
+                    VRMLPROCESSING_API inline cpp::result<std::reference_wrapper<const vrml_proc::parser::VrmlNode>, ExtractVrmlNodeFromVariantError> ExtractVrmlNodeFromVariantExtended(const boost::variant<boost::recursive_wrapper<vrml_proc::parser::VrmlNode>, boost::recursive_wrapper<vrml_proc::parser::UseNode>>& variant, const vrml_proc::parser::VrmlNodeManager& manager, std::string& invalidType, std::string& useId) {
+                        std::string out;
+                        auto result = ExtractFromVariantExtended<vrml_proc::parser::VrmlNode>(variant, out);
+                        if (result.has_value()) {
+                            return result.value();
+                        }
+
+                        auto useNode = ExtractFromVariantExtended<vrml_proc::parser::UseNode>(variant, out);
+                        if (useNode.has_value()) {
+                            auto managerFound = manager.GetDefinitionNode(useNode.value().get().identifier);
+                            if (managerFound != nullptr) {
+                                return std::cref(*managerFound);
+                            }
+                            else {
+                                useId = useNode.value().get().identifier;
+                                return cpp::fail(ExtractVrmlNodeFromVariantError::UnknownUseNode);
+                            }
+                        }
+
+                        invalidType = out;
+                        return cpp::fail(ExtractVrmlNodeFromVariantError::ValidationError);
+                    }
+
+                    VRMLPROCESSING_API inline cpp::result<std::reference_wrapper<const vrml_proc::parser::VrmlNode>, ExtractVrmlNodeFromVariantError> ExtractVrmlNodeFromVariant(const boost::variant<boost::recursive_wrapper<vrml_proc::parser::VrmlNode>, boost::recursive_wrapper<vrml_proc::parser::UseNode>>& variant, const vrml_proc::parser::VrmlNodeManager& manager) {
+                        std::string invalidType;
+                        std::string useId;
+                        return ExtractVrmlNodeFromVariantExtended(variant, manager, invalidType, useId);
                     }
                 }
             }
@@ -148,7 +189,7 @@ struct ExtractorVisitor : public boost::static_visitor<cpp::result<std::referenc
         return cpp::fail(std::optional<std::string>(vrml_proc::core::utils::TypeToString<std::string>()));
     }
 
-    cpp::result<std::reference_wrapper<const T>, std::optional<std::string>> operator()(bool value) const {
+    cpp::result<std::reference_wrapper<const T>, std::optional<std::string>> operator()(const bool& value) const {
         std::cout << "I am here bool" << std::endl;
         if constexpr (std::is_same<T, bool>::value) {
             return std::cref(value);
@@ -158,20 +199,33 @@ struct ExtractorVisitor : public boost::static_visitor<cpp::result<std::referenc
 
     cpp::result<std::reference_wrapper<const T>, std::optional<std::string>> operator()(const vrml_proc::parser::Vec3fArray& value) const {
         std::cout << "I am here vec3f array" << std::endl;
+        std::cout << "Pointer of empty array: " << &value << std::endl;
         if (value.vectors.size() == 0) {
+            std::cout << "Array is empty" << std::endl;
             if constexpr (std::is_same<T, vrml_proc::parser::Vec3fArray>::value) {
+                std::cout << "Empty array as Vec3fArray" << std::endl;
                 return std::cref(value);
             }
+            // Handle case where T is Int32Array
             else if constexpr (std::is_same<T, vrml_proc::parser::Int32Array>::value) {
-                static const T empty_value{};  // Local static object
-                return std::cref(empty_value);
+                // Return a reinterpretation of the empty array
+                std::cout << "Empty array as Int32Array" << std::endl;
+                auto toReturn = std::cref(reinterpret_cast<const T&>(value));
+                std::cout << "Ptr of reintepreted empty array as Int32Array: " << &(toReturn.get()) << std::endl;
+                return toReturn;
             }
-            else if constexpr (std::is_same<T, std::vector<boost::variant<boost::recursive_wrapper<vrml_proc::parser::VrmlNode>, boost::recursive_wrapper<vrml_proc::parser::UseNode>>>>::value) {
-                static const T empty_value{};  // Local static object
-                return std::cref(empty_value);
+            // Handle case where T is the vector of VrmlNode/UseNode
+            else if constexpr (std::is_same<T, std::vector<boost::variant<
+                boost::recursive_wrapper<vrml_proc::parser::VrmlNode>,
+                boost::recursive_wrapper<vrml_proc::parser::UseNode>>>>::value) {
+                std::cout << "Empty array as vrml node array" << std::endl;
+                return std::cref(reinterpret_cast<const T&>(value));
             }
+            // If T doesn't match any known empty array type, fail
             else {
-                return cpp::fail(std::optional<std::string>{});
+                return cpp::fail(std::optional<std::string>{
+                    "Requested type does not match any supported empty array type."
+                });
             }
         }
 
@@ -207,7 +261,7 @@ struct ExtractorVisitor : public boost::static_visitor<cpp::result<std::referenc
         return cpp::fail(std::optional<std::string>(vrml_proc::core::utils::TypeToString<vrml_proc::parser::Int32Array>()));
     }
 
-    cpp::result<std::reference_wrapper<const T>, std::optional<std::string>> operator()(float value) const {
+    cpp::result<std::reference_wrapper<const T>, std::optional<std::string>> operator()(const float& value) const {
         std::cout << "I am here float" << std::endl;
         if constexpr (std::is_same<T, float>::value) {
             return std::cref(value);
@@ -215,7 +269,7 @@ struct ExtractorVisitor : public boost::static_visitor<cpp::result<std::referenc
         return cpp::fail(std::optional<std::string>(vrml_proc::core::utils::TypeToString<float>()));
     }
 
-    cpp::result<std::reference_wrapper<const T>, std::optional<std::string>> operator()(int32_t value) const {
+    cpp::result<std::reference_wrapper<const T>, std::optional<std::string>> operator()(const int32_t& value) const {
         std::cout << "int32" << std::endl;
         if constexpr (std::is_same<T, int32_t>::value) {
             return std::cref(value);
@@ -293,59 +347,58 @@ struct ExtractorVisitor : public boost::static_visitor<cpp::result<std::referenc
     }
 };
 
-
 template <typename T>
-struct VariantVisitor : public boost::static_visitor<cpp::result<T, std::optional<std::string>>> {
+struct VariantVisitor : public boost::static_visitor<cpp::result<std::reference_wrapper<const T>, std::optional<std::string>>> {
 
-    cpp::result<T, std::optional<std::string>> operator()(const vrml_proc::parser::UseNode& node) const {
-        //std::cout << "I am here usenode" << std::endl;
+    cpp::result<std::reference_wrapper<const T>, std::optional<std::string>> operator()(const vrml_proc::parser::UseNode& node) const {
+        std::cout << "I am here usenode" << std::endl;
         if constexpr (std::is_same<T, vrml_proc::parser::UseNode>::value) {
-            return node;
+            return std::cref(node);
         }
 
-        if constexpr (std::is_same<T, boost::recursive_wrapper<vrml_proc::parser::UseNode>>::value) {
-            return boost::recursive_wrapper<vrml_proc::parser::UseNode>(node);
-        }
+        /*if constexpr (std::is_same<T, boost::recursive_wrapper<vrml_proc::parser::UseNode>>::value) {
+            return std::cref(boost::recursive_wrapper<vrml_proc::parser::UseNode>(node));
+        }*/
 
-        return cpp::fail(std::optional<std::string>{});
+        return cpp::fail(std::optional<std::string>(vrml_proc::core::utils::TypeToString<vrml_proc::parser::UseNode>()));
     }
 
-    cpp::result<T, std::optional<std::string>> operator()(const boost::recursive_wrapper<vrml_proc::parser::UseNode>& node) const {
-        //std::cout << "I am here udenode (recursive wrapper)" << std::endl;
+    cpp::result<std::reference_wrapper<const T>, std::optional<std::string>> operator()(const boost::recursive_wrapper<vrml_proc::parser::UseNode>& node) const {
+        std::cout << "I am here usenode (recursive wrapper)" << std::endl;
 
         if constexpr (std::is_same<T, boost::recursive_wrapper<vrml_proc::parser::UseNode>>::value) {
-            return node;
+            return std::cref(node.get());
         }
 
-        return cpp::fail(std::optional<std::string>{});
+        return cpp::fail(std::optional<std::string>(vrml_proc::core::utils::TypeToString<boost::recursive_wrapper<vrml_proc::parser::UseNode>>()));
     }
 
-    cpp::result<T, std::optional<std::string>> operator()(const boost::recursive_wrapper<vrml_proc::parser::VrmlNode>& node) const {
-        //std::cout << "I am here vrmlnode (recursive wrapper)" << std::endl;
+    cpp::result<std::reference_wrapper<const T>, std::optional<std::string>> operator()(const boost::recursive_wrapper<vrml_proc::parser::VrmlNode>& node) const {
+        std::cout << "I am here vrmlnode (recursive wrapper)" << std::endl;
 
         if constexpr (std::is_same<T, boost::recursive_wrapper<vrml_proc::parser::VrmlNode>>::value) {
-            return node;
+            return std::cref(node.get());
         }
 
-        return cpp::fail(std::optional<std::string>{});
+        return cpp::fail(std::optional<std::string>(vrml_proc::core::utils::TypeToString<boost::recursive_wrapper<vrml_proc::parser::VrmlNode>>()));
     }
 
-    cpp::result<T, std::optional<std::string>> operator()(const vrml_proc::parser::VrmlNode& node) const {
-        //std::cout << "I am here vrmlnode (non-recursive)" << std::endl;
+    cpp::result<std::reference_wrapper<const T>, std::optional<std::string>> operator()(const vrml_proc::parser::VrmlNode& node) const {
+        std::cout << "I am here vrmlnode (non-recursive)" << std::endl;
 
         if constexpr (std::is_same<T, vrml_proc::parser::VrmlNode>::value) {
-            return node;
+            return std::cref(node);
         }
 
-        if constexpr (std::is_same<T, boost::recursive_wrapper<vrml_proc::parser::VrmlNode>>::value) {
-            return boost::recursive_wrapper<vrml_proc::parser::VrmlNode>(node);
-        }
+        /*if constexpr (std::is_same<T, boost::recursive_wrapper<vrml_proc::parser::VrmlNode>>::value) {
+            return std::cref(boost::recursive_wrapper<vrml_proc::parser::VrmlNode>(node));
+        }*/
 
-        return cpp::fail(std::optional<std::string>{});
+        return cpp::fail(std::optional<std::string>(vrml_proc::core::utils::TypeToString<vrml_proc::parser::VrmlNode>()));
     }
 
     template <typename U>
-    cpp::result<T, std::optional<std::string>> operator()(const U&) const {
+    cpp::result<std::reference_wrapper<const T>, std::optional<std::string>> operator()(const U&) const {
         std::cout << "Type mismatch: expected '" << typeid(T).name()
             << "' but got '" << typeid(U).name() << "'" << std::endl;
         return cpp::fail(std::optional<std::string>(vrml_proc::core::utils::TypeToString(U)));
