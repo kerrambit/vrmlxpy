@@ -14,6 +14,15 @@ std::string onlyWorldInfo = R"(
 	}
 )";
 
+std::string validBoxNode = R"(
+
+	#VRML V2.0 utf8
+
+	Box {
+        size 58.58 0.45 558.05
+	}
+)";
+
 
 std::string validGroup = R"(
 

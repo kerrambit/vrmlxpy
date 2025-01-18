@@ -93,17 +93,16 @@ static vrml_proc::action::BaseConversionContextActionMap& GetActionMap() {
 TEST_CASE("Parse VRML File - Valid Input - Simple VRML File", "[parsing][valid]") {
 
     vrml_proc::parser::VrmlNodeManager manager;
-    auto parseResult = ParseVrmlFile(sphereWithBox, manager);
+    auto parseResult = ParseVrmlFile(validBoxNode, manager);
     REQUIRE(parseResult);
 
     vrml_proc::action::BaseConversionContextActionMap actionMap = GetActionMap();
 
-    vrml_proc::traversor::VrmlFileTraversor traversor;
-    auto traversorResult = traversor.Traverse({ parseResult.value(), manager}, actionMap);
+    auto traversorResult = vrml_proc::traversor::VrmlFileTraversor::Traverse<vrml_proc::conversion_context::MeshConversionContext>({ parseResult.value(), manager}, actionMap);
 
     std::shared_ptr<vrml_proc::conversion_context::MeshConversionContext> meshContextPtr = std::dynamic_pointer_cast<vrml_proc::conversion_context::MeshConversionContext>(traversorResult);
     REQUIRE(meshContextPtr);
 
-    auto meshContext = meshContextPtr->GetData();
-    REQUIRE(meshContext.size() == 1);
+    auto& meshContext = meshContextPtr->GetData();
+    REQUIRE(meshContext.size() == 0);
 }
