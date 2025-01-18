@@ -3,7 +3,6 @@
 #include <cstdint>
 #include <string>
 #include <type_traits>
-#include <vadefs.h>
 #include <vector>
 
 #include <boost/variant/get.hpp>
@@ -80,7 +79,7 @@ TEST_CASE("ExtractByNameExtended - Validation Error", "[invalid]") {
     auto result = vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractByNameExtended<vrml_proc::parser::Int32Array>("shape", fields, invalidType);
     REQUIRE(result.has_error());
     CHECK(result.error() == vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractByNameError::ValidationError);
-    CHECK(invalidType.find("struct vrml_proc::parser::VrmlNode") != std::string::npos);
+    CHECK(invalidType.find("vrml_proc::parser::VrmlNode") != std::string::npos);
 }
 
 TEST_CASE("ExtractByNameExtended - VrmlNode Non-recursive I.", "[valid]") {
@@ -312,7 +311,7 @@ TEST_CASE("ExtractFromVariantExtended - Invalid I.", "[invalid]") {
     const boost::variant<boost::recursive_wrapper<vrml_proc::parser::VrmlNode>, boost::recursive_wrapper<vrml_proc::parser::UseNode>>& variant = children.at(0);
     auto result = vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractFromVariantExtended<boost::recursive_wrapper<vrml_proc::parser::UseNode>>(variant, invalidType);
     REQUIRE(!result.has_value());
-    CHECK(invalidType.find("struct vrml_proc::parser::VrmlNode") != std::string::npos);
+    CHECK(invalidType.find("vrml_proc::parser::VrmlNode") != std::string::npos);
 }
 
 TEST_CASE("ExtractFromVariantExtended - Invalid II.", "[invalid]") {
@@ -328,7 +327,7 @@ TEST_CASE("ExtractFromVariantExtended - Invalid II.", "[invalid]") {
     const boost::variant<boost::recursive_wrapper<vrml_proc::parser::VrmlNode>, boost::recursive_wrapper<vrml_proc::parser::UseNode>>& variant = children.at(1);
     auto result = vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractFromVariantExtended<vrml_proc::parser::VrmlNode>(variant, invalidType);
     REQUIRE(!result.has_value());
-    CHECK(invalidType.find("struct vrml_proc::parser::UseNode") != std::string::npos);
+    CHECK(invalidType.find("vrml_proc::parser::UseNode") != std::string::npos);
 }
 
 TEST_CASE("ExtractFromVariantExtended - VrmlNode", "[valid]") {
@@ -451,7 +450,7 @@ TEST_CASE("ExtractVrmlNodeExtended - Validation Error", "[invalid]") {
     auto result = vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractVrmlNodeExtended("appearance", shape.fields, manager, invalidType, useId);
     REQUIRE(result.has_error());
     CHECK(result.error() == vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractVrmlNodeError::ValidationError);
-    CHECK(invalidType.find("struct vrml_proc::parser::Vec4f") != std::string::npos);
+    CHECK(invalidType.find("vrml_proc::parser::Vec4f") != std::string::npos);
 }
 
 TEST_CASE("ExtractVrmlNodeExtended - Missing USE Id Error", "[invalid]") {
