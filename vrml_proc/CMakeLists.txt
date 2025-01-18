@@ -125,6 +125,7 @@ add_library(vrmlproc SHARED
 
 
     "src/traversors/validators/NodeValidator.hpp"
+    "src/traversors/validators/NodeValidationError.hpp"
     "src/traversors/validators/ShapeNodeValidator.hpp"
     "src/traversors/validators/GroupNodeValidator.hpp"
 
