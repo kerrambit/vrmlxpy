@@ -51,13 +51,16 @@ namespace vrml_proc {
 			 * The `Merge` method moves internal data (from std::vector) from the passed pointer to the actual object.
 			 * Note that passed pointer' data storage aka std::vector will be empty and may not be safe to reuse.
 			 * 
-			 * @param other Pointer to another `Mergeable` object, must be of type VectorConversionContext
+			 * @param other pointer to another `Mergeable` object, must be of type VectorConversionContextl; if other is nullptr, nothing will be merged
 			 * 
 			 * @todo Merge should not throw exception but return Result type identifying the issue occured.
 			 * @todo Move it into seperated .cpp file.
 			 * @throws std::invalid_argument if the objects cannot be merged due to incompatibility.
 			 */
 			void Merge(Mergeable* other) override {
+				if (other == nullptr) {
+					return;
+				}
 				auto* otherContext = dynamic_cast<VectorConversionContext<T>*>(other);
 				if (otherContext) {
 					m_data.insert(m_data.end(), std::make_move_iterator(otherContext->m_data.begin()), std::make_move_iterator(otherContext->m_data.end()));
