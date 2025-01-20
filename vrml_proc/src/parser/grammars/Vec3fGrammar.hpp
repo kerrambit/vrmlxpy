@@ -1,16 +1,17 @@
 #pragma once
 
-#include <boost/spirit/include/qi.hpp>
+#include <iostream>
+#include <iterator>
+#include <string>
+
 #include <boost/fusion/adapted/struct/adapt_struct.hpp>
 #include <boost/phoenix/bind/bind_member_function.hpp>
 #include <boost/phoenix/object/construct.hpp>
 #include <boost/phoenix/operator.hpp>
-#include <iostream>
-#include <string>
-#include <iterator>
+#include <boost/spirit/include/qi.hpp>
 
-#include "Vec3f.hpp"
 #include "BaseGrammar.hpp"
+#include "Vec3f.hpp"
 
 BOOST_FUSION_ADAPT_STRUCT(
     vrml_proc::parser::Vec3f,
@@ -31,7 +32,7 @@ namespace vrml_proc {
             Vec3fGrammar() : Vec3fGrammar::base_type(this->m_start) {
 
                 float32 = boost::spirit::qi::float_;
-                this->m_start = float32 > float32 > float32;
+                this->m_start = float32 >> float32 >> float32; // '>' will trigger error, '>>' won't
 
                 BOOST_SPIRIT_DEBUG_NODE(this->m_start);
                 BOOST_SPIRIT_DEBUG_NODE(float32);
@@ -52,30 +53,28 @@ namespace vrml_proc {
                 );
             }
 
-            enum class ConstructErrorPositionStringResult {
-                Tail,
-                Truncated,
-                NoChange
-            };
-
             std::string ConstructErrorPositionString(const Iterator& begin, const Iterator& errorPosition, const Iterator& end, const boost::spirit::info& expectedRule, size_t maxLength) {
                 
+                /**
+                 * 1) distance from begin to errorPosition
+                 * 2) distance from errorPosition to end
+                 * 3) store expectedRule as string
+                 * 4) create (truncated) errorPosition as string
+                 * 5) store this into std::optional<vrml_proc::parser::error::GrammarError> variable as this->m_error = ...
+                 * 6) BaseGrammar::HasError() const will check m_eroro variable and return boolean according to it
+                 */
+
                 this->SetError(true);
 
                 if (errorPosition == end) {
                     return " is at the end of the input string.";
-                    // distance = 0;
-                    // return ConstructErrorPositionStringResult::Tail;
                 }
                 size_t length = std::distance(errorPosition, end);
-                // distance = length;
 
                 if (length > maxLength) {
                     return ": '" + std::string(errorPosition, errorPosition + maxLength) + "...'";
-                    // return ConstructErrorPositionStringResult::Truncated;
                 }
                 return "'" + std::string(errorPosition, end) + "'";
-                // return ConstructErrorPositionStringResult::NoChange;
             }
 
         private:
