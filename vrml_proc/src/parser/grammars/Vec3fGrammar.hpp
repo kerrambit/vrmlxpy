@@ -58,7 +58,10 @@ namespace vrml_proc {
                 NoChange
             };
 
-            std::string ConstructErrorPositionString(const Iterator& begin, const Iterator& errorPosition, const Iterator& end, const boost::spirit::info& expectedRule, size_t maxLength) const {
+            std::string ConstructErrorPositionString(const Iterator& begin, const Iterator& errorPosition, const Iterator& end, const boost::spirit::info& expectedRule, size_t maxLength) {
+                
+                this->SetError(true);
+
                 if (errorPosition == end) {
                     return " is at the end of the input string.";
                     // distance = 0;
@@ -68,7 +71,7 @@ namespace vrml_proc {
                 // distance = length;
 
                 if (length > maxLength) {
-                    return ": '" + std::string(errorPosition, errorPosition + maxLength) + "... '";
+                    return ": '" + std::string(errorPosition, errorPosition + maxLength) + "...'";
                     // return ConstructErrorPositionStringResult::Truncated;
                 }
                 return "'" + std::string(errorPosition, end) + "'";

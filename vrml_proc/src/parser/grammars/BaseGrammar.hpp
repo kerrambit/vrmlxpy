@@ -11,7 +11,10 @@ namespace vrml_proc {
             protected:
                 BaseGrammar() = default;
                 boost::spirit::qi::rule<Iterator, ReturnType, Skipper> m_start;
+                bool HasError() const { return m_hasError; }
+                void SetError(bool value) { m_hasError = value; }
             private:
+                bool m_hasError = false;
                 BaseGrammar(const BaseGrammar&) = delete;
                 BaseGrammar& operator=(const BaseGrammar&) = delete;
                 BaseGrammar(BaseGrammar&&) = delete;
