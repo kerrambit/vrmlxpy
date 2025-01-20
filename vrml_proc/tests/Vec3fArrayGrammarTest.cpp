@@ -44,4 +44,9 @@ TEST_CASE("Parse Vec3fArray - Valid Input", "[parsing][valid]") {
     CHECK_THAT(parseResult.value().vectors.at(3).x, Catch::Matchers::WithinAbs(8.59816f, 0.001f));
     CHECK_THAT(parseResult.value().vectors.at(3).y, Catch::Matchers::WithinAbs(0.555317f, 0.001f));
     CHECK_THAT(parseResult.value().vectors.at(3).z, Catch::Matchers::WithinAbs(-3.05561f, 0.001f));
-} 
+}
+
+TEST_CASE("Parse Vec3fArray - Invalid Input", "[parsing][invalid]") {
+    auto parseResult = ParseVec3fArray(invalidVec3fArray);
+    REQUIRE_FALSE(parseResult.has_value());
+}
