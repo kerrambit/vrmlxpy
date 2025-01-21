@@ -3,7 +3,7 @@
 #include <memory>
 
 #include "Vec3f.hpp"
-#include "BaseConversionContextAction.hpp"
+#include "ConversionContextAction.hpp"
 #include "MeshConversionContext.hpp"
 #include "StlBaseStructure.hpp"
 #include "GeometryAction.hpp"

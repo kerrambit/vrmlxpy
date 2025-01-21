@@ -2,7 +2,7 @@
 
 #include <memory>
 
-#include "BaseConversionContextAction.hpp"
+#include "ConversionContextAction.hpp"
 #include "MeshConversionContext.hpp"
 #include "StlBaseStructure.hpp"
 
@@ -11,7 +11,7 @@ namespace vrml_proc {
 		/**
 		 * @todo This class will be deleted.
 		 */
-		class SpotlightAction : public BaseConversionContextAction<vrml_proc::conversion_context::MeshConversionContext> {
+		class SpotlightAction : public ConversionContextAction<vrml_proc::conversion_context::MeshConversionContext> {
 
 		public:
 			SpotlightAction(float ambientIntensity) :

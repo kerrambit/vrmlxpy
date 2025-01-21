@@ -4,7 +4,7 @@
 #include <vector>
 
 #include "BaseConversionContext.hpp"
-#include "BaseConversionContextAction.hpp"
+#include "ConversionContextAction.hpp"
 #include "MeshConversionContext.hpp"
 #include "StlBaseStructure.hpp"
 #include "Vec3f.hpp"
@@ -14,9 +14,9 @@ namespace vrml_proc {
 		/**
 		 * @brief Represents a concrete type of Action.
 		 * 
-		 * @implements BaseConversionContextAction
+		 * @implements ConversionContextAction
 		 */
-		class GroupAction : public BaseConversionContextAction<vrml_proc::conversion_context::MeshConversionContext> {
+		class GroupAction : public ConversionContextAction<vrml_proc::conversion_context::MeshConversionContext> {
 
 		public:
 			/**

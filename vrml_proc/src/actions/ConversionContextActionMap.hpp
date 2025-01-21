@@ -5,8 +5,7 @@
 #include <memory>
 #include <string>
 
-#include "BaseConversionContext.hpp"
-#include "BaseConversionContextAction.hpp"
+#include "ConversionContextAction.hpp"
 
 namespace vrml_proc {
 	namespace action {
@@ -14,7 +13,7 @@ namespace vrml_proc {
 		 * @brief Represents class which is responsible for storing and mapping `Action` functor value to a string key.
 		 */
 		template<typename ConversionContext>
-		class BaseConversionContextActionMap {
+		class ConversionContextActionMap {
 		public:
 			/**
 			 * @brief Arguments passed into the function responsible for creating the given Action.
@@ -22,9 +21,9 @@ namespace vrml_proc {
 			using Arguments = std::vector<std::any>;
 			/**
 			 * @brief The basic data type stored in the ActionMap. It is a function pointer to a function, which
-			 * takes some, for now unknown, arguments and returns a shared pointer owning BaseConversionContextAction.
+			 * takes some, for now unknown, arguments and returns a shared pointer owning ConversionContextAction.
 			 */
-			using ActionFunctor = std::function<std::shared_ptr<BaseConversionContextAction<ConversionContext>>(Arguments)>;
+			using ActionFunctor = std::function<std::shared_ptr<ConversionContextAction<ConversionContext>>(Arguments)>;
 			/**
 			 * @brief Adds new action to the ActionMap mapped to a string key.
 			 * Duplicated key will be rewritten.
@@ -49,14 +48,14 @@ namespace vrml_proc {
 				return false;
 			}
 			/**
-			 * @brief Gets a shared pointer owning a BaseConversionContextAction object. The function creates new object using functor
+			 * @brief Gets a shared pointer owning a ConversionContextAction object. The function creates new object using functor
 			 * stored in the ActionMap and passed `args` which are passed in to the Action constructor.
 			 * 
 			 * @param key key identifying the given Action
 			 * @param args arguments passed into the function responsible for creating the given Action
-			 * @returns nullptr if the key does not exists, otherwise shared pointer owning the given BaseConversionContextAction object
+			 * @returns nullptr if the key does not exists, otherwise shared pointer owning the given ConversionContextAction object
 			 */
-			std::shared_ptr<BaseConversionContextAction<ConversionContext>> GetAction(const std::string& key, const Arguments& args) const {
+			std::shared_ptr<ConversionContextAction<ConversionContext>> GetAction(const std::string& key, const Arguments& args) const {
 				auto iterator = m_actions.find(key);
 				if (iterator != m_actions.end()) {
 					return iterator->second(args);

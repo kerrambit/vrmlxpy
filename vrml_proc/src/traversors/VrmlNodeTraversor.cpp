@@ -11,7 +11,7 @@
 #include "MeshConversionContext.hpp"
 
 template<typename ConversionContext>
-std::shared_ptr<ConversionContext> vrml_proc::traversor::VrmlNodeTraversor::Traverse(vrml_proc::traversor::FullParsedVrmlNodeContext context, const vrml_proc::action::BaseConversionContextActionMap<ConversionContext>& actionMap) {
+std::shared_ptr<ConversionContext> vrml_proc::traversor::VrmlNodeTraversor::Traverse(vrml_proc::traversor::FullParsedVrmlNodeContext context, const vrml_proc::action::ConversionContextActionMap<ConversionContext>& actionMap) {
 	
 	if (context.node.header == "WorldInfo") {
 		//return vrml_proc::traversor::handler::WorldInfoHandler::Handle(context, actionMap);
@@ -38,7 +38,7 @@ std::shared_ptr<ConversionContext> vrml_proc::traversor::VrmlNodeTraversor::Trav
 namespace vrml_proc {
 	namespace traversor {
 		namespace VrmlNodeTraversor {
-			template VRMLPROCESSING_API std::shared_ptr<vrml_proc::conversion_context::MeshConversionContext> Traverse<vrml_proc::conversion_context::MeshConversionContext>(vrml_proc::traversor::FullParsedVrmlNodeContext context, const vrml_proc::action::BaseConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext>& actionMap);
+			template VRMLPROCESSING_API std::shared_ptr<vrml_proc::conversion_context::MeshConversionContext> Traverse<vrml_proc::conversion_context::MeshConversionContext>(vrml_proc::traversor::FullParsedVrmlNodeContext context, const vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext>& actionMap);
 		}
 	}
 }

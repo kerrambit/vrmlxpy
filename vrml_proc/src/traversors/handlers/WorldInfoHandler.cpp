@@ -1,11 +1,11 @@
 #include "WorldInfoHandler.hpp"
 
 #include "VrmlFieldExtractor.hpp"
-#include "BaseConversionContextActionExecutor.hpp"
+#include "ConversionContextActionExecutor.hpp"
 #include "MeshConversionContext.hpp"
 
 template<typename ConversionContext>
-std::shared_ptr<ConversionContext> vrml_proc::traversor::handler::WorldInfoHandler::Handle(vrml_proc::traversor::FullParsedVrmlNodeContext context, const vrml_proc::action::BaseConversionContextActionMap<ConversionContext>& actionMap)
+std::shared_ptr<ConversionContext> vrml_proc::traversor::handler::WorldInfoHandler::Handle(vrml_proc::traversor::FullParsedVrmlNodeContext context, const vrml_proc::action::ConversionContextActionMap<ConversionContext>& actionMap)
 {
 	std::cout << "VRML Node - WorldInfo" << std::endl;
 	return nullptr;
@@ -25,7 +25,7 @@ std::shared_ptr<ConversionContext> vrml_proc::traversor::handler::WorldInfoHandl
 	//	// Return error type, invalid field value
 	//}
 
-	//return vrml_proc::traversor::utils::BaseConversionContextActionExecutor::TryToExecute<vrml_proc::conversion_context::MeshConversionContext>(actionMap, "WorldInfo", { info.value_or(""), title.value_or("") });
+	//return vrml_proc::traversor::utils::ConversionContextActionExecutor::TryToExecute<vrml_proc::conversion_context::MeshConversionContext>(actionMap, "WorldInfo", { info.value_or(""), title.value_or("") });
 }
 
 namespace vrml_proc {
@@ -36,7 +36,7 @@ namespace vrml_proc {
 				template VRMLPROCESSING_API std::shared_ptr<vrml_proc::conversion_context::MeshConversionContext>
 					Handle<vrml_proc::conversion_context::MeshConversionContext>(
 						vrml_proc::traversor::FullParsedVrmlNodeContext,
-						const vrml_proc::action::BaseConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext>&);
+						const vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext>&);
 			}
 		}
 	}

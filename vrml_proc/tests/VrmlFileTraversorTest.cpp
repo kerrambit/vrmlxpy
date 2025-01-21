@@ -6,7 +6,7 @@
 #include <vector>
 
 #include "test_data/VrmlFileTraversorTestDataset.hpp"
-#include <BaseConversionContextActionMap.hpp>
+#include <ConversionContextActionMap.hpp>
 #include <BoxAction.hpp>
 #include <GroupAction.hpp>
 #include <MemoryMappedFileReader.hpp>
@@ -38,9 +38,9 @@ static vrml_proc::parser::ParserResult<vrml_proc::parser::VrmlFile> ParseVrmlFil
     return parser.Parse(readResult.value());
 }
 
-static vrml_proc::action::BaseConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext>& GetActionMap() {
+static vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext>& GetActionMap() {
 
-    static vrml_proc::action::BaseConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext> actionMap;
+    static vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext> actionMap;
 
     /*actionMap.AddAction("Spotlight", [](const std::vector<std::any>& args) {
         if (args.size() == 1 && args[0].type() == typeid(float)) {
@@ -97,7 +97,7 @@ TEST_CASE("Parse VRML File - Valid Input - Simple VRML File - Box node", "[parsi
     auto parseResult = ParseVrmlFile(validBoxNode, manager);
     REQUIRE(parseResult);
 
-    vrml_proc::action::BaseConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext> actionMap = GetActionMap();
+    vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext> actionMap = GetActionMap();
 
     std::shared_ptr<vrml_proc::conversion_context::MeshConversionContext> traversorResult = vrml_proc::traversor::VrmlFileTraversor::Traverse<vrml_proc::conversion_context::MeshConversionContext>({ parseResult.value(), manager}, actionMap);
 
@@ -112,7 +112,7 @@ TEST_CASE("Parse VRML File - Invalid Input - Simple VRML File - Box node", "[par
     auto parseResult = ParseVrmlFile(invalidBoxNode, manager);
     REQUIRE(parseResult);
 
-    vrml_proc::action::BaseConversionContextActionMap actionMap = GetActionMap();
+    vrml_proc::action::ConversionContextActionMap actionMap = GetActionMap();
 
     std::shared_ptr<vrml_proc::conversion_context::MeshConversionContext>  traversorResult = vrml_proc::traversor::VrmlFileTraversor::Traverse<vrml_proc::conversion_context::MeshConversionContext>({ parseResult.value(), manager }, actionMap);
     REQUIRE(traversorResult == nullptr);

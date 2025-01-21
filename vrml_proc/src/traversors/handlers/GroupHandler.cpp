@@ -6,7 +6,7 @@
 #include <boost/variant.hpp>
 #include <boost/variant/recursive_wrapper.hpp>
 
-#include "BaseConversionContextActionExecutor.hpp"
+#include "ConversionContextActionExecutor.hpp"
 #include "GroupNodeValidator.hpp"
 #include "MeshConversionContext.hpp"
 #include "NodeValidator.hpp"
@@ -15,7 +15,7 @@
 #include "VrmlNodeTraversor.hpp"
 
 template<typename ConversionContext>
-std::shared_ptr<ConversionContext> vrml_proc::traversor::handler::GroupHandler::Handle(vrml_proc::traversor::FullParsedVrmlNodeContext context, const vrml_proc::action::BaseConversionContextActionMap<ConversionContext>& actionMap)
+std::shared_ptr<ConversionContext> vrml_proc::traversor::handler::GroupHandler::Handle(vrml_proc::traversor::FullParsedVrmlNodeContext context, const vrml_proc::action::ConversionContextActionMap<ConversionContext>& actionMap)
 {
 	std::cout << "VRML Node - Group" << std::endl;
 	return nullptr;
@@ -51,7 +51,7 @@ std::shared_ptr<ConversionContext> vrml_proc::traversor::handler::GroupHandler::
 	//vrml_proc::parser::Vec3f defaultBoxCentre = { 0.0f, 0.0f, 0.0f };
 	//vrml_proc::parser::Vec3f defaultBoxSize = { -1.0f, -1.0f, -1.0f };
 
-	//return vrml_proc::traversor::utils::BaseConversionContextActionExecutor::TryToExecute<vrml_proc::conversion_context::MeshConversionContext>(
+	//return vrml_proc::traversor::utils::ConversionContextActionExecutor::TryToExecute<vrml_proc::conversion_context::MeshConversionContext>(
 	//	actionMap, "Group", { resolvedChildren, validator.GetCachedBoxCenter(defaultBoxCentre), validator.GetCachedBoxSize(defaultBoxSize)});
 }
 
@@ -63,7 +63,7 @@ namespace vrml_proc {
 				template VRMLPROCESSING_API std::shared_ptr<vrml_proc::conversion_context::MeshConversionContext>
 					Handle<vrml_proc::conversion_context::MeshConversionContext>(
 						vrml_proc::traversor::FullParsedVrmlNodeContext,
-						const vrml_proc::action::BaseConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext>&);
+						const vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext>&);
 			}
 		}
 	}

@@ -2,8 +2,6 @@
 
 #include <memory>
 
-#include "BaseConversionContext.hpp"
-
 namespace vrml_proc {
 	namespace action {
 
@@ -13,12 +11,12 @@ namespace vrml_proc {
 		 * The Action object is encapsulation of a "program" or a "function" which returns a BaseConversionContext object.
 		 */
 		template<typename ConversionContext>
-		class BaseConversionContextAction {
+		class ConversionContextAction {
 		public:
 			/**
 			 * @brief Virtual default destructor.
 			 */
-			virtual ~BaseConversionContextAction() = default;
+			virtual ~ConversionContextAction() = default;
 			/**
 			 * @brief Pure virtual method which executes on the given Action object.
 			 * 
@@ -26,12 +24,12 @@ namespace vrml_proc {
 			 */
 			virtual std::shared_ptr<ConversionContext> Execute() = 0;
 		protected:
-			BaseConversionContextAction() = default;
+			ConversionContextAction() = default;
 		private:
-			BaseConversionContextAction(const BaseConversionContextAction&) = delete;
-			BaseConversionContextAction& operator=(const BaseConversionContextAction&) = delete;
-			BaseConversionContextAction(BaseConversionContextAction&&) = delete;
-			BaseConversionContextAction& operator=(BaseConversionContextAction&&) = delete;
+			ConversionContextAction(const ConversionContextAction&) = delete;
+			ConversionContextAction& operator=(const ConversionContextAction&) = delete;
+			ConversionContextAction(ConversionContextAction&&) = delete;
+			ConversionContextAction& operator=(ConversionContextAction&&) = delete;
 		};
 	}
 }

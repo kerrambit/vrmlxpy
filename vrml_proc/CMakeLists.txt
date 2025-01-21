@@ -112,7 +112,7 @@ add_library(vrmlproc SHARED
     "src/traversors/VrmlFileTraversor.cpp"
     "src/traversors/FullParsedVrmlNodeContext.hpp"
     "src/traversors/FullParsedVrmlFileContext.hpp"
-    "src/traversors/utils/BaseConversionContextActionExecutor.hpp"
+    "src/traversors/utils/ConversionContextActionExecutor.hpp"
 
     "src/traversors/handlers/ShapeHandler.hpp"
     "src/traversors/handlers/ShapeHandler.cpp"
@@ -132,8 +132,8 @@ add_library(vrmlproc SHARED
     "src/traversors/validators/GroupNodeValidator.hpp"
     "src/traversors/validators/BoxNodeValidator.hpp"
 
-    "src/actions/BaseConversionContextActionMap.hpp"
-    "src/actions/BaseConversionContextAction.hpp"
+    "src/actions/ConversionContextActionMap.hpp"
+    "src/actions/ConversionContextAction.hpp"
     "src/actions/GeometryAction.hpp"
     "src/actions/SpotlightAction.hpp"
     "src/actions/GroupAction.hpp"

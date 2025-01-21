@@ -2,10 +2,10 @@
 
 #include "VrmlFieldExtractor.hpp"
 #include "MeshConversionContext.hpp"
-#include "BaseConversionContextActionExecutor.hpp"
+#include "ConversionContextActionExecutor.hpp"
 
 template<typename ConversionContext>
-std::shared_ptr<ConversionContext> vrml_proc::traversor::handler::SpotlightHandler::Handle(vrml_proc::traversor::FullParsedVrmlNodeContext context, const vrml_proc::action::BaseConversionContextActionMap<ConversionContext>& actionMap)
+std::shared_ptr<ConversionContext> vrml_proc::traversor::handler::SpotlightHandler::Handle(vrml_proc::traversor::FullParsedVrmlNodeContext context, const vrml_proc::action::ConversionContextActionMap<ConversionContext>& actionMap)
 {
 	std::cout << "VRML Node - Spotlight" << std::endl;
 	return nullptr;
@@ -17,7 +17,7 @@ std::shared_ptr<ConversionContext> vrml_proc::traversor::handler::SpotlightHandl
 	//	// Return error type, invalid field value
 	//}
 
-	//return vrml_proc::traversor::utils::BaseConversionContextActionExecutor::TryToExecute<vrml_proc::conversion_context::MeshConversionContext>(actionMap, "Spotlight", { ambientIntensity.value_or(0.0f) });
+	//return vrml_proc::traversor::utils::ConversionContextActionExecutor::TryToExecute<vrml_proc::conversion_context::MeshConversionContext>(actionMap, "Spotlight", { ambientIntensity.value_or(0.0f) });
 }
 
 namespace vrml_proc {
@@ -28,7 +28,7 @@ namespace vrml_proc {
 				template VRMLPROCESSING_API std::shared_ptr<vrml_proc::conversion_context::MeshConversionContext>
 					Handle<vrml_proc::conversion_context::MeshConversionContext>(
 						vrml_proc::traversor::FullParsedVrmlNodeContext,
-						const vrml_proc::action::BaseConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext>&);
+						const vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext>&);
 			}
 		}
 	}

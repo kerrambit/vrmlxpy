@@ -2,13 +2,13 @@
 
 #include <memory>
 
-#include "BaseConversionContextAction.hpp"
+#include "ConversionContextAction.hpp"
 #include "MeshConversionContext.hpp"
 
 namespace vrml_proc {
 	namespace action {
 
-		class GeometryAction : public BaseConversionContextAction<vrml_proc::conversion_context::MeshConversionContext> {
+		class GeometryAction : public ConversionContextAction<vrml_proc::conversion_context::MeshConversionContext> {
 
 		public:
 			explicit GeometryAction(bool containedByShape) :
