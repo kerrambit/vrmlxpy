@@ -12,6 +12,7 @@ namespace vrml_proc {
 		 * with method called Execute() which returns a shared pointer owning a BaseConversionContext object.
 		 * The Action object is encapsulation of a "program" or a "function" which returns a BaseConversionContext object.
 		 */
+		template<typename ConversionContext>
 		class BaseConversionContextAction {
 		public:
 			/**
@@ -23,7 +24,7 @@ namespace vrml_proc {
 			 * 
 			 * @returns Shared pointer containing the ConversionContext object (of type base class BaseConversionContext).
 			 */
-			virtual std::shared_ptr<vrml_proc::conversion_context::BaseConversionContext> Execute() = 0;
+			virtual std::shared_ptr<ConversionContext> Execute() = 0;
 		protected:
 			BaseConversionContextAction() = default;
 		private:

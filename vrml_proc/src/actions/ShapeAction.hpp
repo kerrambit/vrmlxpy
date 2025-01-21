@@ -16,7 +16,7 @@ namespace vrml_proc {
 		 *
 		 * @implements BaseConversionContextAction
 		 */
-		class ShapeAction : public BaseConversionContextAction {
+		class ShapeAction : public BaseConversionContextAction<vrml_proc::conversion_context::MeshConversionContext> {
 
 		public:
 			/**
@@ -26,20 +26,20 @@ namespace vrml_proc {
 			 * @param appearance data representing appearance of the shape
 			 * @param geometry data representing geometry of the shape
 			 */
-			ShapeAction(std::shared_ptr<vrml_proc::conversion_context::BaseConversionContext> appearance, std::shared_ptr<vrml_proc::conversion_context::BaseConversionContext> geometry) :
+			ShapeAction(std::shared_ptr<vrml_proc::conversion_context::MeshConversionContext> appearance, std::shared_ptr<vrml_proc::conversion_context::MeshConversionContext> geometry) :
 				m_appearance(appearance), m_geometry(geometry) {}
 			/**
 			 * @brief Overriden implemented interface method from `BaseConversionContextAction`. The method is focused only on `m_geometry` member field.
 			 *
 			 * @returns shared pointer owning the object of merged ConversionContext objects
 			 */
-			std::shared_ptr<vrml_proc::conversion_context::BaseConversionContext> Execute() override {
+			std::shared_ptr<vrml_proc::conversion_context::MeshConversionContext> Execute() override {
 
 				return m_geometry;
 			}
 		private:
-			std::shared_ptr<vrml_proc::conversion_context::BaseConversionContext> m_appearance;
-			std::shared_ptr<vrml_proc::conversion_context::BaseConversionContext> m_geometry;
+			std::shared_ptr<vrml_proc::conversion_context::MeshConversionContext> m_appearance;
+			std::shared_ptr<vrml_proc::conversion_context::MeshConversionContext> m_geometry;
 		};
 	}
 }

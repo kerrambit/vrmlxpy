@@ -14,8 +14,8 @@
 namespace vrml_proc {
 	namespace traversor {
 		namespace VrmlNodeTraversor {
-			template<typename DefaultConversionContext>
-			VRMLPROCESSING_API std::shared_ptr<vrml_proc::conversion_context::BaseConversionContext> Traverse(vrml_proc::traversor::FullParsedVrmlNodeContext context, const vrml_proc::action::BaseConversionContextActionMap& actionMap);
+			template<typename ConversionContext>
+			VRMLPROCESSING_API std::shared_ptr<ConversionContext> Traverse(vrml_proc::traversor::FullParsedVrmlNodeContext context, const vrml_proc::action::BaseConversionContextActionMap<ConversionContext>& actionMap);
 		}
 	}
 }

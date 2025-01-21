@@ -13,6 +13,7 @@ namespace vrml_proc {
 		/**
 		 * @brief Represents class which is responsible for storing and mapping `Action` functor value to a string key.
 		 */
+		template<typename ConversionContext>
 		class BaseConversionContextActionMap {
 		public:
 			/**
@@ -23,7 +24,7 @@ namespace vrml_proc {
 			 * @brief The basic data type stored in the ActionMap. It is a function pointer to a function, which
 			 * takes some, for now unknown, arguments and returns a shared pointer owning BaseConversionContextAction.
 			 */
-			using ActionFunctor = std::function<std::shared_ptr<BaseConversionContextAction>(Arguments)>;
+			using ActionFunctor = std::function<std::shared_ptr<BaseConversionContextAction<ConversionContext>>(Arguments)>;
 			/**
 			 * @brief Adds new action to the ActionMap mapped to a string key.
 			 * Duplicated key will be rewritten.
@@ -55,7 +56,7 @@ namespace vrml_proc {
 			 * @param args arguments passed into the function responsible for creating the given Action
 			 * @returns nullptr if the key does not exists, otherwise shared pointer owning the given BaseConversionContextAction object
 			 */
-			std::shared_ptr<BaseConversionContextAction> GetAction(const std::string& key, const Arguments& args) const {
+			std::shared_ptr<BaseConversionContextAction<ConversionContext>> GetAction(const std::string& key, const Arguments& args) const {
 				auto iterator = m_actions.find(key);
 				if (iterator != m_actions.end()) {
 					return iterator->second(args);

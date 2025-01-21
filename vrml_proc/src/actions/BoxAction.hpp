@@ -18,7 +18,7 @@ namespace vrml_proc {
 				GeometryAction(containedByShape), m_size(size) {}
 
 			// TODO: use here some mesh calculator to create data for STL
-			std::shared_ptr<vrml_proc::conversion_context::BaseConversionContext> Execute() override {
+			std::shared_ptr<vrml_proc::conversion_context::MeshConversionContext> Execute() override {
 				auto result = std::make_shared<vrml_proc::conversion_context::MeshConversionContext>();
 				if (!m_containedByShape) {
 					return result;

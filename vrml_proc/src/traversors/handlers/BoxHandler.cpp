@@ -7,8 +7,8 @@
 #include "BoxNodeValidator.hpp"
 #include "MeshConversionContext.hpp"
 
-template<typename DefaultConversionContext>
-std::shared_ptr<vrml_proc::conversion_context::BaseConversionContext> vrml_proc::traversor::handler::BoxHandler::Handle(vrml_proc::traversor::FullParsedVrmlNodeContext context, const vrml_proc::action::BaseConversionContextActionMap& actionMap)
+template<typename ConversionContext>
+std::shared_ptr<ConversionContext> vrml_proc::traversor::handler::BoxHandler::Handle(vrml_proc::traversor::FullParsedVrmlNodeContext context, const vrml_proc::action::BaseConversionContextActionMap<ConversionContext>& actionMap)
 {
 	std::cout << "VRML Node - Box" << std::endl;
 	
@@ -19,7 +19,7 @@ std::shared_ptr<vrml_proc::conversion_context::BaseConversionContext> vrml_proc:
 	}
 
 	vrml_proc::parser::Vec3f defaultSize = { 2.0f, 2.0f, 2.0f };
-	return vrml_proc::traversor::utils::BaseConversionContextActionExecutor::TryToExecute<DefaultConversionContext>(actionMap, "Box", { validator.GetCachedSize(defaultSize), context.IsDescendantOfShape});
+	return vrml_proc::traversor::utils::BaseConversionContextActionExecutor::TryToExecute<ConversionContext>(actionMap, "Box", { validator.GetCachedSize(defaultSize), context.IsDescendantOfShape});
 }
 
 namespace vrml_proc {
@@ -27,10 +27,10 @@ namespace vrml_proc {
         namespace handler {
             namespace BoxHandler {
 
-                template VRMLPROCESSING_API std::shared_ptr<vrml_proc::conversion_context::BaseConversionContext>
+                template VRMLPROCESSING_API std::shared_ptr<vrml_proc::conversion_context::MeshConversionContext>
                     Handle<vrml_proc::conversion_context::MeshConversionContext>(
                         vrml_proc::traversor::FullParsedVrmlNodeContext,
-                        const vrml_proc::action::BaseConversionContextActionMap&);
+                        const vrml_proc::action::BaseConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext>&);
             }
         }
     }

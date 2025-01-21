@@ -14,9 +14,9 @@ namespace vrml_proc {
 			namespace BaseConversionContextActionExecutor {
 
 				template<typename EmptyDefaultConversionContextType>
-				static std::shared_ptr<EmptyDefaultConversionContextType> TryToExecute(const vrml_proc::action::BaseConversionContextActionMap& actionMap, const std::string& key, const std::vector<std::any>& args) {
+				static std::shared_ptr<EmptyDefaultConversionContextType> TryToExecute(const vrml_proc::action::BaseConversionContextActionMap<EmptyDefaultConversionContextType>& actionMap, const std::string& key, const std::vector<std::any>& args) {
 					if (actionMap.VerifyKey(key)) {
-						auto result = actionMap.GetAction(key, args)->Execute();
+						std::shared_ptr<EmptyDefaultConversionContextType> result = actionMap.GetAction(key, args)->Execute();
 						auto derivedContext = std::dynamic_pointer_cast<EmptyDefaultConversionContextType>(result);
 						if (derivedContext != nullptr) {
 							return derivedContext;
