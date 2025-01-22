@@ -17,8 +17,11 @@ FetchContent_MakeAvailable(Catch2)
 # Add source files and vendor dependencies.
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/src
+
     ${CMAKE_CURRENT_SOURCE_DIR}/src/core
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/core/errors
     ${CMAKE_CURRENT_SOURCE_DIR}/src/core/utils
+
     ${CMAKE_CURRENT_SOURCE_DIR}/src/parser
     ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/models
     ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/models/utils
@@ -49,6 +52,7 @@ add_library(vrmlproc SHARED
     "src/core/MemoryMappedFileReader.hpp"
     "src/core/MemoryMappedFileReader.cpp"
 
+    "src/core/errors/Error.hpp"
     "src/core/utils/ScopedTimer.hpp"
     "src/core/utils/TypeToString.hpp"
 
