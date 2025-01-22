@@ -53,6 +53,7 @@ add_library(vrmlproc SHARED
     "src/core/MemoryMappedFileReader.cpp"
 
     "src/core/errors/Error.hpp"
+    "src/core/errors/NullPointerError.hpp"
     "src/core/utils/ScopedTimer.hpp"
     "src/core/utils/TypeToString.hpp"
 
