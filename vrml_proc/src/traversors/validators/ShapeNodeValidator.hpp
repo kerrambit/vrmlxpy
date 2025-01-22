@@ -8,6 +8,8 @@
 
 #include "NodeValidator.hpp"
 #include "VrmlNode.hpp"
+#include <memory>
+#include "NodeValidationError.hpp"
 
 namespace vrml_proc {
 	namespace traversor {
@@ -19,53 +21,53 @@ namespace vrml_proc {
 				ShapeNodeValidator(const vrml_proc::parser::VrmlNode& node, const vrml_proc::parser::VrmlNodeManager& manager)
 					: m_node(node), m_manager(manager) {}
 
-				cpp::result<void, vrml_proc::traversor::validator::error::NodeValidationError> Validate() override {
+				cpp::result<void, std::shared_ptr<error::NodeValidationError>> Validate() override {
 
 					if (m_node.fields.empty()) {
 						return {};
 					}
 
-					auto fieldsResult = vrml_proc::traversor::validator::NodeValidator::CheckForOnlyUniqueAllowedFieldNames({ "appearance", "geometry" }, m_node.fields);
+					auto fieldsResult = vrml_proc::traversor::validator::NodeValidator::CheckForOnlyUniqueAllowedFieldNames({ "appearance", "geometry" }, m_node.fields, m_node.header);
 					if (fieldsResult.has_error()) {
 						return fieldsResult;
 					}
 
 					// --------------------------------------------------------
 
-					auto appearanceResult = vrml_proc::traversor::validator::NodeValidator::ValidateVrmlNode("appearance", m_node.fields, m_manager);
-					if (appearanceResult.has_error()) {
-						return cpp::fail(appearanceResult.error());
-					}
+					//auto appearanceResult = vrml_proc::traversor::validator::NodeValidator::ValidateVrmlNode("appearance", m_node.fields, m_manager);
+					//if (appearanceResult.has_error()) {
+					//	return cpp::fail(appearanceResult.error());
+					//}
 			
-					m_appearance = appearanceResult.value();
+					//m_appearance = appearanceResult.value();
 
-					if (m_appearance.has_value()) {
-						auto fieldsResult = vrml_proc::traversor::validator::NodeValidator::CheckForOnlyAllowedVrmlNodeHeaders({ "Appearance" }, m_appearance.value(), "appearance");
-						if (fieldsResult.has_error()) {
-							return fieldsResult;
-						}
-					}
+					//if (m_appearance.has_value()) {
+					//	auto fieldsResult = vrml_proc::traversor::validator::NodeValidator::CheckForOnlyAllowedVrmlNodeHeaders({ "Appearance" }, m_appearance.value(), "appearance");
+					//	if (fieldsResult.has_error()) {
+					//		return fieldsResult;
+					//	}
+					//}
 
-					// --------------------------------------------------------
+					//// --------------------------------------------------------
 
-					auto geometryResult = vrml_proc::traversor::validator::NodeValidator::ValidateVrmlNode("geometry", m_node.fields, m_manager);
-					if (geometryResult.has_error()) {
-						return cpp::fail(geometryResult.error());
-					}
+					//auto geometryResult = vrml_proc::traversor::validator::NodeValidator::ValidateVrmlNode("geometry", m_node.fields, m_manager);
+					//if (geometryResult.has_error()) {
+					//	return cpp::fail(geometryResult.error());
+					//}
 
-					m_geometry = geometryResult.value();
+					//m_geometry = geometryResult.value();
 
-					if (m_geometry.has_value()) {
-						auto fieldsResult = vrml_proc::traversor::validator::NodeValidator::CheckForOnlyAllowedVrmlNodeHeaders({ "Box",
-																							"Cone", "Cylinder", "ElevationGrid", "Extrusion",
-																							"IndexedLineSet", "IndexedFaceSet", "PointSet",
-																							"Sphere", "Text" }, m_geometry.value(), "appearance");
-						if (fieldsResult.has_error()) {
-							return fieldsResult;
-						}
-					}
+					//if (m_geometry.has_value()) {
+					//	auto fieldsResult = vrml_proc::traversor::validator::NodeValidator::CheckForOnlyAllowedVrmlNodeHeaders({ "Box",
+					//																		"Cone", "Cylinder", "ElevationGrid", "Extrusion",
+					//																		"IndexedLineSet", "IndexedFaceSet", "PointSet",
+					//																		"Sphere", "Text" }, m_geometry.value(), "appearance");
+					//	if (fieldsResult.has_error()) {
+					//		return fieldsResult;
+					//	}
+					//}
 
-					return {};
+					//return {};
 				}
 
 				vrml_proc::parser::VrmlNode& GetCachedAppearance(vrml_proc::parser::VrmlNode& defaultValue) {

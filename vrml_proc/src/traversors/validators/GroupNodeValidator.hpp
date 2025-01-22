@@ -13,6 +13,8 @@
 #include "VrmlFieldExtractor.hpp"
 #include "VrmlNode.hpp"
 #include "VrmlNodeManager.hpp"
+#include "NodeValidationError.hpp"
+#include <memory>
 
 namespace vrml_proc {
 	namespace traversor {
@@ -22,60 +24,60 @@ namespace vrml_proc {
 				GroupNodeValidator(const vrml_proc::parser::VrmlNode& node, const vrml_proc::parser::VrmlNodeManager& manager)
 					: m_node(node), m_manager(manager) {}
 
-				cpp::result<void, vrml_proc::traversor::validator::error::NodeValidationError> Validate() override {
+				cpp::result<void, std::shared_ptr<error::NodeValidationError>> Validate() override {
 
 					if (m_node.fields.empty()) {
 						return {};
 					}
 
-					auto fieldsResult = vrml_proc::traversor::validator::NodeValidator::CheckForOnlyUniqueAllowedFieldNames({ "children", "bboxCenter", "bboxSize"}, m_node.fields);
+					auto fieldsResult = vrml_proc::traversor::validator::NodeValidator::CheckForOnlyUniqueAllowedFieldNames({ "children", "bboxCenter", "bboxSize"}, m_node.fields, m_node.header);
 					if (fieldsResult.has_error()) {
 						return fieldsResult;
 					}
 
-					// --------------------------------------------------------
+					//// --------------------------------------------------------
 
-					m_children = vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractByName<std::vector<boost::variant<boost::recursive_wrapper<vrml_proc::parser::VrmlNode>, boost::recursive_wrapper<vrml_proc::parser::UseNode>>>>("children", m_node.fields);
-					if (m_children.error() == vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractByNameError::ValidationError) {
-						return cpp::fail(vrml_proc::traversor::validator::error::InvalidFieldValueType("std::vector<boost::variant<boost::recursive_wrapper<vrml_proc::parser::VrmlNode>, boost::recursive_wrapper<vrml_proc::parser::UseNode>>>", ""));
-					}
-					
-					if (m_children.has_value()) {
+					//m_children = vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractByName<std::vector<boost::variant<boost::recursive_wrapper<vrml_proc::parser::VrmlNode>, boost::recursive_wrapper<vrml_proc::parser::UseNode>>>>("children", m_node.fields);
+					//if (m_children.error() == vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractByNameError::ValidationError) {
+					//	return cpp::fail(vrml_proc::traversor::validator::error::InvalidFieldValueType("std::vector<boost::variant<boost::recursive_wrapper<vrml_proc::parser::VrmlNode>, boost::recursive_wrapper<vrml_proc::parser::UseNode>>>", ""));
+					//}
+					//
+					//if (m_children.has_value()) {
 
-						for (const auto& child : m_children.value()) {
+					//	for (const auto& child : m_children.value()) {
 
-							auto vrmlNode = vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractFromVariant<boost::recursive_wrapper<vrml_proc::parser::VrmlNode>>(child);
+					//		auto vrmlNode = vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractFromVariant<boost::recursive_wrapper<vrml_proc::parser::VrmlNode>>(child);
 
-							auto useNode = vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractFromVariant<boost::recursive_wrapper<vrml_proc::parser::UseNode>>(child);
-							if (useNode.has_value()) {
+					//		auto useNode = vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractFromVariant<boost::recursive_wrapper<vrml_proc::parser::UseNode>>(child);
+					//		if (useNode.has_value()) {
 
-								auto managerFound = m_manager.GetDefinitionNode(useNode.value().get_pointer()->identifier);
-								if (managerFound == nullptr) {
-									return cpp::fail(vrml_proc::traversor::validator::error::InvalidVrmlNodeVector(boost::variant<vrml_proc::traversor::validator::error::InvalidFieldValueType, vrml_proc::traversor::validator::error::MissingDefNodeForUseNode>(vrml_proc::traversor::validator::error::MissingDefNodeForUseNode(""))));
-								}
-							}
+					//			auto managerFound = m_manager.GetDefinitionNode(useNode.value().get_pointer()->identifier);
+					//			if (managerFound == nullptr) {
+					//				return cpp::fail(vrml_proc::traversor::validator::error::InvalidVrmlNodeVector(boost::variant<vrml_proc::traversor::validator::error::InvalidFieldValueType, vrml_proc::traversor::validator::error::MissingDefNodeForUseNode>(vrml_proc::traversor::validator::error::MissingDefNodeForUseNode(""))));
+					//			}
+					//		}
 
-							if (!vrmlNode.has_value() && !useNode.has_value()) {
-								return cpp::fail(vrml_proc::traversor::validator::error::InvalidVrmlNodeVector(boost::variant<vrml_proc::traversor::validator::error::InvalidFieldValueType, vrml_proc::traversor::validator::error::MissingDefNodeForUseNode>(vrml_proc::traversor::validator::error::InvalidFieldValueType("vrml_proc::parser::VrmlNode || vrml_proc::parser::UseNode", "..."))));
-							}
-						}
-					}
+					//		if (!vrmlNode.has_value() && !useNode.has_value()) {
+					//			return cpp::fail(vrml_proc::traversor::validator::error::InvalidVrmlNodeVector(boost::variant<vrml_proc::traversor::validator::error::InvalidFieldValueType, vrml_proc::traversor::validator::error::MissingDefNodeForUseNode>(vrml_proc::traversor::validator::error::InvalidFieldValueType("vrml_proc::parser::VrmlNode || vrml_proc::parser::UseNode", "..."))));
+					//		}
+					//	}
+					//}
 
-					// --------------------------------------------------------
+					//// --------------------------------------------------------
 
-					m_bboxCenter = vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractByName<vrml_proc::parser::Vec3f>("bboxCenter", m_node.fields);
-					if (m_bboxCenter.error() == vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractByNameError::ValidationError) {
-						return cpp::fail(vrml_proc::traversor::validator::error::InvalidFieldValueType("Vec3f", "TODO"));
-					}
+					//m_bboxCenter = vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractByName<vrml_proc::parser::Vec3f>("bboxCenter", m_node.fields);
+					//if (m_bboxCenter.error() == vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractByNameError::ValidationError) {
+					//	return cpp::fail(vrml_proc::traversor::validator::error::InvalidFieldValueType("Vec3f", "TODO"));
+					//}
 
-					// --------------------------------------------------------
+					//// --------------------------------------------------------
 
-					m_bboxSize = vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractByName<vrml_proc::parser::Vec3f>("bboxSize", m_node.fields);
-					if (m_bboxSize.error() == vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractByNameError::ValidationError) {
-						return cpp::fail(vrml_proc::traversor::validator::error::InvalidFieldValueType("Vec3f", "TODO"));
-					}
+					//m_bboxSize = vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractByName<vrml_proc::parser::Vec3f>("bboxSize", m_node.fields);
+					//if (m_bboxSize.error() == vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractByNameError::ValidationError) {
+					//	return cpp::fail(vrml_proc::traversor::validator::error::InvalidFieldValueType("Vec3f", "TODO"));
+					//}
 
-					return {};
+					//return {};
 				}
 
 				std::vector<boost::variant<boost::recursive_wrapper<vrml_proc::parser::VrmlNode>, boost::recursive_wrapper<vrml_proc::parser::UseNode>>>& GetCachedChildren(std::vector<boost::variant<boost::recursive_wrapper<vrml_proc::parser::VrmlNode>, boost::recursive_wrapper<vrml_proc::parser::UseNode>>>& defaultValue) {

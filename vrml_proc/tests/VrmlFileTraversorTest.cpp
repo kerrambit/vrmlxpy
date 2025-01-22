@@ -99,21 +99,35 @@ TEST_CASE("Parse VRML File - Valid Input - Simple VRML File - Box node", "[parsi
 
     vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext> actionMap = GetActionMap();
 
-    std::shared_ptr<vrml_proc::conversion_context::MeshConversionContext> traversorResult = vrml_proc::traversor::VrmlFileTraversor::Traverse<vrml_proc::conversion_context::MeshConversionContext>({ parseResult.value(), manager}, actionMap);
+    auto traversorResult = vrml_proc::traversor::VrmlFileTraversor::Traverse<vrml_proc::conversion_context::MeshConversionContext>({ parseResult.value(), manager}, actionMap);
+    REQUIRE(traversorResult.has_value());
 
-    auto& meshContext = traversorResult->GetData();
+    auto& meshContext = traversorResult.value()->GetData();
     REQUIRE(meshContext.size() == 0);
 }
 
-
-TEST_CASE("Parse VRML File - Invalid Input - Simple VRML File - Box node", "[parsing][invalid]") {
+TEST_CASE("Parse VRML File - Invalid Input - Simple VRML File - Box node - Wrong Field Type", "[parsing][invalid]") {
 
     vrml_proc::parser::VrmlNodeManager manager;
-    auto parseResult = ParseVrmlFile(invalidBoxNode, manager);
+    auto parseResult = ParseVrmlFile(invalidBoxNodeWrondDataType, manager);
     REQUIRE(parseResult);
 
     vrml_proc::action::ConversionContextActionMap actionMap = GetActionMap();
 
-    std::shared_ptr<vrml_proc::conversion_context::MeshConversionContext>  traversorResult = vrml_proc::traversor::VrmlFileTraversor::Traverse<vrml_proc::conversion_context::MeshConversionContext>({ parseResult.value(), manager }, actionMap);
-    REQUIRE(traversorResult == nullptr);
+    auto traversorResult = vrml_proc::traversor::VrmlFileTraversor::Traverse<vrml_proc::conversion_context::MeshConversionContext>({ parseResult.value(), manager }, actionMap);
+    REQUIRE(traversorResult.has_error());
+    std::cout << traversorResult.error()->GetMessage() << std::endl;
+}
+
+TEST_CASE("Parse VRML File - Invalid Input - Simple VRML File - Box node - Wrong Field Name", "[parsing][invalid]") {
+
+    vrml_proc::parser::VrmlNodeManager manager;
+    auto parseResult = ParseVrmlFile(invalidBoxNodeWrongFieldName, manager);
+    REQUIRE(parseResult);
+
+    vrml_proc::action::ConversionContextActionMap actionMap = GetActionMap();
+
+    auto traversorResult = vrml_proc::traversor::VrmlFileTraversor::Traverse<vrml_proc::conversion_context::MeshConversionContext>({ parseResult.value(), manager }, actionMap);
+    REQUIRE(traversorResult.has_error());
+    std::cout << traversorResult.error()->GetMessage() << std::endl;
 }

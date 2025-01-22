@@ -10,6 +10,8 @@
 #include "NodeValidator.hpp"
 #include "Vec3f.hpp"
 #include "VrmlNode.hpp"
+#include "NodeValidationError.hpp"
+#include <memory>
 
 namespace vrml_proc {
 	namespace traversor {
@@ -21,13 +23,13 @@ namespace vrml_proc {
 				BoxNodeValidator(const vrml_proc::parser::VrmlNode& node)
 					: m_node(node) {}
 
-				cpp::result<void, vrml_proc::traversor::validator::error::NodeValidationError> Validate() override {
+				cpp::result<void, std::shared_ptr<error::NodeValidationError>> Validate() override {
 
 					if (m_node.fields.empty()) {
 						return {};
 					}
 
-					auto fieldsResult = vrml_proc::traversor::validator::NodeValidator::CheckForOnlyUniqueAllowedFieldNames({ "size" }, m_node.fields);
+					auto fieldsResult = vrml_proc::traversor::validator::NodeValidator::CheckForOnlyUniqueAllowedFieldNames({ "size" }, m_node.fields, m_node.header);
 					if (fieldsResult.has_error()) {
 						return fieldsResult;
 					}
