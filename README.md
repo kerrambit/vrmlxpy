@@ -28,3 +28,21 @@ A Python-based toolkit for VRML parsing and STL conversion. Includes a standalon
 - It is recommended to develop in *Visual Studio*.
 - To open this project, navigate yourself to ```File - Open - Cmake...``` and choose the root *CMakeLists.txt*.
 - *Visual Studio* should take care of the burden connecting with generating and building the library itself.
+
+## Run
+### Linux
+- If your system has *Valgrind* installed, you can run the following commands like this:
+
+  ```
+	valgrind --leak-check=full --show-reachable=yes --track-origins=yes <YOUR PROGRAM>
+  ```
+- You can use *CTest* which is a program that comes with *CMake*; it handles running the tests for the project.
+- Run the following command (once again, note that you might need to exchange *Debug* with *Release* if you have built for this type):
+
+	```
+	ctest --test-dir out/build/Debug/vrml_proc
+	```
+- You might want to use ```--verbose``` for the command above.
+
+### Windows
+- TODO

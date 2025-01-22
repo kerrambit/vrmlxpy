@@ -4,7 +4,7 @@
 #include <vector>
 
 #include "BaseConversionContext.hpp"
-#include "BaseConversionContextAction.hpp"
+#include "ConversionContextAction.hpp"
 #include "MeshConversionContext.hpp"
 #include "StlBaseStructure.hpp"
 #include "Vec3f.hpp"
@@ -14,9 +14,9 @@ namespace vrml_proc {
 		/**
 		 * @brief Represents a concrete type of Action.
 		 * 
-		 * @implements BaseConversionContextAction
+		 * @implements ConversionContextAction
 		 */
-		class GroupAction : public BaseConversionContextAction {
+		class GroupAction : public ConversionContextAction<vrml_proc::conversion_context::MeshConversionContext> {
 
 		public:
 			/**
@@ -26,7 +26,7 @@ namespace vrml_proc {
 			 * @param bboxCenter `Vec3f` representing bboxCenter field in VRML 2.0 specification
 			 * @param bboxSize `Vec3f` representing bboxSize field in VRML 2.0 specification
 			 */
-			GroupAction(std::vector<std::shared_ptr<vrml_proc::conversion_context::BaseConversionContext>> children, vrml_proc::parser::Vec3f bboxCenter, vrml_proc::parser::Vec3f bboxSize) :
+			GroupAction(std::vector<std::shared_ptr<vrml_proc::conversion_context::MeshConversionContext>> children, vrml_proc::parser::Vec3f bboxCenter, vrml_proc::parser::Vec3f bboxSize) :
 				m_children(children), m_bboxCenter(bboxCenter), m_bboxSize(bboxSize) {}
 			/**
 			 * @brief Overriden implemented interface method from `BaseConversionContextAction`. The method is focused only on `m_chidlren` member field.
@@ -34,7 +34,7 @@ namespace vrml_proc {
 			 * 
 			 * @returns shared pointer owning the object of merged ConversionContext objects
 			 */
-			std::shared_ptr<vrml_proc::conversion_context::BaseConversionContext> Execute() override {
+			std::shared_ptr<vrml_proc::conversion_context::MeshConversionContext> Execute() override {
 
 				auto result = std::make_shared<vrml_proc::conversion_context::MeshConversionContext>();
 				for (const auto& child : m_children) {
@@ -49,7 +49,7 @@ namespace vrml_proc {
 				return result;
 			}
 		private:
-			std::vector<std::shared_ptr<vrml_proc::conversion_context::BaseConversionContext>> m_children;
+			std::vector<std::shared_ptr<vrml_proc::conversion_context::MeshConversionContext>> m_children;
 			vrml_proc::parser::Vec3f m_bboxCenter;
 			vrml_proc::parser::Vec3f m_bboxSize;
 		};

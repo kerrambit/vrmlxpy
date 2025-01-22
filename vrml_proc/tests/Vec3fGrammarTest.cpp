@@ -34,3 +34,8 @@ TEST_CASE("Parse Vec3f - Valid Input", "[parsing][valid]") {
     CHECK_THAT(parseResult.value().y, Catch::Matchers::WithinAbs(5.55317, 0.001));
     CHECK_THAT(parseResult.value().z, Catch::Matchers::WithinAbs(-0.0305561, 0.001));
 }
+
+TEST_CASE("Parse Vec3f - Valid Input", "[parsing][invalid]") {
+    auto parseResult = ParseVec3f(invalidVec3f);
+    REQUIRE_FALSE(parseResult.has_value());
+}

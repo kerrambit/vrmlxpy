@@ -99,7 +99,7 @@ Before you can build this project, you'll need to have the Boost libraries insta
 
 3. **Set the `BOOST_ROOT` environment variable**:
 - You might need to set `BOOST_ROOT` environment variable when building Boost from source files.
-- So it you need it, proceed with setting the `BOOST_ROOT` environment variable to the Boost installation directory:
+- In the case you need it, proceed with setting the `BOOST_ROOT` environment variable to the Boost installation directory:
 
 - **Temporarily** (only for the current terminal session):
      ```

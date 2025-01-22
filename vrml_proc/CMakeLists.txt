@@ -17,18 +17,29 @@ FetchContent_MakeAvailable(Catch2)
 # Add source files and vendor dependencies.
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/src
+
     ${CMAKE_CURRENT_SOURCE_DIR}/src/core
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/core/errors
     ${CMAKE_CURRENT_SOURCE_DIR}/src/core/utils
+
     ${CMAKE_CURRENT_SOURCE_DIR}/src/parser
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/models 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/models
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/models/utils
     ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/interfaces
     ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/grammars
     ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/services
+
     ${CMAKE_CURRENT_SOURCE_DIR}/src/conversion_context
+
     ${CMAKE_CURRENT_SOURCE_DIR}/src/actions
+
     ${CMAKE_CURRENT_SOURCE_DIR}/src/traversors
     ${CMAKE_CURRENT_SOURCE_DIR}/src/traversors/utils
-    ${CMAKE_CURRENT_SOURCE_DIR}/../vendor/pybind11/include/pybind11
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/traversors/errors
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/traversors/validators
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/traversors/handlers
+
+    # ${CMAKE_CURRENT_SOURCE_DIR}/../vendor/pybind11/include/pybind11
     ${CMAKE_CURRENT_SOURCE_DIR}/../vendor/result
 )
 
@@ -37,6 +48,12 @@ add_library(vrmlproc SHARED
 
     "${CMAKE_CURRENT_SOURCE_DIR}/../vendor/result/result.hpp"
 
+    # DLL export macro.
+
+    "src/VrmlProcessingExport.hpp"
+
+    # Core.
+
     "src/core/FileReader.hpp"
     "src/core/FileWriter.hpp"
     "src/core/SimpleFileReader.hpp"
@@ -44,7 +61,13 @@ add_library(vrmlproc SHARED
     "src/core/MemoryMappedFileReader.hpp"
     "src/core/MemoryMappedFileReader.cpp"
 
+    "src/core/errors/Error.hpp"
+    "src/core/errors/NullPointerError.hpp"
+
     "src/core/utils/ScopedTimer.hpp"
+    "src/core/utils/TypeToString.hpp"
+
+    # Parser.
 
     "src/parser/models/VrmlUnits.hpp"
     "src/parser/models/VrmlFile.hpp"
@@ -70,6 +93,8 @@ add_library(vrmlproc SHARED
     "src/parser/models/UseNode.hpp"
     "src/parser/models/UseNode.cpp"
 
+    "src/parser/models/utils/VrmlFieldExtractor.hpp"
+
     "src/parser/services/VrmlNodeManager.hpp"
     "src/parser/services/VrmlNodeManager.cpp"
 
@@ -92,23 +117,54 @@ add_library(vrmlproc SHARED
     "src/parser/grammars/BooleanGrammar.hpp"
     "src/parser/grammars/VrmlFileGrammar.hpp"
 
+    # Conversion context.
+
     "src/conversion_context/BaseConversionContext.hpp"
     "src/conversion_context/Mergeable.hpp"
     "src/conversion_context/VectorConversionContext.hpp"
     "src/conversion_context/MeshConversionContext.hpp"
     "src/conversion_context/StlBaseStructure.hpp"
 
-    "src/traversors/VrmlFileTraversor.hpp"
-    "src/traversors/VrmlNodeTraversor.hpp"
-    "src/traversors/utils/VrmlFieldExtractor.hpp"
-    "src/traversors/utils/BaseConversionContextActionExecutor.hpp"
-    "src/traversors/utils/VrmlFieldChecker.hpp"
+    # Traversors.
 
-    "src/actions/BaseConversionContextActionMap.hpp"
-    "src/actions/BaseConversionContextAction.hpp"
+    "src/traversors/VrmlNodeTraversor.hpp"
+    "src/traversors/VrmlNodeTraversor.cpp"
+    "src/traversors/VrmlFileTraversor.hpp"
+    "src/traversors/VrmlFileTraversor.cpp"
+    "src/traversors/FullParsedVrmlNodeContext.hpp"
+    "src/traversors/FullParsedVrmlFileContext.hpp"
+
+    "src/traversors/errors/FileTraversorError.hpp"
+    "src/traversors/errors/NodeTraversorError.hpp"
+
+    "src/traversors/utils/ConversionContextActionExecutor.hpp"
+
+    "src/traversors/handlers/ShapeHandler.hpp"
+    "src/traversors/handlers/ShapeHandler.cpp"
+    "src/traversors/handlers/GroupHandler.hpp"
+    "src/traversors/handlers/GroupHandler.cpp"
+    "src/traversors/handlers/WorldInfoHandler.hpp"
+    "src/traversors/handlers/WorldInfoHandler.cpp"
+    "src/traversors/handlers/BoxHandler.hpp"
+    "src/traversors/handlers/BoxHandler.cpp"
+    "src/traversors/handlers/SpotlightHandler.hpp"
+    "src/traversors/handlers/SpotlightHandler.cpp"
+
+    "src/traversors/validators/NodeValidator.hpp"
+    "src/traversors/validators/NodeValidationError.hpp"
+    "src/traversors/validators/ShapeNodeValidator.hpp"
+    "src/traversors/validators/GroupNodeValidator.hpp"
+    "src/traversors/validators/BoxNodeValidator.hpp"
+
+    # Actions.
+
+    "src/actions/ConversionContextActionMap.hpp"
+    "src/actions/ConversionContextAction.hpp"
+    "src/actions/GeometryAction.hpp"
     "src/actions/SpotlightAction.hpp"
     "src/actions/GroupAction.hpp"
     "src/actions/BoxAction.hpp"
+    "src/actions/ShapeAction.hpp"
 )
 
 # Two build types - Debug and Release.
@@ -154,6 +210,7 @@ add_executable(Vec4fGrammarUnitTests "tests/Vec4fGrammarTest.cpp")
 add_executable(Vec3fArrayGrammarUnitTests "tests/Vec3fArrayGrammarTest.cpp")
 add_executable(Int32ArrayGrammarUnitTests "tests/Int32ArrayGrammarTest.cpp")
 add_executable(VrmlFileTraversorUnitTests "tests/VrmlFileTraversorTest.cpp")
+add_executable(VrmlFieldExtractorUnitTests "tests/VrmlFieldExtractorTest.cpp")
 
 # Link Catch2 with the test executables.
 target_link_libraries(VRMLFileGrammarUnitTests PRIVATE Catch2::Catch2WithMain vrmlproc)
@@ -162,6 +219,7 @@ target_link_libraries(Vec4fGrammarUnitTests PRIVATE Catch2::Catch2WithMain vrmlp
 target_link_libraries(Vec3fArrayGrammarUnitTests PRIVATE Catch2::Catch2WithMain vrmlproc)
 target_link_libraries(Int32ArrayGrammarUnitTests PRIVATE Catch2::Catch2WithMain vrmlproc)
 target_link_libraries(VrmlFileTraversorUnitTests PRIVATE Catch2::Catch2WithMain vrmlproc)
+target_link_libraries(VrmlFieldExtractorUnitTests PRIVATE Catch2::Catch2WithMain vrmlproc)
 
 # Enable testing (use CTest to run the unit tests).
 enable_testing()
@@ -171,3 +229,4 @@ add_test(NAME Vec4fGrammarUnitTests COMMAND Vec4fGrammarUnitTests)
 add_test(NAME Vec3fArrayGrammarUnitTests COMMAND Vec3fArrayGrammarUnitTests)
 add_test(NAME Int32ArrayGrammarUnitTests COMMAND Int32ArrayGrammarUnitTests)
 add_test(NAME VrmlFileTraversorUnitTests COMMAND VrmlFileTraversorUnitTests)
+add_test(NAME VrmlFieldExtractorUnitTests COMMAND VrmlFieldExtractorUnitTests)

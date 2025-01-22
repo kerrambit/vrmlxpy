@@ -16,7 +16,7 @@ namespace vrml_proc {
         struct VRMLPROCESSING_API VrmlNode : public Printable {
 
             VrmlNode()
-                : Printable(std::cout) {}
+                : Printable(std::cout), definitionName(""), header(""), fields(std::vector<VrmlField>()) {}
 
             boost::optional<std::string> definitionName;
             std::string header;

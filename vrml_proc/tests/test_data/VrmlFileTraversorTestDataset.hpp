@@ -14,6 +14,32 @@ std::string onlyWorldInfo = R"(
 	}
 )";
 
+std::string validBoxNode = R"(
+
+	#VRML V2.0 utf8
+
+	Box {
+        size 58.58 0.45 558.05
+	}
+)";
+
+std::string invalidBoxNodeWrondDataType = R"(
+
+	#VRML V2.0 utf8
+
+	Box {
+        size [58.58 0.45 558.05]
+	}
+)";
+
+std::string invalidBoxNodeWrongFieldName = R"(
+
+	#VRML V2.0 utf8
+
+	Box {
+        center 58.58 0.45 558.05
+	}
+)";
 
 std::string validGroup = R"(
 
@@ -47,6 +73,7 @@ std::string sphereWithBox = R"(
     #VRML V2.0 utf8
 
     Group {
+        bboxSize 8.5 44.001 0.0
         children [
             DEF id Box {
                       size 2.0 2.0 2.0

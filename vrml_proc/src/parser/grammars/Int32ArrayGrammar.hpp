@@ -24,7 +24,7 @@ namespace vrml_proc {
                 : Int32ArrayGrammar::base_type(this->m_start) {
 
                 this->m_start =
-                    "[" >> (boost::spirit::qi::int_ % ",") >> "]";
+                    "[" >> (boost::spirit::qi::int_ % ",") >> -boost::spirit::qi::lit(',') >> "]";
 
                 BOOST_SPIRIT_DEBUG_NODE(this->m_start);
             }

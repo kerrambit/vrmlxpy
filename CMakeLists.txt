@@ -17,7 +17,7 @@ else()
 endif()
 
 # Add vendor dependencies.
-include_directories(vendor/pybind11/include)
+# include_directories(vendor/pybind11/include)
 
 # Add the pyvrml directory.
 add_subdirectory(vrml_proc)
