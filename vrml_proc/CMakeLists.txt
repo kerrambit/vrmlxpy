@@ -28,12 +28,17 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/interfaces
     ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/grammars
     ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/services
+
     ${CMAKE_CURRENT_SOURCE_DIR}/src/conversion_context
+
     ${CMAKE_CURRENT_SOURCE_DIR}/src/actions
+
     ${CMAKE_CURRENT_SOURCE_DIR}/src/traversors
     ${CMAKE_CURRENT_SOURCE_DIR}/src/traversors/utils
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/traversors/errors
     ${CMAKE_CURRENT_SOURCE_DIR}/src/traversors/validators
     ${CMAKE_CURRENT_SOURCE_DIR}/src/traversors/handlers
+
     ${CMAKE_CURRENT_SOURCE_DIR}/../vendor/pybind11/include/pybind11
     ${CMAKE_CURRENT_SOURCE_DIR}/../vendor/result
 )
@@ -43,7 +48,11 @@ add_library(vrmlproc SHARED
 
     "${CMAKE_CURRENT_SOURCE_DIR}/../vendor/result/result.hpp"
 
+    # DLL export macro.
+
     "src/VrmlProcessingExport.hpp"
+
+    # Core.
 
     "src/core/FileReader.hpp"
     "src/core/FileWriter.hpp"
@@ -54,8 +63,11 @@ add_library(vrmlproc SHARED
 
     "src/core/errors/Error.hpp"
     "src/core/errors/NullPointerError.hpp"
+
     "src/core/utils/ScopedTimer.hpp"
     "src/core/utils/TypeToString.hpp"
+
+    # Parser.
 
     "src/parser/models/VrmlUnits.hpp"
     "src/parser/models/VrmlFile.hpp"
@@ -105,11 +117,15 @@ add_library(vrmlproc SHARED
     "src/parser/grammars/BooleanGrammar.hpp"
     "src/parser/grammars/VrmlFileGrammar.hpp"
 
+    # Conversion context.
+
     "src/conversion_context/BaseConversionContext.hpp"
     "src/conversion_context/Mergeable.hpp"
     "src/conversion_context/VectorConversionContext.hpp"
     "src/conversion_context/MeshConversionContext.hpp"
     "src/conversion_context/StlBaseStructure.hpp"
+
+    # Traversors.
 
     "src/traversors/VrmlNodeTraversor.hpp"
     "src/traversors/VrmlNodeTraversor.cpp"
@@ -117,6 +133,10 @@ add_library(vrmlproc SHARED
     "src/traversors/VrmlFileTraversor.cpp"
     "src/traversors/FullParsedVrmlNodeContext.hpp"
     "src/traversors/FullParsedVrmlFileContext.hpp"
+
+    "src/traversors/errors/FileTraversorError.hpp"
+    "src/traversors/errors/NodeTraversorError.hpp"
+
     "src/traversors/utils/ConversionContextActionExecutor.hpp"
 
     "src/traversors/handlers/ShapeHandler.hpp"
@@ -130,12 +150,13 @@ add_library(vrmlproc SHARED
     "src/traversors/handlers/SpotlightHandler.hpp"
     "src/traversors/handlers/SpotlightHandler.cpp"
 
-
     "src/traversors/validators/NodeValidator.hpp"
     "src/traversors/validators/NodeValidationError.hpp"
     "src/traversors/validators/ShapeNodeValidator.hpp"
     "src/traversors/validators/GroupNodeValidator.hpp"
     "src/traversors/validators/BoxNodeValidator.hpp"
+
+    # Actions.
 
     "src/actions/ConversionContextActionMap.hpp"
     "src/actions/ConversionContextAction.hpp"
