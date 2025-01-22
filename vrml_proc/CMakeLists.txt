@@ -39,7 +39,7 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/src/traversors/validators
     ${CMAKE_CURRENT_SOURCE_DIR}/src/traversors/handlers
 
-    ${CMAKE_CURRENT_SOURCE_DIR}/../vendor/pybind11/include/pybind11
+    # ${CMAKE_CURRENT_SOURCE_DIR}/../vendor/pybind11/include/pybind11
     ${CMAKE_CURRENT_SOURCE_DIR}/../vendor/result
 )
 
