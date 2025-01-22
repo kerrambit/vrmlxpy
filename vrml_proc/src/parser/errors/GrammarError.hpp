@@ -13,8 +13,8 @@ namespace vrml_proc {
 
 				size_t bytesCountFromStringStartToErrorPosition;
 				size_t bytesCountFromErrorPositionToStringEnd;
-				std::shared_ptr<std::string> expectedRule;
-				std::shared_ptr<std::string> errorPosition;
+				std::string expectedRule;
+				std::string errorPosition;
 			};
 		}
 	}
