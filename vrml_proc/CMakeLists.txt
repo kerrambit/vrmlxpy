@@ -21,6 +21,7 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/src/core
     ${CMAKE_CURRENT_SOURCE_DIR}/src/core/errors
     ${CMAKE_CURRENT_SOURCE_DIR}/src/core/utils
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/core/logger
 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/parser
     ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/models
@@ -66,6 +67,9 @@ add_library(vrmlproc SHARED
 
     "src/core/utils/ScopedTimer.hpp"
     "src/core/utils/TypeToString.hpp"
+
+    "src/core/logger/Logger.hpp"
+    "src/core/logger/Logger.cpp"
 
     # Parser.
 
@@ -184,7 +188,7 @@ elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
 endif()
 
 # Explicitly link Boost::iostreams (problems with compilation on Linux with GNU 11.4.0).
-target_link_libraries(vrmlproc PRIVATE Boost::iostreams)
+target_link_libraries(vrmlproc PRIVATE Boost::iostreams Boost::log Boost::date_time Boost::log_setup Boost::system Boost::thread)
 
 # --------------------------------------------------------------------------------------- #
 

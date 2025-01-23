@@ -4,7 +4,7 @@ project(vrmlxpy)
 set(CMAKE_CXX_STANDARD 20)
 
 # CMake will look for Boost libraries specified by BOOST_ROOT variable.
-find_package(Boost REQUIRED COMPONENTS iostreams system)
+find_package(Boost REQUIRED COMPONENTS iostreams log date_time log_setup thread system)
 
 if (Boost_FOUND)
     message(STATUS "Boost found!")
