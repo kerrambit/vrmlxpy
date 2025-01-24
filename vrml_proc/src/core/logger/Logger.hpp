@@ -38,7 +38,16 @@ BOOST_LOG_GLOBAL_LOGGER(Logger, boost::log::sources::severity_logger_mt<boost::l
 namespace vrml_proc {
     namespace core {
         namespace logger {
+            VRMLPROCESSING_API enum class Level {
+                Trace,
+                Debug,
+                Info,
+                Warning,
+                Error,
+                Fatal
+            };
             VRMLPROCESSING_API void InitLogging();
+            VRMLPROCESSING_API void LogUnformattedText(const std::string& title, const std::string& text, Level level, const std::string& file, int line, const std::string& function);
         }
     }
 }
