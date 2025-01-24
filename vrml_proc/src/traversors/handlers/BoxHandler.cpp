@@ -6,14 +6,18 @@
 
 #include "BoxNodeValidator.hpp"
 #include "ConversionContextActionExecutor.hpp"
+#include "ConversionContextActionMap.hpp"
 #include "Error.hpp"
+#include "Logger.hpp"
 #include "MeshConversionContext.hpp"
 #include "NodeTraversorError.hpp"
+
+#include "VrmlProcessingExport.hpp"
 
 template<typename ConversionContext>
 cpp::result<std::shared_ptr<ConversionContext>, std::shared_ptr<vrml_proc::core::error::Error>> vrml_proc::traversor::handler::BoxHandler::Handle(vrml_proc::traversor::FullParsedVrmlNodeContext context, const vrml_proc::action::ConversionContextActionMap<ConversionContext>& actionMap)
 {
-	std::cout << "VRML Node - Box" << std::endl;
+    LOG_INFO() << "Handle VRML node <" << context.node.header << ">.";
 	
 	vrml_proc::traversor::validator::BoxNodeValidator validator(context.node);
     auto validationResult = validator.Validate();

@@ -155,7 +155,8 @@ add_library(vrmlproc SHARED
     "src/traversors/handlers/SpotlightHandler.cpp"
 
     "src/traversors/validators/NodeValidator.hpp"
-    "src/traversors/validators/NodeValidationError.hpp"
+    "src/traversors/validators/BoxNodeValidator.hpp"
+    "src/traversors/validators/WorldInfoNodeValidator.hpp"
     "src/traversors/validators/ShapeNodeValidator.hpp"
     "src/traversors/validators/GroupNodeValidator.hpp"
     "src/traversors/validators/BoxNodeValidator.hpp"

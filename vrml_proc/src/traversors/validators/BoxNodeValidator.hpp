@@ -3,15 +3,15 @@
 #pragma once
 
 #include <functional>
+#include <memory>
 #include <optional>
 
 #include <result.hpp>
 
+#include "NodeValidationError.hpp"
 #include "NodeValidator.hpp"
 #include "Vec3f.hpp"
 #include "VrmlNode.hpp"
-#include "NodeValidationError.hpp"
-#include <memory>
 
 namespace vrml_proc {
 	namespace traversor {

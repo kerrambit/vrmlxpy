@@ -1,13 +1,39 @@
 ﻿#include <string>
 
 
-std::string onlyWorldInfo = R"(
+std::string validWorldInfoNode = R"(
 
 	#VRML V2.0 utf8
 
 	WorldInfo {
 
 	   title "cube.wrl"
+
+	   info "VRML file."
+
+	}
+)";
+
+std::string invalidWorldInfoNodeWrongDataType = R"(
+
+	#VRML V2.0 utf8
+
+	WorldInfo {
+
+	   title Node { size 5.505 }
+
+	   info "VRML file."
+
+	}
+)";
+
+std::string invalidWorldInfoNodeWrongFieldName = R"(
+
+	#VRML V2.0 utf8
+
+	WorldInfo {
+
+	   titles "cube.wrl"
 
 	   info "VRML file."
 
@@ -23,7 +49,7 @@ std::string validBoxNode = R"(
 	}
 )";
 
-std::string invalidBoxNodeWrondDataType = R"(
+std::string invalidBoxNodeWrongDataType = R"(
 
 	#VRML V2.0 utf8
 

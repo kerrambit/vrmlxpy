@@ -5,13 +5,14 @@
 #include <result.hpp>
 
 #include "ConversionContextActionMap.hpp"
+#include "Error.hpp"
+#include "FileTraversorError.hpp"
 #include "FullParsedVrmlFileContext.hpp"
 #include "FullParsedVrmlNodeContext.hpp"
+#include "Logger.hpp"
 #include "MeshConversionContext.hpp"
-#include "VrmlNodeTraversor.hpp"
-#include "Error.hpp"
 #include "NullPointerError.hpp"
-#include "FileTraversorError.hpp"
+#include "VrmlNodeTraversor.hpp"
 
 #include "VrmlProcessingExport.hpp"
 
@@ -23,18 +24,19 @@ cpp::result<std::shared_ptr<ConversionContext>, std::shared_ptr<vrml_proc::core:
 
 	for (const auto& root : context.file) {
 
-		std::cout << "Found root node of type " << root.header << std::endl;
+		LOG_INFO() << "Found root node of type <" << root.header << ">.";
+
 		cpp::result<std::shared_ptr<ConversionContext>, std::shared_ptr<vrml_proc::core::error::Error>> result =
 			vrml_proc::traversor::VrmlNodeTraversor::Traverse<ConversionContext>(vrml_proc::traversor::FullParsedVrmlNodeContext(root, context.manager), actionMap);
 
 		if (result.has_error()) {
-			auto fileError = std::make_shared<vrml_proc::traversor::error::FileTraversorError>(
-				result.error(), root
-			);
+			LOG_ERROR() << "While traversing root node <" << root.header << "> error occured!";
+			auto fileError = std::make_shared<vrml_proc::traversor::error::FileTraversorError>(result.error(), root);
 			return cpp::fail(fileError);
 		}
 
 		if (result.value() == nullptr) {
+			LOG_ERROR() << "While traversing root node <" << root.header << "> unexpected internal error occured!";
 			auto nullPointerError = std::make_shared<vrml_proc::core::error::NullPointerError>();
 			auto fileError = std::make_shared<vrml_proc::traversor::error::FileTraversorError>(
 				nullPointerError, root
