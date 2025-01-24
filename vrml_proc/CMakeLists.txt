@@ -38,6 +38,7 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/src/traversors/utils
     ${CMAKE_CURRENT_SOURCE_DIR}/src/traversors/errors
     ${CMAKE_CURRENT_SOURCE_DIR}/src/traversors/validators
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/traversors/validators/errors
     ${CMAKE_CURRENT_SOURCE_DIR}/src/traversors/handlers
 
     # ${CMAKE_CURRENT_SOURCE_DIR}/../vendor/pybind11/include/pybind11
@@ -159,7 +160,8 @@ add_library(vrmlproc SHARED
     "src/traversors/validators/WorldInfoNodeValidator.hpp"
     "src/traversors/validators/ShapeNodeValidator.hpp"
     "src/traversors/validators/GroupNodeValidator.hpp"
-    "src/traversors/validators/BoxNodeValidator.hpp"
+
+    "src/traversors/validators/errors/NodeValidationError.hpp"
 
     # Actions.
 
