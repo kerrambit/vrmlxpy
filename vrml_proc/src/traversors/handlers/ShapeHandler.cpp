@@ -1,38 +1,59 @@
 #include "ShapeHandler.hpp"
 
-#include "ConversionContextActionExecutor.hpp"
-#include "MeshConversionContext.hpp"
+#include <memory>
+
+#include <result.hpp>
+
 #include "ShapeNodeValidator.hpp"
+#include "ConversionContextActionExecutor.hpp"
+#include "ConversionContextActionMap.hpp"
+#include "Error.hpp"
+#include "Logger.hpp"
+#include "MeshConversionContext.hpp"
+#include "NodeTraversorError.hpp"
 #include "VrmlNode.hpp"
 #include "VrmlNodeTraversor.hpp"
 
+#include "VrmlProcessingExport.hpp"
+
 template<typename ConversionContext>
-std::shared_ptr<ConversionContext> vrml_proc::traversor::handler::ShapeHandler::Handle(vrml_proc::traversor::FullParsedVrmlNodeContext context, const vrml_proc::action::ConversionContextActionMap<ConversionContext>& actionMap) {
-	std::cout << "VRML Node - Shape" << std::endl;
-	return nullptr;
-	//vrml_proc::traversor::validator::ShapeNodeValidator validator(context.node, context.manager);
-	//if (validator.Validate().has_error()) {
-	//	// here we gonna extend the error type and return it
-	//	return nullptr;
-	//}
+cpp::result<std::shared_ptr<ConversionContext>, std::shared_ptr<vrml_proc::core::error::Error>> vrml_proc::traversor::handler::ShapeHandler::Handle(vrml_proc::traversor::FullParsedVrmlNodeContext context, const vrml_proc::action::ConversionContextActionMap<ConversionContext>& actionMap)
+{
+    LOG_INFO() << "Handle VRML node <" << context.node.header << ">.";
 
-	//auto defaultAppearance = vrml_proc::parser::VrmlNode(); auto defaultGeometry = vrml_proc::parser::VrmlNode();
-	//auto apperanceTraversorResult = vrml_proc::traversor::VrmlNodeTraversor::Traverse({ validator.GetCachedAppearance(defaultAppearance), context.manager, true }, actionMap);
-	//auto geometryTraversorResult = vrml_proc::traversor::VrmlNodeTraversor::Traverse({ validator.GetCachedGeometry(defaultGeometry), context.manager, true }, actionMap);
+    vrml_proc::traversor::validator::ShapeNodeValidator validator(context.node, context.manager);
+    auto validationResult = validator.Validate();
+    if (validationResult.has_error()) {
+        std::shared_ptr<vrml_proc::core::error::Error> error = std::make_shared<vrml_proc::traversor::error::NodeTraversorError>(validationResult.error(), context.node);
+        return cpp::fail(error);
+    }
 
-	//return vrml_proc::traversor::utils::ConversionContextActionExecutor::TryToExecute<vrml_proc::conversion_context::MeshConversionContext>(actionMap, "Shape", { apperanceTraversorResult, geometryTraversorResult });
+    vrml_proc::parser::VrmlNode defaultAppearance;
+    vrml_proc::parser::VrmlNode defaultGeometry;
+
+    auto resolvedAppearance = vrml_proc::traversor::VrmlNodeTraversor::Traverse<ConversionContext>({ validator.GetCachedAppearance(defaultAppearance), context.manager, true }, actionMap);
+    if (resolvedAppearance.has_error()) {
+        return cpp::fail(resolvedAppearance.error());
+    }
+
+    auto resolvedGeometry = vrml_proc::traversor::VrmlNodeTraversor::Traverse<ConversionContext>({ validator.GetCachedGeometry(defaultGeometry), context.manager, true }, actionMap);
+    if (resolvedGeometry.has_error()) {
+        return cpp::fail(resolvedAppearance.error());
+    }
+
+    return vrml_proc::traversor::utils::ConversionContextActionExecutor::TryToExecute<ConversionContext>(actionMap, "Shape", { resolvedAppearance.value(), resolvedGeometry.value()});
 }
 
 namespace vrml_proc {
-	namespace traversor {
-		namespace handler {
-			namespace ShapeHandler {
+    namespace traversor {
+        namespace handler {
+            namespace ShapeHandler {
 
-				template VRMLPROCESSING_API std::shared_ptr<vrml_proc::conversion_context::MeshConversionContext>
-					Handle<vrml_proc::conversion_context::MeshConversionContext>(
-						vrml_proc::traversor::FullParsedVrmlNodeContext,
-						const vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext>&);
-			}
-		}
-	}
+                template VRMLPROCESSING_API cpp::result<std::shared_ptr<vrml_proc::conversion_context::MeshConversionContext>, std::shared_ptr<vrml_proc::core::error::Error>>
+                    Handle<vrml_proc::conversion_context::MeshConversionContext>(
+                        vrml_proc::traversor::FullParsedVrmlNodeContext,
+                        const vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext>&);
+            }
+        }
+    }
 }

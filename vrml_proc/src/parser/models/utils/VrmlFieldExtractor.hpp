@@ -1,5 +1,6 @@
 #pragma once
 
+#include <vector>
 #include <functional>
 #include <optional>
 #include <string>
@@ -11,6 +12,7 @@
 
 #include <result.hpp>
 
+#include "Logger.hpp"
 #include "TypeToString.hpp"
 #include "VrmlField.hpp"
 #include "VrmlNodeManager.hpp"

@@ -37,6 +37,20 @@ namespace vrml_proc {
 					return dummyNode;
 				}
 			};
+
+			class UnknownVrmlNode : public vrml_proc::core::error::Error {
+			public:
+				UnknownVrmlNode(std::string nodeName)
+					: m_nodeName(nodeName) {}
+			protected:
+				std::string GetMessageInternal() const override {
+					std::ostringstream oss;
+					oss << "[UnknownVrmlNode]: found unknown VRML node with name <" << m_nodeName << ">!\n";
+					return oss.str();
+				}
+			private:
+				std::string m_nodeName;
+			};
 		}
 	}
 }

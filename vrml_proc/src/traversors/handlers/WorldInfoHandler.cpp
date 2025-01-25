@@ -1,6 +1,7 @@
 #include "WorldInfoHandler.hpp"
 
 #include <memory>
+#include <string>
 
 #include <result.hpp>
 

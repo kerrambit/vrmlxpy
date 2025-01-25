@@ -1,21 +1,23 @@
 #pragma once
 
 #include <functional>
+#include <memory>
 #include <optional>
 #include <string>
 #include <unordered_set>
 #include <vector>
-#include <memory>
 
+#include <boost/variant/recursive_wrapper.hpp>
+#include <boost/variant/variant.hpp>
 #include <result.hpp>
 
 #include "NodeValidationError.hpp"
 #include "TypeToString.hpp"
+#include "UseNode.hpp"
 #include "VrmlField.hpp"
 #include "VrmlFieldExtractor.hpp"
 #include "VrmlNode.hpp"
 #include "VrmlNodeManager.hpp"
-#include <UseNode.hpp>
 
 namespace vrml_proc {
 	namespace traversor {
@@ -130,6 +132,52 @@ namespace vrml_proc {
 					}
 
 					return std::optional<std::reference_wrapper<const T>>(value.value());
+				}
+
+				/**
+				 * @brief Static helper method which validates field entry of expected type VRML node array and resolves found USE nodes into VRML nodes.
+				 * 
+				 * @param fieldName name of the field
+				 * @param fields vector of node's fields
+				 * @param manager VRML manager
+				 * 
+				 * @returns NodeValidationError if the field has wrong type (or if any USE node cannot found its corresponding DEF node); otherwise
+				 * it returns empty optional (field is missing) or optional containing vector of const references to VRML nodes
+				 */
+				static cpp::result<std::optional<std::vector<std::reference_wrapper<const vrml_proc::parser::VrmlNode>>>, std::shared_ptr<error::NodeValidationError>> ExtractVrmlNodeArrayWithValidation(const std::string& fieldName, const std::vector<vrml_proc::parser::VrmlField>& fields, const vrml_proc::parser::VrmlNodeManager& manager) {
+
+					std::string invalidType = "";
+					cpp::result<std::reference_wrapper<const std::vector<boost::variant<boost::recursive_wrapper<vrml_proc::parser::VrmlNode>, boost::recursive_wrapper<vrml_proc::parser::UseNode>>>>, vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractByNameError> value = vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractByNameExtended<std::vector<boost::variant<boost::recursive_wrapper<vrml_proc::parser::VrmlNode>, boost::recursive_wrapper<vrml_proc::parser::UseNode>>>>(fieldName, fields, invalidType);
+
+					if (value.has_error()) {
+						if (value.error() == vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractByNameError::FieldNotFound) {
+							return std::optional<std::vector<std::reference_wrapper<const vrml_proc::parser::VrmlNode>>>{};
+						}
+						else if (value.error() == vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractByNameError::ValidationError) {
+							return cpp::fail(std::make_shared<error::InvalidFieldValueType>(vrml_proc::core::utils::TypeToString<vrml_proc::parser::VrmlNode>(), invalidType));
+						}
+					}
+
+					std::vector<std::reference_wrapper<const vrml_proc::parser::VrmlNode>> resolvedChildren;
+
+					for (const auto& child : value.value().get()) {
+						std::string invalidType; std::string useId;
+						cpp::result<std::reference_wrapper<const vrml_proc::parser::VrmlNode>, vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractVrmlNodeFromVariantError> childResult = vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractVrmlNodeFromVariantExtended(child, manager, invalidType, useId);
+						if (childResult.has_error()) {
+							switch (childResult.error())
+							{
+							case vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractVrmlNodeFromVariantError::ValidationError:
+								return cpp::fail(std::make_shared<error::InvalidFieldValueType>(vrml_proc::core::utils::TypeToString<vrml_proc::parser::VrmlNode>(), invalidType));
+							case vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractVrmlNodeFromVariantError::UnknownUseNode:
+								return cpp::fail(std::make_shared<error::MissingDefNodeForUseNode>(useId));
+							default:
+								break;
+							}
+						}
+						resolvedChildren.push_back(childResult.value());
+					}
+
+					return resolvedChildren;
 				}
 			};
 		}
