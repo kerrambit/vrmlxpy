@@ -124,10 +124,13 @@ TEST_CASE("ExtractByNameExtended - VrmlNode Array", "[valid]") {
     auto& fieldsOfRoot = parseResult.value().at(0).fields;
     std::vector<boost::variant<boost::recursive_wrapper<vrml_proc::parser::VrmlNode>, boost::recursive_wrapper<vrml_proc::parser::UseNode>>>* ptr = boost::get<std::vector<boost::variant<boost::recursive_wrapper<vrml_proc::parser::VrmlNode>, boost::recursive_wrapper<vrml_proc::parser::UseNode>>>>(&fieldsOfRoot.at(0).value);
 
+    boost::variant<boost::recursive_wrapper<vrml_proc::parser::VrmlNode>, boost::recursive_wrapper<vrml_proc::parser::UseNode>>* firstOfChildrenPtr = &ptr->at(0);
+
     std::string invalidType;
     auto result = vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractByNameExtended<std::vector<boost::variant<boost::recursive_wrapper<vrml_proc::parser::VrmlNode>, boost::recursive_wrapper<vrml_proc::parser::UseNode>>>>("children", fieldsOfRoot, invalidType);
     REQUIRE(result.has_value());
     CHECK(ptr == &(result.value().get()));
+    CHECK(firstOfChildrenPtr == &(result.value().get().at(0)));
 }
 
 TEST_CASE("ExtractByNameExtended - Empty Array of Vec3f's", "[valid]") {
