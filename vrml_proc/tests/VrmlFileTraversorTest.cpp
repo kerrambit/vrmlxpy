@@ -14,7 +14,6 @@
 #include <MeshConversionContext.hpp>
 #include <ParserResult.hpp>
 #include <ShapeAction.hpp>
-#include <SpotlightAction.hpp>
 #include <Vec3f.hpp>
 #include <VrmlFile.hpp>
 #include <VrmlFileTraversor.hpp>
@@ -51,13 +50,6 @@ static void HandleRootLevelError(const cpp::result<std::shared_ptr<vrml_proc::co
 static vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext>& GetActionMap() {
 
     static vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext> actionMap;
-
-    /*actionMap.AddAction("Spotlight", [](const std::vector<std::any>& args) {
-        if (args.size() == 1 && args[0].type() == typeid(float)) {
-            return std::make_shared<vrml_proc::action::SpotlightAction>(std::any_cast<float>(args[0]));
-        }
-        throw std::invalid_argument("Invalid arguments for SpotlightAction");
-        });*/
 
     actionMap.AddAction("Box", [](const std::vector<std::any>& args) {
         if (args.size() == 2 && args[0].type() == typeid(vrml_proc::parser::Vec3f) && args[1].type() == typeid(bool)) {
