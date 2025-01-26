@@ -3,15 +3,17 @@
 
 #include <vector>
 
+#include <boost/optional/optional.hpp>
+#include <boost/variant/detail/apply_visitor_unary.hpp>
 #include <boost/variant/get.hpp>
 #include <boost/variant/recursive_wrapper.hpp>
 #include <boost/variant/static_visitor.hpp>
 #include <boost/variant/variant.hpp>
 
 #include "test_data/VRMLFileGrammarTestDataset.hpp"
-#include <boost/optional/optional.hpp>
-#include <boost/variant/detail/apply_visitor_unary.hpp>
 #include <Int32Array.hpp>
+#include <Logger.hpp>
+#include <MemoryMappedFileReader.hpp>
 #include <ParserResult.hpp>
 #include <UseNode.hpp>
 #include <Vec3f.hpp>
@@ -22,8 +24,6 @@
 #include <VrmlNodeManager.hpp>
 #include <VrmlParser.hpp>
 #include <VrmlUnits.hpp>
-#include <SimpleFileReader.hpp>
-#include <MemoryMappedFileReader.hpp>
 
 static vrml_proc::parser::ParserResult<vrml_proc::parser::VrmlFile> ParseVrmlFile(std::string& text, vrml_proc::parser::VrmlNodeManager& manager) {
 
@@ -44,6 +44,10 @@ static vrml_proc::parser::ParserResult<vrml_proc::parser::VrmlFile> ParseVrmlFil
 }
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------ //
+
+TEST_CASE("Initialization") {
+    vrml_proc::core::logger::InitLogging();
+}
 
 TEST_CASE("Parse VRML File - Valid Input - Simple VRML File", "[parsing][valid]") {
 

@@ -1,6 +1,7 @@
 #include "Logger.hpp"
 
 #include <ios>
+#include <string>
 
 #include <boost/date_time/posix_time/ptime.hpp>
 #include <boost/log/expressions.hpp>
@@ -57,4 +58,30 @@ void vrml_proc::core::logger::InitLogging() {
         logging::trivial::severity >= logging::trivial::trace
     );
 #endif
+}
+
+void vrml_proc::core::logger::LogUnformattedText(const std::string& title, const std::string& text, vrml_proc::core::logger::Level level, const std::string& file, int line, const std::string& function) {
+    switch (level)
+    {
+        case vrml_proc::core::logger::Level::Trace:
+            BOOST_LOG_SEV(Logger::get(), boost::log::trivial::trace) << "[" << file << ":" << line << "] [" << function << "]: " << title << ":\n" << text;
+            break;
+        case vrml_proc::core::logger::Level::Debug:
+            BOOST_LOG_SEV(Logger::get(), boost::log::trivial::debug) << title << ":\n" << text;
+            break;
+        case vrml_proc::core::logger::Level::Info:
+            BOOST_LOG_SEV(Logger::get(), boost::log::trivial::info) << title << ":\n" << text;
+            break;
+        case vrml_proc::core::logger::Level::Warning:
+            BOOST_LOG_SEV(Logger::get(), boost::log::trivial::warning) << title << ":\n" << text;
+            break;
+        case vrml_proc::core::logger::Level::Error:
+            BOOST_LOG_SEV(Logger::get(), boost::log::trivial::error) << "[" << file << ":" << line << "] [" << function << "]: " << title << ":\n" << text;
+            break;
+        case vrml_proc::core::logger::Level::Fatal:
+            BOOST_LOG_SEV(Logger::get(), boost::log::trivial::fatal) << title << ":\n" << text;
+            break;
+        default:
+            break;
+    }
 }

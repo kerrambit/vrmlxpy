@@ -3,15 +3,16 @@
 #pragma once
 
 #include <functional>
+#include <memory>
 #include <optional>
 
 #include <result.hpp>
 
+#include "Logger.hpp"
+#include "NodeValidationError.hpp"
 #include "NodeValidator.hpp"
 #include "Vec3f.hpp"
 #include "VrmlNode.hpp"
-#include "NodeValidationError.hpp"
-#include <memory>
 
 namespace vrml_proc {
 	namespace traversor {
@@ -25,12 +26,16 @@ namespace vrml_proc {
 
 				cpp::result<void, std::shared_ptr<error::NodeValidationError>> Validate() override {
 
+					LOG_INFO() << "Validate Box VRML node.";
+
 					if (m_node.fields.empty()) {
+						LOG_INFO() << "No fields were detected in the node.";
 						return {};
 					}
 
 					auto fieldsResult = vrml_proc::traversor::validator::NodeValidator::CheckForOnlyUniqueAllowedFieldNames({ "size" }, m_node.fields, m_node.header);
 					if (fieldsResult.has_error()) {
+						LOG_ERROR() << "Node contains field with invalid name!";
 						return fieldsResult;
 					}
 
@@ -38,11 +43,13 @@ namespace vrml_proc {
 
 					auto sizeResult = vrml_proc::traversor::validator::NodeValidator::ExtractFieldByNameWithValidation<vrml_proc::parser::Vec3f>("size", m_node.fields);
 					if (sizeResult.has_error()) {
+						LOG_ERROR() << "Field <size> could not be extracted from the VRML node!";
 						return cpp::fail(sizeResult.error());
 					}
 
 					m_size = sizeResult.value();
 
+					LOG_INFO() << "Validation was successfull. Data are cached.";
 					return {};
 				}
 
@@ -56,7 +63,6 @@ namespace vrml_proc {
 
 			private:
 				const vrml_proc::parser::VrmlNode& m_node;
-
 				std::optional<std::reference_wrapper<const vrml_proc::parser::Vec3f>> m_size = std::optional<std::reference_wrapper<const vrml_proc::parser::Vec3f>>{};
 			};
 		}

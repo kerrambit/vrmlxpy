@@ -1,43 +1,46 @@
 #include "WorldInfoHandler.hpp"
 
-#include "VrmlFieldExtractor.hpp"
+#include <memory>
+#include <string>
+
+#include <result.hpp>
+
+#include "WorldInfoNodeValidator.hpp"
 #include "ConversionContextActionExecutor.hpp"
+#include "Error.hpp"
+#include "Logger.hpp"
 #include "MeshConversionContext.hpp"
+#include "NodeTraversorError.hpp"
+#include "ConversionContextActionMap.hpp"
+
+#include "VrmlProcessingExport.hpp"
 
 template<typename ConversionContext>
-std::shared_ptr<ConversionContext> vrml_proc::traversor::handler::WorldInfoHandler::Handle(vrml_proc::traversor::FullParsedVrmlNodeContext context, const vrml_proc::action::ConversionContextActionMap<ConversionContext>& actionMap)
+cpp::result<std::shared_ptr<ConversionContext>, std::shared_ptr<vrml_proc::core::error::Error>> vrml_proc::traversor::handler::WorldInfoHandler::Handle(vrml_proc::traversor::FullParsedVrmlNodeContext context, const vrml_proc::action::ConversionContextActionMap<ConversionContext>& actionMap)
 {
-	std::cout << "VRML Node - WorldInfo" << std::endl;
-	return nullptr;
-	//auto info = vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractByName<std::string>("info", context.node.fields);
-	//if (info.has_value()) {
-	//	std::cout << "info" << info.value() << std::endl;
-	//}
-	//if (info.error() == vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractByNameError::ValidationError) {
-	//	// Return error type, invalid field value
-	//}
+	LOG_INFO() << "Handle VRML node <" << context.node.header << ">.";
 
-	//auto title = vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractByName<std::string>("title", context.node.fields);
-	//if (title.has_value()) {
-	//	std::cout << "title" << title.value() << std::endl;
-	//}
-	//if (title.error() == vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractByNameError::ValidationError) {
-	//	// Return error type, invalid field value
-	//}
+	vrml_proc::traversor::validator::WorldInfoNodeValidator validator(context.node);
+	auto validationResult = validator.Validate();
+	if (validationResult.has_error()) {
+		std::shared_ptr<vrml_proc::core::error::Error> error = std::make_shared<vrml_proc::traversor::error::NodeTraversorError>(validationResult.error(), context.node);
+		return cpp::fail(error);
+	}
 
-	//return vrml_proc::traversor::utils::ConversionContextActionExecutor::TryToExecute<vrml_proc::conversion_context::MeshConversionContext>(actionMap, "WorldInfo", { info.value_or(""), title.value_or("") });
+	std::string defaultInfo = ""; std::string defaultTitle = "";
+	return vrml_proc::traversor::utils::ConversionContextActionExecutor::TryToExecute<ConversionContext>(actionMap, "WorldInfo", { validator.GetCachedInfo(defaultInfo), validator.GetCachedTitle(defaultTitle), context.IsDescendantOfShape });
 }
 
 namespace vrml_proc {
-	namespace traversor {
-		namespace handler {
-			namespace WorldInfoHandler {
+    namespace traversor {
+        namespace handler {
+            namespace WorldInfoHandler {
 
-				template VRMLPROCESSING_API std::shared_ptr<vrml_proc::conversion_context::MeshConversionContext>
-					Handle<vrml_proc::conversion_context::MeshConversionContext>(
-						vrml_proc::traversor::FullParsedVrmlNodeContext,
-						const vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext>&);
-			}
-		}
-	}
+                template VRMLPROCESSING_API cpp::result<std::shared_ptr<vrml_proc::conversion_context::MeshConversionContext>, std::shared_ptr<vrml_proc::core::error::Error>>
+                    Handle<vrml_proc::conversion_context::MeshConversionContext>(
+                        vrml_proc::traversor::FullParsedVrmlNodeContext,
+                        const vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext>&);
+            }
+        }
+    }
 }
