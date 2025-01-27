@@ -3,6 +3,8 @@
 #include <string>
 #include <unordered_map>
 #include <memory>
+#include <optional>
+#include <functional>
 
 #include "VrmlNode.hpp"
 #include "VrmlProcessingExport.hpp"
@@ -12,16 +14,16 @@ namespace vrml_proc {
 
         class VRMLPROCESSING_API VrmlNodeManager {
         public:
-            VrmlNodeManager() = default;
+            VrmlNodeManager();
 
-            void AddDefinitionNode(const std::string& id, std::shared_ptr<VrmlNode> node);
+            void AddDefinitionNode(const std::string& id, const VrmlNode& node);
 
-            std::shared_ptr<VrmlNode> GetDefinitionNode(const std::string& id) const;
+            std::optional<std::reference_wrapper<const VrmlNode>> GetDefinitionNode(const std::string& id) const;
 
             inline size_t GetDefNodesTotalCount() const { return m_definitionNodes.size(); }
 
         private:
-            std::unordered_map<std::string, std::shared_ptr<VrmlNode>> m_definitionNodes;
+            std::unordered_map<std::string, std::reference_wrapper<const VrmlNode>> m_definitionNodes;
         };
     }
 }

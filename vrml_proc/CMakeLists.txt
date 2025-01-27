@@ -217,6 +217,7 @@ add_executable(Vec3fArrayGrammarUnitTests "tests/Vec3fArrayGrammarTest.cpp")
 add_executable(Int32ArrayGrammarUnitTests "tests/Int32ArrayGrammarTest.cpp")
 add_executable(VrmlFileTraversorUnitTests "tests/VrmlFileTraversorTest.cpp")
 add_executable(VrmlFieldExtractorUnitTests "tests/VrmlFieldExtractorTest.cpp")
+add_executable(VrmlNodeGrammarUnitTests "tests/VrmlNodeGrammarTest.cpp")
 
 # Link Catch2 with the test executables.
 target_link_libraries(VRMLFileGrammarUnitTests PRIVATE Catch2::Catch2WithMain vrmlproc)
@@ -226,6 +227,7 @@ target_link_libraries(Vec3fArrayGrammarUnitTests PRIVATE Catch2::Catch2WithMain 
 target_link_libraries(Int32ArrayGrammarUnitTests PRIVATE Catch2::Catch2WithMain vrmlproc)
 target_link_libraries(VrmlFileTraversorUnitTests PRIVATE Catch2::Catch2WithMain vrmlproc)
 target_link_libraries(VrmlFieldExtractorUnitTests PRIVATE Catch2::Catch2WithMain vrmlproc)
+target_link_libraries(VrmlNodeGrammarUnitTests PRIVATE Catch2::Catch2WithMain vrmlproc)
 
 # Enable testing (use CTest to run the unit tests).
 enable_testing()
@@ -236,3 +238,4 @@ add_test(NAME Vec3fArrayGrammarUnitTests COMMAND Vec3fArrayGrammarUnitTests)
 add_test(NAME Int32ArrayGrammarUnitTests COMMAND Int32ArrayGrammarUnitTests)
 add_test(NAME VrmlFileTraversorUnitTests COMMAND VrmlFileTraversorUnitTests)
 add_test(NAME VrmlFieldExtractorUnitTests COMMAND VrmlFieldExtractorUnitTests)
+add_test(NAME VrmlNodeGrammarUnitTests COMMAND VrmlNodeGrammarUnitTests)

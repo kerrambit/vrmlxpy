@@ -404,7 +404,10 @@ TEST_CASE("ExtractVrmlNodeFromVariantExtended - UseNode", "[valid]") {
     auto result = vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractVrmlNodeFromVariantExtended(variant, manager, invalidType, useId);
     REQUIRE(result.has_value());
     std::reference_wrapper<const vrml_proc::parser::VrmlNode>& wrapper = result.value();
-    CHECK(&wrapper.get() == &(*manager.GetDefinitionNode("id")));
+
+    auto managerFound = manager.GetDefinitionNode("id");
+    REQUIRE(managerFound.has_value());
+    CHECK(&wrapper.get() == &(managerFound.value().get()));
 }
 
 TEST_CASE("ExtractVrmlNodeFromVariantExtended - UseNode Is Missing", "[invalid]") {
@@ -484,7 +487,10 @@ TEST_CASE("ExtractVrmlNodeExtended - USENode", "[valid]") {
     std::string invalidType; std::string useId;
     auto result = vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractVrmlNodeExtended("validUseId", shape.fields, manager, invalidType, useId);
     REQUIRE(result.has_value());
-    CHECK(&(*manager.GetDefinitionNode("id")) == &(result.value().get()));
+
+    auto managerFound = manager.GetDefinitionNode("id");
+    REQUIRE(managerFound.has_value());
+    CHECK(&(managerFound.value().get()) == &(result.value().get()));
 }
 
 TEST_CASE("ExtractVrmlNodeExtended - VrmlNode", "[valid]") {
