@@ -1,7 +1,7 @@
 #include "VrmlNodeManagerPopulator.hpp"
 
 #include "VrmlFieldExtractor.hpp"
-#include "vrmlNode.hpp"
+#include "VrmlNode.hpp"
 #include "VrmlNodeManager.hpp"
 
 namespace vrml_proc {
