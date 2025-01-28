@@ -47,6 +47,35 @@ namespace vrml_proc {
                         ValidationError
                     };
 
+                    // --------------------------------------------------------
+
+                    template <typename T>
+                    VRMLPROCESSING_API inline std::optional<std::reference_wrapper<const T>> ExtractExtended(const vrml_proc::parser::VrmlFieldValue& fieldValue, std::string& invalidType) {
+                        
+                        ExtractorVisitor<T> visitor;
+                        auto result = boost::apply_visitor(visitor, fieldValue);
+
+                        if (result.has_value()) {
+                            return result.value();
+
+                        }
+                        else {
+                            if (result.error().has_value()) {
+                                invalidType = result.error().value();
+                            }
+                            return {};
+                        }
+                    }
+
+                    template <typename T>
+                    VRMLPROCESSING_API inline std::optional<std::reference_wrapper<const T>> Extract(const vrml_proc::parser::VrmlFieldValue& fieldValue) {
+
+                        std::string invalidType;
+                        return vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractExtended<T>(fieldValue, invalidType);
+                    }
+
+                    // --------------------------------------------------------
+
                     template <typename T>
                     VRMLPROCESSING_API inline cpp::result<std::reference_wrapper<const T>, ExtractByNameError> ExtractByNameExtended(const std::string& name, const std::vector<vrml_proc::parser::VrmlField>& fields, std::string& invalidType) {
                         for (const auto& field : fields) {
