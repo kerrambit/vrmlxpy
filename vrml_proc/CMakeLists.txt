@@ -102,6 +102,8 @@ add_library(vrmlproc SHARED
 
     "src/parser/services/VrmlNodeManager.hpp"
     "src/parser/services/VrmlNodeManager.cpp"
+    "src/parser/services/VrmlNodeManagerPopulator.hpp"
+    "src/parser/services/VrmlNodeManagerPopulator.cpp"
 
     "src/parser/interfaces/Printable.hpp"
     "src/parser/interfaces/Printable.cpp"
