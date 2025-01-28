@@ -5,7 +5,7 @@ void vrml_proc::parser::VrmlNode::Print(Printable::IndentationLevel indentationL
     indentationLevel++;
 
     *Printable::AccessStreamPointer() << indentationString;
-    *Printable::AccessStreamPointer() << "VRMLNode:\n";
+    *Printable::AccessStreamPointer() << "VRMLNode (" << this << "):\n";
     if (definitionName.has_value()) {
         *Printable::AccessStreamPointer() << Printable::CreateIndentationString(indentationLevel) << "DEF identifier: <" << definitionName.value() << ">\n";
     }

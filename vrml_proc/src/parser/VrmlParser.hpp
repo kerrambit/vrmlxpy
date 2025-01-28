@@ -2,10 +2,10 @@
 
 // #define BOOST_SPIRIT_DEBUG
 
+#include "CommentSkipper.hpp"
 #include "Parser.hpp"
 #include "VrmlFile.hpp"
 #include "VrmlFileGrammar.hpp"
-#include "CommentSkipper.hpp"
 #include "VrmlProcessingExport.hpp"
 
 namespace vrml_proc {
@@ -16,7 +16,7 @@ namespace vrml_proc {
             VrmlParser() = delete;
 
             VrmlParser(VrmlNodeManager& manager)
-                : Parser<VrmlFile>(), m_manager(manager), m_grammar(manager), m_skipper() {} 
+                : Parser<VrmlFile>(), m_manager(manager), m_grammar(), m_skipper() {} 
 
             ParserResult<VrmlFile> Parse(std::string& string) override;
 

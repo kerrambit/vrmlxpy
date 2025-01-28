@@ -309,50 +309,53 @@ TEST_CASE("Parse VRML File - Valid Input - Simple DEF Node", "[parsing][valid]")
     auto parseResult = ParseVrmlFile(simpleDefNode, manager);
     REQUIRE(parseResult);
 
+    auto& root = parseResult.value().at(0);
+    auto& field = root.fields.at(0);
+
+    CHECK(field.name == "children");
+
+    auto* value = boost::get<std::vector<boost::variant<boost::recursive_wrapper<vrml_proc::parser::VrmlNode>, boost::recursive_wrapper<vrml_proc::parser::UseNode>>>>(&field.value);
+    REQUIRE(value != nullptr);
+
+    uintptr_t variantPtr;
     {
-        vrml_proc::parser::VrmlNode root = parseResult.value().at(0);
-        CHECK(root.header == "Group");
+        auto& variant = value->at(0);
 
-        auto &field = root.fields.at(0);
-        CHECK(field.name == "children");
+        struct VrmlNodeVisitor : public boost::static_visitor<void> {
+            void operator()(vrml_proc::parser::VrmlNode& vrmlNode) {
 
-        auto* value = boost::get<std::vector<boost::variant<boost::recursive_wrapper<vrml_proc::parser::VrmlNode>, boost::recursive_wrapper<vrml_proc::parser::UseNode>>>>(&field.value);
-        REQUIRE(value != nullptr);
+                REQUIRE(vrmlNode.header == "Group");
+                ptr = reinterpret_cast<uintptr_t>(&vrmlNode);
 
-        {
-            auto& variant = value->at(0);
+                REQUIRE(vrmlNode.definitionName.has_value());
+                CHECK(vrmlNode.definitionName.value() == "id");
 
-            struct VrmlNodeVisitor : public boost::static_visitor<void> {
-                void operator()(vrml_proc::parser::VrmlNode& vrmlNode) const {
+                auto& field = vrmlNode.fields.at(0);
+                CHECK(field.name == "bboxCenter");
 
-                    REQUIRE(vrmlNode.header == "Group");
-                    auto &field = vrmlNode.fields.at(0);
+                REQUIRE(boost::get<vrml_proc::parser::Vec3f>(&field.value) != nullptr);
+                auto* bboxCenter = boost::get<vrml_proc::parser::Vec3f>(&field.value);
 
-                    REQUIRE(vrmlNode.definitionName.has_value());
-                    CHECK(vrmlNode.definitionName.value() == "id");
+                CHECK_THAT(bboxCenter->x, Catch::Matchers::WithinAbs(0.0587, 0.01));
+                CHECK_THAT(bboxCenter->y, Catch::Matchers::WithinAbs(0.0, 0.0));
+                CHECK_THAT(bboxCenter->z, Catch::Matchers::WithinAbs(15.0, 0.0));
+            }
 
-                    CHECK(field.name == "bboxCenter");
+            void operator()(vrml_proc::parser::UseNode& useNode) {
+                FAIL("Unexpected type inside the variant.");
+            }
 
-                    REQUIRE(boost::get<vrml_proc::parser::Vec3f>(&field.value) != nullptr);
-                    auto *bboxCenter = boost::get<vrml_proc::parser::Vec3f>(&field.value);
+            uintptr_t ptr;
+        };
 
-                    CHECK_THAT(bboxCenter->x, Catch::Matchers::WithinAbs(0.058, 0.01));
-                    CHECK_THAT(bboxCenter->y, Catch::Matchers::WithinAbs(0.0, 0.0));
-                    CHECK_THAT(bboxCenter->z, Catch::Matchers::WithinAbs(15.0, 0.0));
-                }
-
-                void operator()(vrml_proc::parser::UseNode& useNode) const {
-                    FAIL("Unexpected type inside the variant.");
-                }
-            };
-
-            VrmlNodeVisitor visitor;
-            boost::apply_visitor(visitor, variant);
-        }
+        VrmlNodeVisitor visitor;
+        boost::apply_visitor(visitor, variant);
+        variantPtr = visitor.ptr;
     }
 
     auto def = manager.GetDefinitionNode("id");
-    CHECK(def != nullptr);
+    REQUIRE(def.has_value());
+    CHECK(reinterpret_cast<uintptr_t>(&def.value().get()) == variantPtr);
 }
 
 TEST_CASE("Parse VRML File - Valid Input - Simple USE Node", "[parsing][valid]") {
@@ -417,7 +420,7 @@ TEST_CASE("Parse VRML File - Valid Input - Simple USE Node", "[parsing][valid]")
     }
 
     auto def = manager.GetDefinitionNode("id");
-    CHECK(def != nullptr);
+    REQUIRE(def.has_value());
 }
 
 TEST_CASE("Parse VRM LFile - Valid Input - Node With Switch", "[parsing][valid]") {
@@ -479,12 +482,12 @@ TEST_CASE("Parse VRM LFile - Valid Input - Node With Switch", "[parsing][valid]"
 
     {
         auto def = manager.GetDefinitionNode("A1");
-        CHECK(def != nullptr);
+        REQUIRE(def.has_value());
     }
 
     {
         auto def = manager.GetDefinitionNode("C2");
-        CHECK(def != nullptr);
+        REQUIRE(def.has_value());
     }
 }
 

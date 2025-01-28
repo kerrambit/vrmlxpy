@@ -21,6 +21,7 @@ namespace vrml_proc {
 
         struct VrmlNode;
         using VrmlFieldValue = boost::variant<std::string, bool, Vec3fArray, Int32Array, float32_t, int32_t, Vec4f, Vec3f, UseNode, boost::recursive_wrapper<struct VrmlNode>, std::vector<boost::variant<boost::recursive_wrapper<struct VrmlNode>, boost::recursive_wrapper<struct UseNode>>>>;
+        using VrmlNodeArray = std::vector<boost::variant<boost::recursive_wrapper<struct VrmlNode>, boost::recursive_wrapper<struct UseNode>>>;
 
         struct VRMLPROCESSING_API VrmlField : public Printable {
             std::string name;

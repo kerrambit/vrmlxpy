@@ -5,7 +5,7 @@ void vrml_proc::parser::UseNode::Print(Printable::IndentationLevel indentationLe
     indentationLevel++;
 
     *Printable::AccessStreamPointer() << indentationString;
-    *Printable::AccessStreamPointer() << "USENode:\n";
+    *Printable::AccessStreamPointer() << "USENode (" << this << "):\n";
     *Printable::AccessStreamPointer() << Printable::CreateIndentationString(indentationLevel) << "Identifier: <" << identifier << ">";
     *Printable::AccessStreamPointer() << std::endl;
 }

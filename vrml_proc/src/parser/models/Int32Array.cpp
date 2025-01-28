@@ -5,7 +5,7 @@ void vrml_proc::parser::Int32Array::Print(Printable::IndentationLevel indentatio
     indentationLevel++;
 
     *Printable::AccessStreamPointer() << indentationString;
-    *Printable::AccessStreamPointer() << "Int32Array:\n";
+    *Printable::AccessStreamPointer() << "Int32Array (" << this << "):\n";
     *Printable::AccessStreamPointer() << Printable::CreateIndentationString(indentationLevel) << "[\n" << Printable::CreateIndentationString(indentationLevel + 1);
 
     for (const auto integer : integers) {

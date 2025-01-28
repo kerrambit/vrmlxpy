@@ -5,7 +5,7 @@ void vrml_proc::parser::Vec3fArray::Print(Printable::IndentationLevel indentatio
     indentationLevel++;
 
     *Printable::AccessStreamPointer() << indentationString;
-    *Printable::AccessStreamPointer() << "Vec3fArray:\n";
+    *Printable::AccessStreamPointer() << "Vec3fArray (" << this << "):\n";
     *Printable::AccessStreamPointer() << Printable::CreateIndentationString(indentationLevel) << "[\n";
 
     for (const auto& vector : vectors) {
