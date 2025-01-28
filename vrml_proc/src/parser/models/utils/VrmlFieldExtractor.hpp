@@ -125,8 +125,8 @@ namespace vrml_proc {
                             auto useNode = ExtractByName<vrml_proc::parser::UseNode>(name, fields);
                             if (useNode.has_value()) {
                                 auto managerFound = manager.GetDefinitionNode(useNode.value().get().identifier);
-                                if (managerFound != nullptr) {
-                                    return *managerFound;
+                                if (managerFound.has_value()) {
+                                    return managerFound.value();
                                 }
                                 else {
                                     useId = useNode.value().get().identifier;
@@ -187,8 +187,8 @@ namespace vrml_proc {
                         auto useNode = ExtractFromVariantExtended<vrml_proc::parser::UseNode>(variant, out);
                         if (useNode.has_value()) {
                             auto managerFound = manager.GetDefinitionNode(useNode.value().get().identifier);
-                            if (managerFound != nullptr) {
-                                return std::cref(*managerFound);
+                            if (managerFound.has_value()) {
+                                return managerFound.value();
                             }
                             else {
                                 useId = useNode.value().get().identifier;
