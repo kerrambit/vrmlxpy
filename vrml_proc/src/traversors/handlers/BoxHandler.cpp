@@ -2,6 +2,7 @@
 
 #include <memory>
 
+#include <any>
 #include <result.hpp>
 
 #include "BoxNodeValidator.hpp"
@@ -11,6 +12,7 @@
 #include "Logger.hpp"
 #include "MeshConversionContext.hpp"
 #include "NodeTraversorError.hpp"
+#include "Vec3f.hpp"
 
 #include "VrmlProcessingExport.hpp"
 
@@ -25,9 +27,17 @@ cpp::result<std::shared_ptr<ConversionContext>, std::shared_ptr<vrml_proc::core:
         std::shared_ptr<vrml_proc::core::error::Error> error = std::make_shared<vrml_proc::traversor::error::NodeTraversorError>(validationResult.error(), context.node);
         return cpp::fail(error);
 	}
+	static vrml_proc::parser::Vec3f defaultSize = { 2.0f, 2.0f, 2.0f };
 
-	vrml_proc::parser::Vec3f defaultSize = { 2.0f, 2.0f, 2.0f };
-	return vrml_proc::traversor::utils::ConversionContextActionExecutor::TryToExecute<ConversionContext>(actionMap, "Box", { validator.GetCachedSize(defaultSize), context.IsDescendantOfShape});
+    std::cout << "Handler (1): " << (validator.GetCachedSize(defaultSize)).get() << std::endl;
+
+    std::any cachedSize = validator.GetCachedSize(defaultSize);
+
+    std::cout << "Handler (2): "
+        << (std::any_cast<std::reference_wrapper<const vrml_proc::parser::Vec3f>>(cachedSize)).get()
+        << std::endl;
+
+    return vrml_proc::traversor::utils::ConversionContextActionExecutor::TryToExecute<ConversionContext>(actionMap, "Box", { std::cref(cachedSize) }, {context.IsDescendantOfShape});
 }
 
 namespace vrml_proc {

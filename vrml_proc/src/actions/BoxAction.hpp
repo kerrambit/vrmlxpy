@@ -2,11 +2,11 @@
 
 #include <memory>
 
-#include "Vec3f.hpp"
 #include "ConversionContextAction.hpp"
+#include "GeometryAction.hpp"
 #include "MeshConversionContext.hpp"
 #include "StlBaseStructure.hpp"
-#include "GeometryAction.hpp"
+#include "Vec3f.hpp"
 
 namespace vrml_proc {
 	namespace action {
@@ -14,11 +14,12 @@ namespace vrml_proc {
 		class BoxAction : public GeometryAction {
 
 		public:
-			BoxAction(vrml_proc::parser::Vec3f size, bool containedByShape) :
+			BoxAction(std::reference_wrapper<const vrml_proc::parser::Vec3f> size, bool containedByShape) :
 				GeometryAction(containedByShape), m_size(size) {}
 
 			// TODO: use here some mesh calculator to create data for STL
 			std::shared_ptr<vrml_proc::conversion_context::MeshConversionContext> Execute() override {
+				std::cout << "Action: " << m_size.get() << std::endl;
 				auto result = std::make_shared<vrml_proc::conversion_context::MeshConversionContext>();
 				if (!m_containedByShape) {
 					return result;
@@ -28,7 +29,7 @@ namespace vrml_proc {
 				return result;
 			}
 		private:
-			vrml_proc::parser::Vec3f m_size = { 0.0f, 0.0f, 0.0f };
+			std::reference_wrapper<const vrml_proc::parser::Vec3f> m_size;
 		};
 	}
 }

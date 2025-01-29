@@ -49,6 +49,15 @@ std::string validBoxNode = R"(
 	}
 )";
 
+std::string validBoxNodeEmpty = R"(
+
+	#VRML V2.0 utf8
+
+	Box {
+        
+	}
+)";
+
 std::string invalidBoxNodeWrongDataType = R"(
 
 	#VRML V2.0 utf8

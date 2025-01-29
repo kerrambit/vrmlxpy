@@ -4,6 +4,7 @@
 #include <filesystem>
 #include <memory>
 #include <vector>
+#include <cassert>
 
 #include "test_data/VrmlFileTraversorTestDataset.hpp"
 #include <BoxAction.hpp>
@@ -51,11 +52,13 @@ static vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_conte
 
     static vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext> actionMap;
 
-    actionMap.AddAction("Box", [](const std::vector<std::any>& args) {
-        if (args.size() == 2 && args[0].type() == typeid(vrml_proc::parser::Vec3f) && args[1].type() == typeid(bool)) {
-            return std::make_shared<vrml_proc::action::BoxAction>(std::any_cast<vrml_proc::parser::Vec3f>(args[0]), std::any_cast<bool>(args[1]));
+    actionMap.AddAction("Box", [](const vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext>::ReferencedArguments& refArgs, 
+        const vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext>::CopiedArguments& copyArgs) {
+            if (refArgs.size() == 1 && refArgs[0].get().type() == typeid(std::reference_wrapper<const vrml_proc::parser::Vec3f>) && 
+                copyArgs.size() == 1 && copyArgs[0].type() == typeid(bool)) {
+                return std::make_shared<vrml_proc::action::BoxAction>(std::any_cast<std::reference_wrapper<const vrml_proc::parser::Vec3f>>(refArgs[0]), std::any_cast<bool>(copyArgs[0]));
         }
-        throw std::invalid_argument("Invalid arguments for BoxAction");
+            assert(false && "Invalid arguments for BoxAction");
         });
 
      actionMap.AddAction("Group", [](const std::vector<std::any>& args) {
@@ -104,6 +107,23 @@ TEST_CASE("Parse VRML File - Valid Input - Simple VRML File - Box node", "[parsi
     vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext> actionMap = GetActionMap();
 
     auto traversorResult = vrml_proc::traversor::VrmlFileTraversor::Traverse<vrml_proc::conversion_context::MeshConversionContext>({ parseResult.value(), manager}, actionMap);
+    REQUIRE(traversorResult.has_value());
+
+    auto& meshContext = traversorResult.value()->GetData();
+    REQUIRE(meshContext.size() == 0);
+}
+
+TEST_CASE("Parse VRML File - Valid Input - Simple VRML File - Box node empty", "[parsing][valid]") {
+
+    vrml_proc::core::logger::InitLogging();
+
+    vrml_proc::parser::VrmlNodeManager manager;
+    auto parseResult = ParseVrmlFile(validBoxNodeEmpty, manager);
+    REQUIRE(parseResult);
+
+    vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext> actionMap = GetActionMap();
+
+    auto traversorResult = vrml_proc::traversor::VrmlFileTraversor::Traverse<vrml_proc::conversion_context::MeshConversionContext>({ parseResult.value(), manager }, actionMap);
     REQUIRE(traversorResult.has_value());
 
     auto& meshContext = traversorResult.value()->GetData();

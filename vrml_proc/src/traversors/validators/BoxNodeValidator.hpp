@@ -53,12 +53,12 @@ namespace vrml_proc {
 					return {};
 				}
 
-				const vrml_proc::parser::Vec3f& GetCachedSize(const vrml_proc::parser::Vec3f& defaultValue) {
+				std::reference_wrapper<const vrml_proc::parser::Vec3f> GetCachedSize(const vrml_proc::parser::Vec3f& defaultValue) {
 					if (m_size.has_value()) {
-						return m_size.value().get();
+						return m_size.value();
 					}
 
-					return defaultValue;
+					return std::cref(defaultValue);
 				}
 
 			private:
