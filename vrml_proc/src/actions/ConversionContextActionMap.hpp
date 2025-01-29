@@ -17,13 +17,19 @@ namespace vrml_proc {
 		public:
 			/**
 			 * @brief Arguments passed into the function responsible for creating the given Action.
+			 * These argument will be taken as a reference.
 			 */
-			using Arguments = std::vector<std::any>;
+			using ReferencedArguments = std::vector<std::reference_wrapper<const std::any>>;
+			/**
+			 * @brief Arguments passed into the function responsible for creating the given Action.
+			 * These argument will be copied.
+			 */
+			using CopiedArguments = std::vector<std::any>;
 			/**
 			 * @brief The basic data type stored in the ActionMap. It is a function pointer to a function, which
 			 * takes some, for now unknown, arguments and returns a shared pointer owning ConversionContextAction.
 			 */
-			using ActionFunctor = std::function<std::shared_ptr<ConversionContextAction<ConversionContext>>(Arguments)>;
+			using ActionFunctor = std::function<std::shared_ptr<ConversionContextAction<ConversionContext>>(ReferencedArguments, CopiedArguments)>;
 			/**
 			 * @brief Adds new action to the ActionMap mapped to a string key.
 			 * Duplicated key will be rewritten.
@@ -55,10 +61,10 @@ namespace vrml_proc {
 			 * @param args arguments passed into the function responsible for creating the given Action
 			 * @returns nullptr if the key does not exists, otherwise shared pointer owning the given ConversionContextAction object
 			 */
-			std::shared_ptr<ConversionContextAction<ConversionContext>> GetAction(const std::string& key, const Arguments& args) const {
+			std::shared_ptr<ConversionContextAction<ConversionContext>> GetAction(const std::string& key, const ReferencedArguments& refArgs, const CopiedArguments& copyArgs) const {
 				auto iterator = m_actions.find(key);
 				if (iterator != m_actions.end()) {
-					return iterator->second(args);
+					return iterator->second(refArgs, copyArgs);
 				}
 				return nullptr;
 			}
