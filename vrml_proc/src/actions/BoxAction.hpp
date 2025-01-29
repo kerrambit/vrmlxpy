@@ -19,13 +19,15 @@ namespace vrml_proc {
 
 			// TODO: use here some mesh calculator to create data for STL
 			std::shared_ptr<vrml_proc::conversion_context::MeshConversionContext> Execute() override {
-				std::cout << "Action: " << m_size.get() << std::endl;
+				std::cout << "BoxAction - input vector: " << m_size.get() << std::endl;
 				auto result = std::make_shared<vrml_proc::conversion_context::MeshConversionContext>();
 				if (!m_containedByShape) {
+					std::cout << "Returning empty data cause Box is not inside Shape!" << std::endl;
 					return result;
 				}
 				vrml_proc::conversion_context::StlBaseStructure entity = vrml_proc::conversion_context::StlBaseStructure({ 1.0, 1.0, 1.0 }, { {1.0, 1.0, 1.0}, {1.0, 1.0, 1.0}, {1.0, 1.0, 1.0} });
-				result->Add(entity);
+				result->Add(std::move(entity));
+				std::cout << "BoxAction - result entity's adrress: " << result.get() << std::endl;
 				return result;
 			}
 		private:

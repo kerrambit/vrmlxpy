@@ -34,7 +34,7 @@ namespace vrml_proc {
 			 * @returns shared pointer owning the object of merged ConversionContext objects
 			 */
 			std::shared_ptr<vrml_proc::conversion_context::MeshConversionContext> Execute() override {
-
+				std::cout << "Shape action - appearance: " << m_appearance.get() << ", geometry: " << m_geometry.get() << std::endl;
 				return m_geometry;
 			}
 		private:

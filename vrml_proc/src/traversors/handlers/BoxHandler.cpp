@@ -29,11 +29,11 @@ cpp::result<std::shared_ptr<ConversionContext>, std::shared_ptr<vrml_proc::core:
 	}
 	static vrml_proc::parser::Vec3f defaultSize = { 2.0f, 2.0f, 2.0f };
 
-    std::cout << "Handler (1): " << (validator.GetCachedSize(defaultSize)).get() << std::endl;
+    std::cout << "Box Handler (1): " << (validator.GetCachedSize(defaultSize)).get() << std::endl;
 
     std::any cachedSize = validator.GetCachedSize(defaultSize);
 
-    std::cout << "Handler (2): "
+    std::cout << "Box Handler (2): "
         << (std::any_cast<std::reference_wrapper<const vrml_proc::parser::Vec3f>>(cachedSize)).get()
         << std::endl;
 

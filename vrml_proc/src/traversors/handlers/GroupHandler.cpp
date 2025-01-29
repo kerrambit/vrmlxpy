@@ -2,6 +2,9 @@
 
 #include <memory>
 
+#include <any>
+#include <vector>
+
 #include <result.hpp>
 
 #include "ConversionContextActionExecutor.hpp"
@@ -36,11 +39,16 @@ cpp::result<std::shared_ptr<ConversionContext>, std::shared_ptr<vrml_proc::core:
             return cpp::fail(recursiveResult.error());
         }
         resolvedChildren.push_back(recursiveResult.value());
+        std::cout << "Group handler: " << recursiveResult.value().get() << std::endl;
     }
 
-    vrml_proc::parser::Vec3f defaultBoxCenter = { 0.0f, 0.0f, 0.0f };
-    vrml_proc::parser::Vec3f defaultBoxSize = { -1.0f, -1.0f, -1.0f };
-    return vrml_proc::traversor::utils::ConversionContextActionExecutor::TryToExecute<ConversionContext>(actionMap, "Group", { resolvedChildren, validator.GetCachedBoxCenter(defaultBoxCenter), validator.GetCachedBoxSize(defaultBoxSize) });
+    static vrml_proc::parser::Vec3f defaultBoxCenter = { 0.0f, 0.0f, 0.0f };
+    std::any cachedBoxCenter = validator.GetCachedBoxCenter(defaultBoxCenter);
+
+    static vrml_proc::parser::Vec3f defaultBoxSize = { -1.0f, -1.0f, -1.0f };
+    std::any cachedBoxSize = validator.GetCachedBoxSize(defaultBoxSize);
+
+    return vrml_proc::traversor::utils::ConversionContextActionExecutor::TryToExecute<ConversionContext>(actionMap, "Group", { std::cref(cachedBoxCenter), std::cref(cachedBoxSize) }, { resolvedChildren });
 }
 
 namespace vrml_proc {

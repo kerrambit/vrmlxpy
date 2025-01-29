@@ -61,35 +61,39 @@ static vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_conte
             assert(false && "Invalid arguments for BoxAction");
         });
 
-     actionMap.AddAction("Group", [](const std::vector<std::any>& args) {
+     actionMap.AddAction("Group", [](const vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext>::ReferencedArguments& refArgs,
+         const vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext>::CopiedArguments& copyArgs) {
 
-        if (args.size() == 3 &&
-            args[0].type() == typeid(std::vector<std::shared_ptr<vrml_proc::conversion_context::MeshConversionContext>>) &&
-            args[1].type() == typeid(vrml_proc::parser::Vec3f) &&
-            args[2].type() == typeid(vrml_proc::parser::Vec3f)) {
+        if (refArgs.size() == 2 &&
+            refArgs[0].get().type() == typeid(std::reference_wrapper<const vrml_proc::parser::Vec3f>) &&
+            refArgs[1].get().type() == typeid(std::reference_wrapper<const vrml_proc::parser::Vec3f>) &&
+            copyArgs.size() == 1 &&
+            copyArgs[0].type() == typeid(std::vector<std::shared_ptr<vrml_proc::conversion_context::MeshConversionContext>>)) {
 
-            auto children = std::any_cast<std::vector<std::shared_ptr<vrml_proc::conversion_context::MeshConversionContext>>>(args[0]);
-            auto bboxCenter = std::any_cast<vrml_proc::parser::Vec3f>(args[1]);
-            auto bboxSize = std::any_cast<vrml_proc::parser::Vec3f>(args[2]);
+            auto children = std::any_cast<std::vector<std::shared_ptr<vrml_proc::conversion_context::MeshConversionContext>>>(copyArgs[0]);
+            auto bboxCenter = std::any_cast<std::reference_wrapper<const vrml_proc::parser::Vec3f>>(refArgs[0]);
+            auto bboxSize = std::any_cast<std::reference_wrapper<const vrml_proc::parser::Vec3f>>(refArgs[1]);
 
             return std::make_shared<vrml_proc::action::GroupAction>(children, bboxCenter, bboxSize);
         }
 
-        throw std::invalid_argument("Invalid arguments for GroupAction"); });
+        assert(false && "Invalid arguments for GroupAction");
+         });
 
-      actionMap.AddAction("Shape", [](const std::vector<std::any>& args) {
+      actionMap.AddAction("Shape", [](const vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext>::ReferencedArguments& refArgs,
+          const vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext>::CopiedArguments& copyArgs) {
 
-        if (args.size() == 2 &&
-            args[0].type() == typeid(std::shared_ptr<vrml_proc::conversion_context::MeshConversionContext>) &&
-            args[1].type() == typeid(std::shared_ptr<vrml_proc::conversion_context::MeshConversionContext>)) {
+        if (refArgs.size() == 0 && copyArgs.size() == 2 &&
+            copyArgs[0].type() == typeid(std::shared_ptr<vrml_proc::conversion_context::MeshConversionContext>) &&
+            copyArgs[1].type() == typeid(std::shared_ptr<vrml_proc::conversion_context::MeshConversionContext>)) {
 
-            auto appearance = std::any_cast<std::shared_ptr<vrml_proc::conversion_context::MeshConversionContext>>(args[0]);
-            auto geometry = std::any_cast<std::shared_ptr<vrml_proc::conversion_context::MeshConversionContext>>(args[1]);
+            auto appearance = std::any_cast<std::shared_ptr<vrml_proc::conversion_context::MeshConversionContext>>(copyArgs[0]);
+            auto geometry = std::any_cast<std::shared_ptr<vrml_proc::conversion_context::MeshConversionContext>>(copyArgs[1]);
 
             return std::make_shared<vrml_proc::action::ShapeAction>(appearance, geometry);
         }
 
-        throw std::invalid_argument("Invalid arguments for ShapeAction"); });
+        assert(false && "Invalid arguments for ShapeAction"); });
 
     return actionMap;
 }
@@ -207,7 +211,7 @@ TEST_CASE("Parse VRML File - Invalid Input - Simple VRML File - WorldInfo node -
     HandleRootLevelError(traversorResult);
 }
 
-TEST_CASE("Parse VRML File - Invalid Input - Simple VRML File - Group node", "[parsing][invalid]") {
+TEST_CASE("Parse VRML File - Invalid Input - Simple VRML File - Group node - Unknown node", "[parsing][invalid]") {
 
     vrml_proc::core::logger::InitLogging();
 
@@ -254,6 +258,23 @@ TEST_CASE("Parse VRML File - Valid Input - Simple VRML File - Shape node", "[par
 
     auto& meshContext = traversorResult.value()->GetData();
     REQUIRE(meshContext.size() == 1);
+}
+
+TEST_CASE("Parse VRML File - Valid Input - Simple VRML File - Shape node with Group merging", "[parsing][valid]") {
+
+    vrml_proc::core::logger::InitLogging();
+
+    vrml_proc::parser::VrmlNodeManager manager;
+    auto parseResult = ParseVrmlFile(validShapeMerge, manager);
+    REQUIRE(parseResult);
+
+    vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext> actionMap = GetActionMap();
+
+    auto traversorResult = vrml_proc::traversor::VrmlFileTraversor::Traverse<vrml_proc::conversion_context::MeshConversionContext>({ parseResult.value(), manager }, actionMap);
+    REQUIRE(traversorResult.has_value());
+
+    auto& meshContext = traversorResult.value()->GetData();
+    REQUIRE(meshContext.size() == 3);
 }
 
 TEST_CASE("Parse VRML File - Valid Input - Simple VRML File - Shape empty node", "[parsing][valid]") {
