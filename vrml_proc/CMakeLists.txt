@@ -168,11 +168,15 @@ add_library(vrmlproc SHARED
     # Actions.
 
     "src/actions/ConversionContextActionMap.hpp"
+    "src/actions/ConversionContextActionMap.cpp"
     "src/actions/ConversionContextAction.hpp"
     "src/actions/GeometryAction.hpp"
     "src/actions/GroupAction.hpp"
+    "src/actions/GroupAction.cpp"
     "src/actions/BoxAction.hpp"
+    "src/actions/BoxAction.cpp"
     "src/actions/ShapeAction.hpp"
+    "src/actions/ShapeAction.cpp"
 )
 
 # Two build types - Debug and Release.

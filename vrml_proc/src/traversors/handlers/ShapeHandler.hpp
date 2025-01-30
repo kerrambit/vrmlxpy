@@ -6,8 +6,8 @@
 
 #include "BaseConversionContext.hpp"
 #include "ConversionContextActionMap.hpp"
-#include "FullParsedVrmlNodeContext.hpp"
 #include "Error.hpp"
+#include "FullParsedVrmlNodeContext.hpp"
 
 #include "VrmlProcessingExport.hpp"
 

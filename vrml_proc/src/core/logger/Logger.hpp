@@ -48,6 +48,7 @@ namespace vrml_proc {
             };
             VRMLPROCESSING_API void InitLogging();
             VRMLPROCESSING_API void LogUnformattedText(const std::string& title, const std::string& text, Level level, const std::string& file, int line, const std::string& function);
+            VRMLPROCESSING_API void Log(const std::string& text, Level level, const std::string& file, int line, const std::string& function);
         }
     }
 }

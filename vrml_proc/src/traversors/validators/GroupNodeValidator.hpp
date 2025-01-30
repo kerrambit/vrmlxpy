@@ -70,20 +70,20 @@ namespace vrml_proc {
 					return {};
 				}
 
-				const vrml_proc::parser::Vec3f& GetCachedBoxSize(const vrml_proc::parser::Vec3f& defaultValue) {
+				std::reference_wrapper<const vrml_proc::parser::Vec3f> GetCachedBoxSize(const vrml_proc::parser::Vec3f& defaultValue) {
 					if (m_bboxSize.has_value()) {
 						return m_bboxSize.value();
 					}
 
-					return defaultValue;
+					return std::cref(defaultValue);
 				}
 
-				const vrml_proc::parser::Vec3f& GetCachedBoxCenter(const vrml_proc::parser::Vec3f& defaultValue) {
+				std::reference_wrapper<const vrml_proc::parser::Vec3f> GetCachedBoxCenter(const vrml_proc::parser::Vec3f& defaultValue) {
 					if (m_bboxCenter.has_value()) {
 						return m_bboxCenter.value();
 					}
 
-					return defaultValue;
+					return std::cref(defaultValue);
 				}
 
 			private:

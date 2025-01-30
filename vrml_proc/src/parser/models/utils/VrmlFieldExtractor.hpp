@@ -18,6 +18,9 @@
 #include "VrmlNodeManager.hpp"
 #include "VrmlProcessingExport.hpp"
 
+#define LOGGING_INFO \
+    __FILE__, __LINE__, __FUNCTION__
+
 // Forward declarations.
 template <typename T>
 struct ExtractorVisitor;
@@ -215,10 +218,12 @@ template <typename T>
 struct ExtractorVisitor : public boost::static_visitor<cpp::result<std::reference_wrapper<const T>, std::optional<std::string>>> {
 
     cpp::result<std::reference_wrapper<const T>, std::optional<std::string>> operator()(const std::string& value) const {
-        //std::cout << "I am here string" << std::endl;
+        vrml_proc::core::logger::Log("Visit string.", vrml_proc::core::logger::Level::Debug, LOGGING_INFO);
         if constexpr (std::is_same<T, std::string>::value) {
+            vrml_proc::core::logger::Log("Extract string.", vrml_proc::core::logger::Level::Debug, LOGGING_INFO);
             return std::cref(value);
         }
+        vrml_proc::core::logger::Log("String could not be extracted.", vrml_proc::core::logger::Level::Debug, LOGGING_INFO);
         return cpp::fail(std::optional<std::string>(vrml_proc::core::utils::TypeToString<std::string>()));
     }
 

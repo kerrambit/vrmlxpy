@@ -77,20 +77,20 @@ namespace vrml_proc {
 					return {};
 				}
 
-				const vrml_proc::parser::VrmlNode& GetCachedAppearance(const vrml_proc::parser::VrmlNode& defaultValue) {
+				std::reference_wrapper<const vrml_proc::parser::VrmlNode> GetCachedAppearance(const vrml_proc::parser::VrmlNode& defaultValue) {
 					if (m_appearance.has_value()) {
-						return m_appearance.value().get();
+						return m_appearance.value();
 					}
 
-					return defaultValue;
+					return std::cref(defaultValue);
 				}
 
-				const vrml_proc::parser::VrmlNode& GetCachedGeometry(const vrml_proc::parser::VrmlNode& defaultValue) {
+				std::reference_wrapper<const vrml_proc::parser::VrmlNode> GetCachedGeometry(const vrml_proc::parser::VrmlNode& defaultValue) {
 					if (m_geometry.has_value()) {
-						return m_geometry.value().get();
+						return m_geometry.value();
 					}
 
-					return defaultValue;
+					return std::cref(defaultValue);
 				}
 
 			private:

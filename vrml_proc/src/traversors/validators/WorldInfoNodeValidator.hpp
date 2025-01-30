@@ -53,20 +53,20 @@ namespace vrml_proc {
 					return {};
 				}
 
-				const std::string& GetCachedInfo(const std::string& defaultValue) {
+				std::reference_wrapper<const std::string> GetCachedInfo(const std::string& defaultValue) {
 					if (m_info.has_value()) {
-						return m_info.value().get();
+						return m_info.value();
 					}
 
-					return defaultValue;
+					return std::cref(defaultValue);
 				}
 
-				const std::string& GetCachedTitle(const std::string& defaultValue) {
+				std::reference_wrapper<const std::string> GetCachedTitle(const std::string& defaultValue) {
 					if (m_title.has_value()) {
-						return m_title.value().get();
+						return m_title.value();
 					}
 
-					return defaultValue;
+					return std::cref(defaultValue);
 				}
 
 			private:

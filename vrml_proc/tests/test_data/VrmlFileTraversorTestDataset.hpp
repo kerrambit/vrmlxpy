@@ -49,6 +49,15 @@ std::string validBoxNode = R"(
 	}
 )";
 
+std::string validBoxNodeEmpty = R"(
+
+	#VRML V2.0 utf8
+
+	Box {
+        
+	}
+)";
+
 std::string invalidBoxNodeWrongDataType = R"(
 
 	#VRML V2.0 utf8
@@ -101,7 +110,10 @@ std::string validGroup = R"(
         bboxSize 0 0 0
         children [
             Box {
-                size 58.58 0.45 558.05
+                size 1 1 1 
+            },
+            Box {
+                size 2 2 2
             }
         ]
     }
@@ -122,6 +134,36 @@ std::string validShape = R"(
         children [
             DEF id Box {
                 size 58.58 0.45 558.05
+            },
+            Shape {
+                geometry USE id
+            }
+        ]
+    }
+
+)";
+
+std::string validShapeMerge = R"(
+
+    #VRML V2.0 utf8
+
+    WorldInfo {
+        title "cube.wrl"
+        info "VRML file."
+    }
+
+    Group {
+        bboxCenter 4.5 10.47 -10.0
+        bboxSize 0 0 0
+        children [
+            DEF id Box {
+                size 58.58 0.45 558.05
+            },
+            Shape {
+                geometry USE id
+            },
+            Shape {
+                geometry USE id
             },
             Shape {
                 geometry USE id

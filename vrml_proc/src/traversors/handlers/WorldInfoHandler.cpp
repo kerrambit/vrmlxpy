@@ -1,17 +1,18 @@
 #include "WorldInfoHandler.hpp"
 
+#include <any>
 #include <memory>
 #include <string>
 
 #include <result.hpp>
 
-#include "WorldInfoNodeValidator.hpp"
 #include "ConversionContextActionExecutor.hpp"
+#include "ConversionContextActionMap.hpp"
 #include "Error.hpp"
 #include "Logger.hpp"
 #include "MeshConversionContext.hpp"
 #include "NodeTraversorError.hpp"
-#include "ConversionContextActionMap.hpp"
+#include "WorldInfoNodeValidator.hpp"
 
 #include "VrmlProcessingExport.hpp"
 
@@ -27,8 +28,13 @@ cpp::result<std::shared_ptr<ConversionContext>, std::shared_ptr<vrml_proc::core:
 		return cpp::fail(error);
 	}
 
-	std::string defaultInfo = ""; std::string defaultTitle = "";
-	return vrml_proc::traversor::utils::ConversionContextActionExecutor::TryToExecute<ConversionContext>(actionMap, "WorldInfo", { validator.GetCachedInfo(defaultInfo), validator.GetCachedTitle(defaultTitle), context.IsDescendantOfShape });
+	static std::string defaultInfo = "";
+    std::any cachedInfo = validator.GetCachedInfo(defaultInfo);
+
+    static std::string defaultTitle = "";
+    std::any cachedTitle = validator.GetCachedInfo(defaultTitle);
+
+    return vrml_proc::traversor::utils::ConversionContextActionExecutor::TryToExecute<ConversionContext>(actionMap, "WorldInfo", { std::cref(cachedInfo), std::cref(cachedTitle) }, { context.IsDescendantOfShape });
 }
 
 namespace vrml_proc {
