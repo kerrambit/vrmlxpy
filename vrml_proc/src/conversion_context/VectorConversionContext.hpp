@@ -61,11 +61,11 @@ namespace vrml_proc {
 				if (other == nullptr) {
 					return;
 				}
-				auto* otherContext = dynamic_cast<VectorConversionContext<T>*>(other);
+				VectorConversionContext* otherContext = dynamic_cast<VectorConversionContext<T>*>(other);
 				if (otherContext) {
-					if (otherContext->m_data.size() == 0) {
+					if (otherContext->IsEmpty()) {
 						return;
-					}
+					}		
 					m_data.reserve(m_data.size() + otherContext->m_data.size());
 					m_data.insert(m_data.end(), std::make_move_iterator(otherContext->m_data.begin()), std::make_move_iterator(otherContext->m_data.end()));
 					otherContext->m_data.clear();
