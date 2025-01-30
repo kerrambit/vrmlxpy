@@ -7,13 +7,15 @@
 
 #include "ConversionContextAction.hpp"
 
+#include "VrmlProcessingExport.hpp"
+
 namespace vrml_proc {
 	namespace action {
 		/**
 		 * @brief Represents class which is responsible for storing and mapping `Action` functor value to a string key.
 		 */
 		template<typename ConversionContext>
-		class ConversionContextActionMap {
+		class VRMLPROCESSING_API ConversionContextActionMap {
 		public:
 			/**
 			 * @brief Arguments passed into the function responsible for creating the given Action.
@@ -37,22 +39,14 @@ namespace vrml_proc {
 			 * @param key key which will be mapped to the Action
 			 * @param action ActionFunctor representing the given Action
 			 */
-			inline void AddAction(const std::string& key, ActionFunctor action) {
-				m_actions[key] = std::move(action);
-			}
+			void AddAction(const std::string& key, ActionFunctor action);
 			/**
 			 * @brief Verifies if the given key exists in the ActionMap.
 			 * 
 			 * @param key key identifying the given Action
 			 * @return true if the key is present, false if the key is not present.
 			 */
-			inline bool VerifyKey(const std::string& key) const {
-				auto iterator = m_actions.find(key);
-				if (iterator != m_actions.end()) {
-					return true;
-				}
-				return false;
-			}
+			bool VerifyKey(const std::string& key) const;
 			/**
 			 * @brief Gets a shared pointer owning a ConversionContextAction object. The function creates new object using functor
 			 * stored in the ActionMap and passed `args` which are passed in to the Action constructor.
@@ -61,13 +55,8 @@ namespace vrml_proc {
 			 * @param args arguments passed into the function responsible for creating the given Action
 			 * @returns nullptr if the key does not exists, otherwise shared pointer owning the given ConversionContextAction object
 			 */
-			std::shared_ptr<ConversionContextAction<ConversionContext>> GetAction(const std::string& key, const ReferencedArguments& refArgs, const CopiedArguments& copyArgs) const {
-				auto iterator = m_actions.find(key);
-				if (iterator != m_actions.end()) {
-					return iterator->second(refArgs, copyArgs);
-				}
-				return nullptr;
-			}
+			std::shared_ptr<ConversionContextAction<ConversionContext>> GetAction(const std::string& key, const ReferencedArguments& refArgs, const CopiedArguments& copyArgs) const;
+
 		private:
 			std::unordered_map<std::string, ActionFunctor> m_actions;
 		};
