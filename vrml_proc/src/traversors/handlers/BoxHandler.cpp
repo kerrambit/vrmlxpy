@@ -28,14 +28,7 @@ cpp::result<std::shared_ptr<ConversionContext>, std::shared_ptr<vrml_proc::core:
         return cpp::fail(error);
 	}
 	static vrml_proc::parser::Vec3f defaultSize = { 2.0f, 2.0f, 2.0f };
-
-    std::cout << "Box Handler (1): " << (validator.GetCachedSize(defaultSize)).get() << std::endl;
-
     std::any cachedSize = validator.GetCachedSize(defaultSize);
-
-    std::cout << "Box Handler (2): "
-        << (std::any_cast<std::reference_wrapper<const vrml_proc::parser::Vec3f>>(cachedSize)).get()
-        << std::endl;
 
     return vrml_proc::traversor::utils::ConversionContextActionExecutor::TryToExecute<ConversionContext>(actionMap, "Box", { std::cref(cachedSize) }, {context.IsDescendantOfShape});
 }

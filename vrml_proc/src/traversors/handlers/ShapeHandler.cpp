@@ -42,8 +42,6 @@ cpp::result<std::shared_ptr<ConversionContext>, std::shared_ptr<vrml_proc::core:
         return cpp::fail(resolvedAppearance.error());
     }
 
-    std::cout << "Shape handler - appearance: " << resolvedAppearance.value().get() << ", geometry: " << resolvedGeometry.value().get() << std::endl;
-
     return vrml_proc::traversor::utils::ConversionContextActionExecutor::TryToExecute<ConversionContext>(actionMap, "Shape", {}, { resolvedAppearance.value(), resolvedGeometry.value() });
 }
 

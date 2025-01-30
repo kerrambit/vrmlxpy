@@ -39,7 +39,6 @@ cpp::result<std::shared_ptr<ConversionContext>, std::shared_ptr<vrml_proc::core:
             return cpp::fail(recursiveResult.error());
         }
         resolvedChildren.push_back(recursiveResult.value());
-        std::cout << "Group handler: " << recursiveResult.value().get() << std::endl;
     }
 
     static vrml_proc::parser::Vec3f defaultBoxCenter = { 0.0f, 0.0f, 0.0f };
