@@ -85,3 +85,29 @@ void vrml_proc::core::logger::LogUnformattedText(const std::string& title, const
             break;
     }
 }
+
+void vrml_proc::core::logger::Log(const std::string& text, Level level, const std::string& file, int line, const std::string& function) {
+    switch (level)
+    {
+    case vrml_proc::core::logger::Level::Trace:
+        BOOST_LOG_SEV(Logger::get(), boost::log::trivial::trace) << "[" << file << ":" << line << "] [" << function << "]: " << text;
+        break;
+    case vrml_proc::core::logger::Level::Debug:
+        BOOST_LOG_SEV(Logger::get(), boost::log::trivial::debug) << "[" << file << ":" << line << "] [" << function << "]: " << text;
+        break;
+    case vrml_proc::core::logger::Level::Info:
+        BOOST_LOG_SEV(Logger::get(), boost::log::trivial::info) << "[" << file << ":" << line << "] [" << function << "]: " << text;
+        break;
+    case vrml_proc::core::logger::Level::Warning:
+        BOOST_LOG_SEV(Logger::get(), boost::log::trivial::warning) << "[" << file << ":" << line << "] [" << function << "]: " << text;
+        break;
+    case vrml_proc::core::logger::Level::Error:
+        BOOST_LOG_SEV(Logger::get(), boost::log::trivial::error) << "[" << file << ":" << line << "] [" << function << "]: " << text;
+        break;
+    case vrml_proc::core::logger::Level::Fatal:
+        BOOST_LOG_SEV(Logger::get(), boost::log::trivial::fatal) << "[" << file << ":" << line << "] [" << function << "]: " << text;
+        break;
+    default:
+        break;
+    }
+}
