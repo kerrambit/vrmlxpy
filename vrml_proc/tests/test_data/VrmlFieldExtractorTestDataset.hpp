@@ -39,6 +39,13 @@ std::string simpleEntityTypes = R"(
         int32array [ 42, 43, 44, 45, 46, 47, 48, 49, 50, ]
         float -0.1548E-5 # float
         int32 789456123
+        vec2f 100.001001       5.55317      # vec2f
+        vec2farray      [
+                            8.59816       5.55317     ,
+                            8.59816       2.49756     ,
+                            8.59816       2.49756     ,
+                            8.59816       5.55317E-1  ,
+                        ] # vec2farray
 	}
 )";
 

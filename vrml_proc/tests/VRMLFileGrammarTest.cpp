@@ -282,12 +282,11 @@ TEST_CASE("Parse VRMLFile - Valid Input - Group With Nodes Array", "[parsing][va
                     auto &&field = vrmlNode.fields.at(0);
                     CHECK(field.name == "bboxSize");
 
-                    REQUIRE(boost::get<vrml_proc::parser::Vec3f>(&field.value) != nullptr);
-                    auto *bboxCenter = boost::get<vrml_proc::parser::Vec3f>(&field.value);
+                    REQUIRE(boost::get<vrml_proc::parser::Vec2f>(&field.value) != nullptr);
+                    auto *bboxCenter = boost::get<vrml_proc::parser::Vec2f>(&field.value);
 
-                    CHECK_THAT(bboxCenter->x, Catch::Matchers::WithinAbs(-1.0, 0.0));
-                    CHECK_THAT(bboxCenter->y, Catch::Matchers::WithinAbs(-1.0, 0.0));
-                    CHECK_THAT(bboxCenter->z, Catch::Matchers::WithinAbs(-1.0, 0.0));
+                    CHECK_THAT(bboxCenter->u, Catch::Matchers::WithinAbs(-1.0, 0.0));
+                    CHECK_THAT(bboxCenter->v, Catch::Matchers::WithinAbs(-1.0, 0.0));
                 }
 
                 void operator()(vrml_proc::parser::UseNode& useNode) const {
@@ -388,12 +387,13 @@ TEST_CASE("Parse VRML File - Valid Input - Simple USE Node", "[parsing][valid]")
 
                     CHECK(field.name == "bboxCenter");
 
-                    REQUIRE(boost::get<vrml_proc::parser::Vec3f>(&field.value) != nullptr);
-                    auto *bboxCenter = boost::get<vrml_proc::parser::Vec3f>(&field.value);
+                    REQUIRE(boost::get<vrml_proc::parser::Vec2fArray>(&field.value) != nullptr);
+                    auto *bboxCenter = boost::get<vrml_proc::parser::Vec2fArray>(&field.value);
 
-                    CHECK_THAT(bboxCenter->x, Catch::Matchers::WithinAbs(0.058, 0.01));
-                    CHECK_THAT(bboxCenter->y, Catch::Matchers::WithinAbs(0.0, 0.0));
-                    CHECK_THAT(bboxCenter->z, Catch::Matchers::WithinAbs(15.0, 0.0));
+                    CHECK_THAT(bboxCenter->vectors.at(0).u, Catch::Matchers::WithinAbs(0.058, 0.01));
+                    CHECK_THAT(bboxCenter->vectors.at(0).v, Catch::Matchers::WithinAbs(0.0, 0.0));
+                    CHECK_THAT(bboxCenter->vectors.at(1).u, Catch::Matchers::WithinAbs(15.0, 0.0));
+                    CHECK_THAT(bboxCenter->vectors.at(1).v, Catch::Matchers::WithinAbs(69.0, 0.0));
                 }
 
                 void operator()(vrml_proc::parser::UseNode& useNode) const {
