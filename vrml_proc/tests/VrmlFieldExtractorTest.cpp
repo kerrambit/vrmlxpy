@@ -13,7 +13,9 @@
 #include <Int32Array.hpp>
 #include <ParserResult.hpp>
 #include <UseNode.hpp>
+#include <Vec2f.hpp>
 #include <Vec3f.hpp>
+#include <Vec2fArray.hpp>
 #include <Vec3fArray.hpp>
 #include <Vec4f.hpp>
 #include <VrmlField.hpp>
@@ -136,6 +138,20 @@ TEST_CASE("ExtractByNameExtended - VrmlNode Array", "[valid]") {
     REQUIRE(result.has_value());
     CHECK(ptr == &(result.value().get()));
     CHECK(firstOfChildrenPtr == &(result.value().get().at(0)));
+}
+
+TEST_CASE("ExtractByNameExtended - Empty Array of Vec2f's", "[valid]") {
+
+    vrml_proc::parser::VrmlNodeManager manager;
+    auto parseResult = ParseVrmlFile(emptyArray, manager);
+    REQUIRE(parseResult);
+
+    auto& fieldsOfRoot = parseResult.value().at(0).fields;
+
+    std::string invalidType;
+    auto result = vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractByNameExtended<vrml_proc::parser::Vec2fArray>("array", fieldsOfRoot, invalidType);
+    REQUIRE(result.has_value());
+    CHECK(result.value().get().vectors.size() == 0);
 }
 
 TEST_CASE("ExtractByNameExtended - Empty Array of Vec3f's", "[valid]") {
@@ -299,6 +315,40 @@ TEST_CASE("ExtractByNameExtended - int32", "[valid]") {
     auto result = vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractByNameExtended<int32_t>("int32", fieldsOfRoot, invalidType);
     REQUIRE(result.has_value());
     CHECK(ptr == &(result.value().get()));
+}
+
+TEST_CASE("ExtractByNameExtended - Vec2f", "[valid]") {
+
+    vrml_proc::parser::VrmlNodeManager manager;
+    auto parseResult = ParseVrmlFile(simpleEntityTypes, manager);
+    REQUIRE(parseResult);
+
+    auto& fieldsOfRoot = parseResult.value().at(0).fields;
+    vrml_proc::parser::Vec2f* ptr = boost::get<vrml_proc::parser::Vec2f>(&fieldsOfRoot.at(8).value);
+
+    std::string invalidType;
+    auto result = vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractByNameExtended<vrml_proc::parser::Vec2f>("vec2f", fieldsOfRoot, invalidType);
+    REQUIRE(result.has_value());
+    CHECK(ptr == &(result.value().get()));
+}
+
+TEST_CASE("ExtractByNameExtended - Vec2fArray", "[valid]") {
+
+    vrml_proc::parser::VrmlNodeManager manager;
+    auto parseResult = ParseVrmlFile(simpleEntityTypes, manager);
+    REQUIRE(parseResult);
+
+    auto& fieldsOfRoot = parseResult.value().at(0).fields;
+    vrml_proc::parser::Vec2fArray* ptr = boost::get<vrml_proc::parser::Vec2fArray>(&fieldsOfRoot.at(9).value);
+    vrml_proc::parser::Vec2f* vecPtr = &ptr->vectors.at(0);
+    vrml_proc::parser::float32_t* floatPtr = &vecPtr->u;
+
+    std::string invalidType;
+    auto result = vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractByNameExtended<vrml_proc::parser::Vec2fArray>("vec2farray", fieldsOfRoot, invalidType);
+    REQUIRE(result.has_value());
+    CHECK(ptr == &(result.value().get()));
+    CHECK(vecPtr == &(result.value().get().vectors.at(0)));
+    CHECK(floatPtr == &(result.value().get().vectors.at(0).u));
 }
 
 TEST_CASE("ExtractByNameExtended - UseNode", "[valid]") {

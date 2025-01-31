@@ -83,8 +83,14 @@ add_library(vrmlproc SHARED
     "src/parser/models/Vec3f.hpp"
     "src/parser/models/Vec3f.cpp"
 
+    "src/parser/models/Vec2f.hpp"
+    "src/parser/models/Vec2f.cpp"
+
     "src/parser/models/Vec4f.hpp"
     "src/parser/models/Vec4f.cpp"
+
+    "src/parser/models/Vec2fArray.hpp"
+    "src/parser/models/Vec2fArray.cpp"
 
     "src/parser/models/Vec3fArray.hpp"
     "src/parser/models/Vec3fArray.cpp"
@@ -116,7 +122,9 @@ add_library(vrmlproc SHARED
     "src/parser/grammars/BaseGrammar.hpp"
     "src/parser/grammars/CommentSkipper.hpp"
     "src/parser/grammars/IdentifierGrammar.hpp"
+    "src/parser/grammars/Vec2fGrammar.hpp"
     "src/parser/grammars/Vec3fGrammar.hpp"
+    "src/parser/grammars/Vec2fArrayGrammar.hpp"
     "src/parser/grammars/Vec3fArrayGrammar.hpp"
     "src/parser/grammars/Vec4fGrammar.hpp"
     "src/parser/grammars/Int32ArrayGrammar.hpp"

@@ -18,6 +18,10 @@ struct Visitor {
         *outputStream << std::endl;
     }
 
+    void operator()(const vrml_proc::parser::Vec2fArray& array) const {
+        array.Print(indentationLevel);
+    }
+
     void operator()(const vrml_proc::parser::Vec3fArray& array) const {
         array.Print(indentationLevel);
     }
@@ -34,6 +38,10 @@ struct Visitor {
     void operator()(int32_t value) const {
         *outputStream << Printable::CreateIndentationString(indentationLevel) << "Int32 (" << &value << "): <" << value << ">";
         *outputStream << std::endl;
+    }
+
+    void operator()(const vrml_proc::parser::Vec2f& vector) const {
+        vector.Print(indentationLevel);
     }
 
     void operator()(const vrml_proc::parser::Vec3f& vector) const {

@@ -20,7 +20,9 @@
 #include "VrmlNodeManager.hpp"
 
 #include "IdentifierGrammar.hpp"
+#include "Vec2fGrammar.hpp"
 #include "Vec3fGrammar.hpp"
+#include "Vec2fArrayGrammar.hpp"
 #include "Vec3fArrayGrammar.hpp"
 #include "Vec4fGrammar.hpp"
 #include "Int32ArrayGrammar.hpp"
@@ -67,9 +69,13 @@ namespace vrml_proc {
 
                 m_quotedString = std::make_unique<QuotedStringGrammar<Iterator, Skipper>>();
 
+                m_vec2f = std::make_unique<Vec2fGrammar<Iterator, Skipper>>();
+
                 m_vec3f = std::make_unique<Vec3fGrammar<Iterator, Skipper>>();
 
                 m_vec4f = std::make_unique<Vec4fGrammar<Iterator, Skipper>>();
+
+                m_vec2fArray = std::make_unique<Vec2fArrayGrammar<Iterator, Skipper>>();
 
                 m_vec3fArray = std::make_unique<Vec3fArrayGrammar<Iterator, Skipper>>();
 
@@ -77,7 +83,7 @@ namespace vrml_proc {
 
                 m_boolean = std::make_unique<BooleanGrammar<Iterator, Skipper>>();
 
-                m_vrmlFieldValue = (m_quotedString->GetStartRule() | m_boolean->GetStartRule() | m_vec3fArray->GetStartRule() | m_int32Array->GetStartRule() | m_vec4f->GetStartRule() | m_vec3f->GetStartRule() | boost::spirit::qi::real_parser<float32_t, Float32Policy>() | boost::spirit::qi::int_ | m_useNode | m_vrmlNode | m_vrmlNodeArray);
+                m_vrmlFieldValue = (m_quotedString->GetStartRule() | m_boolean->GetStartRule() | m_vec3fArray->GetStartRule() | m_vec2fArray->GetStartRule() | m_int32Array->GetStartRule() | m_vec4f->GetStartRule() | m_vec3f->GetStartRule() | m_vec2f->GetStartRule() | boost::spirit::qi::real_parser<float32_t, Float32Policy>() | boost::spirit::qi::int_ | m_useNode | m_vrmlNode | m_vrmlNodeArray);
 
                 m_vrmlField = (m_identifier->GetStartRule() >> m_vrmlFieldValue);
 
@@ -108,8 +114,10 @@ namespace vrml_proc {
             boost::spirit::qi::rule<Iterator, std::vector<boost::variant<boost::recursive_wrapper<VrmlNode>, boost::recursive_wrapper<UseNode>>>(), Skipper> m_vrmlNodeArray;
 
             std::unique_ptr<IdentifierGrammar<Iterator, Skipper>> m_identifier;
+            std::unique_ptr<Vec2fGrammar<Iterator, Skipper>> m_vec2f;
             std::unique_ptr<Vec3fGrammar<Iterator, Skipper>> m_vec3f;
             std::unique_ptr<Vec4fGrammar<Iterator, Skipper>> m_vec4f;
+            std::unique_ptr<Vec2fArrayGrammar<Iterator, Skipper>> m_vec2fArray;
             std::unique_ptr<Vec3fArrayGrammar<Iterator, Skipper>> m_vec3fArray;
             std::unique_ptr<Int32ArrayGrammar<Iterator, Skipper>> m_int32Array;
             std::unique_ptr<QuotedStringGrammar<Iterator, Skipper>> m_quotedString;

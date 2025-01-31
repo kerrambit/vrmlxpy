@@ -115,7 +115,7 @@ std::string groupWithNodesArray = R"(
                       },
 
                     Group {
-                           bboxSize   -1.0 -1.0 -1.0
+                           bboxSize   -1.0 -1.0
                       }
 
 				 ]
@@ -144,7 +144,7 @@ std::string simpleUseNode = R"(
     Group {
 		children [
 					DEF id Group {
-                           bboxCenter 58.7E-3 0.0 15
+                           bboxCenter [ 58.7E-3 0.0 , 15 69.0 ]
                       }
 				 ]
 	}

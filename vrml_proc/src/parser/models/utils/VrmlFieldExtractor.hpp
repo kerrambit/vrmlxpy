@@ -1,11 +1,11 @@
 #pragma once
 
-#include <vector>
 #include <functional>
 #include <optional>
 #include <string>
 #include <type_traits>
 #include <typeinfo>
+#include <vector>
 
 #include <boost/variant/recursive_wrapper.hpp>
 #include <boost/variant/variant.hpp>
@@ -14,8 +14,11 @@
 
 #include "Logger.hpp"
 #include "TypeToString.hpp"
+#include "Vec2f.hpp"
+#include "Vec2fArray.hpp"
 #include "VrmlField.hpp"
 #include "VrmlNodeManager.hpp"
+
 #include "VrmlProcessingExport.hpp"
 
 #define LOGGING_INFO \
@@ -246,6 +249,14 @@ struct ExtractorVisitor : public boost::static_visitor<cpp::result<std::referenc
                 return std::cref(value);
             }
 
+            else if constexpr (std::is_same<T, vrml_proc::parser::Vec2fArray>::value) {
+
+                //std::cout << "Empty array as Int32Array" << std::endl;
+                static const vrml_proc::parser::Vec2fArray emptyVec2fArray{};
+                //std::cout << "Return static empty Int32 array: " << &(emptyInt32Array) << std::endl;
+                return std::cref(emptyVec2fArray);
+            }
+
             else if constexpr (std::is_same<T, vrml_proc::parser::Int32Array>::value) {
 
                 //std::cout << "Empty array as Int32Array" << std::endl;
@@ -278,6 +289,14 @@ struct ExtractorVisitor : public boost::static_visitor<cpp::result<std::referenc
         return cpp::fail(std::optional<std::string>(vrml_proc::core::utils::TypeToString<vrml_proc::parser::Vec3fArray>()));
     }
 
+    cpp::result<std::reference_wrapper<const T>, std::optional<std::string>> operator()(const vrml_proc::parser::Vec2fArray& value) const {
+        //std::cout << "I am here intarray" << std::endl;
+        if constexpr (std::is_same<T, vrml_proc::parser::Vec2fArray>::value) {
+            return std::cref(value);
+        }
+        return cpp::fail(std::optional<std::string>(vrml_proc::core::utils::TypeToString<vrml_proc::parser::Vec2fArray>()));
+    }
+
     cpp::result<std::reference_wrapper<const T>, std::optional<std::string>> operator()(const vrml_proc::parser::Int32Array& value) const {
         //std::cout << "I am here intarray" << std::endl;
         if constexpr (std::is_same<T, vrml_proc::parser::Int32Array>::value) {
@@ -300,6 +319,14 @@ struct ExtractorVisitor : public boost::static_visitor<cpp::result<std::referenc
             return std::cref(value);
         }
         return cpp::fail(std::optional<std::string>(vrml_proc::core::utils::TypeToString<int32_t>()));
+    }
+
+    cpp::result<std::reference_wrapper<const T>, std::optional<std::string>> operator()(const vrml_proc::parser::Vec2f& value) const {
+        //std::cout << "vec3f" << std::endl;
+        if constexpr (std::is_same<T, vrml_proc::parser::Vec2f>::value) {
+            return std::cref(value);
+        }
+        return cpp::fail(std::optional<std::string>(vrml_proc::core::utils::TypeToString<vrml_proc::parser::Vec2f>()));
     }
 
     cpp::result<std::reference_wrapper<const T>, std::optional<std::string>> operator()(const vrml_proc::parser::Vec3f& value) const {
