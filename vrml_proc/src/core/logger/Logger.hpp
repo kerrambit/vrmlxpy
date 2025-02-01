@@ -9,6 +9,9 @@
 
 #include "VrmlProcessingExport.hpp"
 
+#define LOGGING_INFO \
+    __FILE__, __LINE__, __FUNCTION__
+
 BOOST_LOG_GLOBAL_LOGGER(Logger, boost::log::sources::severity_logger_mt<boost::log::trivial::severity_level>)
 
 #define LOG_TRACE() \
@@ -38,7 +41,7 @@ BOOST_LOG_GLOBAL_LOGGER(Logger, boost::log::sources::severity_logger_mt<boost::l
 namespace vrml_proc {
     namespace core {
         namespace logger {
-            VRMLPROCESSING_API enum class Level {
+            enum class Level {
                 Trace,
                 Debug,
                 Info,
@@ -47,8 +50,15 @@ namespace vrml_proc {
                 Fatal
             };
             VRMLPROCESSING_API void InitLogging();
+            VRMLPROCESSING_API void InitLogging(const std::string& loggingDirectory, const std::string& projectName);
             VRMLPROCESSING_API void LogUnformattedText(const std::string& title, const std::string& text, Level level, const std::string& file, int line, const std::string& function);
             VRMLPROCESSING_API void Log(const std::string& text, Level level, const std::string& file, int line, const std::string& function);
+            VRMLPROCESSING_API void LogTrace(const std::string& text, const std::string& file, int line, const std::string& function);
+            VRMLPROCESSING_API void LogDebug(const std::string& text, const std::string& file, int line, const std::string& function);
+            VRMLPROCESSING_API void LogInfo(const std::string& text, const std::string& file, int line, const std::string& function);
+            VRMLPROCESSING_API void LogWarning(const std::string& text, const std::string& file, int line, const std::string& function);
+            VRMLPROCESSING_API void LogError(const std::string& text, const std::string& file, int line, const std::string& function);
+            VRMLPROCESSING_API void LogFatal(const std::string& text, const std::string& file, int line, const std::string& function);
         }
     }
 }
