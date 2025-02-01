@@ -19,5 +19,6 @@ endif()
 # Add vendor dependencies.
 # include_directories(vendor/pybind11/include)
 
-# Add the pyvrml directory.
+# Add the vrml_proc and to_stl directories.
 add_subdirectory(vrml_proc)
+add_subdirectory(to_stl)

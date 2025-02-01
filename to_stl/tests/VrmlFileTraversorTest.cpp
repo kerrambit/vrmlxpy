@@ -1,10 +1,10 @@
 #include <catch2/catch_test_macros.hpp>
 
 #include <any>
+#include <cassert>
 #include <filesystem>
 #include <memory>
 #include <vector>
-#include <cassert>
 
 #include "test_data/VrmlFileTraversorTestDataset.hpp"
 #include <BoxAction.hpp>
@@ -52,48 +52,48 @@ static vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_conte
 
     static vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext> actionMap;
 
-    actionMap.AddAction("Box", [](const vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext>::ReferencedArguments& refArgs, 
+    actionMap.AddAction("Box", [](const vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext>::ReferencedArguments& refArgs,
         const vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext>::CopiedArguments& copyArgs) {
-            if (refArgs.size() == 1 && refArgs[0].get().type() == typeid(std::reference_wrapper<const vrml_proc::parser::Vec3f>) && 
+            if (refArgs.size() == 1 && refArgs[0].get().type() == typeid(std::reference_wrapper<const vrml_proc::parser::Vec3f>) &&
                 copyArgs.size() == 1 && copyArgs[0].type() == typeid(bool)) {
                 return std::make_shared<vrml_proc::action::BoxAction>(std::any_cast<std::reference_wrapper<const vrml_proc::parser::Vec3f>>(refArgs[0]), std::any_cast<bool>(copyArgs[0]));
-        }
+            }
             assert(false && "Invalid arguments for BoxAction");
         });
 
-     actionMap.AddAction("Group", [](const vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext>::ReferencedArguments& refArgs,
-         const vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext>::CopiedArguments& copyArgs) {
+    actionMap.AddAction("Group", [](const vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext>::ReferencedArguments& refArgs,
+        const vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext>::CopiedArguments& copyArgs) {
 
-        if (refArgs.size() == 2 &&
-            refArgs[0].get().type() == typeid(std::reference_wrapper<const vrml_proc::parser::Vec3f>) &&
-            refArgs[1].get().type() == typeid(std::reference_wrapper<const vrml_proc::parser::Vec3f>) &&
-            copyArgs.size() == 1 &&
-            copyArgs[0].type() == typeid(std::vector<std::shared_ptr<vrml_proc::conversion_context::MeshConversionContext>>)) {
+            if (refArgs.size() == 2 &&
+                refArgs[0].get().type() == typeid(std::reference_wrapper<const vrml_proc::parser::Vec3f>) &&
+                refArgs[1].get().type() == typeid(std::reference_wrapper<const vrml_proc::parser::Vec3f>) &&
+                copyArgs.size() == 1 &&
+                copyArgs[0].type() == typeid(std::vector<std::shared_ptr<vrml_proc::conversion_context::MeshConversionContext>>)) {
 
-            auto children = std::any_cast<std::vector<std::shared_ptr<vrml_proc::conversion_context::MeshConversionContext>>>(copyArgs[0]);
-            auto bboxCenter = std::any_cast<std::reference_wrapper<const vrml_proc::parser::Vec3f>>(refArgs[0]);
-            auto bboxSize = std::any_cast<std::reference_wrapper<const vrml_proc::parser::Vec3f>>(refArgs[1]);
+                auto children = std::any_cast<std::vector<std::shared_ptr<vrml_proc::conversion_context::MeshConversionContext>>>(copyArgs[0]);
+                auto bboxCenter = std::any_cast<std::reference_wrapper<const vrml_proc::parser::Vec3f>>(refArgs[0]);
+                auto bboxSize = std::any_cast<std::reference_wrapper<const vrml_proc::parser::Vec3f>>(refArgs[1]);
 
-            return std::make_shared<vrml_proc::action::GroupAction>(children, bboxCenter, bboxSize);
-        }
+                return std::make_shared<vrml_proc::action::GroupAction>(children, bboxCenter, bboxSize);
+            }
 
-        assert(false && "Invalid arguments for GroupAction");
-         });
+            assert(false && "Invalid arguments for GroupAction");
+        });
 
-      actionMap.AddAction("Shape", [](const vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext>::ReferencedArguments& refArgs,
-          const vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext>::CopiedArguments& copyArgs) {
+    actionMap.AddAction("Shape", [](const vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext>::ReferencedArguments& refArgs,
+        const vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext>::CopiedArguments& copyArgs) {
 
-        if (refArgs.size() == 0 && copyArgs.size() == 2 &&
-            copyArgs[0].type() == typeid(std::shared_ptr<vrml_proc::conversion_context::MeshConversionContext>) &&
-            copyArgs[1].type() == typeid(std::shared_ptr<vrml_proc::conversion_context::MeshConversionContext>)) {
+            if (refArgs.size() == 0 && copyArgs.size() == 2 &&
+                copyArgs[0].type() == typeid(std::shared_ptr<vrml_proc::conversion_context::MeshConversionContext>) &&
+                copyArgs[1].type() == typeid(std::shared_ptr<vrml_proc::conversion_context::MeshConversionContext>)) {
 
-            auto appearance = std::any_cast<std::shared_ptr<vrml_proc::conversion_context::MeshConversionContext>>(copyArgs[0]);
-            auto geometry = std::any_cast<std::shared_ptr<vrml_proc::conversion_context::MeshConversionContext>>(copyArgs[1]);
+                auto appearance = std::any_cast<std::shared_ptr<vrml_proc::conversion_context::MeshConversionContext>>(copyArgs[0]);
+                auto geometry = std::any_cast<std::shared_ptr<vrml_proc::conversion_context::MeshConversionContext>>(copyArgs[1]);
 
-            return std::make_shared<vrml_proc::action::ShapeAction>(appearance, geometry);
-        }
+                return std::make_shared<vrml_proc::action::ShapeAction>(appearance, geometry);
+            }
 
-        assert(false && "Invalid arguments for ShapeAction"); });
+            assert(false && "Invalid arguments for ShapeAction"); });
 
     return actionMap;
 }
@@ -110,7 +110,7 @@ TEST_CASE("Parse VRML File - Valid Input - Simple VRML File - Box node", "[parsi
 
     vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext> actionMap = GetActionMap();
 
-    auto traversorResult = vrml_proc::traversor::VrmlFileTraversor::Traverse<vrml_proc::conversion_context::MeshConversionContext>({ parseResult.value(), manager}, actionMap);
+    auto traversorResult = vrml_proc::traversor::VrmlFileTraversor::Traverse<vrml_proc::conversion_context::MeshConversionContext>({ parseResult.value(), manager }, actionMap);
     REQUIRE(traversorResult.has_value());
 
     auto& meshContext = traversorResult.value()->GetData();
