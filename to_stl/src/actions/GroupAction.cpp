@@ -15,7 +15,7 @@ namespace vrml_proc {
 
 		std::shared_ptr<vrml_proc::conversion_context::MeshConversionContext> GroupAction::Execute() {
 
-			LOG_INFO() << "Execute GroupAction.";
+			vrml_proc::core::logger::LogInfo("Execute GroupAction.", LOGGING_INFO);
 
 			auto result = std::make_shared<vrml_proc::conversion_context::MeshConversionContext>();
 			for (const auto& child : m_children) {

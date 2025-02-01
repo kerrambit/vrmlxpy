@@ -157,21 +157,7 @@ add_library(vrmlproc SHARED
     "src/actions/ConversionContextActionMap.hpp"
     "src/actions/ConversionContextActionMap.cpp"
     "src/actions/ConversionContextAction.hpp"
-    "src/actions/IndexedFaceSetAction.hpp"
-    "src/actions/IndexedFaceSetAction.cpp"
-    "src/actions/CoordinateAction.hpp"
-    "src/actions/CoordinateAction.cpp"
-    "src/actions/NormalAction.hpp"
-    "src/actions/NormalAction.cpp"
-    "src/actions/TextureCoordinateAction.hpp"
-    "src/actions/TextureCoordinateAction.cpp"
     "src/actions/GeometryAction.hpp"
-    "src/actions/GroupAction.hpp"
-    "src/actions/GroupAction.cpp"
-    "src/actions/BoxAction.hpp"
-    "src/actions/BoxAction.cpp"
-    "src/actions/ShapeAction.hpp"
-    "src/actions/ShapeAction.cpp"
 )
 
 # Add source files and vendor dependencies.

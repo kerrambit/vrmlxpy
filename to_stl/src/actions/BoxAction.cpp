@@ -17,11 +17,11 @@ namespace vrml_proc {
 
 		std::shared_ptr<vrml_proc::conversion_context::MeshConversionContext> BoxAction::Execute() {
 			
-			LOG_INFO() << "Execute BoxAction.";
+			vrml_proc::core::logger::LogInfo("Execute BoxAction.", LOGGING_INFO);
 
 			auto result = std::make_shared<vrml_proc::conversion_context::MeshConversionContext>();
 			if (!m_containedByShape) {
-				LOG_DEBUG() << "Return empty data because Box node is not a child of a Shape node.";
+				vrml_proc::core::logger::LogDebug("Return empty data because Box node is not a child of a Shape node.", LOGGING_INFO);
 				return result;
 			}
 
