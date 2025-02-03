@@ -34,6 +34,9 @@ add_library(tostl SHARED
     # DLL export macro.
     "src/VrmlToStlExport.hpp"
 
+    # Core.
+    "src/core/Mesh.hpp"
+
     # Actions.
     "src/actions/IndexedFaceSetAction.hpp"
     "src/actions/IndexedFaceSetAction.cpp"
@@ -50,6 +53,9 @@ add_library(tostl SHARED
     "src/actions/ShapeAction.hpp"
     "src/actions/ShapeAction.cpp"
 
+    # Calculators.
+    "src/calculators/BoxCalculator.hpp"
+    "src/calculators/BoxCalculator.cpp"
     "src/calculators/test.hpp"
 )
 
@@ -59,6 +65,7 @@ target_include_directories(tostl PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src
     ${CMAKE_CURRENT_SOURCE_DIR}/src/actions
     ${CMAKE_CURRENT_SOURCE_DIR}/src/calculators
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/core
 
     ${CMAKE_CURRENT_SOURCE_DIR}/../vrml_proc/src
 

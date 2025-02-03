@@ -14,6 +14,11 @@ namespace vrml_proc {
 		class VRMLPROCESSING_API BoxAction : public GeometryAction {
 
 		public:
+
+			struct BoxProperties {
+				std::reference_wrapper<const vrml_proc::parser::Vec3f> size;
+			};
+
 			BoxAction(std::reference_wrapper<const vrml_proc::parser::Vec3f> size, bool containedByShape);
 			std::shared_ptr<vrml_proc::conversion_context::MeshConversionContext> Execute() override;
 

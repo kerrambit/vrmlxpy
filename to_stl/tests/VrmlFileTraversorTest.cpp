@@ -21,6 +21,7 @@
 #include <VrmlNodeManager.hpp>
 #include <VrmlParser.hpp>
 #include <test.hpp>
+#include <BoxCalculator.hpp>
 
 static vrml_proc::parser::ParserResult<vrml_proc::parser::VrmlFile> ParseVrmlFile(std::string& text, vrml_proc::parser::VrmlNodeManager& manager) {
 
@@ -99,12 +100,24 @@ static vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_conte
 // ------------------------------------------------------------------------------------------------------------------------------------------------ //
 
 TEST_CASE("Initialization") {
-    test();
-    auto result = create_box_mesh(2.0, 2.0, 2.0);
-    export_to_stl(*result, R"(C:\Users\marek\Documents\FI_MUNI\sem_05\SBAPR\vrmlxpy\export.stl)");
-    auto result2 = create_box_mesh(20.0, 20.0, 20.0);
-    export_to_stl(*result2, R"(C:\Users\marek\Documents\FI_MUNI\sem_05\SBAPR\vrmlxpy\export.stl)");
+
     vrml_proc::core::logger::InitLogging();
+
+    vrml_proc::parser::Vec3f size;
+    size.x = 2.0; size.y = 2.0; size.z = 2.0;
+
+    to_stl::calculator::BoxCalculator calculator = to_stl::calculator::BoxCalculator();
+    auto result = (calculator.Generate3DMesh({ std::cref(size) })).value();
+
+    size.x = 10.0; size.y = 20.0; size.z = 30.0;
+    auto result2 = (calculator.Generate3DMesh({ std::cref(size) })).value();
+
+    export_to_stl(*result, R"(C:\Users\marek\Documents\FI_MUNI\sem_05\SBAPR\vrmlxpy\export.stl)");
+    export_to_stl(*result2, R"(C:\Users\marek\Documents\FI_MUNI\sem_05\SBAPR\vrmlxpy\export.stl)");
+    to_stl::core::Mesh mesh;
+    mesh.join(*result);
+    mesh.join(*result2);
+    export_to_stl(mesh, R"(C:\Users\marek\Documents\FI_MUNI\sem_05\SBAPR\vrmlxpy\export.stl)");
 }
 
 TEST_CASE("Parse VRML File - Valid Input - Simple VRML File - Box node", "[parsing][valid]") {
