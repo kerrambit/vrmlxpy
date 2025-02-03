@@ -37,3 +37,5 @@ out/
 vendor/boost_1_86_0
 vendor/boost_1_87_0
 vendor/pybind11
+vendor/CGAL-6.0.1
+vendor/boost

@@ -12,6 +12,19 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(Catch2)
 
+# Find CGAL
+# list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../vendor/CGAL-6.0.1/lib/cmake/CGAL")
+# set(CGAL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../vendor/CGAL-6.0.1/lib/cmake/CGAL")
+find_package(CGAL CONFIG REQUIRED)
+if(CGAL_FOUND)
+    message(STATUS "CGAL found!")
+    message(STATUS "CGAL version: ${CGAL_VERSION}")
+    message(STATUS "CGAL include directory: ${CGAL_INCLUDE_DIRS}")
+    message(STATUS "CGAL libraries: ${CGAL_LIBRARIES}")
+else()
+    message(FATAL_ERROR "CGAL not found. Please set CGAL_DIR to the correct path.")
+endif()
+
 # --------------------------------------------------------------------------------------- #
 
 # Create the DLL.
@@ -38,6 +51,8 @@ add_library(tostl SHARED
     "src/actions/BoxAction.cpp"
     "src/actions/ShapeAction.hpp"
     "src/actions/ShapeAction.cpp"
+
+    "src/calculators/test.hpp"
 )
 
 # Add source files and vendor dependencies.
@@ -45,10 +60,14 @@ target_include_directories(tostl PUBLIC
 
     ${CMAKE_CURRENT_SOURCE_DIR}/src
     ${CMAKE_CURRENT_SOURCE_DIR}/src/actions
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/calculators
 
     ${CMAKE_CURRENT_SOURCE_DIR}/../vrml_proc/src
 
     ${CMAKE_CURRENT_SOURCE_DIR}/../vendor/result
+    # ${CMAKE_CURRENT_SOURCE_DIR}/../vendor/CGAL-6.0.1/include
+    ${CGAL_INCLUDE_DIRS}
+    # ${GMP_INCLUDE_DIR}
 )
 
 # Two build types - Debug and Release.
@@ -67,8 +86,8 @@ elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
     add_compile_definitions(RELEASE)
 endif()
 
-# Explicitly link Boost::iostreams (problems with compilation on Linux with GNU 11.4.0).
-target_link_libraries(tostl PRIVATE Boost::iostreams Boost::log Boost::date_time Boost::log_setup Boost::system Boost::thread vrmlproc)
+# Link the tostl library with vrmlproc shared library.
+target_link_libraries(tostl PRIVATE Boost::boost Boost::iostreams Boost::log Boost::date_time Boost::log_setup Boost::system Boost::thread CGAL::CGAL vrmlproc)
 
 # --------------------------------------------------------------------------------------- #
 
