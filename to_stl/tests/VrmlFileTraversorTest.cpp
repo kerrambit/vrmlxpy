@@ -20,6 +20,7 @@
 #include <VrmlFileTraversor.hpp>
 #include <VrmlNodeManager.hpp>
 #include <VrmlParser.hpp>
+#include <test.hpp>
 
 static vrml_proc::parser::ParserResult<vrml_proc::parser::VrmlFile> ParseVrmlFile(std::string& text, vrml_proc::parser::VrmlNodeManager& manager) {
 
@@ -98,6 +99,11 @@ static vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_conte
 // ------------------------------------------------------------------------------------------------------------------------------------------------ //
 
 TEST_CASE("Initialization") {
+    test();
+    auto result = create_box_mesh(2.0, 2.0, 2.0);
+    export_to_stl(*result, R"(C:\Users\marek\Documents\FI_MUNI\sem_05\SBAPR\vrmlxpy\export.stl)");
+    auto result2 = create_box_mesh(20.0, 20.0, 20.0);
+    export_to_stl(*result2, R"(C:\Users\marek\Documents\FI_MUNI\sem_05\SBAPR\vrmlxpy\export.stl)");
     vrml_proc::core::logger::InitLogging();
 }
 

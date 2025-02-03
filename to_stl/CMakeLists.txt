@@ -12,9 +12,7 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(Catch2)
 
-# Find CGAL
-# list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../vendor/CGAL-6.0.1/lib/cmake/CGAL")
-# set(CGAL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../vendor/CGAL-6.0.1/lib/cmake/CGAL")
+# Find CGAL.
 find_package(CGAL CONFIG REQUIRED)
 if(CGAL_FOUND)
     message(STATUS "CGAL found!")
@@ -65,9 +63,7 @@ target_include_directories(tostl PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/../vrml_proc/src
 
     ${CMAKE_CURRENT_SOURCE_DIR}/../vendor/result
-    # ${CMAKE_CURRENT_SOURCE_DIR}/../vendor/CGAL-6.0.1/include
     ${CGAL_INCLUDE_DIRS}
-    # ${GMP_INCLUDE_DIR}
 )
 
 # Two build types - Debug and Release.
@@ -87,7 +83,7 @@ elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
 endif()
 
 # Link the tostl library with vrmlproc shared library.
-target_link_libraries(tostl PRIVATE Boost::boost Boost::iostreams Boost::log Boost::date_time Boost::log_setup Boost::system Boost::thread CGAL::CGAL vrmlproc)
+target_link_libraries(tostl PRIVATE CGAL::CGAL vrmlproc)
 
 # --------------------------------------------------------------------------------------- #
 
