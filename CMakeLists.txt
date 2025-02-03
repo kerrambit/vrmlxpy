@@ -3,6 +3,16 @@ project(vrmlxpy)
 
 set(CMAKE_CXX_STANDARD 20)
 
+if(WIN32)
+    set(Boost_USE_STATIC_LIBS ON)
+    set(Boost_USE_MULTITHREADED ON)
+    set(Boost_USE_STATIC_RUNTIME OFF)
+else()
+    set(Boost_USE_STATIC_LIBS OFF)
+    set(Boost_USE_MULTITHREADED ON)
+    set(Boost_USE_STATIC_RUNTIME OFF)
+endif()
+
 # CMake will look for Boost libraries specified by BOOST_ROOT variable.
 find_package(Boost REQUIRED COMPONENTS iostreams log date_time log_setup thread system)
 
