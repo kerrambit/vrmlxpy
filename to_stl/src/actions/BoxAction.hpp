@@ -8,10 +8,10 @@
 
 #include "VrmlProcessingExport.hpp"
 
-namespace vrml_proc {
+namespace to_stl {
 	namespace action {
 
-		class VRMLPROCESSING_API BoxAction : public GeometryAction {
+		class VRMLPROCESSING_API BoxAction : public vrml_proc::action::GeometryAction {
 
 		public:
 

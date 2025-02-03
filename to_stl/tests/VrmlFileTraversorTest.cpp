@@ -55,7 +55,7 @@ static vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_conte
         const vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext>::CopiedArguments& copyArgs) {
             if (refArgs.size() == 1 && refArgs[0].get().type() == typeid(std::reference_wrapper<const vrml_proc::parser::Vec3f>) &&
                 copyArgs.size() == 1 && copyArgs[0].type() == typeid(bool)) {
-                return std::make_shared<vrml_proc::action::BoxAction>(std::any_cast<std::reference_wrapper<const vrml_proc::parser::Vec3f>>(refArgs[0]), std::any_cast<bool>(copyArgs[0]));
+                return std::make_shared<to_stl::action::BoxAction>(std::any_cast<std::reference_wrapper<const vrml_proc::parser::Vec3f>>(refArgs[0]), std::any_cast<bool>(copyArgs[0]));
             }
             assert(false && "Invalid arguments for BoxAction");
         });
@@ -73,7 +73,7 @@ static vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_conte
                 auto bboxCenter = std::any_cast<std::reference_wrapper<const vrml_proc::parser::Vec3f>>(refArgs[0]);
                 auto bboxSize = std::any_cast<std::reference_wrapper<const vrml_proc::parser::Vec3f>>(refArgs[1]);
 
-                return std::make_shared<vrml_proc::action::GroupAction>(children, bboxCenter, bboxSize);
+                return std::make_shared<to_stl::action::GroupAction>(children, bboxCenter, bboxSize);
             }
 
             assert(false && "Invalid arguments for GroupAction");
@@ -89,7 +89,7 @@ static vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_conte
                 auto appearance = std::any_cast<std::shared_ptr<vrml_proc::conversion_context::MeshConversionContext>>(copyArgs[0]);
                 auto geometry = std::any_cast<std::shared_ptr<vrml_proc::conversion_context::MeshConversionContext>>(copyArgs[1]);
 
-                return std::make_shared<vrml_proc::action::ShapeAction>(appearance, geometry);
+                return std::make_shared<to_stl::action::ShapeAction>(appearance, geometry);
             }
 
             assert(false && "Invalid arguments for ShapeAction"); });

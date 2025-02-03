@@ -5,7 +5,7 @@
 #include "Logger.hpp"
 #include "MeshConversionContext.hpp"
 
-namespace vrml_proc {
+namespace to_stl {
 	namespace action {
 	
 		ShapeAction::ShapeAction(std::shared_ptr<vrml_proc::conversion_context::MeshConversionContext> appearance, std::shared_ptr<vrml_proc::conversion_context::MeshConversionContext> geometry) :

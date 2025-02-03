@@ -18,7 +18,7 @@ typedef CGAL::Surface_mesh<Point> Mesh;
 
 namespace to_stl {
 	namespace calculator {
-		cpp::result<std::shared_ptr<core::Mesh>, std::shared_ptr<vrml_proc::core::error::Error>> BoxCalculator::Generate3DMesh(const vrml_proc::action::BoxAction::BoxProperties& properties) {
+		cpp::result<std::shared_ptr<core::Mesh>, std::shared_ptr<vrml_proc::core::error::Error>> BoxCalculator::Generate3DMesh(const to_stl::action::BoxAction::BoxProperties& properties) {
 
             if (properties.size.get().x <= 0.0 || properties.size.get().y <= 0.0 || properties.size.get().z <= 0.0) {
 
