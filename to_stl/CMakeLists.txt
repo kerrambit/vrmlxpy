@@ -98,13 +98,16 @@ target_link_libraries(tostl PRIVATE CGAL::CGAL vrmlproc)
 
 # Add the test executables.
 add_executable(VrmlFileTraversorUnitTests "tests/VrmlFileTraversorTest.cpp")
+add_executable(CalculatorsUnitTests "tests/CalculatorsTest.cpp")
 
 # Link Catch2 with the test executables.
 target_link_libraries(VrmlFileTraversorUnitTests PRIVATE Catch2::Catch2WithMain vrmlproc tostl)
+target_link_libraries(CalculatorsUnitTests PRIVATE Catch2::Catch2WithMain vrmlproc tostl)
 
 # Enable testing (use CTest to run the unit tests).
 enable_testing()
 add_test(NAME VrmlFileTraversorUnitTests COMMAND VrmlFileTraversorUnitTests)
+add_test(NAME CalculatorsUnitTests COMMAND CalculatorsUnitTests)
 
 # Copy vrmlproc.dll to the folder for tests to run.
 add_custom_command(TARGET VrmlFileTraversorUnitTests POST_BUILD
