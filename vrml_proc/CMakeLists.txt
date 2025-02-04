@@ -40,6 +40,8 @@ add_library(vrmlproc SHARED
     "src/core/logger/Logger.hpp"
     "src/core/logger/Logger.cpp"
 
+    "src/core/contracts/Comparable.hpp"
+
     # Parser.
     "src/parser/models/VrmlUnits.hpp"
     "src/parser/models/VrmlFile.hpp"
@@ -166,6 +168,7 @@ target_include_directories(vrmlproc PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src
 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/core
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/core/contracts
     ${CMAKE_CURRENT_SOURCE_DIR}/src/core/errors
     ${CMAKE_CURRENT_SOURCE_DIR}/src/core/utils
     ${CMAKE_CURRENT_SOURCE_DIR}/src/core/logger
