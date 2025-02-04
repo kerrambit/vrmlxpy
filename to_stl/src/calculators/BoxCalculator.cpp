@@ -9,8 +9,10 @@
 #include <result.hpp>
 
 #include "BoxAction.hpp"
+#include "CalculatorError.hpp"
 #include "Error.hpp"
 #include "Mesh.hpp"
+#include "ModelValidator.hpp"
 
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef Kernel::Point_3 Point;
@@ -20,8 +22,9 @@ namespace to_stl {
 	namespace calculator {
 		cpp::result<std::shared_ptr<core::Mesh>, std::shared_ptr<vrml_proc::core::error::Error>> BoxCalculator::Generate3DMesh(const to_stl::action::BoxAction::BoxProperties& properties) {
 
-            if (properties.size.get().x <= 0.0 || properties.size.get().y <= 0.0 || properties.size.get().z <= 0.0) {
-
+            auto checkResult = vrml_proc::parser::model::validator::CheckVec3fIsGreaterThanZero(properties.size.get());
+            if (checkResult.has_error()) {
+                return cpp::fail(std::make_shared<error::BoxCalculatorError>() << (std::make_shared<error::PropertiesError>() << checkResult.error()));
             }
 
             auto mesh = std::make_shared<core::Mesh>();
