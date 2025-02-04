@@ -9,19 +9,19 @@
 #include "StlBaseStructure.hpp"
 #include "Vec3f.hpp"
 
-namespace vrml_proc {
+namespace to_stl {
 	namespace action {
 
 		BoxAction::BoxAction(std::reference_wrapper<const vrml_proc::parser::Vec3f> size, bool containedByShape) :
-			GeometryAction(containedByShape), m_size(size) {}
+			vrml_proc::action::GeometryAction(containedByShape), m_size(size) {}
 
 		std::shared_ptr<vrml_proc::conversion_context::MeshConversionContext> BoxAction::Execute() {
 			
-			LOG_INFO() << "Execute BoxAction.";
+			vrml_proc::core::logger::LogInfo("Execute BoxAction.", LOGGING_INFO);
 
 			auto result = std::make_shared<vrml_proc::conversion_context::MeshConversionContext>();
 			if (!m_containedByShape) {
-				LOG_DEBUG() << "Return empty data because Box node is not a child of a Shape node.";
+				vrml_proc::core::logger::LogDebug("Return empty data because Box node is not a child of a Shape node.", LOGGING_INFO);
 				return result;
 			}
 

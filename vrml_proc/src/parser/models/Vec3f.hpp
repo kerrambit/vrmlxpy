@@ -33,6 +33,10 @@ namespace vrml_proc {
 
             Vec3f& operator=(const Vec3f&) = default;
 
+            friend std::ostream& operator<<(std::ostream& stream, const Vec3f& vector) {
+                return stream << "Vec3f: { x: <" << vector.x << ">, y: <" << vector.y << ">, z: <" << vector.z << "> }";
+            }
+
             float32_t x = 0.0f;
             float32_t y = 0.0f;
             float32_t z = 0.0f;

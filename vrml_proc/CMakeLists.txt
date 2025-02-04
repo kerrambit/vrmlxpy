@@ -14,48 +14,16 @@ FetchContent_MakeAvailable(Catch2)
 
 # --------------------------------------------------------------------------------------- #
 
-# Add source files and vendor dependencies.
-include_directories(
-    ${CMAKE_CURRENT_SOURCE_DIR}/src
-
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/core
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/core/errors
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/core/utils
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/core/logger
-
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/parser
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/models
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/models/utils
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/interfaces
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/grammars
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/services
-
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/conversion_context
-
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/actions
-
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/traversors
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/traversors/utils
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/traversors/errors
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/traversors/validators
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/traversors/validators/errors
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/traversors/handlers
-
-    # ${CMAKE_CURRENT_SOURCE_DIR}/../vendor/pybind11/include/pybind11
-    ${CMAKE_CURRENT_SOURCE_DIR}/../vendor/result
-)
-
 # Create the DLL.
 add_library(vrmlproc SHARED
 
+    # Third party libraries.
     "${CMAKE_CURRENT_SOURCE_DIR}/../vendor/result/result.hpp"
 
     # DLL export macro.
-
     "src/VrmlProcessingExport.hpp"
 
     # Core.
-
     "src/core/FileReader.hpp"
     "src/core/FileWriter.hpp"
     "src/core/SimpleFileReader.hpp"
@@ -68,12 +36,14 @@ add_library(vrmlproc SHARED
 
     "src/core/utils/ScopedTimer.hpp"
     "src/core/utils/TypeToString.hpp"
+    "src/core/utils/Range.hpp"
 
     "src/core/logger/Logger.hpp"
     "src/core/logger/Logger.cpp"
 
-    # Parser.
+    "src/core/contracts/Comparable.hpp"
 
+    # Parser.
     "src/parser/models/VrmlUnits.hpp"
     "src/parser/models/VrmlFile.hpp"
 
@@ -105,6 +75,8 @@ add_library(vrmlproc SHARED
     "src/parser/models/UseNode.cpp"
 
     "src/parser/models/utils/VrmlFieldExtractor.hpp"
+    "src/parser/models/validators/ModelValidator.hpp"
+    "src/parser/models/validators/errors/ModelValidationError.hpp"
 
     "src/parser/services/VrmlNodeManager.hpp"
     "src/parser/services/VrmlNodeManager.cpp"
@@ -133,7 +105,6 @@ add_library(vrmlproc SHARED
     "src/parser/grammars/VrmlFileGrammar.hpp"
 
     # Conversion context.
-
     "src/conversion_context/BaseConversionContext.hpp"
     "src/conversion_context/Mergeable.hpp"
     "src/conversion_context/VectorConversionContext.hpp"
@@ -141,7 +112,6 @@ add_library(vrmlproc SHARED
     "src/conversion_context/StlBaseStructure.hpp"
 
     # Traversors.
-
     "src/traversors/VrmlNodeTraversor.hpp"
     "src/traversors/VrmlNodeTraversor.cpp"
     "src/traversors/VrmlFileTraversor.hpp"
@@ -189,25 +159,45 @@ add_library(vrmlproc SHARED
     "src/traversors/validators/errors/NodeValidationError.hpp"
 
     # Actions.
-
     "src/actions/ConversionContextActionMap.hpp"
     "src/actions/ConversionContextActionMap.cpp"
     "src/actions/ConversionContextAction.hpp"
-    "src/actions/IndexedFaceSetAction.hpp"
-    "src/actions/IndexedFaceSetAction.cpp"
-    "src/actions/CoordinateAction.hpp"
-    "src/actions/CoordinateAction.cpp"
-    "src/actions/NormalAction.hpp"
-    "src/actions/NormalAction.cpp"
-    "src/actions/TextureCoordinateAction.hpp"
-    "src/actions/TextureCoordinateAction.cpp"
     "src/actions/GeometryAction.hpp"
-    "src/actions/GroupAction.hpp"
-    "src/actions/GroupAction.cpp"
-    "src/actions/BoxAction.hpp"
-    "src/actions/BoxAction.cpp"
-    "src/actions/ShapeAction.hpp"
-    "src/actions/ShapeAction.cpp"
+)
+
+# Add source files and vendor dependencies.
+target_include_directories(vrmlproc PUBLIC
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/src
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/core
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/core/contracts
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/core/errors
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/core/utils
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/core/logger
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/parser
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/models
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/models/validators
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/models/validators/errors
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/models/utils
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/interfaces
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/grammars
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/services
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/conversion_context
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/actions
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/traversors
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/traversors/utils
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/traversors/errors
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/traversors/validators
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/traversors/validators/errors
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/traversors/handlers
+
+    # ${CMAKE_CURRENT_SOURCE_DIR}/../vendor/pybind11/include/pybind11
+    ${CMAKE_CURRENT_SOURCE_DIR}/../vendor/result
 )
 
 # Two build types - Debug and Release.
@@ -252,7 +242,6 @@ add_executable(Vec3fGrammarUnitTests "tests/Vec3fGrammarTest.cpp")
 add_executable(Vec4fGrammarUnitTests "tests/Vec4fGrammarTest.cpp")
 add_executable(Vec3fArrayGrammarUnitTests "tests/Vec3fArrayGrammarTest.cpp")
 add_executable(Int32ArrayGrammarUnitTests "tests/Int32ArrayGrammarTest.cpp")
-add_executable(VrmlFileTraversorUnitTests "tests/VrmlFileTraversorTest.cpp")
 add_executable(VrmlFieldExtractorUnitTests "tests/VrmlFieldExtractorTest.cpp")
 
 # Link Catch2 with the test executables.
@@ -261,7 +250,6 @@ target_link_libraries(Vec3fGrammarUnitTests PRIVATE Catch2::Catch2WithMain vrmlp
 target_link_libraries(Vec4fGrammarUnitTests PRIVATE Catch2::Catch2WithMain vrmlproc)
 target_link_libraries(Vec3fArrayGrammarUnitTests PRIVATE Catch2::Catch2WithMain vrmlproc)
 target_link_libraries(Int32ArrayGrammarUnitTests PRIVATE Catch2::Catch2WithMain vrmlproc)
-target_link_libraries(VrmlFileTraversorUnitTests PRIVATE Catch2::Catch2WithMain vrmlproc)
 target_link_libraries(VrmlFieldExtractorUnitTests PRIVATE Catch2::Catch2WithMain vrmlproc)
 
 # Enable testing (use CTest to run the unit tests).
@@ -271,5 +259,4 @@ add_test(NAME Vec3fGrammarUnitTests COMMAND Vec3fGrammarUnitTests)
 add_test(NAME Vec4fGrammarUnitTests COMMAND Vec4fGrammarUnitTests)
 add_test(NAME Vec3fArrayGrammarUnitTests COMMAND Vec3fArrayGrammarUnitTests)
 add_test(NAME Int32ArrayGrammarUnitTests COMMAND Int32ArrayGrammarUnitTests)
-add_test(NAME VrmlFileTraversorUnitTests COMMAND VrmlFileTraversorUnitTests)
 add_test(NAME VrmlFieldExtractorUnitTests COMMAND VrmlFieldExtractorUnitTests)

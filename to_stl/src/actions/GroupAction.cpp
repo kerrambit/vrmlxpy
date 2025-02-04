@@ -7,7 +7,7 @@
 #include "MeshConversionContext.hpp"
 #include "Vec3f.hpp"
 
-namespace vrml_proc {
+namespace to_stl {
 	namespace action {
 		
 		GroupAction::GroupAction(std::vector<std::shared_ptr<vrml_proc::conversion_context::MeshConversionContext>> children, std::reference_wrapper<const vrml_proc::parser::Vec3f> bboxCenter, std::reference_wrapper<const vrml_proc::parser::Vec3f> bboxSize) :
@@ -15,7 +15,7 @@ namespace vrml_proc {
 
 		std::shared_ptr<vrml_proc::conversion_context::MeshConversionContext> GroupAction::Execute() {
 
-			LOG_INFO() << "Execute GroupAction.";
+			vrml_proc::core::logger::LogInfo("Execute GroupAction.", LOGGING_INFO);
 
 			auto result = std::make_shared<vrml_proc::conversion_context::MeshConversionContext>();
 			for (const auto& child : m_children) {

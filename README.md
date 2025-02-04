@@ -3,6 +3,7 @@ A Python-based toolkit for VRML parsing and STL conversion. Includes a standalon
 
 ## Prerequisites
 - You need to have the [Boost](https://www.boost.org/) installed on your system. Please follow instructions [here](doc/boost_installation.md).
+- Other third part library used is called [CGAL](https://www.cgal.org/). Follow instructions [here](doc/cgal_installation.md).
 - The project uses [Ninja](https://ninja-build.org/) build system. Please follow the installation instructions of this software based on your system vendor.
 - It comes naturally that you should have [CMake](https://cmake.org/) installed on your system as well.
 - C++ compiler.
@@ -46,3 +47,5 @@ A Python-based toolkit for VRML parsing and STL conversion. Includes a standalon
 
 ### Windows
 - TODO
+
+## Troubleshooting

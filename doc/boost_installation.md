@@ -7,13 +7,16 @@ Before you can build this project, you'll need to have the Boost libraries insta
 ### Windows Installation
 
 1. **Download Boost**:
-   - Visit the [Boost Downloads Page](https://www.boost.org/users/download/) and download the latest Boost release (e.g., `boost_1_86_0.zip`).
+   - The easiest way how to get Boost on Windows is to download prebuilt binaries. Check [Boost C++ Libraries Files on SourceForge](https://sourceforge.net/projects/boost/files/boost-binaries/), choose version and download
+     executable file such as *boost_1_87_0-msvc-14.3-64.exe*. Run the installer and place unzipped data for example to the ```/vendor``` folder.
 
-2. **Extract Boost**:
+2. **Manual building**:
+   - If you wish not to download prebuilt binaries and you want to build Boost yourself, then you should visit the [Boost Downloads Page](https://www.boost.org/users/download/) and download the latest Boost release (e.g., `boost_1_87_0.zip`).
    - Extract the Boost archive to a directory of your choice. For example, extract it to:
      ```
      C:\path\to\your\boost
      ```
+   
    - You can use also ```vendor``` folder in this project to keep your dependencies organized.
    - You should now have a folder structure like:
      ```
@@ -25,9 +28,8 @@ Before you can build this project, you'll need to have the Boost libraries insta
      ├── status
      └── tools
      ```
-
-3. **Build Boost**:
-   - You might also need to build Boost from source (to create libraries like `boost_filesystem`), you can use the following commands:
+   
+   - You also need to build Boost (to create libraries like `boost_filesystem`). You can use the following commands:
      1. Open a **Developer Command Prompt for Visual Studio**.
      2. Navigate to the Boost root directory:
         ```

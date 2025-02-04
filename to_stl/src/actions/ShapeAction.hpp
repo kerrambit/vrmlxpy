@@ -8,14 +8,14 @@
 
 #include "VrmlProcessingExport.hpp"
 
-namespace vrml_proc {
+namespace to_stl {
 	namespace action {
 		/**
 		 * @brief Represents a concrete type of Action.
 		 *
 		 * @implements ConversionContextAction
 		 */
-		class VRMLPROCESSING_API ShapeAction : public ConversionContextAction<vrml_proc::conversion_context::MeshConversionContext> {
+		class VRMLPROCESSING_API ShapeAction : public vrml_proc::action::ConversionContextAction<vrml_proc::conversion_context::MeshConversionContext> {
 
 		public:
 			/**
