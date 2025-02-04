@@ -75,6 +75,8 @@ add_library(vrmlproc SHARED
     "src/parser/models/UseNode.cpp"
 
     "src/parser/models/utils/VrmlFieldExtractor.hpp"
+    "src/parser/models/validators/ModelValidator.hpp"
+    "src/parser/models/validators/errors/ModelValidationError.hpp"
 
     "src/parser/services/VrmlNodeManager.hpp"
     "src/parser/services/VrmlNodeManager.cpp"
@@ -176,6 +178,8 @@ target_include_directories(vrmlproc PUBLIC
 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/parser
     ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/models
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/models/validators
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/models/validators/errors
     ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/models/utils
     ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/interfaces
     ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/grammars
