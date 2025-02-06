@@ -49,17 +49,3 @@ cpp::result<std::shared_ptr<ConversionContext>, std::shared_ptr<vrml_proc::core:
 
     return vrml_proc::traversor::utils::ConversionContextActionExecutor::TryToExecute<ConversionContext>(actionMap, "Group", { std::cref(cachedBoxCenter), std::cref(cachedBoxSize) }, { resolvedChildren });
 }
-
-namespace vrml_proc {
-    namespace traversor {
-        namespace handler {
-            namespace GroupHandler {
-
-                template VRMLPROCESSING_API cpp::result<std::shared_ptr<vrml_proc::conversion_context::MeshConversionContext>, std::shared_ptr<vrml_proc::core::error::Error>>
-                    Handle<vrml_proc::conversion_context::MeshConversionContext>(
-                        vrml_proc::traversor::FullParsedVrmlNodeContext,
-                        const vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext>&);
-            }
-        }
-    }
-}

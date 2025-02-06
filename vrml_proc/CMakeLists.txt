@@ -20,6 +20,8 @@ add_library(vrmlproc SHARED
     # Third party libraries.
     "${CMAKE_CURRENT_SOURCE_DIR}/../vendor/result/result.hpp"
 
+    "src/GroupHandler.MeshConversionContext.cpp"
+
     # DLL export macro.
     "src/VrmlProcessingExport.hpp"
 
