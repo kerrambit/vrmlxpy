@@ -53,6 +53,9 @@ add_library(tostl SHARED
     "src/actions/ShapeAction.hpp"
     "src/actions/ShapeAction.cpp"
 
+    # Conversion contexts
+    "src/conversion_context/CoordConversionContext.hpp"
+
     # Calculators.
     "src/calculators/BoxCalculator.hpp"
     "src/calculators/BoxCalculator.cpp"
@@ -65,6 +68,7 @@ target_include_directories(tostl PUBLIC
 
     ${CMAKE_CURRENT_SOURCE_DIR}/src
     ${CMAKE_CURRENT_SOURCE_DIR}/src/actions
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/conversion_context
     ${CMAKE_CURRENT_SOURCE_DIR}/src/calculators
     ${CMAKE_CURRENT_SOURCE_DIR}/src/calculators/errors
     ${CMAKE_CURRENT_SOURCE_DIR}/src/core
