@@ -265,70 +265,70 @@ namespace vrml_proc {
 					return std::cref(defaultValue);
 				}
 
-				std::reference_wrapper<const bool> GetCcw(const bool& defaultValue) {
+				std::reference_wrapper<const bool> GetCachedCcw(const bool& defaultValue) {
 					if (m_ccw.has_value()) {
 						return m_ccw.value();
 					}
 					return std::cref(defaultValue);
 				}
 
-				std::reference_wrapper<const vrml_proc::parser::Int32Array> GetColorIndex(const vrml_proc::parser::Int32Array& defaultValue) {
+				std::reference_wrapper<const vrml_proc::parser::Int32Array> GetCachedColorIndex(const vrml_proc::parser::Int32Array& defaultValue) {
 					if (m_colorIndex.has_value()) {
 						return m_colorIndex.value();
 					}
 					return std::cref(defaultValue);
 				}
 
-				std::reference_wrapper<const bool> GetColorPerVertex(const bool& defaultValue) {
+				std::reference_wrapper<const bool> GetCachedColorPerVertex(const bool& defaultValue) {
 					if (m_colorPerVertex.has_value()) {
 						return m_colorPerVertex.value();
 					}
 					return std::cref(defaultValue);
 				}
 
-				std::reference_wrapper<const bool> GetConvex(const bool& defaultValue) {
+				std::reference_wrapper<const bool> GetCachedConvex(const bool& defaultValue) {
 					if (m_convex.has_value()) {
 						return m_convex.value();
 					}
 					return std::cref(defaultValue);
 				}
 
-				std::reference_wrapper<const vrml_proc::parser::Int32Array> GetCoordIndex(const vrml_proc::parser::Int32Array& defaultValue) {
+				std::reference_wrapper<const vrml_proc::parser::Int32Array> GetCachedCoordIndex(const vrml_proc::parser::Int32Array& defaultValue) {
 					if (m_coordIndex.has_value()) {
 						return m_coordIndex.value();
 					}
 					return std::cref(defaultValue);
 				}
 
-				std::reference_wrapper<const vrml_proc::parser::float32_t> GetCreaseAngle(const vrml_proc::parser::float32_t& defaultValue) {
+				std::reference_wrapper<const vrml_proc::parser::float32_t> GetCachedCreaseAngle(const vrml_proc::parser::float32_t& defaultValue) {
 					if (m_creaseAngle.has_value()) {
 						return m_creaseAngle.value();
 					}
 					return std::cref(defaultValue);
 				}
 
-				std::reference_wrapper<const vrml_proc::parser::Int32Array> GetNormalIndex(const vrml_proc::parser::Int32Array& defaultValue) {
+				std::reference_wrapper<const vrml_proc::parser::Int32Array> GetCachedNormalIndex(const vrml_proc::parser::Int32Array& defaultValue) {
 					if (m_normalIndex.has_value()) {
 						return m_normalIndex.value();
 					}
 					return std::cref(defaultValue);
 				}
 
-				std::reference_wrapper<const bool> GetNormalPerVertex(const bool& defaultValue) {
+				std::reference_wrapper<const bool> GetCachedNormalPerVertex(const bool& defaultValue) {
 					if (m_normalPerVertex.has_value()) {
 						return m_normalPerVertex.value();
 					}
 					return std::cref(defaultValue);
 				}
 
-				std::reference_wrapper<const bool> GetSolid(const bool& defaultValue) {
+				std::reference_wrapper<const bool> GetCachedSolid(const bool& defaultValue) {
 					if (m_solid.has_value()) {
 						return m_solid.value();
 					}
 					return std::cref(defaultValue);
 				}
 
-				std::reference_wrapper<const vrml_proc::parser::Int32Array> GetTexCoordIndex(const vrml_proc::parser::Int32Array& defaultValue) {
+				std::reference_wrapper<const vrml_proc::parser::Int32Array> GetCachedTexCoordIndex(const vrml_proc::parser::Int32Array& defaultValue) {
 					if (m_texCoordIndex.has_value()) {
 						return m_texCoordIndex.value();
 					}
