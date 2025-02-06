@@ -11,6 +11,7 @@
 #include <BoxCalculator.hpp>
 #include <ConversionContextActionMap.hpp>
 #include <GroupAction.hpp>
+#include <IndexedFaceSetAction.hpp>
 #include <Logger.hpp>
 #include <MemoryMappedFileReader.hpp>
 #include <MeshConversionContext.hpp>
@@ -96,6 +97,57 @@ static vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_conte
             }
 
             assert(false && "Invalid arguments for ShapeAction"); });
+
+    actionMap.AddAction("IndexedFaceSet", [](const vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext>::ReferencedArguments& refArgs,
+        const vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext>::CopiedArguments& copyArgs) {
+
+            using vrml_proc::parser::VrmlNode;
+            using vrml_proc::parser::Int32Array;
+            using vrml_proc::parser::float32_t;
+
+            if (refArgs.size() == 14 && copyArgs.size() == 1 &&
+                copyArgs[0].type() == typeid(bool) &&
+                refArgs[0].get().type() == typeid(std::reference_wrapper<const VrmlNode>) &&
+                refArgs[1].get().type() == typeid(std::reference_wrapper<const VrmlNode>) &&
+                refArgs[2].get().type() == typeid(std::reference_wrapper<const VrmlNode>) &&
+                refArgs[3].get().type() == typeid(std::reference_wrapper<const VrmlNode>) &&
+                refArgs[4].get().type() == typeid(std::reference_wrapper<const bool>) &&
+                refArgs[5].get().type() == typeid(std::reference_wrapper<const Int32Array>) &&
+                refArgs[6].get().type() == typeid(std::reference_wrapper<const bool>) &&
+                refArgs[7].get().type() == typeid(std::reference_wrapper<const bool>) &&
+                refArgs[8].get().type() == typeid(std::reference_wrapper<const Int32Array>) &&
+                refArgs[9].get().type() == typeid(std::reference_wrapper<const float32_t>) &&
+                refArgs[10].get().type() == typeid(std::reference_wrapper<const Int32Array>) &&
+                refArgs[11].get().type() == typeid(std::reference_wrapper<const bool>) &&
+                refArgs[12].get().type() == typeid(std::reference_wrapper<const bool>) &&
+                refArgs[13].get().type() == typeid(std::reference_wrapper<const Int32Array>)
+                ) {
+                vrml_proc::traversor::handler::IndexedFaceSetHandler::IndexedFaceSetProperties properties{
+                    std::any_cast<std::reference_wrapper<const VrmlNode>>(refArgs[0]),
+                    std::any_cast<std::reference_wrapper<const VrmlNode>>(refArgs[1]),
+                    std::any_cast<std::reference_wrapper<const VrmlNode>>(refArgs[2]),
+                    std::any_cast<std::reference_wrapper<const VrmlNode>>(refArgs[3]),
+                    std::any_cast<std::reference_wrapper<const bool>>(refArgs[4]),
+                    std::any_cast<std::reference_wrapper<const Int32Array>>(refArgs[5]),
+                    std::any_cast<std::reference_wrapper<const bool>>(refArgs[6]),
+                    std::any_cast<std::reference_wrapper<const bool>>(refArgs[7]),
+                    std::any_cast<std::reference_wrapper<const Int32Array>>(refArgs[8]),
+                    std::any_cast<std::reference_wrapper<const float32_t>>(refArgs[9]),
+                    std::any_cast<std::reference_wrapper<const Int32Array>>(refArgs[10]),
+                    std::any_cast<std::reference_wrapper<const bool>>(refArgs[11]),
+                    std::any_cast<std::reference_wrapper<const bool>>(refArgs[12]),
+                    std::any_cast<std::reference_wrapper<const Int32Array>>(refArgs[13])
+                };
+
+                return std::make_shared<to_stl::action::IndexedFaceSetAction>(
+                    properties,
+                    std::any_cast<bool>(copyArgs[0])
+                );
+            }
+
+            assert(false && "Invalid arguments for IndexedFaceSet");
+        });
+
 
     return actionMap;
 }
