@@ -2,6 +2,8 @@
 #error "Don't include this file"
 #endif
 
+// https://stackoverflow.com/questions/115703/storing-c-template-function-definitions-in-a-cpp-file.
+
 #include "GroupHandler.cpp"
 
 #include <memory>
