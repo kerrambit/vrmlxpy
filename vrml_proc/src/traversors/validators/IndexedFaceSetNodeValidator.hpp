@@ -14,6 +14,7 @@
 #include "NodeValidator.hpp"
 #include "VrmlNode.hpp"
 #include "VrmlNodeManager.hpp"
+#include "FormatString.hpp"
 #include "VrmlUnits.hpp"
 
 namespace vrml_proc {
@@ -129,9 +130,9 @@ namespace vrml_proc {
 
 					// --------------------------------------------------------
 
-					auto ccwResult = vrml_proc::traversor::validator::NodeValidator::ExtractFieldByNameWithValidation<const bool>("ccw", m_node.fields);
+					auto ccwResult = vrml_proc::traversor::validator::NodeValidator::ExtractFieldByNameWithValidation<bool>("ccw", m_node.fields);
 					if (ccwResult.has_error()) {
-						//LOG_ERROR() << "Field <ccw> could not be extracted from the VRML node!";
+						vrml_proc::core::logger::LogError("Field <ccw> could not be extracted from the VRML node!", LOGGING_INFO);
 						return cpp::fail(ccwResult.error());
 					}
 
@@ -139,7 +140,7 @@ namespace vrml_proc {
 
 					// --------------------------------------------------------
 
-					auto colorIndexResult = vrml_proc::traversor::validator::NodeValidator::ExtractFieldByNameWithValidation<const vrml_proc::parser::Int32Array>("colorIndex", m_node.fields);
+					auto colorIndexResult = vrml_proc::traversor::validator::NodeValidator::ExtractFieldByNameWithValidation<vrml_proc::parser::Int32Array>("colorIndex", m_node.fields);
 					if (colorIndexResult.has_error()) {
 						//LOG_ERROR() << "Field <colorIndex> could not be extracted from the VRML node!";
 						return cpp::fail(colorIndexResult.error());
@@ -149,7 +150,7 @@ namespace vrml_proc {
 
 					// --------------------------------------------------------
 
-					auto colorPerVertexResult = vrml_proc::traversor::validator::NodeValidator::ExtractFieldByNameWithValidation<const bool>("colorPerVertex", m_node.fields);
+					auto colorPerVertexResult = vrml_proc::traversor::validator::NodeValidator::ExtractFieldByNameWithValidation<bool>("colorPerVertex", m_node.fields);
 					if (colorPerVertexResult.has_error()) {
 						//LOG_ERROR() << "Field <colorPerVertex> could not be extracted from the VRML node!";
 						return cpp::fail(colorPerVertexResult.error());
@@ -159,7 +160,7 @@ namespace vrml_proc {
 
 					// --------------------------------------------------------
 
-					auto convexResult = vrml_proc::traversor::validator::NodeValidator::ExtractFieldByNameWithValidation<const bool>("convex", m_node.fields);
+					auto convexResult = vrml_proc::traversor::validator::NodeValidator::ExtractFieldByNameWithValidation<bool>("convex", m_node.fields);
 					if (convexResult.has_error()) {
 						//LOG_ERROR() << "Field <convex> could not be extracted from the VRML node!";
 						return cpp::fail(convexResult.error());
@@ -169,7 +170,7 @@ namespace vrml_proc {
 
 					// --------------------------------------------------------
 
-					auto coordIndexResult = vrml_proc::traversor::validator::NodeValidator::ExtractFieldByNameWithValidation<const vrml_proc::parser::Int32Array>("coordIndex", m_node.fields);
+					auto coordIndexResult = vrml_proc::traversor::validator::NodeValidator::ExtractFieldByNameWithValidation<vrml_proc::parser::Int32Array>("coordIndex", m_node.fields);
 					if (coordIndexResult.has_error()) {
 						//LOG_ERROR() << "Field <coordIndex> could not be extracted from the VRML node!";
 						return cpp::fail(coordIndexResult.error());
@@ -179,7 +180,7 @@ namespace vrml_proc {
 
 					// --------------------------------------------------------
 
-					auto creaseAngleResult = vrml_proc::traversor::validator::NodeValidator::ExtractFieldByNameWithValidation<const vrml_proc::parser::float32_t>("creaseAngle", m_node.fields);
+					auto creaseAngleResult = vrml_proc::traversor::validator::NodeValidator::ExtractFieldByNameWithValidation<vrml_proc::parser::float32_t>("creaseAngle", m_node.fields);
 					if (creaseAngleResult.has_error()) {
 						//LOG_ERROR() << "Field <creaseAngle> could not be extracted from the VRML node!";
 						return cpp::fail(creaseAngleResult.error());
@@ -189,7 +190,7 @@ namespace vrml_proc {
 
 					// --------------------------------------------------------
 
-					auto normalIndexResult = vrml_proc::traversor::validator::NodeValidator::ExtractFieldByNameWithValidation<const vrml_proc::parser::Int32Array>("normalIndex", m_node.fields);
+					auto normalIndexResult = vrml_proc::traversor::validator::NodeValidator::ExtractFieldByNameWithValidation<vrml_proc::parser::Int32Array>("normalIndex", m_node.fields);
 					if (normalIndexResult.has_error()) {
 						//LOG_ERROR() << "Field <normalIndex> could not be extracted from the VRML node!";
 						return cpp::fail(normalIndexResult.error());
@@ -199,7 +200,7 @@ namespace vrml_proc {
 
 					// --------------------------------------------------------
 
-					auto normalPerVertexResult = vrml_proc::traversor::validator::NodeValidator::ExtractFieldByNameWithValidation<const bool>("normalPerVertex", m_node.fields);
+					auto normalPerVertexResult = vrml_proc::traversor::validator::NodeValidator::ExtractFieldByNameWithValidation<bool>("normalPerVertex", m_node.fields);
 					if (normalPerVertexResult.has_error()) {
 						//LOG_ERROR() << "Field <normalPerVertex> could not be extracted from the VRML node!";
 						return cpp::fail(normalPerVertexResult.error());
@@ -209,7 +210,7 @@ namespace vrml_proc {
 
 					// --------------------------------------------------------
 
-					auto solidResult = vrml_proc::traversor::validator::NodeValidator::ExtractFieldByNameWithValidation<const bool>("solid", m_node.fields);
+					auto solidResult = vrml_proc::traversor::validator::NodeValidator::ExtractFieldByNameWithValidation<bool>("solid", m_node.fields);
 					if (solidResult.has_error()) {
 						//LOG_ERROR() << "Field <solid> could not be extracted from the VRML node!";
 						return cpp::fail(solidResult.error());
@@ -219,7 +220,7 @@ namespace vrml_proc {
 
 					// --------------------------------------------------------
 
-					auto texCoordIndexResult = vrml_proc::traversor::validator::NodeValidator::ExtractFieldByNameWithValidation<const vrml_proc::parser::Int32Array>("texCoordIndex", m_node.fields);
+					auto texCoordIndexResult = vrml_proc::traversor::validator::NodeValidator::ExtractFieldByNameWithValidation<vrml_proc::parser::Int32Array>("texCoordIndex", m_node.fields);
 					if (texCoordIndexResult.has_error()) {
 						//LOG_ERROR() << "Field <texCoordIndex> could not be extracted from the VRML node!";
 						return cpp::fail(texCoordIndexResult.error());
