@@ -40,7 +40,7 @@ cpp::result<std::shared_ptr<ConversionContext>, std::shared_ptr<vrml_proc::core:
 
     auto resolvedGeometry = vrml_proc::traversor::VrmlNodeTraversor::Traverse<ConversionContext>({ validator.GetCachedGeometry(defaultGeometry).get(), context.manager, true}, actionMap);
     if (resolvedGeometry.has_error()) {
-        return cpp::fail(resolvedAppearance.error());
+        return cpp::fail(resolvedGeometry.error());
     }
 
     return vrml_proc::traversor::utils::ConversionContextActionExecutor::TryToExecute<ConversionContext>(actionMap, "Shape", {}, { resolvedAppearance.value(), resolvedGeometry.value() });

@@ -52,16 +52,16 @@ cpp::result<std::shared_ptr<ConversionContext>, std::shared_ptr<vrml_proc::core:
     std::any coord = validator.GetCachedCoord(defaultCoord);
     std::any normal = validator.GetCachedNormal(defaultNormal);
     std::any texCoord = validator.GetCachedTexCoord(defaultTexCoord);
-    std::any colorIndex = validator.GetCachedColorIndex(defaultColorIndex);
-    std::any coordIndex = validator.GetCachedCoordIndex(defaultCoordIndex);
-    std::any normalIndex = validator.GetCachedNormalIndex(defaultNormalIndex);
-    std::any texCoordIndex = validator.GetCachedTexCoordIndex(defaultTexCoordIndex);
-    std::any creaseAngle = validator.GetCachedCreaseAngle(defaultCreaseangle);
     std::any ccw = validator.GetCachedCcw(defaultCcw);
+    std::any colorIndex = validator.GetCachedColorIndex(defaultColorIndex);
     std::any colorPerVertex = validator.GetCachedColorPerVertex(defaultColorPerVertex);
     std::any convex = validator.GetCachedConvex(defaultConvex);
+    std::any coordIndex = validator.GetCachedCoordIndex(defaultCoordIndex);
+    std::any creaseAngle = validator.GetCachedCreaseAngle(defaultCreaseangle);
+    std::any normalIndex = validator.GetCachedNormalIndex(defaultNormalIndex);
     std::any normalPerVertex = validator.GetCachedNormalPerVertex(defaultNormalPerVertex);
     std::any solid = validator.GetCachedSolid(defaultSolid);
+    std::any texCoordIndex = validator.GetCachedTexCoordIndex(defaultTexCoordIndex);
 
     return vrml_proc::traversor::utils::ConversionContextActionExecutor::TryToExecute<ConversionContext>(
         actionMap, context.node.header,
@@ -70,16 +70,16 @@ cpp::result<std::shared_ptr<ConversionContext>, std::shared_ptr<vrml_proc::core:
             std::cref(coord),
             std::cref(normal),
             std::cref(texCoord),
-            std::cref(colorIndex),
-            std::cref(coordIndex),
-            std::cref(normalIndex),
-            std::cref(texCoordIndex),
-            std::cref(creaseAngle),
             std::cref(ccw),
+            std::cref(colorIndex),
             std::cref(colorPerVertex),
             std::cref(convex),
+            std::cref(coordIndex),
+            std::cref(creaseAngle),
+            std::cref(normalIndex),
             std::cref(normalPerVertex),
-            std::cref(solid)
+            std::cref(solid),
+            std::cref(texCoordIndex),
         }, { context.IsDescendantOfShape });
 }
 
