@@ -15,8 +15,6 @@
 #include "FullParsedVrmlNodeContext.hpp"
 #include "MeshConversionContext.hpp"
 
-#include "VrmlProcessingExport.hpp"
-
 namespace vrml_proc {
     namespace traversor {
         namespace handler {
