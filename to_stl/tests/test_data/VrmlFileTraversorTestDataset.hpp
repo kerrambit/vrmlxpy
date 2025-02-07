@@ -219,3 +219,40 @@ std::string invalidShapeWrongNodeForGeometryField = R"(
     }
 
 )";
+
+std::string validIndexedFaceSetNode = R"(
+
+    #VRML V2.0 utf8
+
+    WorldInfo {
+        title "cube.wrl"
+        info "VRML file."
+    }
+
+    Group {
+        bboxCenter 0 0 0
+        bboxSize 0 0 0
+        children [
+            Shape {
+                geometry IndexedFaceSet {
+                    coord Coordinate {
+                       point [
+                           285.5 434.2858 8.5,
+                           284.83615 434.5 8.5,
+                           285.5 434.5 8.3120184,
+                           283.5 436.35297 7.5,
+                           283.28903 436.5 7.5,
+                           283.5 436.5 7.3894577,
+                           283.5 435.24545 8.5,
+                           283.22855 435.5 8.5,
+                           283.5 435.5 8.2797327
+                       ]
+                    }
+                    coordIndex [2, 0, 1, -1, 5, 3, 4, -1]
+                    ccw TRUE
+                    solid FALSE
+                }
+            }
+        ]
+    }
+)";
