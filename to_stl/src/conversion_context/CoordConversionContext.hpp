@@ -1,6 +1,7 @@
 #pragma once
 
 #include <functional>
+#include <optional>
 
 #include "BaseConversionContext.hpp"
 #include "Vec3fArray.hpp"
@@ -9,11 +10,10 @@ namespace to_stl::conversion_context {
 
 	class CoordConversionContext : public vrml_proc::conversion_context::BaseConversionContext {
 	public:
-		CoordConversionContext(int data)
+		CoordConversionContext(std::reference_wrapper<const vrml_proc::parser::Vec3fArray> data)
 			: m_data(data) {}
 
-		CoordConversionContext()
-			: m_data(0) {}
+		CoordConversionContext() = default;
 
 		void Merge(Mergeable* other) override {
 			/*if (other == nullptr) {
@@ -34,6 +34,6 @@ namespace to_stl::conversion_context {
 		}
 
 	private:
-		int m_data;
+		std::optional<std::reference_wrapper<const vrml_proc::parser::Vec3fArray>> m_data = std::nullopt;
 	};
 }
