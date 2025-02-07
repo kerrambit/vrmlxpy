@@ -55,6 +55,19 @@ add_library(tostl SHARED
 
     # Conversion contexts
     "src/conversion_context/CoordConversionContext.hpp"
+    "src/conversion_context/ConversionContextMap.CoordConversionContext.cpp"
+    "src/conversion_context/VrmlNodeTraversor.CoordConversionContext.cpp"
+
+    "src/conversion_context/GroupHandler.CoordConversionContext.cpp"
+    "src/conversion_context/BoxHandler.CoordConversionContext.cpp"
+    "src/conversion_context/WorldInfoHandler.CoordConversionContext.cpp"
+    "src/conversion_context/BoxHandler.CoordConversionContext.cpp"
+    "src/conversion_context/ColorHandler.CoordConversionContext.cpp"
+    "src/conversion_context/CoordinateHandler.CoordConversionContext.cpp"
+    "src/conversion_context/IndexedFaceSetHandler.CoordConversionContext.cpp"
+    "src/conversion_context/NormalHandler.CoordConversionContext.cpp"
+    "src/conversion_context/ShapeHandler.CoordConversionContext.cpp"
+    "src/conversion_context/TextureCoordinateHandler.CoordConversionContext.cpp"
 
     # Calculators.
     "src/calculators/BoxCalculator.hpp"

@@ -4,6 +4,8 @@
 #include <stdexcept>
 
 #include "BaseConversionContext.hpp"
+#include "VrmlProcessingExport.hpp"
+
 
 namespace vrml_proc {
 	namespace conversion_context {
@@ -12,7 +14,7 @@ namespace vrml_proc {
 		 * Its internal data format is std::vector<T>.
 		 */
 		template<typename T>
-		class VectorConversionContext : public BaseConversionContext {
+		class VRMLPROCESSING_API VectorConversionContext : public BaseConversionContext {
 		public:
 			/**
 			 * @brief Default constructor.
