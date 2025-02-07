@@ -12,6 +12,7 @@
 #include "VrmlFile.hpp"
 #include "VrmlNode.hpp"
 #include "VrmlNodeManagerPopulator.hpp"
+#include "FormatString.hpp"
 
 namespace vrml_proc {
 
@@ -19,7 +20,7 @@ namespace vrml_proc {
 
         ParserResult<VrmlFile> VrmlParser::Parse(std::string& string)
 		{
-            LOG_INFO() << "Parse VRML file content.";
+            vrml_proc::core::logger::LogInfo("Parse VRML file content.", LOGGING_INFO);
 
             auto iterator = string.begin();
             std::vector<VrmlNode> parsedData;
@@ -32,9 +33,9 @@ namespace vrml_proc {
             }
 
             if (success && iterator == string.end()) {
-                LOG_INFO() << "Parsing was successful. The whole parsing and AST creation process took " << time << " seconds.";
+                vrml_proc::core::logger::LogInfo(vrml_proc::core::utils::FormatString("Parsing was successful. The whole parsing and AST creation process took ", time, "seconds."), LOGGING_INFO);
 
-                LOG_INFO() << "Populate VrmlNodeManager with DEF nodes.";
+                vrml_proc::core::logger::LogInfo("Populate VrmlNodeManager with DEF nodes.", LOGGING_INFO);
                 double time = 0.0;
                 {
                     auto timer = vrmlproc::core::utils::ScopedTimer(time);
@@ -42,12 +43,12 @@ namespace vrml_proc {
                         VrmlNodeManagerPopulator::Populate(m_manager, root);
                     }
                 }
-                LOG_INFO() << "DEF nodes populating has finished. The whole process took " << time << " seconds.";
+                vrml_proc::core::logger::LogInfo(vrml_proc::core::utils::FormatString("DEF nodes populating has finished. The whole process took ", time, "seconds."), LOGGING_INFO);
 
                 return parsedData;
             }
 
-            LOG_ERROR() << "Parsing was not successful. Process took " << time << " seconds.";
+            vrml_proc::core::logger::LogInfo(vrml_proc::core::utils::FormatString("Parsing was not successful. The process took ", time, "seconds."), LOGGING_INFO);
             return {};
 		}
 	}

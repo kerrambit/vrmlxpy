@@ -10,6 +10,7 @@
 #include "CoordinateNodeValidator.hpp"
 #include "Error.hpp"
 #include "Logger.hpp"
+#include "FormatString.hpp"
 #include "MeshConversionContext.hpp"
 #include "NodeTraversorError.hpp"
 #include "Vec3fArray.hpp"
@@ -19,7 +20,7 @@
 template<typename ConversionContext>
 cpp::result<std::shared_ptr<ConversionContext>, std::shared_ptr<vrml_proc::core::error::Error>> vrml_proc::traversor::handler::CoordinateHandler::Handle(vrml_proc::traversor::FullParsedVrmlNodeContext context, const vrml_proc::action::ConversionContextActionMap<ConversionContext>& actionMap)
 {
-    LOG_INFO() << "Handle VRML node <" << context.node.header << ">.";
+    vrml_proc::core::logger::LogInfo(vrml_proc::core::utils::FormatString("Handle VRML node <", context.node.header, ">."), LOGGING_INFO);
 
     vrml_proc::traversor::validator::CoordinateNodeValidator validator(context.node);
     auto validationResult = validator.Validate();

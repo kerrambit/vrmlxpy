@@ -26,16 +26,16 @@ namespace vrml_proc {
 
 				cpp::result<void, std::shared_ptr<error::NodeValidationError>> Validate() override {
 
-					LOG_INFO() << "Validate Normal VRML node.";
+					//LOG_INFO() << "Validate Normal VRML node.";
 
 					if (m_node.fields.empty()) {
-						LOG_INFO() << "No fields were detected in the node.";
+						//LOG_INFO() << "No fields were detected in the node.";
 						return {};
 					}
 
 					auto fieldsResult = vrml_proc::traversor::validator::NodeValidator::CheckForOnlyUniqueAllowedFieldNames({ "vector" }, m_node.fields, m_node.header);
 					if (fieldsResult.has_error()) {
-						LOG_ERROR() << "Node contains field with invalid name!";
+						//LOG_ERROR() << "Node contains field with invalid name!";
 						return fieldsResult;
 					}
 
@@ -43,13 +43,13 @@ namespace vrml_proc {
 
 					auto vectorResult = vrml_proc::traversor::validator::NodeValidator::ExtractFieldByNameWithValidation<vrml_proc::parser::Vec3fArray>("vector", m_node.fields);
 					if (vectorResult.has_error()) {
-						LOG_ERROR() << "Field <vector> could not be extracted from the VRML node!";
+						//LOG_ERROR() << "Field <vector> could not be extracted from the VRML node!";
 						return cpp::fail(vectorResult.error());
 					}
 
 					m_vector = vectorResult.value();
 
-					LOG_INFO() << "Validation was successfull. Data are cached.";
+					//LOG_INFO() << "Validation was successfull. Data are cached.";
 					return {};
 				}
 
