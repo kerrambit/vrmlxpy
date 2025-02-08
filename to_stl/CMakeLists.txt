@@ -53,6 +53,22 @@ add_library(tostl SHARED
     "src/actions/ShapeAction.hpp"
     "src/actions/ShapeAction.cpp"
 
+    # Conversion contexts
+    "src/conversion_context/Vec3fArrayConversionContext.hpp"
+    "src/conversion_context/ConversionContextMap.Vec3fArrayConversionContext.cpp"
+    "src/conversion_context/VrmlNodeTraversor.Vec3fArrayConversionContext.cpp"
+
+    "src/conversion_context/GroupHandler.Vec3fArrayConversionContext.cpp"
+    "src/conversion_context/BoxHandler.Vec3fArrayConversionContext.cpp"
+    "src/conversion_context/WorldInfoHandler.Vec3fArrayConversionContext.cpp"
+    "src/conversion_context/BoxHandler.Vec3fArrayConversionContext.cpp"
+    "src/conversion_context/ColorHandler.Vec3fArrayConversionContext.cpp"
+    "src/conversion_context/CoordinateHandler.Vec3fArrayConversionContext.cpp"
+    "src/conversion_context/IndexedFaceSetHandler.Vec3fArrayConversionContext.cpp"
+    "src/conversion_context/NormalHandler.Vec3fArrayConversionContext.cpp"
+    "src/conversion_context/ShapeHandler.Vec3fArrayConversionContext.cpp"
+    "src/conversion_context/TextureCoordinateHandler.Vec3fArrayConversionContext.cpp"
+
     # Calculators.
     "src/calculators/BoxCalculator.hpp"
     "src/calculators/BoxCalculator.cpp"
@@ -65,6 +81,7 @@ target_include_directories(tostl PUBLIC
 
     ${CMAKE_CURRENT_SOURCE_DIR}/src
     ${CMAKE_CURRENT_SOURCE_DIR}/src/actions
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/conversion_context
     ${CMAKE_CURRENT_SOURCE_DIR}/src/calculators
     ${CMAKE_CURRENT_SOURCE_DIR}/src/calculators/errors
     ${CMAKE_CURRENT_SOURCE_DIR}/src/core

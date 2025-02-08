@@ -20,6 +20,8 @@ add_library(vrmlproc SHARED
     # Third party libraries.
     "${CMAKE_CURRENT_SOURCE_DIR}/../vendor/result/result.hpp"
 
+    "src/GroupHandler.MeshConversionContext.cpp"
+
     # DLL export macro.
     "src/VrmlProcessingExport.hpp"
 
@@ -37,6 +39,7 @@ add_library(vrmlproc SHARED
     "src/core/utils/ScopedTimer.hpp"
     "src/core/utils/TypeToString.hpp"
     "src/core/utils/Range.hpp"
+    "src/core/utils/FormatString.hpp"
 
     "src/core/logger/Logger.hpp"
     "src/core/logger/Logger.cpp"

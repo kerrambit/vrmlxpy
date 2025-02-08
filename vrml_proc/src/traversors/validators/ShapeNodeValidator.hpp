@@ -24,16 +24,16 @@ namespace vrml_proc {
 
 				cpp::result<void, std::shared_ptr<error::NodeValidationError>> Validate() override {
 
-					LOG_INFO() << "Validate Shape VRML node.";
+					//LOG_INFO() << "Validate Shape VRML node.";
 
 					if (m_node.fields.empty()) {
-						LOG_INFO() << "No fields were detected in the node.";
+						//LOG_INFO() << "No fields were detected in the node.";
 						return {};
 					}
 
 					auto fieldsResult = vrml_proc::traversor::validator::NodeValidator::CheckForOnlyUniqueAllowedFieldNames({ "appearance", "geometry" }, m_node.fields, m_node.header);
 					if (fieldsResult.has_error()) {
-						LOG_ERROR() << "Node contains field with invalid name!";
+						//LOG_ERROR() << "Node contains field with invalid name!";
 						return fieldsResult;
 					}
 
@@ -41,14 +41,14 @@ namespace vrml_proc {
 
 					auto appearanceResult = vrml_proc::traversor::validator::NodeValidator::ExtractVrmlNodeWithValidation("appearance", m_node.fields, m_manager);
 					if (appearanceResult.has_error()) {
-						LOG_ERROR() << "Field <appearance> could not be extracted from the VRML node!";
+						//LOG_ERROR() << "Field <appearance> could not be extracted from the VRML node!";
 						return cpp::fail(appearanceResult.error());
 					}
 
 					if (appearanceResult.value().has_value()) {
 						auto headerResult = vrml_proc::traversor::validator::NodeValidator::CheckForOnlyAllowedVrmlNodeHeaders({ "Appearance" }, appearanceResult.value().value().get(), "appearance");
 						if (headerResult.has_error()) {
-							LOG_ERROR() << "VRML node <" << appearanceResult.value().value().get().header << "> is not valid node for <appearance> field.";
+							//LOG_ERROR() << "VRML node <" << appearanceResult.value().value().get().header << "> is not valid node for <appearance> field.";
 							return cpp::fail(headerResult.error());
 						}
 					}
@@ -59,21 +59,21 @@ namespace vrml_proc {
 
 					auto geometryResult = vrml_proc::traversor::validator::NodeValidator::ExtractVrmlNodeWithValidation("geometry", m_node.fields, m_manager);
 					if (geometryResult.has_error()) {
-						LOG_ERROR() << "Field <geometry> could not be extracted from the VRML node!";
+						//LOG_ERROR() << "Field <geometry> could not be extracted from the VRML node!";
 						return cpp::fail(geometryResult.error());
 					}
 
 					if (geometryResult.value().has_value()) {
 						auto headerResult = vrml_proc::traversor::validator::NodeValidator::CheckForOnlyAllowedVrmlNodeHeaders({ "Box", "Cone", "Cylinder", "ElevationGrid", "Extrusion", "IndexedFaceSet", "IndexedLineSet", "PointSet", "Sphere", "Text" }, geometryResult.value().value().get(), "geometry");
 						if (headerResult.has_error()) {
-							LOG_ERROR() << "VRML node <" << geometryResult.value().value().get().header << "> is not valid node for <geometry> field.";
+							//LOG_ERROR() << "VRML node <" << geometryResult.value().value().get().header << "> is not valid node for <geometry> field.";
 							return cpp::fail(headerResult.error());
 						}
 					}
 
 					m_geometry = geometryResult.value();
 
-					LOG_INFO() << "Validation was successfull. Data are cached.";
+					//LOG_INFO() << "Validation was successfull. Data are cached.";
 					return {};
 				}
 

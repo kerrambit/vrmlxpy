@@ -219,3 +219,178 @@ std::string invalidShapeWrongNodeForGeometryField = R"(
     }
 
 )";
+
+std::string validIndexedFaceSetNode = R"(
+
+    #VRML V2.0 utf8
+
+    Group {
+        bboxCenter 0 0 0
+        bboxSize 0 0 0
+        children [
+            Shape {
+                geometry IndexedFaceSet {
+                
+                    coord Coordinate {
+                        point [
+                            0 0 0, 1 0 0, 1 1 0, 0 1 0,
+                            0 0 1, 1 0 1, 1 1 1, 0 1 1
+                        ]
+                    }
+                    coordIndex [
+                        0, 1, 2, 3, -1,
+                        4, 5, 6, 7, -1,
+                        0, 1, 5, 4, -1,
+                        2, 3, 7, 6, -1,
+                        0, 3, 7, 4, -1,
+                        1, 2, 6, 5, -1
+                    ]
+
+                    normal Normal {
+                        vector [
+                            0 0 -1, 0 0 1, -1 0 0, 1 0 0, 0 -1 0, 0 1 0
+                        ]
+                    }
+                    normalIndex [0, 1, 2, 3, -1, 4, 5, 2, 3, -1]
+
+                    texCoord TextureCoordinate {
+                        point [
+                            0 0, 1 0, 1 1, 0 1
+                        ]
+                    }
+                    texCoordIndex [0, 1, 2, 3, -1, 3, 2, 1, 0, -1]
+
+                    color Color {
+                        color [
+                            1 0 0, 0 1 0, 0 0 1, 1 1 0
+                        ]
+                    }
+                    colorIndex [0, 1, 2, 3, -1, 3, 2, 1, 0, -1]
+
+                    ccw TRUE
+                    convex TRUE
+                    colorPerVertex TRUE
+                    normalPerVertex TRUE
+                    solid FALSE
+                    creaseAngle 0.5
+                }
+            }
+        ]
+    }
+)";
+
+std::string validIndexedFaceSetNodeNotInShape = R"(
+
+    #VRML V2.0 utf8
+
+    Group {
+        bboxCenter 0 0 0
+        bboxSize 0 0 0
+        children [
+                IndexedFaceSet {
+                
+                coord Coordinate {
+                    point [
+                        0 0 0, 1 0 0, 1 1 0, 0 1 0,
+                        0 0 1, 1 0 1, 1 1 1, 0 1 1
+                    ]
+                }
+                coordIndex [
+                    0, 1, 2, 3, -1,
+                    4, 5, 6, 7, -1,
+                    0, 1, 5, 4, -1,
+                    2, 3, 7, 6, -1,
+                    0, 3, 7, 4, -1,
+                    1, 2, 6, 5, -1
+                ]
+
+                normal Normal {
+                    vector [
+                        0 0 -1, 0 0 1, -1 0 0, 1 0 0, 0 -1 0, 0 1 0
+                    ]
+                }
+                normalIndex [0, 1, 2, 3, -1, 4, 5, 2, 3, -1]
+
+                texCoord TextureCoordinate {
+                    point [
+                        0 0, 1 0, 1 1, 0 1
+                    ]
+                }
+                texCoordIndex [0, 1, 2, 3, -1, 3, 2, 1, 0, -1]
+
+                color Color {
+                    color [
+                        1 0 0, 0 1 0, 0 0 1, 1 1 0
+                    ]
+                }
+                colorIndex [0, 1, 2, 3, -1, 3, 2, 1, 0, -1]
+
+                ccw TRUE
+                convex TRUE
+                colorPerVertex TRUE
+                normalPerVertex TRUE
+                solid FALSE
+                creaseAngle 0.5
+            }
+        ]
+    }
+)";
+
+std::string invalidIndexedFaceSetNodeWrongFieldNodeHeader = R"(
+
+    #VRML V2.0 utf8
+
+    Group {
+        bboxCenter 0 0 0
+        bboxSize 0 0 0
+        children [
+            Shape {
+                geometry IndexedFaceSet {
+                
+                    coord Point {
+                        point [
+                            0 0 0, 1 0 0, 1 1 0, 0 1 0,
+                            0 0 1, 1 0 1, 1 1 1, 0 1 1
+                        ]
+                    }
+                    coordIndex [
+                        0, 1, 2, 3, -1,
+                        4, 5, 6, 7, -1,
+                        0, 1, 5, 4, -1,
+                        2, 3, 7, 6, -1,
+                        0, 3, 7, 4, -1,
+                        1, 2, 6, 5, -1
+                    ]
+
+                    normal Normal {
+                        vector [
+                            0 0 -1, 0 0 1, -1 0 0, 1 0 0, 0 -1 0, 0 1 0
+                        ]
+                    }
+                    normalIndex [0, 1, 2, 3, -1, 4, 5, 2, 3, -1]
+
+                    texCoord TextureCoordinate {
+                        point [
+                            0 0, 1 0, 1 1, 0 1
+                        ]
+                    }
+                    texCoordIndex [0, 1, 2, 3, -1, 3, 2, 1, 0, -1]
+
+                    color Color {
+                        color [
+                            1 0 0, 0 1 0, 0 0 1, 1 1 0
+                        ]
+                    }
+                    colorIndex [0, 1, 2, 3, -1, 3, 2, 1, 0, -1]
+
+                    ccw TRUE
+                    convex TRUE
+                    colorPerVertex TRUE
+                    normalPerVertex TRUE
+                    solid FALSE
+                    creaseAngle 0.5
+                }
+            }
+        ]
+    }
+)";

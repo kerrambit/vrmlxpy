@@ -6,22 +6,26 @@
 #include "ConversionContextAction.hpp"
 #include "Logger.hpp"
 #include "MeshConversionContext.hpp"
+#include "FormatString.hpp"
+
+using vrml_proc::core::utils::FormatString;
+using namespace vrml_proc::core::logger;
 
 namespace vrml_proc {
 	namespace action {
 
         template<typename ConversionContext>
         void ConversionContextActionMap<ConversionContext>::AddAction(const std::string& key, ActionFunctor action) {
-            LOG_INFO() << "Add new action with key <" << key << ">.";
+            LogInfo(FormatString("Add new action with key <", key, ">."), LOGGING_INFO);
             m_actions[key] = std::move(action);
         }
 
         template<typename ConversionContext>
         bool ConversionContextActionMap<ConversionContext>::VerifyKey(const std::string& key) const {
             bool result = (m_actions.find(key) != m_actions.end());
-            LOG_TRACE() << "Verify key <" << key << ">.";
+            LogTrace(FormatString("Verify key <", key, ">."), LOGGING_INFO);
             if (result) {
-                LOG_TRACE() << "Key <" << key << "> was not found!";
+                LogTrace(FormatString("Key <", key, "> was not found!"), LOGGING_INFO);
             }
             return result;
         }
@@ -29,12 +33,12 @@ namespace vrml_proc {
         template<typename ConversionContext>
         std::shared_ptr<ConversionContextAction<ConversionContext>> ConversionContextActionMap<ConversionContext>::GetAction(
             const std::string& key, const ReferencedArguments& refArgs, const CopiedArguments& copyArgs) const {
-            LOG_INFO() << "Retrieve action by key <" << key << ">.";
+            LogInfo(FormatString("Retrieve action by key <", key, ">."), LOGGING_INFO);
             auto iterator = m_actions.find(key);
             if (iterator != m_actions.end()) {
                 return iterator->second(refArgs, copyArgs);
             }
-            LOG_WARNING() << "Action with key <" << key << "> was not found!";
+            LogWarning(FormatString("Action with key <", key, "> was not found!"), LOGGING_INFO);
             return nullptr;
         }
 
