@@ -6,7 +6,7 @@
 #include <result.hpp>
 
 #include "ConversionContextActionMap.hpp"
-#include "CoordConversionContext.hpp"
+#include "Vec3fArrayConversionContext.hpp"
 #include "GeometryAction.hpp"
 #include "IndexedFaceSetHandler.hpp"
 #include "Logger.hpp"
@@ -17,13 +17,13 @@
 #include "VrmlNodeTraversor.hpp"
 #include <StlBaseStructure.hpp>
 
-class HelperCoordAction : public vrml_proc::action::ConversionContextAction<to_stl::conversion_context::CoordConversionContext> {
+class HelperCoordAction : public vrml_proc::action::ConversionContextAction<to_stl::conversion_context::Vec3fArrayConversionContext> {
 public:
 	HelperCoordAction(std::reference_wrapper<const vrml_proc::parser::Vec3fArray> data)
 		: m_data(data) {}
 
-	std::shared_ptr<to_stl::conversion_context::CoordConversionContext> Execute() {
-		auto toReturn = std::make_shared<to_stl::conversion_context::CoordConversionContext>();
+	std::shared_ptr<to_stl::conversion_context::Vec3fArrayConversionContext> Execute() {
+		auto toReturn = std::make_shared<to_stl::conversion_context::Vec3fArrayConversionContext>();
 		toReturn->Add(m_data);
 		return toReturn;
 	}
@@ -49,7 +49,7 @@ namespace to_stl {
 			}
 
 			vrml_proc::parser::VrmlNodeManager manager;
-			vrml_proc::action::ConversionContextActionMap<conversion_context::CoordConversionContext> map;
+			vrml_proc::action::ConversionContextActionMap<conversion_context::Vec3fArrayConversionContext> map;
 
 			map.AddAction("Coordinate", [this](const auto& refArgs, const auto& copyArgs) {
 				if (refArgs.size() == 1 && refArgs[0].get().type() == typeid(std::reference_wrapper<const vrml_proc::parser::Vec3fArray>)) {
@@ -67,14 +67,14 @@ namespace to_stl {
 				assert(false && "Invalid arguments for NormalAction");
 				});
 
-			auto coordResult = vrml_proc::traversor::VrmlNodeTraversor::Traverse<conversion_context::CoordConversionContext>({ m_properties.coord.get(), manager, false}, map);
-			std::shared_ptr<to_stl::conversion_context::CoordConversionContext> coord;
+			auto coordResult = vrml_proc::traversor::VrmlNodeTraversor::Traverse<conversion_context::Vec3fArrayConversionContext>({ m_properties.coord.get(), manager, false}, map);
+			std::shared_ptr<to_stl::conversion_context::Vec3fArrayConversionContext> coord;
 			if (coordResult.has_value()) {
 				 coord = coordResult.value();
 			}
 
-			auto normalResult = vrml_proc::traversor::VrmlNodeTraversor::Traverse<conversion_context::CoordConversionContext>({ m_properties.coord.get(), manager, false }, map);
-			std::shared_ptr<to_stl::conversion_context::CoordConversionContext> normal;
+			auto normalResult = vrml_proc::traversor::VrmlNodeTraversor::Traverse<conversion_context::Vec3fArrayConversionContext>({ m_properties.coord.get(), manager, false }, map);
+			std::shared_ptr<to_stl::conversion_context::Vec3fArrayConversionContext> normal;
 			if (normalResult.has_value()) {
 				normal = normalResult.value();
 			}

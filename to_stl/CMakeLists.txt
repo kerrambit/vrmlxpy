@@ -54,20 +54,20 @@ add_library(tostl SHARED
     "src/actions/ShapeAction.cpp"
 
     # Conversion contexts
-    "src/conversion_context/CoordConversionContext.hpp"
-    "src/conversion_context/ConversionContextMap.CoordConversionContext.cpp"
-    "src/conversion_context/VrmlNodeTraversor.CoordConversionContext.cpp"
+    "src/conversion_context/Vec3fArrayConversionContext.hpp"
+    "src/conversion_context/ConversionContextMap.Vec3fArrayConversionContext.cpp"
+    "src/conversion_context/VrmlNodeTraversor.Vec3fArrayConversionContext.cpp"
 
-    "src/conversion_context/GroupHandler.CoordConversionContext.cpp"
-    "src/conversion_context/BoxHandler.CoordConversionContext.cpp"
-    "src/conversion_context/WorldInfoHandler.CoordConversionContext.cpp"
-    "src/conversion_context/BoxHandler.CoordConversionContext.cpp"
-    "src/conversion_context/ColorHandler.CoordConversionContext.cpp"
-    "src/conversion_context/CoordinateHandler.CoordConversionContext.cpp"
-    "src/conversion_context/IndexedFaceSetHandler.CoordConversionContext.cpp"
-    "src/conversion_context/NormalHandler.CoordConversionContext.cpp"
-    "src/conversion_context/ShapeHandler.CoordConversionContext.cpp"
-    "src/conversion_context/TextureCoordinateHandler.CoordConversionContext.cpp"
+    "src/conversion_context/GroupHandler.Vec3fArrayConversionContext.cpp"
+    "src/conversion_context/BoxHandler.Vec3fArrayConversionContext.cpp"
+    "src/conversion_context/WorldInfoHandler.Vec3fArrayConversionContext.cpp"
+    "src/conversion_context/BoxHandler.Vec3fArrayConversionContext.cpp"
+    "src/conversion_context/ColorHandler.Vec3fArrayConversionContext.cpp"
+    "src/conversion_context/CoordinateHandler.Vec3fArrayConversionContext.cpp"
+    "src/conversion_context/IndexedFaceSetHandler.Vec3fArrayConversionContext.cpp"
+    "src/conversion_context/NormalHandler.Vec3fArrayConversionContext.cpp"
+    "src/conversion_context/ShapeHandler.Vec3fArrayConversionContext.cpp"
+    "src/conversion_context/TextureCoordinateHandler.Vec3fArrayConversionContext.cpp"
 
     # Calculators.
     "src/calculators/BoxCalculator.hpp"

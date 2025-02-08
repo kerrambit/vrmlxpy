@@ -4,10 +4,10 @@
 
 #include "ConversionContextActionMap.cpp"
 
-#include "CoordConversionContext.hpp"
+#include "Vec3fArrayConversionContext.hpp"
 
 namespace vrml_proc {
     namespace action {
-        template class ConversionContextActionMap<to_stl::conversion_context::CoordConversionContext>;
+        template class ConversionContextActionMap<to_stl::conversion_context::Vec3fArrayConversionContext>;
     }
 }

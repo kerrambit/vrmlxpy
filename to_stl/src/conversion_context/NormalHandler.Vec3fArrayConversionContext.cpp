@@ -9,7 +9,7 @@
 #include <result.hpp>
 
 #include "ConversionContextActionMap.hpp"
-#include "CoordConversionContext.hpp"
+#include "Vec3fArrayConversionContext.hpp"
 #include "Error.hpp"
 #include "FullParsedVrmlNodeContext.hpp"
 
@@ -18,10 +18,10 @@ namespace vrml_proc {
         namespace handler {
             namespace NormalHandler {
 
-                template cpp::result<std::shared_ptr<to_stl::conversion_context::CoordConversionContext>, std::shared_ptr<vrml_proc::core::error::Error>>
-                    Handle<to_stl::conversion_context::CoordConversionContext>(
+                template cpp::result<std::shared_ptr<to_stl::conversion_context::Vec3fArrayConversionContext>, std::shared_ptr<vrml_proc::core::error::Error>>
+                    Handle<to_stl::conversion_context::Vec3fArrayConversionContext>(
                         vrml_proc::traversor::FullParsedVrmlNodeContext,
-                        const vrml_proc::action::ConversionContextActionMap<to_stl::conversion_context::CoordConversionContext>&);
+                        const vrml_proc::action::ConversionContextActionMap<to_stl::conversion_context::Vec3fArrayConversionContext>&);
             }
         }
     }
