@@ -34,42 +34,50 @@ namespace to_stl {
             double half_z = properties.size.get().z / 2.0;
 
             Point vertices[8] = {
+                /** Left back down. */
                 Point(-half_x, -half_y, -half_z),
+                /** Right back down. */
                 Point(half_x, -half_y, -half_z),
+                /** Right back up. */
                 Point(half_x,  half_y, -half_z),
+                /** Left back up. */
                 Point(-half_x,  half_y, -half_z),
+                /** Left front down. */
                 Point(-half_x, -half_y,  half_z),
+                /** Right front down. */
                 Point(half_x, -half_y,  half_z),
+                /** Right front up. */
                 Point(half_x,  half_y,  half_z),
+                /** Left front up. */
                 Point(-half_x,  half_y,  half_z)
             };
 
             Mesh::Vertex_index v[8];
-            for (int i = 0; i < 8; ++i) {
+            for (size_t i = 0; i < 8; ++i) {
                 v[i] = mesh->add_vertex(vertices[i]);
             }
 
-            // Front face.
+            /** Front face. */
             mesh->add_face(v[4], v[5], v[6]);
             mesh->add_face(v[4], v[6], v[7]);
 
-            // Back face.
+            /** Back face. */
             mesh->add_face(v[1], v[0], v[3]);
             mesh->add_face(v[1], v[3], v[2]);
 
-            // Top face.
+            /** Top face. */
             mesh->add_face(v[7], v[6], v[2]);
             mesh->add_face(v[7], v[2], v[3]);
 
-            // Bottom face.
+            /** Bottom face. */
             mesh->add_face(v[0], v[1], v[5]);
             mesh->add_face(v[0], v[5], v[4]);
 
-            // Right face.
+            /** Right face. */
             mesh->add_face(v[5], v[1], v[2]);
             mesh->add_face(v[5], v[2], v[6]);
 
-            // Left face.
+            /** Left face. */
             mesh->add_face(v[0], v[4], v[7]);
             mesh->add_face(v[0], v[7], v[3]);
 
