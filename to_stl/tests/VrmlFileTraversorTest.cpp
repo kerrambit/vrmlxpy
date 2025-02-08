@@ -27,7 +27,7 @@ static vrml_proc::parser::ParserResult<vrml_proc::parser::VrmlFile> ParseVrmlFil
 
     vrml_proc::parser::VrmlParser parser(manager);
     return parser.Parse(text);
-}
+} 
 
 static vrml_proc::parser::ParserResult<vrml_proc::parser::VrmlFile> ParseVrmlFile(const std::filesystem::path& filepath, vrml_proc::parser::VrmlNodeManager& manager) {
 
@@ -105,18 +105,6 @@ static vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_conte
             using vrml_proc::parser::Int32Array;
             using vrml_proc::parser::float32_t;
 
-            std::cout << "Checking IndexedFaceSet action:" << std::endl;
-            std::cout << "refArgs size: " << refArgs.size() << std::endl;
-            std::cout << "copyArgs size: " << copyArgs.size() << std::endl;
-
-            for (size_t i = 0; i < refArgs.size(); ++i) {
-                std::cout << "refArgs[" << i << "]: " << refArgs[i].get().type().name() << std::endl;
-            }
-
-            for (size_t i = 0; i < copyArgs.size(); ++i) {
-                std::cout << "copyArgs[" << i << "]: " << copyArgs[i].type().name() << std::endl;
-            }
-
             if (refArgs.size() == 14 && copyArgs.size() == 1 &&
                 copyArgs[0].type() == typeid(bool) &&
                 refArgs[0].get().type() == typeid(std::reference_wrapper<const VrmlNode>) &&
@@ -171,188 +159,188 @@ TEST_CASE("Initialization") {
     vrml_proc::core::logger::InitLogging();
 }
 
-//TEST_CASE("Parse VRML File - Valid Input - Simple VRML File - Box node", "[parsing][valid]") {
-//
-//    vrml_proc::parser::VrmlNodeManager manager;
-//    auto parseResult = ParseVrmlFile(validBoxNode, manager);
-//    REQUIRE(parseResult);
-//
-//    vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext> actionMap = GetActionMap();
-//
-//    auto traversorResult = vrml_proc::traversor::VrmlFileTraversor::Traverse<vrml_proc::conversion_context::MeshConversionContext>({ parseResult.value(), manager }, actionMap);
-//    REQUIRE(traversorResult.has_value());
-//
-//    auto& meshContext = traversorResult.value()->GetData();
-//    REQUIRE(meshContext.size() == 0);
-//}
-//
-//TEST_CASE("Parse VRML File - Valid Input - Simple VRML File - Box node empty", "[parsing][valid]") {
-//
-//    vrml_proc::parser::VrmlNodeManager manager;
-//    auto parseResult = ParseVrmlFile(validBoxNodeEmpty, manager);
-//    REQUIRE(parseResult);
-//
-//    vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext> actionMap = GetActionMap();
-//
-//    auto traversorResult = vrml_proc::traversor::VrmlFileTraversor::Traverse<vrml_proc::conversion_context::MeshConversionContext>({ parseResult.value(), manager }, actionMap);
-//    REQUIRE(traversorResult.has_value());
-//
-//    auto& meshContext = traversorResult.value()->GetData();
-//    REQUIRE(meshContext.size() == 0);
-//}
-//
-//TEST_CASE("Parse VRML File - Invalid Input - Simple VRML File - Box node - Wrong Field Type", "[parsing][invalid]") {
-//
-//    vrml_proc::parser::VrmlNodeManager manager;
-//    auto parseResult = ParseVrmlFile(invalidBoxNodeWrongDataType, manager);
-//    REQUIRE(parseResult);
-//
-//    vrml_proc::action::ConversionContextActionMap actionMap = GetActionMap();
-//
-//    auto traversorResult = vrml_proc::traversor::VrmlFileTraversor::Traverse<vrml_proc::conversion_context::MeshConversionContext>({ parseResult.value(), manager }, actionMap);
-//    REQUIRE(traversorResult.has_error());
-//    HandleRootLevelError(traversorResult);
-//}
-//
-//TEST_CASE("Parse VRML File - Invalid Input - Simple VRML File - Box node - Wrong Field Name", "[parsing][invalid]") {
-//
-//    vrml_proc::parser::VrmlNodeManager manager;
-//    auto parseResult = ParseVrmlFile(invalidBoxNodeWrongFieldName, manager);
-//    REQUIRE(parseResult);
-//
-//    vrml_proc::action::ConversionContextActionMap actionMap = GetActionMap();
-//
-//    auto traversorResult = vrml_proc::traversor::VrmlFileTraversor::Traverse<vrml_proc::conversion_context::MeshConversionContext>({ parseResult.value(), manager }, actionMap);
-//    REQUIRE(traversorResult.has_error());
-//    HandleRootLevelError(traversorResult);
-//}
-//
-//TEST_CASE("Parse VRML File - Valid Input - Simple VRML File - WorldInfo node", "[parsing][valid]") {
-//
-//    vrml_proc::parser::VrmlNodeManager manager;
-//    auto parseResult = ParseVrmlFile(validWorldInfoNode, manager);
-//    REQUIRE(parseResult);
-//
-//    vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext> actionMap = GetActionMap();
-//
-//    auto traversorResult = vrml_proc::traversor::VrmlFileTraversor::Traverse<vrml_proc::conversion_context::MeshConversionContext>({ parseResult.value(), manager }, actionMap);
-//    REQUIRE(traversorResult.has_value());
-//
-//    auto& meshContext = traversorResult.value()->GetData();
-//    REQUIRE(meshContext.size() == 0);
-//}
-//
-//TEST_CASE("Parse VRML File - Invalid Input - Simple VRML File - WorldInfo node - Wrong Field Type", "[parsing][invalid]") {
-//
-//    vrml_proc::parser::VrmlNodeManager manager;
-//    auto parseResult = ParseVrmlFile(invalidWorldInfoNodeWrongDataType, manager);
-//    REQUIRE(parseResult);
-//
-//    vrml_proc::action::ConversionContextActionMap actionMap = GetActionMap();
-//
-//    auto traversorResult = vrml_proc::traversor::VrmlFileTraversor::Traverse<vrml_proc::conversion_context::MeshConversionContext>({ parseResult.value(), manager }, actionMap);
-//    REQUIRE(traversorResult.has_error());
-//    HandleRootLevelError(traversorResult);
-//}
-//
-//TEST_CASE("Parse VRML File - Invalid Input - Simple VRML File - WorldInfo node - Wrong Field Name", "[parsing][invalid]") {
-//
-//    vrml_proc::parser::VrmlNodeManager manager;
-//    auto parseResult = ParseVrmlFile(invalidWorldInfoNodeWrongFieldName, manager);
-//    REQUIRE(parseResult);
-//
-//    vrml_proc::action::ConversionContextActionMap actionMap = GetActionMap();
-//
-//    auto traversorResult = vrml_proc::traversor::VrmlFileTraversor::Traverse<vrml_proc::conversion_context::MeshConversionContext>({ parseResult.value(), manager }, actionMap);
-//    REQUIRE(traversorResult.has_error());
-//    HandleRootLevelError(traversorResult);
-//}
-//
-//TEST_CASE("Parse VRML File - Invalid Input - Simple VRML File - Group node - Unknown node", "[parsing][invalid]") {
-//
-//    vrml_proc::parser::VrmlNodeManager manager;
-//    auto parseResult = ParseVrmlFile(invalidGroupUnknownNode, manager);
-//    REQUIRE(parseResult);
-//
-//    vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext> actionMap = GetActionMap();
-//
-//    auto traversorResult = vrml_proc::traversor::VrmlFileTraversor::Traverse<vrml_proc::conversion_context::MeshConversionContext>({ parseResult.value(), manager }, actionMap);
-//    REQUIRE(traversorResult.has_error());
-//    HandleRootLevelError(traversorResult);;
-//}
-//
-//TEST_CASE("Parse VRML File - Valid Input - Simple VRML File - Group node", "[parsing][valid]") {
-//
-//    vrml_proc::parser::VrmlNodeManager manager;
-//    auto parseResult = ParseVrmlFile(validGroup, manager);
-//    REQUIRE(parseResult);
-//
-//    vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext> actionMap = GetActionMap();
-//
-//    auto traversorResult = vrml_proc::traversor::VrmlFileTraversor::Traverse<vrml_proc::conversion_context::MeshConversionContext>({ parseResult.value(), manager }, actionMap);
-//    REQUIRE(traversorResult.has_value());
-//
-//    auto& meshContext = traversorResult.value()->GetData();
-//    REQUIRE(meshContext.size() == 0);
-//}
-//
-//TEST_CASE("Parse VRML File - Valid Input - Simple VRML File - Shape node", "[parsing][valid]") {
-//
-//    vrml_proc::parser::VrmlNodeManager manager;
-//    auto parseResult = ParseVrmlFile(validShape, manager);
-//    REQUIRE(parseResult);
-//
-//    vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext> actionMap = GetActionMap();
-//
-//    auto traversorResult = vrml_proc::traversor::VrmlFileTraversor::Traverse<vrml_proc::conversion_context::MeshConversionContext>({ parseResult.value(), manager }, actionMap);
-//    REQUIRE(traversorResult.has_value());
-//
-//    auto& meshContext = traversorResult.value()->GetData();
-//    REQUIRE(meshContext.size() == 1);
-//}
-//
-//TEST_CASE("Parse VRML File - Valid Input - Simple VRML File - Shape node with Group merging", "[parsing][valid]") {
-//
-//    vrml_proc::parser::VrmlNodeManager manager;
-//    auto parseResult = ParseVrmlFile(validShapeMerge, manager);
-//    REQUIRE(parseResult);
-//
-//    vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext> actionMap = GetActionMap();
-//
-//    auto traversorResult = vrml_proc::traversor::VrmlFileTraversor::Traverse<vrml_proc::conversion_context::MeshConversionContext>({ parseResult.value(), manager }, actionMap);
-//    REQUIRE(traversorResult.has_value());
-//
-//    auto& meshContext = traversorResult.value()->GetData();
-//    REQUIRE(meshContext.size() == 3);
-//}
-//
-//TEST_CASE("Parse VRML File - Valid Input - Simple VRML File - Shape empty node", "[parsing][valid]") {
-//
-//    vrml_proc::parser::VrmlNodeManager manager;
-//    auto parseResult = ParseVrmlFile(validShapeEmpty, manager);
-//    REQUIRE(parseResult);
-//
-//    vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext> actionMap = GetActionMap();
-//
-//    auto traversorResult = vrml_proc::traversor::VrmlFileTraversor::Traverse<vrml_proc::conversion_context::MeshConversionContext>({ parseResult.value(), manager }, actionMap);
-//    REQUIRE(traversorResult.has_value());
-//
-//    auto& meshContext = traversorResult.value()->GetData();
-//    REQUIRE(meshContext.size() == 0);
-//}
-//
-//TEST_CASE("Parse VRML File - Invalid Input - Simple VRML File - Shape node", "[parsing][invalid]") {
-//
-//    vrml_proc::parser::VrmlNodeManager manager;
-//    auto parseResult = ParseVrmlFile(invalidShapeWrongNodeForGeometryField, manager);
-//    REQUIRE(parseResult);
-//
-//    vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext> actionMap = GetActionMap();
-//
-//    auto traversorResult = vrml_proc::traversor::VrmlFileTraversor::Traverse<vrml_proc::conversion_context::MeshConversionContext>({ parseResult.value(), manager }, actionMap);
-//    REQUIRE(traversorResult.has_error());
-//    HandleRootLevelError(traversorResult);;
-//}
+TEST_CASE("Parse VRML File - Valid Input - Simple VRML File - Box node", "[parsing][valid]") {
+
+    vrml_proc::parser::VrmlNodeManager manager;
+    auto parseResult = ParseVrmlFile(validBoxNode, manager);
+    REQUIRE(parseResult);
+
+    vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext> actionMap = GetActionMap();
+
+    auto traversorResult = vrml_proc::traversor::VrmlFileTraversor::Traverse<vrml_proc::conversion_context::MeshConversionContext>({ parseResult.value(), manager }, actionMap);
+    REQUIRE(traversorResult.has_value());
+
+    auto& meshContext = traversorResult.value()->GetData();
+    REQUIRE(meshContext.size() == 0);
+}
+
+TEST_CASE("Parse VRML File - Valid Input - Simple VRML File - Box node empty", "[parsing][valid]") {
+
+    vrml_proc::parser::VrmlNodeManager manager;
+    auto parseResult = ParseVrmlFile(validBoxNodeEmpty, manager);
+    REQUIRE(parseResult);
+
+    vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext> actionMap = GetActionMap();
+
+    auto traversorResult = vrml_proc::traversor::VrmlFileTraversor::Traverse<vrml_proc::conversion_context::MeshConversionContext>({ parseResult.value(), manager }, actionMap);
+    REQUIRE(traversorResult.has_value());
+
+    auto& meshContext = traversorResult.value()->GetData();
+    REQUIRE(meshContext.size() == 0);
+}
+
+TEST_CASE("Parse VRML File - Invalid Input - Simple VRML File - Box node - Wrong Field Type", "[parsing][invalid]") {
+
+    vrml_proc::parser::VrmlNodeManager manager;
+    auto parseResult = ParseVrmlFile(invalidBoxNodeWrongDataType, manager);
+    REQUIRE(parseResult);
+
+    vrml_proc::action::ConversionContextActionMap actionMap = GetActionMap();
+
+    auto traversorResult = vrml_proc::traversor::VrmlFileTraversor::Traverse<vrml_proc::conversion_context::MeshConversionContext>({ parseResult.value(), manager }, actionMap);
+    REQUIRE(traversorResult.has_error());
+    HandleRootLevelError(traversorResult);
+}
+
+TEST_CASE("Parse VRML File - Invalid Input - Simple VRML File - Box node - Wrong Field Name", "[parsing][invalid]") {
+
+    vrml_proc::parser::VrmlNodeManager manager;
+    auto parseResult = ParseVrmlFile(invalidBoxNodeWrongFieldName, manager);
+    REQUIRE(parseResult);
+
+    vrml_proc::action::ConversionContextActionMap actionMap = GetActionMap();
+
+    auto traversorResult = vrml_proc::traversor::VrmlFileTraversor::Traverse<vrml_proc::conversion_context::MeshConversionContext>({ parseResult.value(), manager }, actionMap);
+    REQUIRE(traversorResult.has_error());
+    HandleRootLevelError(traversorResult);
+}
+
+TEST_CASE("Parse VRML File - Valid Input - Simple VRML File - WorldInfo node", "[parsing][valid]") {
+
+    vrml_proc::parser::VrmlNodeManager manager;
+    auto parseResult = ParseVrmlFile(validWorldInfoNode, manager);
+    REQUIRE(parseResult);
+
+    vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext> actionMap = GetActionMap();
+
+    auto traversorResult = vrml_proc::traversor::VrmlFileTraversor::Traverse<vrml_proc::conversion_context::MeshConversionContext>({ parseResult.value(), manager }, actionMap);
+    REQUIRE(traversorResult.has_value());
+
+    auto& meshContext = traversorResult.value()->GetData();
+    REQUIRE(meshContext.size() == 0);
+}
+
+TEST_CASE("Parse VRML File - Invalid Input - Simple VRML File - WorldInfo node - Wrong Field Type", "[parsing][invalid]") {
+
+    vrml_proc::parser::VrmlNodeManager manager;
+    auto parseResult = ParseVrmlFile(invalidWorldInfoNodeWrongDataType, manager);
+    REQUIRE(parseResult);
+
+    vrml_proc::action::ConversionContextActionMap actionMap = GetActionMap();
+
+    auto traversorResult = vrml_proc::traversor::VrmlFileTraversor::Traverse<vrml_proc::conversion_context::MeshConversionContext>({ parseResult.value(), manager }, actionMap);
+    REQUIRE(traversorResult.has_error());
+    HandleRootLevelError(traversorResult);
+}
+
+TEST_CASE("Parse VRML File - Invalid Input - Simple VRML File - WorldInfo node - Wrong Field Name", "[parsing][invalid]") {
+
+    vrml_proc::parser::VrmlNodeManager manager;
+    auto parseResult = ParseVrmlFile(invalidWorldInfoNodeWrongFieldName, manager);
+    REQUIRE(parseResult);
+
+    vrml_proc::action::ConversionContextActionMap actionMap = GetActionMap();
+
+    auto traversorResult = vrml_proc::traversor::VrmlFileTraversor::Traverse<vrml_proc::conversion_context::MeshConversionContext>({ parseResult.value(), manager }, actionMap);
+    REQUIRE(traversorResult.has_error());
+    HandleRootLevelError(traversorResult);
+}
+
+TEST_CASE("Parse VRML File - Invalid Input - Simple VRML File - Group node - Unknown node", "[parsing][invalid]") {
+
+    vrml_proc::parser::VrmlNodeManager manager;
+    auto parseResult = ParseVrmlFile(invalidGroupUnknownNode, manager);
+    REQUIRE(parseResult);
+
+    vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext> actionMap = GetActionMap();
+
+    auto traversorResult = vrml_proc::traversor::VrmlFileTraversor::Traverse<vrml_proc::conversion_context::MeshConversionContext>({ parseResult.value(), manager }, actionMap);
+    REQUIRE(traversorResult.has_error());
+    HandleRootLevelError(traversorResult);;
+}
+
+TEST_CASE("Parse VRML File - Valid Input - Simple VRML File - Group node", "[parsing][valid]") {
+
+    vrml_proc::parser::VrmlNodeManager manager;
+    auto parseResult = ParseVrmlFile(validGroup, manager);
+    REQUIRE(parseResult);
+
+    vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext> actionMap = GetActionMap();
+
+    auto traversorResult = vrml_proc::traversor::VrmlFileTraversor::Traverse<vrml_proc::conversion_context::MeshConversionContext>({ parseResult.value(), manager }, actionMap);
+    REQUIRE(traversorResult.has_value());
+
+    auto& meshContext = traversorResult.value()->GetData();
+    REQUIRE(meshContext.size() == 0);
+}
+
+TEST_CASE("Parse VRML File - Valid Input - Simple VRML File - Shape node", "[parsing][valid]") {
+
+    vrml_proc::parser::VrmlNodeManager manager;
+    auto parseResult = ParseVrmlFile(validShape, manager);
+    REQUIRE(parseResult);
+
+    vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext> actionMap = GetActionMap();
+
+    auto traversorResult = vrml_proc::traversor::VrmlFileTraversor::Traverse<vrml_proc::conversion_context::MeshConversionContext>({ parseResult.value(), manager }, actionMap);
+    REQUIRE(traversorResult.has_value());
+
+    auto& meshContext = traversorResult.value()->GetData();
+    REQUIRE(meshContext.size() == 1);
+}
+
+TEST_CASE("Parse VRML File - Valid Input - Simple VRML File - Shape node with Group merging", "[parsing][valid]") {
+
+    vrml_proc::parser::VrmlNodeManager manager;
+    auto parseResult = ParseVrmlFile(validShapeMerge, manager);
+    REQUIRE(parseResult);
+
+    vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext> actionMap = GetActionMap();
+
+    auto traversorResult = vrml_proc::traversor::VrmlFileTraversor::Traverse<vrml_proc::conversion_context::MeshConversionContext>({ parseResult.value(), manager }, actionMap);
+    REQUIRE(traversorResult.has_value());
+
+    auto& meshContext = traversorResult.value()->GetData();
+    REQUIRE(meshContext.size() == 3);
+}
+
+TEST_CASE("Parse VRML File - Valid Input - Simple VRML File - Shape empty node", "[parsing][valid]") {
+
+    vrml_proc::parser::VrmlNodeManager manager;
+    auto parseResult = ParseVrmlFile(validShapeEmpty, manager);
+    REQUIRE(parseResult);
+
+    vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext> actionMap = GetActionMap();
+
+    auto traversorResult = vrml_proc::traversor::VrmlFileTraversor::Traverse<vrml_proc::conversion_context::MeshConversionContext>({ parseResult.value(), manager }, actionMap);
+    REQUIRE(traversorResult.has_value());
+
+    auto& meshContext = traversorResult.value()->GetData();
+    REQUIRE(meshContext.size() == 0);
+}
+
+TEST_CASE("Parse VRML File - Invalid Input - Simple VRML File - Shape node", "[parsing][invalid]") {
+
+    vrml_proc::parser::VrmlNodeManager manager;
+    auto parseResult = ParseVrmlFile(invalidShapeWrongNodeForGeometryField, manager);
+    REQUIRE(parseResult);
+
+    vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext> actionMap = GetActionMap();
+
+    auto traversorResult = vrml_proc::traversor::VrmlFileTraversor::Traverse<vrml_proc::conversion_context::MeshConversionContext>({ parseResult.value(), manager }, actionMap);
+    REQUIRE(traversorResult.has_error());
+    HandleRootLevelError(traversorResult);;
+}
 
 
 TEST_CASE("Parse VRML File - Valid Input - Simple VRML File - IndexedShapeSet node", "[parsing][valid]") {
@@ -360,7 +348,6 @@ TEST_CASE("Parse VRML File - Valid Input - Simple VRML File - IndexedShapeSet no
     vrml_proc::parser::VrmlNodeManager manager;
     auto parseResult = ParseVrmlFile(validIndexedFaceSetNode, manager);
     REQUIRE(parseResult);
-    std::cout << parseResult.value().at(1);
     vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext> actionMap = GetActionMap();
 
     auto traversorResult = vrml_proc::traversor::VrmlFileTraversor::Traverse<vrml_proc::conversion_context::MeshConversionContext>({ parseResult.value(), manager }, actionMap);

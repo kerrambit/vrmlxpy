@@ -8,6 +8,7 @@
 #include "ConversionContextActionMap.hpp"
 #include "CoordConversionContext.hpp"
 #include "GeometryAction.hpp"
+#include "IndexedFaceSetHandler.hpp"
 #include "Logger.hpp"
 #include "MeshConversionContext.hpp"
 #include "Vec3fArray.hpp"
@@ -32,7 +33,7 @@ private:
 namespace to_stl {
 	namespace action {
 
-		IndexedFaceSetAction::IndexedFaceSetAction(const vrml_proc::traversor::handler::IndexedFaceSetHandler::IndexedFaceSetProperties& properties, bool containedByShape) :
+		IndexedFaceSetAction::IndexedFaceSetAction(vrml_proc::traversor::handler::IndexedFaceSetHandler::IndexedFaceSetProperties properties, bool containedByShape) :
 			vrml_proc::action::GeometryAction(containedByShape), m_properties(properties) {}
 
 		std::shared_ptr<vrml_proc::conversion_context::MeshConversionContext> IndexedFaceSetAction::Execute() {
@@ -64,17 +65,16 @@ namespace to_stl {
 				assert(false && "Invalid arguments for NormalAction");
 				});
 
-			const vrml_proc::parser::VrmlNode& node = m_properties.coord.get();
-			vrml_proc::traversor::FullParsedVrmlNodeContext context = vrml_proc::traversor::FullParsedVrmlNodeContext(node, manager, false);
-
-			auto coordResult = vrml_proc::traversor::VrmlNodeTraversor::Traverse<conversion_context::CoordConversionContext>(context, map);
+			auto coordResult = vrml_proc::traversor::VrmlNodeTraversor::Traverse<conversion_context::CoordConversionContext>({ m_properties.coord.get(), manager, false}, map);
+			std::shared_ptr<to_stl::conversion_context::CoordConversionContext> coord;
 			if (coordResult.has_value()) {
-				std::shared_ptr<to_stl::conversion_context::CoordConversionContext> coord = coordResult.value();
+				 coord = coordResult.value();
 			}
 
-			auto normalResult = vrml_proc::traversor::VrmlNodeTraversor::Traverse<conversion_context::CoordConversionContext>(context, map);
+			auto normalResult = vrml_proc::traversor::VrmlNodeTraversor::Traverse<conversion_context::CoordConversionContext>({ m_properties.coord.get(), manager, false }, map);
+			std::shared_ptr<to_stl::conversion_context::CoordConversionContext> normal;
 			if (normalResult.has_value()) {
-				std::shared_ptr<to_stl::conversion_context::CoordConversionContext> normal = normalResult.value();
+				normal = normalResult.value();
 			}
 
 			vrml_proc::conversion_context::StlBaseStructure entity = vrml_proc::conversion_context::StlBaseStructure({ 1.0, 1.0, 1.0 }, { {1.0, 1.0, 1.0}, {1.0, 1.0, 1.0}, {1.0, 1.0, 1.0} });
