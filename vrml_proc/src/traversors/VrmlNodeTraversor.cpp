@@ -2,9 +2,12 @@
 
 #include <memory>
 
+#include <result.hpp>
+
 #include "BoxHandler.hpp"
 #include "ColorHandler.hpp"
 #include "CoordinateHandler.hpp"
+#include "FormatString.hpp"
 #include "GroupHandler.hpp"
 #include "IndexedFaceSetHandler.hpp"
 #include "Logger.hpp"
@@ -16,9 +19,7 @@
 #include "TextureCoordinateHandler.hpp"
 #include "VrmlNode.hpp"
 #include "WorldInfoHandler.hpp"
-#include <Error.hpp>
-#include "FormatString.hpp"
-#include <result.hpp>
+#include "Error.hpp"
 
 template<typename ConversionContext>
 cpp::result<std::shared_ptr<ConversionContext>, std::shared_ptr<vrml_proc::core::error::Error>> vrml_proc::traversor::VrmlNodeTraversor::Traverse(vrml_proc::traversor::FullParsedVrmlNodeContext context, const vrml_proc::action::ConversionContextActionMap<ConversionContext>& actionMap) {

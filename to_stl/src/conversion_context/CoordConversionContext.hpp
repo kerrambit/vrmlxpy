@@ -34,6 +34,10 @@ namespace to_stl::conversion_context {
 			}
 		}
 
+		const std::vector<std::reference_wrapper<const vrml_proc::parser::Vec3fArray>>& GetData() const {
+			return m_data;
+		}
+
 	private:
 		std::vector<std::reference_wrapper<const vrml_proc::parser::Vec3fArray>> m_data = {};
 	};

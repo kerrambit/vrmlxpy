@@ -18,7 +18,7 @@
 #include "VrmlProcessingExport.hpp"
 
 template<typename ConversionContext>
-cpp::result<std::shared_ptr<ConversionContext>, std::shared_ptr<vrml_proc::core::error::Error>> vrml_proc::traversor::VrmlFileTraversor::Traverse(FullParsedVrmlFileContext context, const vrml_proc::action::ConversionContextActionMap<ConversionContext>& actionMap) {
+cpp::result<std::shared_ptr<ConversionContext>, std::shared_ptr<vrml_proc::core::error::Error>> vrml_proc::traversor::VrmlFileTraversor::Traverse(const FullParsedVrmlFileContext& context, const vrml_proc::action::ConversionContextActionMap<ConversionContext>& actionMap) {
 	// TODO: make parallel for-loop. VrmlNodeManager has to be made thread-safe.
 
 	std::shared_ptr<ConversionContext> traversedFile = std::make_shared<ConversionContext>();
@@ -54,7 +54,8 @@ cpp::result<std::shared_ptr<ConversionContext>, std::shared_ptr<vrml_proc::core:
 namespace vrml_proc {
 	namespace traversor {
 		namespace  VrmlFileTraversor {
-			template VRMLPROCESSING_API cpp::result<std::shared_ptr<vrml_proc::conversion_context::MeshConversionContext>, std::shared_ptr<vrml_proc::core::error::Error>> Traverse<vrml_proc::conversion_context::MeshConversionContext>(FullParsedVrmlFileContext context, const vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext>& actionMap);
+			template VRMLPROCESSING_API cpp::result<std::shared_ptr<vrml_proc::conversion_context::MeshConversionContext>, std::shared_ptr<vrml_proc::core::error::Error>>
+				Traverse<vrml_proc::conversion_context::MeshConversionContext>(const FullParsedVrmlFileContext& context, const vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext>& actionMap);
 		}
 	}
 }

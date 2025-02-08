@@ -224,11 +224,6 @@ std::string validIndexedFaceSetNode = R"(
 
     #VRML V2.0 utf8
 
-    WorldInfo {
-        title "cube.wrl"
-        info "VRML file."
-    }
-
     Group {
         bboxCenter 0 0 0
         bboxSize 0 0 0

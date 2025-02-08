@@ -17,7 +17,7 @@ namespace vrml_proc {
 	namespace traversor {
 		namespace  VrmlFileTraversor {
 			template<typename ConversionContext>
-			VRMLPROCESSING_API cpp::result<std::shared_ptr<ConversionContext>, std::shared_ptr<vrml_proc::core::error::Error>> Traverse(FullParsedVrmlFileContext context, const vrml_proc::action::ConversionContextActionMap<ConversionContext>& actionMap);
+			VRMLPROCESSING_API cpp::result<std::shared_ptr<ConversionContext>, std::shared_ptr<vrml_proc::core::error::Error>> Traverse(const FullParsedVrmlFileContext& context, const vrml_proc::action::ConversionContextActionMap<ConversionContext>& actionMap);
 		}
 	}
 }
