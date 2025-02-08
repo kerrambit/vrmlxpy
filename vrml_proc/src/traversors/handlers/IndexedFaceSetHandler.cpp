@@ -32,6 +32,8 @@ cpp::result<std::shared_ptr<ConversionContext>, std::shared_ptr<vrml_proc::core:
     }
 
     // There are geometry primitive nodes. They are send as VrmlNodes into the given action where they can be traversed if needed.
+    // TODO: we should run validators for coord, color, normal and texCoord
+
     static vrml_proc::parser::VrmlNode defaultColor;
     static vrml_proc::parser::VrmlNode defaultCoord;
     static vrml_proc::parser::VrmlNode defaultNormal;

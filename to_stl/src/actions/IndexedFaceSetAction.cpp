@@ -23,7 +23,9 @@ public:
 		: m_data(data) {}
 
 	std::shared_ptr<to_stl::conversion_context::CoordConversionContext> Execute() {
-		return std::make_shared<to_stl::conversion_context::CoordConversionContext>(m_data);
+		auto toReturn = std::make_shared<to_stl::conversion_context::CoordConversionContext>();
+		toReturn->Add(m_data);
+		return toReturn;
 	}
 
 private:
