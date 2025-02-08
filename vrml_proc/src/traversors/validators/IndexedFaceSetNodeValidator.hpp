@@ -101,7 +101,7 @@ namespace vrml_proc {
 					}
 
 					if (normalResult.value().has_value()) {
-						auto headerResult = vrml_proc::traversor::validator::NodeValidator::CheckForOnlyAllowedVrmlNodeHeaders({ "Normal" }, colorResult.value().value().get(), "normal");
+						auto headerResult = vrml_proc::traversor::validator::NodeValidator::CheckForOnlyAllowedVrmlNodeHeaders({ "Normal" }, normalResult.value().value().get(), "normal");
 						if (headerResult.has_error()) {
 							//LOG_ERROR() << "VRML node <" << normalResult.value().value().get().header << "> is not valid node for <normal> field.";
 							return cpp::fail(headerResult.error());
@@ -119,7 +119,7 @@ namespace vrml_proc {
 					}
 
 					if (texCoordResult.value().has_value()) {
-						auto headerResult = vrml_proc::traversor::validator::NodeValidator::CheckForOnlyAllowedVrmlNodeHeaders({ "TextureCoordinate" }, colorResult.value().value().get(), "texCoord");
+						auto headerResult = vrml_proc::traversor::validator::NodeValidator::CheckForOnlyAllowedVrmlNodeHeaders({ "TextureCoordinate" }, texCoordResult.value().value().get(), "texCoord");
 						if (headerResult.has_error()) {
 							//LOG_ERROR() << "VRML node <" << texCoordResult.value().value().get().header << "> is not valid node for <texCoord> field.";
 							return cpp::fail(headerResult.error());
