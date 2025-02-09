@@ -58,7 +58,7 @@ add_library(tostl SHARED
     "src/conversion_context/ConversionContextMap.Vec3fArrayConversionContext.cpp"
     "src/conversion_context/VrmlNodeTraversor.Vec3fArrayConversionContext.cpp"
 
-    "src/conversion_context/TransformationHandler.Vec3fArrayConversionContext.cpp"
+    "src/conversion_context/TransformHandler.Vec3fArrayConversionContext.cpp"
      "src/conversion_context/GroupHandler.Vec3fArrayConversionContext.cpp"
     "src/conversion_context/BoxHandler.Vec3fArrayConversionContext.cpp"
     "src/conversion_context/WorldInfoHandler.Vec3fArrayConversionContext.cpp"

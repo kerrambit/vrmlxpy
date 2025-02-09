@@ -16,9 +16,9 @@
 
 namespace vrml_proc::traversor::validator {
 
-	class TransformationNodeValidator : public NodeValidator {
+	class TransformNodeValidator : public NodeValidator {
 	public:
-		TransformationNodeValidator(const vrml_proc::parser::VrmlNode& node, const vrml_proc::parser::VrmlNodeManager& manager)
+		TransformNodeValidator(const vrml_proc::parser::VrmlNode& node, const vrml_proc::parser::VrmlNodeManager& manager)
 			: m_node(node), m_manager(manager) {}
 
 		cpp::result<void, std::shared_ptr<error::NodeValidationError>> Validate() override {

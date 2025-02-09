@@ -1,4 +1,4 @@
-#include "TransformationHandler.hpp"
+#include "TransformHandler.hpp"
 
 #include <memory>
 
@@ -14,18 +14,18 @@
 #include "FullParsedVrmlNodeContext.hpp"
 #include "Logger.hpp"
 #include "NodeTraversorError.hpp"
-#include "TransformationNodeValidator.hpp"
+#include "TransformNodeValidator.hpp"
 #include "Vec3f.hpp"
 #include "VrmlNodeTraversor.hpp"
 
 #include "VrmlProcessingExport.hpp"
 
 template<typename ConversionContext>
-cpp::result<std::shared_ptr<ConversionContext>, std::shared_ptr<vrml_proc::core::error::Error>> vrml_proc::traversor::handler::TransformationHandler::Handle(vrml_proc::traversor::FullParsedVrmlNodeContext context, const vrml_proc::action::ConversionContextActionMap<ConversionContext>& actionMap)
+cpp::result<std::shared_ptr<ConversionContext>, std::shared_ptr<vrml_proc::core::error::Error>> vrml_proc::traversor::handler::TransformHandler::Handle(vrml_proc::traversor::FullParsedVrmlNodeContext context, const vrml_proc::action::ConversionContextActionMap<ConversionContext>& actionMap)
 {
     vrml_proc::core::logger::LogInfo(vrml_proc::core::utils::FormatString("Handle VRML node <", context.node.header, ">."), LOGGING_INFO);
 
-    vrml_proc::traversor::validator::TransformationNodeValidator validator(context.node, context.manager);
+    vrml_proc::traversor::validator::TransformNodeValidator validator(context.node, context.manager);
     auto validationResult = validator.Validate();
     if (validationResult.has_error()) {
         std::shared_ptr<vrml_proc::core::error::Error> error = std::make_shared<vrml_proc::traversor::error::NodeTraversorError>(validationResult.error(), context.node);

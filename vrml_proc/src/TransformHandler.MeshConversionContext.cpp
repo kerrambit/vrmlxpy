@@ -2,7 +2,7 @@
 #error "Don't include this file"
 #endif
 
-#include "TransformationHandler.cpp"
+#include "TransformHandler.cpp"
 
 #include <memory>
 
@@ -18,7 +18,7 @@
 namespace vrml_proc {
     namespace traversor {
         namespace handler {
-            namespace TransformationHandler {
+            namespace TransformHandler {
 
                 template cpp::result<std::shared_ptr<vrml_proc::conversion_context::MeshConversionContext>, std::shared_ptr<vrml_proc::core::error::Error>>
                     VRMLPROCESSING_API Handle<vrml_proc::conversion_context::MeshConversionContext>(

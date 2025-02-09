@@ -21,7 +21,7 @@ add_library(vrmlproc SHARED
     "${CMAKE_CURRENT_SOURCE_DIR}/../vendor/result/result.hpp"
 
     "src/GroupHandler.MeshConversionContext.cpp"
-    "src/TransformationHandler.MeshConversionContext.cpp"
+    "src/TransformHandler.MeshConversionContext.cpp"
 
     # DLL export macro.
     "src/VrmlProcessingExport.hpp"
@@ -132,8 +132,8 @@ add_library(vrmlproc SHARED
     "src/traversors/handlers/ShapeHandler.cpp"
     "src/traversors/handlers/GroupHandler.hpp"
     "src/traversors/handlers/GroupHandler.cpp"
-    "src/traversors/handlers/TransformationHandler.hpp"
-    "src/traversors/handlers/TransformationHandler.cpp"
+    "src/traversors/handlers/TransformHandler.hpp"
+    "src/traversors/handlers/TransformHandler.cpp"
     "src/traversors/handlers/WorldInfoHandler.hpp"
     "src/traversors/handlers/WorldInfoHandler.cpp"
     "src/traversors/handlers/BoxHandler.hpp"
@@ -156,7 +156,7 @@ add_library(vrmlproc SHARED
     "src/traversors/validators/WorldInfoNodeValidator.hpp"
     "src/traversors/validators/ShapeNodeValidator.hpp"
     "src/traversors/validators/GroupNodeValidator.hpp"
-    "src/traversors/validators/TransformationNodeValidator.hpp"
+    "src/traversors/validators/TransformNodeValidator.hpp"
     "src/traversors/validators/IndexedFaceSetNodeValidator.hpp"
     "src/traversors/validators/CoordinateNodeValidator.hpp"
     "src/traversors/validators/NormalNodeValidator.hpp"

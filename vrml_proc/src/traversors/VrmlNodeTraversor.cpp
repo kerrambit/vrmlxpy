@@ -17,7 +17,7 @@
 #include "ShapeHandler.hpp"
 #include "SpotlightHandler.hpp"
 #include "TextureCoordinateHandler.hpp"
-#include "TransformationHandler.hpp"
+#include "TransformHandler.hpp"
 #include "VrmlNode.hpp"
 #include "WorldInfoHandler.hpp"
 
@@ -36,8 +36,8 @@ cpp::result<std::shared_ptr<ConversionContext>, std::shared_ptr<vrml_proc::core:
 	else if (context.node.header == "Group") {
 		return vrml_proc::traversor::handler::GroupHandler::Handle<ConversionContext>(context, actionMap);
 	}
-	else if (context.node.header == "Transformation") {
-		return vrml_proc::traversor::handler::TransformationHandler::Handle(context, actionMap);
+	else if (context.node.header == "Transform") {
+		return vrml_proc::traversor::handler::TransformHandler::Handle(context, actionMap);
 	}
 	else if (context.node.header == "Shape") {
 		return vrml_proc::traversor::handler::ShapeHandler::Handle<ConversionContext>(context, actionMap);
