@@ -1,10 +1,10 @@
 import os
 
 TYPES = [
-    "to_stl::conversion_context::CoordConversionContext",
+    "to_stl::conversion_context::Vec3fArrayConversionContext",
 ]
 
-HANDLERS = ["WorldInfoHandler", "BoxHandler", "GroupHandler", "ShapeHandler", "IndexedFaceSetHandler", "CoordinateHandler", "NormalHandler", "TextureCoordinateHandler", "ColorHandler"]
+HANDLERS = ["WorldInfoHandler", "BoxHandler", "GroupHandler", "TransformationHandler", "ShapeHandler", "IndexedFaceSetHandler", "CoordinateHandler", "NormalHandler", "TextureCoordinateHandler", "ColorHandler"]
 
 CPP_TEMPLATE = """#if __INCLUDE_LEVEL__
 #error "Don't include this file"
