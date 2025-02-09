@@ -167,6 +167,9 @@ add_library(vrmlproc SHARED
     "src/actions/ConversionContextActionMap.cpp"
     "src/actions/ConversionContextAction.hpp"
     "src/actions/GeometryAction.hpp"
+
+    # Math
+    "src/math/Transformation.hpp"
 )
 
 # Add source files and vendor dependencies.
