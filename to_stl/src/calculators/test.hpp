@@ -5,10 +5,8 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh/Surface_mesh.h>
 
-typedef CGAL::Simple_cartesian<double> Kernel;
-typedef Kernel::Point_3 Point;
-typedef CGAL::Surface_mesh<Point> Mesh;
+#include "Mesh.hpp"
 
-bool export_to_stl(const Mesh& mesh, const std::string& filename) {
+bool export_to_stl(const to_stl::core::Mesh& mesh, const std::string& filename) {
     return CGAL::IO::write_STL(filename, mesh);
 }

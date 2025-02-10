@@ -23,6 +23,8 @@
 #include <VrmlNodeManager.hpp>
 #include <VrmlParser.hpp>
 #include <VrmlUnits.hpp>
+#include <Transformation.hpp>
+#include <TransformationMatrix.hpp>
 
 template <typename T>
 static bool CheckInnermostError(std::shared_ptr<vrml_proc::core::error::Error> error) {
@@ -64,19 +66,34 @@ TEST_CASE("Initialization") {
     vrml_proc::core::logger::InitLogging();
 
     vrml_proc::parser::Vec3f size;
-    size.x = 2.0; size.y = 2.0; size.z = 2.0;
+    size.x = 2.0f; size.y = 2.0f; size.z = 2.0f;
+
+    vrml_proc::math::Transformation transformationData;
+    vrml_proc::math::TransformationMatrix matrix;
+
+    transformationData.center = vrml_proc::parser::Vec3f(20.0f, 20.0f, 20.0f);
+    vrml_proc::math::UpdateTransformationMatrix(matrix, transformationData);
 
     to_stl::calculator::BoxCalculator calculator = to_stl::calculator::BoxCalculator();
-    auto result = (calculator.Generate3DMesh({ std::cref(size) })).value();
+    auto result = (calculator.Generate3DMesh({ std::cref(size) }, matrix)).value();
 
-    size.x = 10.0; size.y = 20.0; size.z = 30.0;
-    auto result2 = (calculator.Generate3DMesh({ std::cref(size) })).value();
+    size.x = 10.0f; size.y = 20.0f; size.z = 30.0f;
+    auto result2 = (calculator.Generate3DMesh({ std::cref(size) }, matrix)).value();
 
-    export_to_stl(*result, R"(C:\Users\marek\Documents\FI_MUNI\sem_05\SBAPR\vrmlxpy\export.stl)");
-    export_to_stl(*result2, R"(C:\Users\marek\Documents\FI_MUNI\sem_05\SBAPR\vrmlxpy\export.stl)");
+    transformationData.translation = vrml_proc::parser::Vec3f(20.0f, 20.0f, 20.0f);
+    vrml_proc::math::UpdateTransformationMatrix(matrix, transformationData);
+
+    size.x = 2.0f; size.y = 2.0f; size.z = 2.0f;
+    auto result3 = (calculator.Generate3DMesh({ std::cref(size) }, matrix)).value();
+
+    size.x = 10.0f; size.y = 20.0f; size.z = 30.0f;
+    auto result4 = (calculator.Generate3DMesh({ std::cref(size) }, matrix)).value();
+
     to_stl::core::Mesh mesh;
     mesh.join(*result);
     mesh.join(*result2);
+    mesh.join(*result3);
+    mesh.join(*result4);
     export_to_stl(mesh, R"(C:\Users\marek\Documents\FI_MUNI\sem_05\SBAPR\vrmlxpy\export.stl)");
 }
 
@@ -85,18 +102,20 @@ TEST_CASE("BoxCalculator - invalid", "[invalid]") {
     to_stl::calculator::BoxCalculator calculator = to_stl::calculator::BoxCalculator();
 
     vrml_proc::parser::Vec3f size;
-    size.x = 0.0; size.y = 20.0; size.z = 30.0;
+    size.x = 0.0f; size.y = 20.0f; size.z = 30.0f;
+
+    vrml_proc::math::TransformationMatrix matrix;
 
     {
-        auto result = calculator.Generate3DMesh({ std::cref(size) });
+        auto result = calculator.Generate3DMesh({ std::cref(size) }, matrix);
         REQUIRE(result.has_error());
         CHECK(CheckInnermostError<vrml_proc::parser::model::validator::error::NumberOutOfRangeError<vrml_proc::parser::float32_t>>(result.error()));
         HandleRootLevelError(result.error());
     }
 
-    size.x = 50.5; size.y = 20.0; size.z = -0.0001;
+    size.x = 50.5f; size.y = 20.0f; size.z = -0.0001f;
     {
-        auto result = calculator.Generate3DMesh({ std::cref(size) });
+        auto result = calculator.Generate3DMesh({ std::cref(size) }, matrix);
         REQUIRE(result.has_error());
         CHECK(CheckInnermostError<vrml_proc::parser::model::validator::error::NumberOutOfRangeError<vrml_proc::parser::float32_t>>(result.error()));
         HandleRootLevelError(result.error());

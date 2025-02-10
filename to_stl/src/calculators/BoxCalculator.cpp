@@ -13,14 +13,11 @@
 #include "Error.hpp"
 #include "Mesh.hpp"
 #include "ModelValidator.hpp"
-
-typedef CGAL::Simple_cartesian<double> Kernel;
-typedef Kernel::Point_3 Point;
-typedef CGAL::Surface_mesh<Point> Mesh;
+#include "Point.hpp"
 
 namespace to_stl {
 	namespace calculator {
-		cpp::result<std::shared_ptr<core::Mesh>, std::shared_ptr<vrml_proc::core::error::Error>> BoxCalculator::Generate3DMesh(const to_stl::action::BoxAction::BoxProperties& properties) {
+		cpp::result<std::shared_ptr<core::Mesh>, std::shared_ptr<vrml_proc::core::error::Error>> BoxCalculator::Generate3DMesh(const to_stl::action::BoxAction::BoxProperties& properties, const vrml_proc::math::TransformationMatrix& matrix) {
 
             auto checkResult = vrml_proc::parser::model::validator::CheckVec3fIsGreaterThanZero(properties.size.get());
             if (checkResult.has_error()) {
@@ -33,28 +30,29 @@ namespace to_stl {
             double half_y = properties.size.get().y / 2.0;
             double half_z = properties.size.get().z / 2.0;
 
-            Point vertices[8] = {
+            vrml_proc::math::utils::CGALPoint vertices[8] = {
                 /** Left back down. */
-                Point(-half_x, -half_y, -half_z),
+                vrml_proc::math::utils::CGALPoint(-half_x, -half_y, -half_z),
                 /** Right back down. */
-                Point(half_x, -half_y, -half_z),
+                vrml_proc::math::utils::CGALPoint(half_x, -half_y, -half_z),
                 /** Right back up. */
-                Point(half_x,  half_y, -half_z),
+                vrml_proc::math::utils::CGALPoint(half_x,  half_y, -half_z),
                 /** Left back up. */
-                Point(-half_x,  half_y, -half_z),
+                vrml_proc::math::utils::CGALPoint(-half_x,  half_y, -half_z),
                 /** Left front down. */
-                Point(-half_x, -half_y,  half_z),
+                vrml_proc::math::utils::CGALPoint(-half_x, -half_y,  half_z),
                 /** Right front down. */
-                Point(half_x, -half_y,  half_z),
+                vrml_proc::math::utils::CGALPoint(half_x, -half_y,  half_z),
                 /** Right front up. */
-                Point(half_x,  half_y,  half_z),
+                vrml_proc::math::utils::CGALPoint(half_x,  half_y,  half_z),
                 /** Left front up. */
-                Point(-half_x,  half_y,  half_z)
+                vrml_proc::math::utils::CGALPoint(-half_x,  half_y,  half_z)
             };
 
-            Mesh::Vertex_index v[8];
+            core::Mesh::Vertex_index v[8];
             for (size_t i = 0; i < 8; ++i) {
-                v[i] = mesh->add_vertex(vertices[i]);
+                vrml_proc::math::utils::CGALPoint transformed_point = matrix.transform(vertices[i]);
+                v[i] = mesh->add_vertex(transformed_point);
             }
 
             /** Front face. */

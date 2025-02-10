@@ -17,6 +17,8 @@
 #include "TransformNodeValidator.hpp"
 #include "Vec3f.hpp"
 #include "VrmlNodeTraversor.hpp"
+#include "Transformation.hpp"
+#include "TransformationMatrix.hpp"
 
 #include "VrmlProcessingExport.hpp"
 
@@ -39,11 +41,14 @@ cpp::result<std::shared_ptr<ConversionContext>, std::shared_ptr<vrml_proc::core:
     static vrml_proc::parser::Vec3f defaultTranslation;
 
     /** Update transformation data via copying. */
-    context.transformation.center = validator.GetCachedCenter(defaultCenter).get();
-    context.transformation.rotation = validator.GetCachedRotation(defaultRotation).get();
-    context.transformation.scale = validator.GetCachedScale(defaultScale).get();
-    context.transformation.scaleOrientation = validator.GetCachedScaleOrientation(defaultScaleOrientation).get();
-    context.transformation.translation = validator.GetCachedTranslation(defaultTranslation).get();
+    vrml_proc::math::Transformation transformationData;
+    transformationData.center = validator.GetCachedCenter(defaultCenter).get();
+    transformationData.rotation = validator.GetCachedRotation(defaultRotation).get();
+    transformationData.scale = validator.GetCachedScale(defaultScale).get();
+    transformationData.scaleOrientation = validator.GetCachedScaleOrientation(defaultScaleOrientation).get();
+    transformationData.translation = validator.GetCachedTranslation(defaultTranslation).get();
+
+    vrml_proc::math::UpdateTransformationMatrix(context.transformation, transformationData);
 
     std::vector<std::shared_ptr<ConversionContext>> resolvedChildren;
     for (const auto& child : validator.GetCachedChildren()) {

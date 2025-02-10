@@ -173,6 +173,9 @@ add_library(vrmlproc SHARED
 
     # Math
     "src/math/Transformation.hpp"
+    "src/math/TransformationMatrix.hpp"
+    "src/math/TransformationMatrix.cpp"
+    "src/math/utils/Point.hpp"
 )
 
 # Add source files and vendor dependencies.
@@ -207,9 +210,11 @@ target_include_directories(vrmlproc PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src/traversors/handlers
 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/math
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/math/utils
 
     # ${CMAKE_CURRENT_SOURCE_DIR}/../vendor/pybind11/include/pybind11
     ${CMAKE_CURRENT_SOURCE_DIR}/../vendor/result
+    ${CGAL_INCLUDE_DIRS}
 )
 
 # Two build types - Debug and Release.
@@ -229,7 +234,7 @@ elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
 endif()
 
 # Explicitly link Boost::iostreams (problems with compilation on Linux with GNU 11.4.0).
-target_link_libraries(vrmlproc PRIVATE Boost::iostreams Boost::log Boost::date_time Boost::log_setup Boost::system Boost::thread)
+target_link_libraries(vrmlproc PRIVATE CGAL::CGAL Boost::iostreams Boost::log Boost::date_time Boost::log_setup Boost::system Boost::thread)
 
 # --------------------------------------------------------------------------------------- #
 
