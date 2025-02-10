@@ -66,31 +66,46 @@ TEST_CASE("Initialization") {
     vrml_proc::core::logger::InitLogging();
 
     vrml_proc::parser::Vec3f size;
-    size.x = 2.0f; size.y = 2.0f; size.z = 2.0f;
+    size.x = 10.0f; size.y = 20.0f; size.z = 30.0f;
 
     vrml_proc::math::Transformation transformationData;
-    vrml_proc::math::TransformationMatrix matrix;
-
     transformationData.center = vrml_proc::parser::Vec3f(20.0f, 20.0f, 20.0f);
+
+    vrml_proc::math::TransformationMatrix matrix;
     vrml_proc::math::UpdateTransformationMatrix(matrix, transformationData);
 
     to_stl::calculator::BoxCalculator calculator = to_stl::calculator::BoxCalculator();
-    auto result = (calculator.Generate3DMesh({ std::cref(size) }, matrix)).value();
 
-    size.x = 10.0f; size.y = 20.0f; size.z = 30.0f;
-    auto result2 = (calculator.Generate3DMesh({ std::cref(size) }, matrix)).value();
+    // --- //
+
+
+    auto result1 = (calculator.Generate3DMesh({ std::cref(size) }, matrix)).value();
+
+    // --- //
 
     transformationData.translation = vrml_proc::parser::Vec3f(20.0f, 20.0f, 20.0f);
     vrml_proc::math::UpdateTransformationMatrix(matrix, transformationData);
 
-    size.x = 2.0f; size.y = 2.0f; size.z = 2.0f;
+    auto result2 = (calculator.Generate3DMesh({ std::cref(size) }, matrix)).value();
+
+    // --- //
+
+    transformationData.rotation = vrml_proc::parser::Vec4f(0.0f, 0.0f, 1.0f, 0.785398163f);
+    vrml_proc::math::UpdateTransformationMatrix(matrix, transformationData);
+
     auto result3 = (calculator.Generate3DMesh({ std::cref(size) }, matrix)).value();
 
-    size.x = 10.0f; size.y = 20.0f; size.z = 30.0f;
+    // --- //
+
+    transformationData.rotation = vrml_proc::parser::Vec4f(0.0f, 0.0f, 1.0f, 0.785398163f);
+    vrml_proc::math::UpdateTransformationMatrix(matrix, transformationData);
+
     auto result4 = (calculator.Generate3DMesh({ std::cref(size) }, matrix)).value();
 
+    // --- //
+
     to_stl::core::Mesh mesh;
-    mesh.join(*result);
+    mesh.join(*result1);
     mesh.join(*result2);
     mesh.join(*result3);
     mesh.join(*result4);
