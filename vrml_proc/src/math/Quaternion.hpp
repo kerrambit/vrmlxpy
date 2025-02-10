@@ -57,5 +57,20 @@ namespace vrml_proc::math {
                 w /= norm;
             }
         }
+
+        /**
+         * @brief Inverses the quaternion.
+         * @warning Make sure that quaternion is not zero-norm!
+         * 
+         * @note Link: https://www.mathworks.com/help/aeroblks/quaternioninverse.html.
+         */
+        void Inverse() {
+            double scalarDivisor = (x * x) + (y * y) + (z * z) + (w * w);
+
+            x = (-1 * x) / scalarDivisor;
+            y = (-1 * y) / scalarDivisor;
+            z = (-1 * z) / scalarDivisor;
+            w = w / scalarDivisor;
+        }
     };
 }

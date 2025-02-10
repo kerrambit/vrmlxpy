@@ -69,38 +69,44 @@ TEST_CASE("Initialization") {
     size.x = 10.0f; size.y = 20.0f; size.z = 30.0f;
 
     vrml_proc::math::Transformation transformationData;
-    transformationData.center = vrml_proc::parser::Vec3f(20.0f, 20.0f, 20.0f);
-
     vrml_proc::math::TransformationMatrix matrix;
-    vrml_proc::math::UpdateTransformationMatrix(matrix, transformationData);
 
     to_stl::calculator::BoxCalculator calculator = to_stl::calculator::BoxCalculator();
 
     // --- //
 
-
+    vrml_proc::math::UpdateTransformationMatrix(matrix, transformationData);
     auto result1 = (calculator.Generate3DMesh({ std::cref(size) }, matrix)).value();
 
     // --- //
 
-    transformationData.translation = vrml_proc::parser::Vec3f(20.0f, 20.0f, 20.0f);
+    transformationData.rotation = vrml_proc::parser::Vec4f(0.0f, 0.0f, 1.0f, 0.785398163f);
     vrml_proc::math::UpdateTransformationMatrix(matrix, transformationData);
-
     auto result2 = (calculator.Generate3DMesh({ std::cref(size) }, matrix)).value();
 
     // --- //
 
-    transformationData.rotation = vrml_proc::parser::Vec4f(0.0f, 0.0f, 1.0f, 0.785398163f);
+    transformationData.rotation = vrml_proc::parser::Vec4f(0.0f, 0.0f, 1.0f, -0.785398163f);
+    transformationData.translation = vrml_proc::parser::Vec3f(25.0f, 0.0f, 0.0f);
     vrml_proc::math::UpdateTransformationMatrix(matrix, transformationData);
-
     auto result3 = (calculator.Generate3DMesh({ std::cref(size) }, matrix)).value();
 
     // --- //
 
-    transformationData.rotation = vrml_proc::parser::Vec4f(0.0f, 0.0f, 1.0f, 0.785398163f);
+    transformationData.translation = vrml_proc::parser::Vec3f(-25.0f, 0.0f, 0.0f);
+    transformationData.rotation = vrml_proc::parser::Vec4f(0.0f, 0.0f, 1.0f, -0.785398163f);
     vrml_proc::math::UpdateTransformationMatrix(matrix, transformationData);
-
     auto result4 = (calculator.Generate3DMesh({ std::cref(size) }, matrix)).value();
+
+    // --- //
+
+    vrml_proc::math::TransformationMatrix matrix2;
+    transformationData.translation = vrml_proc::parser::Vec3f(0.0f, -25.0f, 0.0f);
+    transformationData.rotation = vrml_proc::parser::Vec4f(0.0f, 0.0f, 1.0f, 0.785398163f);
+    transformationData.scale = vrml_proc::parser::Vec3f(2.0f, 1.0f, 1.0f);
+    transformationData.scaleOrientation = vrml_proc::parser::Vec4f(0.0f, 0.0f, 1.0f, 0.785398163f); // without it applies scaling to world coordinates
+    vrml_proc::math::UpdateTransformationMatrix(matrix2, transformationData);
+    auto result5 = (calculator.Generate3DMesh({ std::cref(size) }, matrix2)).value();
 
     // --- //
 
@@ -109,6 +115,7 @@ TEST_CASE("Initialization") {
     mesh.join(*result2);
     mesh.join(*result3);
     mesh.join(*result4);
+    mesh.join(*result5);
     export_to_stl(mesh, R"(C:\Users\marek\Documents\FI_MUNI\sem_05\SBAPR\vrmlxpy\export.stl)");
 }
 

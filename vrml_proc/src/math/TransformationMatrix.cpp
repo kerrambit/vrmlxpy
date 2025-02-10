@@ -7,12 +7,34 @@
 #include <CGAL/Kernel/Type_equality_wrapper.h>
 #include <CGAL/Simple_cartesian.h>
 
+#include "Angle.hpp"
 #include "CGALBaseTypesForVrml.hpp"
 #include "Quaternion.hpp"
 #include "Transformation.hpp"
 
 /**
- * @brief Creates a 3x3 rotation matrix based on the given quaternion.
+ * @brief Creates a scale matrix based on the given scale vector.
+ * 
+ * @param scaleVector scale vector
+ * @returns scale matrix
+ */
+static vrml_proc::math::TransformationMatrix CreateScaleMatrix(const vrml_proc::parser::Vec3f& scaleVector) {
+
+    return vrml_proc::math::TransformationMatrix(
+        scaleVector.x,
+        0,
+        0,
+        0,
+        scaleVector.y,
+        0,
+        0,
+        0,
+        scaleVector.z
+    );
+}
+
+/**
+ * @brief Creates rotation matrix based on the given quaternion.
  * 
  * @param quaternion quaternion
  * @returns rotation matrix
@@ -47,26 +69,25 @@ void vrml_proc::math::UpdateTransformationMatrix(vrml_proc::math::Transformation
     matrix = vrml_proc::math::TransformationMatrix(CGAL::TRANSLATION, vrml_proc::math::cgal::Vec3fToCGALVector3(transformationData.center)) * matrix;
 
     // Rotation.
-    vrml_proc::math::Quaternion quaternion = vrml_proc::math::Quaternion(transformationData.rotation.x, transformationData.rotation.y, transformationData.rotation.z, vrml_proc::math::Angle(vrml_proc::math::Angle::AngleUnit::Radians, transformationData.rotation.w));
-    vrml_proc::math::TransformationMatrix localRotationMatrix = CreateRotationMatrix(quaternion);
+    vrml_proc::math::Quaternion rotationQuaternion = vrml_proc::math::Quaternion(transformationData.rotation.x, transformationData.rotation.y, transformationData.rotation.z, vrml_proc::math::Angle(vrml_proc::math::Angle::AngleUnit::Radians, transformationData.rotation.w));
+    vrml_proc::math::TransformationMatrix localRotationMatrix = CreateRotationMatrix(rotationQuaternion);
     matrix = localRotationMatrix * matrix;
+
+    // Scale orientation.
+    vrml_proc::math::Quaternion scaleQuaternion = vrml_proc::math::Quaternion(transformationData.scaleOrientation.x, transformationData.scaleOrientation.y, transformationData.scaleOrientation.z, vrml_proc::math::Angle(vrml_proc::math::Angle::AngleUnit::Radians, transformationData.scaleOrientation.w));
+    vrml_proc::math::TransformationMatrix localScaleOrientationMatrix = CreateRotationMatrix(scaleQuaternion);
+    matrix = localScaleOrientationMatrix * matrix;
+
+    // Scale.
+    vrml_proc::math::TransformationMatrix localScaleMatrix = CreateScaleMatrix(transformationData.scale);
+    matrix = localScaleMatrix * matrix;
+
+    // Remove scale orientation.
+    scaleQuaternion.Inverse();
+    localScaleOrientationMatrix = CreateRotationMatrix(scaleQuaternion);
+    matrix = localScaleOrientationMatrix * matrix;
     
     // Remove center.
     matrix = vrml_proc::math::TransformationMatrix(CGAL::TRANSLATION, -vrml_proc::math::cgal::Vec3fToCGALVector3(transformationData.center)) * matrix;
-
-    matrix = vrml_proc::math::TransformationMatrix(CGAL::TRANSLATION, -vrml_proc::math::cgal::Vec3fToCGALVector3(transformationData.translation)) * matrix;
-
-    //// Apply scale orientation (pre-rotation before scaling)
-    //CGAL::Rotation_3<vrml_proc::parser::float32_t> scaleOrientation = axisAngleToRotation(transformationData.scaleOrientation);
-    //matrix = CGAL::ROTATE(matrix, scaleOrientation);
-
-    //// Apply scaling
-    //matrix = CGAL::SCALE(matrix, transformationData.scale);
-
-    //// Apply -scaleOrientation (undo scale orientation)
-    //matrix = CGAL::ROTATE(matrix, -scaleOrientation); // Undo scaleOrientation (inverse rotation)
-
-    //// Apply -center (undo translation to center)
-    //matrix = CGAL::TRANSLATE(matrix, -transformationData.center); // Undo translation to center
 }
 
