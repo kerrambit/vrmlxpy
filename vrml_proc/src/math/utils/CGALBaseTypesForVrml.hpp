@@ -6,7 +6,7 @@
 #include "Vec3f.hpp"
 #include "VrmlUnits.hpp"
 
-namespace vrml_proc::math::utils {
+namespace vrml_proc::math::cgal {
 
 	using CGALKernel = CGAL::Simple_cartesian<vrml_proc::parser::float32_t>;
 

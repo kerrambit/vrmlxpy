@@ -7,17 +7,17 @@
 #include <CGAL/Kernel/interface_macros.h>
 #include <CGAL/Kernel/Type_equality_wrapper.h>
 
-#include "Point.hpp"
+#include "CGALBaseTypesForVrml.hpp"
 #include "VrmlUnits.hpp"
 #include "Transformation.hpp"
 
 void vrml_proc::math::UpdateTransformationMatrix(vrml_proc::math::TransformationMatrix& matrix, const vrml_proc::math::Transformation& transformationData) {
 
     // Apply translation (final translation first)
-    matrix = vrml_proc::math::TransformationMatrix(CGAL::TRANSLATION, vrml_proc::math::utils::Vec3fToCGALVector3(transformationData.translation)) * matrix;
+    matrix = vrml_proc::math::TransformationMatrix(CGAL::TRANSLATION, vrml_proc::math::cgal::Vec3fToCGALVector3(transformationData.translation)) * matrix;
 
     // Apply translation to the center
-    matrix = vrml_proc::math::TransformationMatrix(CGAL::TRANSLATION, vrml_proc::math::utils::Vec3fToCGALVector3(transformationData.center)) * matrix;
+    matrix = vrml_proc::math::TransformationMatrix(CGAL::TRANSLATION, vrml_proc::math::cgal::Vec3fToCGALVector3(transformationData.center)) * matrix;
 
     //// Apply rotation (axis-angle to CGAL rotation)
     //CGAL::Rotation_3<vrml_proc::parser::float32_t> rotation = axisAngleToRotation(transformationData.rotation);

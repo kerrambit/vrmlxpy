@@ -5,14 +5,14 @@
 #include <CGAL/Kernel/Type_equality_wrapper.h>
 #include <CGAL/Simple_cartesian.h>
 
-#include "Point.hpp"
+#include "CGALBaseTypesForVrml.hpp"
 #include "Transformation.hpp"
 
 #include "VrmlProcessingExport.hpp"
 
 namespace vrml_proc::math {
 
-	using TransformationMatrix = CGAL::Aff_transformation_3<vrml_proc::math::utils::CGALKernel>;
+	using TransformationMatrix = CGAL::Aff_transformation_3<vrml_proc::math::cgal::CGALKernel>;
 
 	VRMLPROCESSING_API void UpdateTransformationMatrix(TransformationMatrix& matrix, const Transformation& transformationData);
 }

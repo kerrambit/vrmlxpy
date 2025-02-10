@@ -4,10 +4,10 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh/Surface_mesh.h>
 
-#include "Point.hpp"
+#include "CGALBaseTypesForVrml.hpp"
 
 namespace to_stl {
 	namespace core {
-		using Mesh = CGAL::Surface_mesh<vrml_proc::math::utils::CGALPoint>;
+		using Mesh = CGAL::Surface_mesh<vrml_proc::math::cgal::CGALPoint>;
 	}
 }

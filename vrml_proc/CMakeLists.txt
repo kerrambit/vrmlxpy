@@ -175,7 +175,7 @@ add_library(vrmlproc SHARED
     "src/math/Transformation.hpp"
     "src/math/TransformationMatrix.hpp"
     "src/math/TransformationMatrix.cpp"
-    "src/math/utils/Point.hpp"
+    "src/math/utils/CGALBaseTypesForVrml.hpp"
 )
 
 # Add source files and vendor dependencies.

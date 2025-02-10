@@ -13,7 +13,7 @@
 #include "Error.hpp"
 #include "Mesh.hpp"
 #include "ModelValidator.hpp"
-#include "Point.hpp"
+#include "CGALBaseTypesForVrml.hpp"
 
 namespace to_stl {
 	namespace calculator {
@@ -30,28 +30,28 @@ namespace to_stl {
             double half_y = properties.size.get().y / 2.0;
             double half_z = properties.size.get().z / 2.0;
 
-            vrml_proc::math::utils::CGALPoint vertices[8] = {
+            vrml_proc::math::cgal::CGALPoint vertices[8] = {
                 /** Left back down. */
-                vrml_proc::math::utils::CGALPoint(-half_x, -half_y, -half_z),
+                vrml_proc::math::cgal::CGALPoint(-half_x, -half_y, -half_z),
                 /** Right back down. */
-                vrml_proc::math::utils::CGALPoint(half_x, -half_y, -half_z),
+                vrml_proc::math::cgal::CGALPoint(half_x, -half_y, -half_z),
                 /** Right back up. */
-                vrml_proc::math::utils::CGALPoint(half_x,  half_y, -half_z),
+                vrml_proc::math::cgal::CGALPoint(half_x,  half_y, -half_z),
                 /** Left back up. */
-                vrml_proc::math::utils::CGALPoint(-half_x,  half_y, -half_z),
+                vrml_proc::math::cgal::CGALPoint(-half_x,  half_y, -half_z),
                 /** Left front down. */
-                vrml_proc::math::utils::CGALPoint(-half_x, -half_y,  half_z),
+                vrml_proc::math::cgal::CGALPoint(-half_x, -half_y,  half_z),
                 /** Right front down. */
-                vrml_proc::math::utils::CGALPoint(half_x, -half_y,  half_z),
+                vrml_proc::math::cgal::CGALPoint(half_x, -half_y,  half_z),
                 /** Right front up. */
-                vrml_proc::math::utils::CGALPoint(half_x,  half_y,  half_z),
+                vrml_proc::math::cgal::CGALPoint(half_x,  half_y,  half_z),
                 /** Left front up. */
-                vrml_proc::math::utils::CGALPoint(-half_x,  half_y,  half_z)
+                vrml_proc::math::cgal::CGALPoint(-half_x,  half_y,  half_z)
             };
 
             core::Mesh::Vertex_index v[8];
             for (size_t i = 0; i < 8; ++i) {
-                vrml_proc::math::utils::CGALPoint transformed_point = matrix.transform(vertices[i]);
+                vrml_proc::math::cgal::CGALPoint transformed_point = matrix.transform(vertices[i]);
                 v[i] = mesh->add_vertex(transformed_point);
             }
 
