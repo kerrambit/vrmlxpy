@@ -450,7 +450,7 @@ struct ExtractorVisitor : public boost::static_visitor<cpp::result<std::referenc
 
     template <typename U>
     cpp::result<std::reference_wrapper<const T>, std::optional<std::string>> operator()(const U&) const {
-        vrml_proc::core::logger::Log("Type mismatch! Expected <" << typeid(T).name() << ">,  but received <" << typeid(U).name() << ">.", vrml_proc::core::logger::Level::Debug, LOGGING_INFO);
+        vrml_proc::core::logger::Log(vrml_proc::core::utils::FormatString("Type mismatch! Expected <", typeid(T).name(), ">,  but received <", typeid(U).name(), ">."), vrml_proc::core::logger::Level::Debug, LOGGING_INFO);
         return cpp::fail(std::optional<std::string>(vrml_proc::core::utils::TypeToString<U>()));
     }
 };
@@ -520,7 +520,7 @@ struct VariantVisitor : public boost::static_visitor<cpp::result<std::reference_
 
     template <typename U>
     cpp::result<std::reference_wrapper<const T>, std::optional<std::string>> operator()(const U&) const {
-        vrml_proc::core::logger::Log("Type mismatch! Expected <" << typeid(T).name() << ">,  but received <" << typeid(U).name() << ">.", vrml_proc::core::logger::Level::Debug, LOGGING_INFO);
+        vrml_proc::core::logger::Log(vrml_proc::core::utils::FormatString("Type mismatch! Expected <", typeid(T).name(), ">,  but received <", typeid(U).name(), ">."), vrml_proc::core::logger::Level::Debug, LOGGING_INFO);
         return cpp::fail(std::optional<std::string>(vrml_proc::core::utils::TypeToString<U>()));
     }
 };
