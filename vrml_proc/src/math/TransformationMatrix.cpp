@@ -60,34 +60,46 @@ static vrml_proc::math::TransformationMatrix CreateRotationMatrix(const vrml_pro
     );
 }
 
-void vrml_proc::math::UpdateTransformationMatrix(vrml_proc::math::TransformationMatrix& matrix, const vrml_proc::math::Transformation& transformationData) {
+vrml_proc::math::TransformationMatrix vrml_proc::math::UpdateTransformationMatrix(const vrml_proc::math::TransformationMatrix& currentMatrix, const vrml_proc::math::Transformation& transformationData) {
 
-    // Translation.
-    matrix = vrml_proc::math::TransformationMatrix(CGAL::TRANSLATION, vrml_proc::math::cgal::Vec3fToCGALVector3(transformationData.translation)) * matrix;
+    using vrml_proc::math::TransformationMatrix;
+    using vrml_proc::math::Quaternion;
+    using vrml_proc::math::Angle;
+
+    // Create a copy of a matrix.
+    TransformationMatrix matrix = currentMatrix;
+
+    // Subtract center.
+    matrix = TransformationMatrix(CGAL::TRANSLATION, -vrml_proc::math::cgal::Vec3fToCGALVector3(transformationData.center)) * matrix;
+
+    // Compute scale orientation quaternion.
+    Quaternion scaleQuaternion = Quaternion(transformationData.scaleOrientation.x, transformationData.scaleOrientation.y, transformationData.scaleOrientation.z, Angle(Angle::AngleUnit::Radians, transformationData.scaleOrientation.w));
+
+    // Subtract scale orientation.
+    Quaternion inversedScaleQuaternion = scaleQuaternion;
+    inversedScaleQuaternion.Inverse();
+    TransformationMatrix localScaleOrientationMatrix = CreateRotationMatrix(inversedScaleQuaternion);
+    matrix = localScaleOrientationMatrix * matrix;
+
+    // Scale orientation.
+    TransformationMatrix localScaleMatrix = CreateScaleMatrix(transformationData.scale);
+    matrix = localScaleMatrix * matrix;
+
+    // Scale orientation.
+    localScaleOrientationMatrix = CreateRotationMatrix(scaleQuaternion);
+    matrix = localScaleOrientationMatrix * matrix;
+
+    // Rotation.
+    Quaternion rotationQuaternion = Quaternion(transformationData.rotation.x, transformationData.rotation.y, transformationData.rotation.z, Angle(Angle::AngleUnit::Radians, transformationData.rotation.w));
+    TransformationMatrix localRotationMatrix = CreateRotationMatrix(rotationQuaternion);
+    matrix = localRotationMatrix * matrix;
 
     // Center.
     matrix = vrml_proc::math::TransformationMatrix(CGAL::TRANSLATION, vrml_proc::math::cgal::Vec3fToCGALVector3(transformationData.center)) * matrix;
 
-    // Rotation.
-    vrml_proc::math::Quaternion rotationQuaternion = vrml_proc::math::Quaternion(transformationData.rotation.x, transformationData.rotation.y, transformationData.rotation.z, vrml_proc::math::Angle(vrml_proc::math::Angle::AngleUnit::Radians, transformationData.rotation.w));
-    vrml_proc::math::TransformationMatrix localRotationMatrix = CreateRotationMatrix(rotationQuaternion);
-    matrix = localRotationMatrix * matrix;
+    // Translation.
+    matrix = vrml_proc::math::TransformationMatrix(CGAL::TRANSLATION, vrml_proc::math::cgal::Vec3fToCGALVector3(transformationData.translation)) * matrix;
 
-    // Scale orientation.
-    vrml_proc::math::Quaternion scaleQuaternion = vrml_proc::math::Quaternion(transformationData.scaleOrientation.x, transformationData.scaleOrientation.y, transformationData.scaleOrientation.z, vrml_proc::math::Angle(vrml_proc::math::Angle::AngleUnit::Radians, transformationData.scaleOrientation.w));
-    vrml_proc::math::TransformationMatrix localScaleOrientationMatrix = CreateRotationMatrix(scaleQuaternion);
-    matrix = localScaleOrientationMatrix * matrix;
-
-    // Scale.
-    vrml_proc::math::TransformationMatrix localScaleMatrix = CreateScaleMatrix(transformationData.scale);
-    matrix = localScaleMatrix * matrix;
-
-    // Remove scale orientation.
-    scaleQuaternion.Inverse();
-    localScaleOrientationMatrix = CreateRotationMatrix(scaleQuaternion);
-    matrix = localScaleOrientationMatrix * matrix;
-    
-    // Remove center.
-    matrix = vrml_proc::math::TransformationMatrix(CGAL::TRANSLATION, -vrml_proc::math::cgal::Vec3fToCGALVector3(transformationData.center)) * matrix;
+    return matrix;
 }
 

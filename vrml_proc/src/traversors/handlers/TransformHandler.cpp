@@ -48,11 +48,11 @@ cpp::result<std::shared_ptr<ConversionContext>, std::shared_ptr<vrml_proc::core:
     transformationData.scaleOrientation = validator.GetCachedScaleOrientation(defaultScaleOrientation).get();
     transformationData.translation = validator.GetCachedTranslation(defaultTranslation).get();
 
-    vrml_proc::math::UpdateTransformationMatrix(context.transformation, transformationData);
+    vrml_proc::math::TransformationMatrix transformation = vrml_proc::math::UpdateTransformationMatrix(context.transformation, transformationData);
 
     std::vector<std::shared_ptr<ConversionContext>> resolvedChildren;
     for (const auto& child : validator.GetCachedChildren()) {
-        auto recursiveResult = vrml_proc::traversor::VrmlNodeTraversor::Traverse<ConversionContext>({ child, context.manager, context.IsDescendantOfShape, context.transformation }, actionMap);
+        auto recursiveResult = vrml_proc::traversor::VrmlNodeTraversor::Traverse<ConversionContext>({ child, context.manager, context.IsDescendantOfShape, transformation }, actionMap);
         if (recursiveResult.has_error()) {
             return cpp::fail(recursiveResult.error());
         }

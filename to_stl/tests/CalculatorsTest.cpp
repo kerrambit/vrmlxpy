@@ -5,26 +5,20 @@
 #include <string>
 #include <vector>
 
-#include "test_data/VrmlFileTraversorTestDataset.hpp"
-#include <BoxAction.hpp>
 #include <BoxCalculator.hpp>
-#include <ConversionContextActionMap.hpp>
-#include <GroupAction.hpp>
 #include <Logger.hpp>
 #include <MemoryMappedFileReader.hpp>
 #include <MeshConversionContext.hpp>
 #include <ModelValidationError.hpp>
 #include <ParserResult.hpp>
-#include <ShapeAction.hpp>
 #include <test.hpp>
+#include <Transformation.hpp>
+#include <TransformationMatrix.hpp>
 #include <Vec3f.hpp>
 #include <VrmlFile.hpp>
-#include <VrmlFileTraversor.hpp>
 #include <VrmlNodeManager.hpp>
 #include <VrmlParser.hpp>
 #include <VrmlUnits.hpp>
-#include <Transformation.hpp>
-#include <TransformationMatrix.hpp>
 
 template <typename T>
 static bool CheckInnermostError(std::shared_ptr<vrml_proc::core::error::Error> error) {
@@ -64,59 +58,166 @@ static void HandleRootLevelError(std::shared_ptr<vrml_proc::core::error::Error> 
 TEST_CASE("Initialization") {
 
     vrml_proc::core::logger::InitLogging();
+}
 
-    vrml_proc::parser::Vec3f size;
+TEST_CASE("BoxCalculator - Basic tests", "[valid]") {
+
+    using vrml_proc::math::TransformationMatrix;
+    using vrml_proc::math::Transformation;
+    using vrml_proc::parser::Vec3f;
+    using vrml_proc::parser::Vec4f;
+    using vrml_proc::math::UpdateTransformationMatrix;
+
+    Vec3f size;
     size.x = 10.0f; size.y = 20.0f; size.z = 30.0f;
-
-    vrml_proc::math::Transformation transformationData;
-    vrml_proc::math::TransformationMatrix matrix;
 
     to_stl::calculator::BoxCalculator calculator = to_stl::calculator::BoxCalculator();
 
+    // --- ///
+
+    TransformationMatrix matrix;
+    auto result0 = (calculator.Generate3DMesh({ std::cref(size) }, matrix)).value();
+
+    // TODO: compare with file
+
     // --- //
 
-    vrml_proc::math::UpdateTransformationMatrix(matrix, transformationData);
+    Transformation transformationData;
+    matrix = UpdateTransformationMatrix(matrix, transformationData);
     auto result1 = (calculator.Generate3DMesh({ std::cref(size) }, matrix)).value();
 
+    // TODO: compare with the first file (should be same)
+
     // --- //
 
-    transformationData.rotation = vrml_proc::parser::Vec4f(0.0f, 0.0f, 1.0f, 0.785398163f);
-    vrml_proc::math::UpdateTransformationMatrix(matrix, transformationData);
+    transformationData = Transformation();
+    matrix = TransformationMatrix();
+    transformationData.rotation = Vec4f(0.0f, 0.0f, 1.0f, 0.785398163f);
+    matrix = UpdateTransformationMatrix(matrix, transformationData);
     auto result2 = (calculator.Generate3DMesh({ std::cref(size) }, matrix)).value();
 
+    // TODO: compare with file
+
     // --- //
 
-    transformationData.rotation = vrml_proc::parser::Vec4f(0.0f, 0.0f, 1.0f, -0.785398163f);
-    transformationData.translation = vrml_proc::parser::Vec3f(25.0f, 0.0f, 0.0f);
-    vrml_proc::math::UpdateTransformationMatrix(matrix, transformationData);
+    transformationData = Transformation();
+    matrix = TransformationMatrix();
+    transformationData.center = vrml_proc::parser::Vec3f(10.0f, 10.0f, 0.0f);
+    transformationData.rotation = Vec4f(0.0f, 0.0f, 1.0f, 0.785398163f);
+    matrix = UpdateTransformationMatrix(matrix, transformationData);
     auto result3 = (calculator.Generate3DMesh({ std::cref(size) }, matrix)).value();
 
+    // TODO: compare with file
+
     // --- //
 
-    transformationData.translation = vrml_proc::parser::Vec3f(-25.0f, 0.0f, 0.0f);
-    transformationData.rotation = vrml_proc::parser::Vec4f(0.0f, 0.0f, 1.0f, -0.785398163f);
-    vrml_proc::math::UpdateTransformationMatrix(matrix, transformationData);
+    transformationData = Transformation();
+    matrix = TransformationMatrix();
+    transformationData.center = vrml_proc::parser::Vec3f(10.0f, 10.0f, 0.0f);
+    matrix = UpdateTransformationMatrix(matrix, transformationData);
     auto result4 = (calculator.Generate3DMesh({ std::cref(size) }, matrix)).value();
 
+    // TODO: compare with the first file (should be same)
+
     // --- //
 
-    vrml_proc::math::TransformationMatrix matrix2;
+    transformationData = Transformation();
+    matrix = TransformationMatrix();
+    transformationData.rotation = Vec4f(0.0f, 1.0f, 0.0f, 0.785398163f);
+    matrix = UpdateTransformationMatrix(matrix, transformationData);
+    auto result5 = (calculator.Generate3DMesh({ std::cref(size) }, matrix)).value();
+
+    // TODO: compare with file
+
+    // --- //
+
+    transformationData = Transformation();
+    matrix = TransformationMatrix();
+    transformationData.center = vrml_proc::parser::Vec3f(10.0f, 10.0f, 10.0f);
+    transformationData.rotation = Vec4f(0.0f, 1.0f, 0.0f, 0.785398163f);
+    matrix = UpdateTransformationMatrix(matrix, transformationData);
+    auto result6 = (calculator.Generate3DMesh({ std::cref(size) }, matrix)).value();
+
+    // TODO: compare with file
+
+    // --- //
+
+    transformationData = Transformation();
+    matrix = TransformationMatrix();
+    transformationData.translation = vrml_proc::parser::Vec3f(10.0f, 10.0f, 10.0f);
+    transformationData.rotation = Vec4f(0.0f, 0.0f, 1.0f, 0.785398163f);
+    matrix = UpdateTransformationMatrix(matrix, transformationData);
+    auto result7 = (calculator.Generate3DMesh({ std::cref(size) }, matrix)).value();
+
+    // TODO: compare with file
+
+    // --- //
+
+    transformationData = Transformation();
+    matrix = TransformationMatrix();
     transformationData.translation = vrml_proc::parser::Vec3f(0.0f, -25.0f, 0.0f);
     transformationData.rotation = vrml_proc::parser::Vec4f(0.0f, 0.0f, 1.0f, 0.785398163f);
     transformationData.scale = vrml_proc::parser::Vec3f(2.0f, 1.0f, 1.0f);
     transformationData.scaleOrientation = vrml_proc::parser::Vec4f(0.0f, 0.0f, 1.0f, 0.785398163f); // without it applies scaling to world coordinates
-    vrml_proc::math::UpdateTransformationMatrix(matrix2, transformationData);
-    auto result5 = (calculator.Generate3DMesh({ std::cref(size) }, matrix2)).value();
+    matrix = vrml_proc::math::UpdateTransformationMatrix(matrix, transformationData);
+    auto result8 = (calculator.Generate3DMesh({ std::cref(size) }, matrix)).value();
+
+    // TODO: compare with file
 
     // --- //
 
-    to_stl::core::Mesh mesh;
+    transformationData = Transformation();
+    matrix = TransformationMatrix();
+    transformationData.translation = vrml_proc::parser::Vec3f(0.0f, -25.0f, 0.0f);
+    transformationData.rotation = vrml_proc::parser::Vec4f(0.0f, 0.0f, 1.0f, 0.785398163f);
+    transformationData.scale = vrml_proc::parser::Vec3f(2.0f, 1.0f, 1.0f);
+    matrix = vrml_proc::math::UpdateTransformationMatrix(matrix, transformationData);
+    auto result9 = (calculator.Generate3DMesh({ std::cref(size) }, matrix)).value();
+
+    // TODO: compare with file
+
+    // --- //
+
+    transformationData = Transformation();
+    transformationData.translation = vrml_proc::parser::Vec3f(15.0f, 0.0f, 0.0f);
+    transformationData.rotation = vrml_proc::parser::Vec4f(1.0f, 0.0f, 0.0f, 0.785398163f);
+    matrix = vrml_proc::math::UpdateTransformationMatrix(matrix, transformationData);
+    auto result10 = (calculator.Generate3DMesh({ std::cref(size) }, matrix)).value();
+
+    // TODO: compare with file
+
+    // --- //
+
+    transformationData = Transformation();
+    matrix = TransformationMatrix();
+    transformationData.scale = vrml_proc::parser::Vec3f(2.0f, 2.0f, 2.0f);
+    matrix = vrml_proc::math::UpdateTransformationMatrix(matrix, transformationData);
+    matrix = vrml_proc::math::UpdateTransformationMatrix(matrix, transformationData);
+    matrix = vrml_proc::math::UpdateTransformationMatrix(matrix, transformationData);
+    matrix = vrml_proc::math::UpdateTransformationMatrix(matrix, transformationData);
+    auto result11 = (calculator.Generate3DMesh({ std::cref(size) }, matrix)).value();
+    
+    // TODO: compare with file
+
+    // --- //
+
+    /*to_stl::core::Mesh mesh;
     mesh.join(*result1);
     mesh.join(*result2);
-    mesh.join(*result3);
-    mesh.join(*result4);
-    mesh.join(*result5);
-    export_to_stl(mesh, R"(C:\Users\marek\Documents\FI_MUNI\sem_05\SBAPR\vrmlxpy\export.stl)");
+    mesh.join(*result3);*/
+    //mesh.join(*result4);
+    //mesh.join(*result5);
+    export_to_stl(*result1, R"(C:\Users\marek\Documents\FI_MUNI\sem_05\SBAPR\vrmlxpy\export1.stl)");
+    export_to_stl(*result2, R"(C:\Users\marek\Documents\FI_MUNI\sem_05\SBAPR\vrmlxpy\export2.stl)");
+    export_to_stl(*result3, R"(C:\Users\marek\Documents\FI_MUNI\sem_05\SBAPR\vrmlxpy\export3.stl)");
+    export_to_stl(*result4, R"(C:\Users\marek\Documents\FI_MUNI\sem_05\SBAPR\vrmlxpy\export4.stl)");
+    export_to_stl(*result5, R"(C:\Users\marek\Documents\FI_MUNI\sem_05\SBAPR\vrmlxpy\export5.stl)");
+    export_to_stl(*result6, R"(C:\Users\marek\Documents\FI_MUNI\sem_05\SBAPR\vrmlxpy\export6.stl)");
+    export_to_stl(*result7, R"(C:\Users\marek\Documents\FI_MUNI\sem_05\SBAPR\vrmlxpy\export7.stl)");
+    export_to_stl(*result8, R"(C:\Users\marek\Documents\FI_MUNI\sem_05\SBAPR\vrmlxpy\export8.stl)");
+    export_to_stl(*result9, R"(C:\Users\marek\Documents\FI_MUNI\sem_05\SBAPR\vrmlxpy\export9.stl)");
+    export_to_stl(*result10, R"(C:\Users\marek\Documents\FI_MUNI\sem_05\SBAPR\vrmlxpy\export10.stl)");
+    export_to_stl(*result11, R"(C:\Users\marek\Documents\FI_MUNI\sem_05\SBAPR\vrmlxpy\export11.stl)");
 }
 
 TEST_CASE("BoxCalculator - invalid", "[invalid]") {
