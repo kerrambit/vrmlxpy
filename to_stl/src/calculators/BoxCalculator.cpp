@@ -51,8 +51,8 @@ namespace to_stl {
 
             core::Mesh::Vertex_index v[8];
             for (size_t i = 0; i < 8; ++i) {
-                vrml_proc::math::cgal::CGALPoint transformed_point = matrix.transform(vertices[i]);
-                v[i] = mesh->add_vertex(transformed_point);
+                vrml_proc::math::cgal::CGALPoint transformedPoint = matrix.transform(vertices[i]);
+                v[i] = mesh->add_vertex(transformedPoint);
             }
 
             /** Front face. */
