@@ -32,7 +32,9 @@ endif()
 
 set(CGAL_Boost_INCLUDE_DIR ${Boost_INCLUDE_DIRS})
 set(CGAL_Boost_LIBRARY_DIR ${Boost_LIBRARY_DIRS})
+#if(WIN32)
 set(CGAL_Boost_USE_STATIC_LIBS ${Boost_USE_STATIC_LIBS})  # Ensure CGAL links Boost the same way
+#endif()
 set(CGAL_Boost_USE_MULTITHREADED ${Boost_USE_MULTITHREADED})
 
 # Find CGAL.
