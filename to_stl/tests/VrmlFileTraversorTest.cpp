@@ -457,6 +457,18 @@ TEST_CASE("Parse VRML File - Invalid Input - Simple VRML File - Transformation n
     HandleRootLevelError(traversorResult);
 }
 
+TEST_CASE("Parse VRML File - Valid Input - Simple VRML File - Transformation node III.", "[parsing][valid]") {
+
+    vrml_proc::parser::VrmlNodeManager manager;
+    auto parseResult = ParseVrmlFile(validTransformatioNodeNested, manager);
+    REQUIRE(parseResult);
+
+    vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext> actionMap = GetActionMap();
+
+    auto traversorResult = vrml_proc::traversor::VrmlFileTraversor::Traverse<vrml_proc::conversion_context::MeshConversionContext>({ parseResult.value(), manager }, actionMap);
+    REQUIRE(traversorResult.has_value());
+}
+
 //TEST_CASE("Parse VRMLFile From File - Valid Input - Tubulin", "[parsing][valid][fromfile]") {
 //
 //    vrml_proc::parser::VrmlNodeManager manager;
