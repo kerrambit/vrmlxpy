@@ -21,6 +21,7 @@ add_library(vrmlproc SHARED
     "${CMAKE_CURRENT_SOURCE_DIR}/../vendor/result/result.hpp"
 
     "src/GroupHandler.MeshConversionContext.cpp"
+    "src/TransformHandler.MeshConversionContext.cpp"
 
     # DLL export macro.
     "src/VrmlProcessingExport.hpp"
@@ -131,6 +132,8 @@ add_library(vrmlproc SHARED
     "src/traversors/handlers/ShapeHandler.cpp"
     "src/traversors/handlers/GroupHandler.hpp"
     "src/traversors/handlers/GroupHandler.cpp"
+    "src/traversors/handlers/TransformHandler.hpp"
+    "src/traversors/handlers/TransformHandler.cpp"
     "src/traversors/handlers/WorldInfoHandler.hpp"
     "src/traversors/handlers/WorldInfoHandler.cpp"
     "src/traversors/handlers/BoxHandler.hpp"
@@ -153,6 +156,7 @@ add_library(vrmlproc SHARED
     "src/traversors/validators/WorldInfoNodeValidator.hpp"
     "src/traversors/validators/ShapeNodeValidator.hpp"
     "src/traversors/validators/GroupNodeValidator.hpp"
+    "src/traversors/validators/TransformNodeValidator.hpp"
     "src/traversors/validators/IndexedFaceSetNodeValidator.hpp"
     "src/traversors/validators/CoordinateNodeValidator.hpp"
     "src/traversors/validators/NormalNodeValidator.hpp"
@@ -166,6 +170,14 @@ add_library(vrmlproc SHARED
     "src/actions/ConversionContextActionMap.cpp"
     "src/actions/ConversionContextAction.hpp"
     "src/actions/GeometryAction.hpp"
+
+    # Math
+    "src/math/Transformation.hpp"
+    "src/math/TransformationMatrix.hpp"
+    "src/math/TransformationMatrix.cpp"
+    "src/math/Angle.hpp"
+    "src/math/Quaternion.hpp"
+    "src/math/cgal/CGALBaseTypesForVrml.hpp"
 )
 
 # Add source files and vendor dependencies.
@@ -199,8 +211,12 @@ target_include_directories(vrmlproc PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src/traversors/validators/errors
     ${CMAKE_CURRENT_SOURCE_DIR}/src/traversors/handlers
 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/math
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/math/cgal
+
     # ${CMAKE_CURRENT_SOURCE_DIR}/../vendor/pybind11/include/pybind11
     ${CMAKE_CURRENT_SOURCE_DIR}/../vendor/result
+    ${CGAL_INCLUDE_DIRS}
 )
 
 # Two build types - Debug and Release.
@@ -220,7 +236,7 @@ elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
 endif()
 
 # Explicitly link Boost::iostreams (problems with compilation on Linux with GNU 11.4.0).
-target_link_libraries(vrmlproc PRIVATE Boost::iostreams Boost::log Boost::date_time Boost::log_setup Boost::system Boost::thread)
+target_link_libraries(vrmlproc PRIVATE CGAL::CGAL Boost::iostreams Boost::log Boost::date_time Boost::log_setup Boost::system Boost::thread)
 
 # --------------------------------------------------------------------------------------- #
 

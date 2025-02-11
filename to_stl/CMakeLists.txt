@@ -12,17 +12,6 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(Catch2)
 
-# Find CGAL.
-find_package(CGAL CONFIG REQUIRED)
-if(CGAL_FOUND)
-    message(STATUS "CGAL found!")
-    message(STATUS "CGAL version: ${CGAL_VERSION}")
-    message(STATUS "CGAL include directory: ${CGAL_INCLUDE_DIRS}")
-    message(STATUS "CGAL libraries: ${CGAL_LIBRARIES}")
-else()
-    message(FATAL_ERROR "CGAL not found. Please set CGAL_DIR to the correct path.")
-endif()
-
 # --------------------------------------------------------------------------------------- #
 
 # Create the DLL.
@@ -58,7 +47,8 @@ add_library(tostl SHARED
     "src/conversion_context/ConversionContextMap.Vec3fArrayConversionContext.cpp"
     "src/conversion_context/VrmlNodeTraversor.Vec3fArrayConversionContext.cpp"
 
-    "src/conversion_context/GroupHandler.Vec3fArrayConversionContext.cpp"
+    "src/conversion_context/TransformHandler.Vec3fArrayConversionContext.cpp"
+     "src/conversion_context/GroupHandler.Vec3fArrayConversionContext.cpp"
     "src/conversion_context/BoxHandler.Vec3fArrayConversionContext.cpp"
     "src/conversion_context/WorldInfoHandler.Vec3fArrayConversionContext.cpp"
     "src/conversion_context/BoxHandler.Vec3fArrayConversionContext.cpp"
@@ -109,7 +99,7 @@ elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
 endif()
 
 # Link the tostl library with vrmlproc shared library.
-target_link_libraries(tostl PRIVATE CGAL::CGAL vrmlproc)
+target_link_libraries(tostl PRIVATE vrmlproc)
 
 # --------------------------------------------------------------------------------------- #
 

@@ -13,6 +13,9 @@ namespace vrml_proc {
             Vec4f()
                 : Printable(std::cout) { }
 
+            Vec4f(float32_t x, float32_t y, float32_t z, float32_t w)
+                : Printable(std::cout), x(x), y(y), z(z), w(w) {}
+
             float32_t x = 0.0f;
             float32_t y = 0.0f;
             float32_t z = 0.0f;

@@ -4,9 +4,9 @@
 
 #include <result.hpp>
 
-#include "BoxHandler.hpp"
 #include "ColorHandler.hpp"
 #include "CoordinateHandler.hpp"
+#include "Error.hpp"
 #include "FormatString.hpp"
 #include "GroupHandler.hpp"
 #include "IndexedFaceSetHandler.hpp"
@@ -17,9 +17,9 @@
 #include "ShapeHandler.hpp"
 #include "SpotlightHandler.hpp"
 #include "TextureCoordinateHandler.hpp"
+#include "TransformHandler.hpp"
 #include "VrmlNode.hpp"
 #include "WorldInfoHandler.hpp"
-#include "Error.hpp"
 
 template<typename ConversionContext>
 cpp::result<std::shared_ptr<ConversionContext>, std::shared_ptr<vrml_proc::core::error::Error>> vrml_proc::traversor::VrmlNodeTraversor::Traverse(vrml_proc::traversor::FullParsedVrmlNodeContext context, const vrml_proc::action::ConversionContextActionMap<ConversionContext>& actionMap) {
@@ -35,6 +35,9 @@ cpp::result<std::shared_ptr<ConversionContext>, std::shared_ptr<vrml_proc::core:
 	}
 	else if (context.node.header == "Group") {
 		return vrml_proc::traversor::handler::GroupHandler::Handle<ConversionContext>(context, actionMap);
+	}
+	else if (context.node.header == "Transform") {
+		return vrml_proc::traversor::handler::TransformHandler::Handle(context, actionMap);
 	}
 	else if (context.node.header == "Shape") {
 		return vrml_proc::traversor::handler::ShapeHandler::Handle<ConversionContext>(context, actionMap);

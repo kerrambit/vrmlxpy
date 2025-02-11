@@ -394,3 +394,147 @@ std::string invalidIndexedFaceSetNodeWrongFieldNodeHeader = R"(
         ]
     }
 )";
+
+std::string validTransformatioNode = R"(
+
+    #VRML V2.0 utf8
+
+    DEF box Box { } # size 2 2 2
+
+    Transform {
+      center 0.5 0.669 0.789
+      children [
+        Shape { geometry USE box }
+      ]
+      rotation 0.7 0.89 1.0 1.57
+      scale 1.0 2.0 1.69
+      scaleOrientation 1 0 0 1.57
+      translation 5 0 0
+      bboxCenter 0 0 0
+      bboxSize -1 -1 -1
+    }
+)";
+
+std::string validTransformatioNodeEmpty = R"(
+
+    #VRML V2.0 utf8
+
+    DEF box Box { } # size 2 2 2
+
+    Transform {
+    }
+)";
+
+std::string validTransformatioNodeNested = R"(
+
+    #VRML V2.0 utf8
+
+    DEF box Box { } # size 2 2 2
+
+    Transform {
+      center 0.5 0.669 0.789
+      children [
+        Transform {
+              center 0.5 0.669 0.789
+              children [
+                    Transform {
+                      center 0.5 0.669 0.789
+                      children [
+                            Shape { geometry USE box }
+                      ]
+                      rotation 0.7 0.89 1.0 1.57
+                      scale 1.0 2.0 1.69
+                      scaleOrientation 1 0 0 1.57
+                      translation 5 0 0
+                    }
+              ]
+              rotation 0.7 0.89 1.0 1.57
+              scale 1.0 2.0 1.69
+              scaleOrientation 1 0 0 1.57
+              translation 5 0 0
+            }
+      ]
+      rotation 0.7 0.89 1.0 1.57
+      scale 1.0 2.0 1.69
+      scaleOrientation 1 0 0 1.57
+      translation 5 0 0
+    }
+)";
+
+std::string invalidTransformatioNodeWrongFieldNameCenter = R"(
+
+    #VRML V2.0 utf8
+
+    DEF box Box { } # size 2 2 2
+
+    Transform {
+      Center 0.5 0.669 0.789
+      children [
+        Shape { geometry USE box }
+      ]
+      rotation 0.7 0.89 1.0 1.57
+      scale 1.0 2.0 1.69
+      scaleOrientation 1 0 0 1.57
+      translation 5 0 0
+      bboxCenter 0 0 0
+      bboxSize -1 -1 -1
+    }
+)";
+
+std::string invalidTransformatioNodeWrongFieldNameChildren = R"(
+
+    #VRML V2.0 utf8
+
+    DEF box Box { } # size 2 2 2
+
+    Transform {
+      center 0.5 0.669 0.789
+      Children [
+        Shape { geometry USE box }
+      ]
+      rotation 0.7 0.89 1.0 1.57
+      scale 1.0 2.0 1.69
+      scaleOrientation 1 0 0 1.57
+      translation 5 0 0
+      bboxCenter 0 0 0
+      bboxSize -1 -1 -1
+    }
+)";
+
+std::string invalidTransformatioNodeWrongFieldTypeChildren = R"(
+
+    #VRML V2.0 utf8
+
+    DEF box Box { } # size 2 2 2
+
+    Transform {
+      center 0.5 0.669 0.789
+      children [ 0 0 0 ]
+      rotation 0.7 0.89 1.0 1.57
+      scale 1.0 2.0 1.69
+      scaleOrientation 1 0 0 1.57
+      translation 5 0 0
+      bboxCenter 0 0 0
+      bboxSize -1 -1 -1
+    }
+)";
+
+std::string invalidTransformatioNodeWrongFieldTypeScaleOrientation = R"(
+
+    #VRML V2.0 utf8
+
+    DEF box Box { } # size 2 2 2
+
+    Transform {
+      center 0.5 0.669 0.789
+      children [
+        Shape { geometry USE box }
+      ]
+      rotation 0.7 0.89 1.0 1.57
+      scale 1.0 2.0 1.69
+      scaleOrientation 1 0 0
+      translation 5 0 0
+      bboxCenter 0 0 0
+      bboxSize -1 -1 -1
+    }
+)";

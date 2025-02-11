@@ -30,6 +30,26 @@ else()
     message(FATAL_ERROR "Boost was not found. Please set BOOST_ROOT to your Boost installation.")
 endif()
 
+set(CGAL_Boost_INCLUDE_DIR ${Boost_INCLUDE_DIRS})
+set(CGAL_Boost_LIBRARY_DIR ${Boost_LIBRARY_DIRS})
+#if(WIN32)
+set(CGAL_Boost_USE_STATIC_LIBS ${Boost_USE_STATIC_LIBS})  # Ensure CGAL links Boost the same way
+#endif()
+set(CGAL_Boost_USE_MULTITHREADED ${Boost_USE_MULTITHREADED})
+
+# Find CGAL.
+find_package(CGAL CONFIG REQUIRED)
+if(CGAL_FOUND)
+    message(STATUS "CGAL found!")
+    message(STATUS "CGAL version: ${CGAL_VERSION}")
+    message(STATUS "CGAL include directory: ${CGAL_INCLUDE_DIRS}")
+    message(STATUS "CGAL libraries: ${CGAL_LIBRARIES}")
+    include_directories(${CGAL_INCLUDE_DIRS})
+    link_directories(${CGAL_LIBRARIES})
+else()
+    message(FATAL_ERROR "CGAL not found. Please set CGAL_DIR to the correct path.")
+endif()
+
 # Add vendor dependencies.
 # include_directories(vendor/pybind11/include)
 
