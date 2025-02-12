@@ -154,7 +154,7 @@ namespace vrml_proc {
 							return std::optional<std::vector<std::reference_wrapper<const vrml_proc::parser::VrmlNode>>>{};
 						}
 						else if (value.error() == vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractByNameError::ValidationError) {
-							return cpp::fail(std::make_shared<error::InvalidFieldValueType>(vrml_proc::core::utils::TypeToString<vrml_proc::parser::VrmlNode>(), invalidType));
+							return cpp::fail(std::make_shared<error::InvalidFieldValueType>(vrml_proc::core::utils::TypeToString<std::vector<boost::variant<boost::recursive_wrapper<vrml_proc::parser::VrmlNode>, boost::recursive_wrapper<vrml_proc::parser::UseNode>>>>(), invalidType));
 						}
 					}
 
