@@ -16,6 +16,7 @@
 #include "NormalHandler.hpp"
 #include "ShapeHandler.hpp"
 #include "SpotlightHandler.hpp"
+#include "SwitchHandler.hpp"
 #include "TextureCoordinateHandler.hpp"
 #include "TransformHandler.hpp"
 #include "VrmlNode.hpp"
@@ -59,6 +60,9 @@ cpp::result<std::shared_ptr<ConversionContext>, std::shared_ptr<vrml_proc::core:
 	}
 	else if (context.node.header == "Box") {
 		return vrml_proc::traversor::handler::BoxHandler::Handle<ConversionContext>(context, actionMap);
+	}
+	else if (context.node.header == "Switch") {
+		return vrml_proc::traversor::handler::SwitchHandler::Handle<ConversionContext>(context, actionMap);
 	}
 	else if (context.node.header == "Spotlight") {
 		//return vrml_proc::traversor::handler::SpotlightHandler::Handle(context, actionMap);
