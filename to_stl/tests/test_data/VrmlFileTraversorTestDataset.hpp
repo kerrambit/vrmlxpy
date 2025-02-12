@@ -538,3 +538,201 @@ std::string invalidTransformatioNodeWrongFieldTypeScaleOrientation = R"(
       bboxSize -1 -1 -1
     }
 )";
+
+std::string validSwitchNodeWithOneChoiceEmpty = R"(
+
+	#VRML V2.0 utf8
+
+    Group {
+          children [ 
+            DEF A1 Switch {
+                whichChoice 0
+                choice DEF C2 Group { }
+              }
+           ]
+         }
+)";
+
+std::string validSwitchNodeWithMulipleChoicesEmpty = R"(
+
+	#VRML V2.0 utf8
+
+    Group {
+          children [ 
+            DEF A1 Switch {
+                whichChoice 17
+                choice [
+                    DEF C1 Group { },
+                    DEF C2 Group { },
+                    DEF C3 Group { },
+                    DEF C4 Group { },
+                    DEF C5 Group { },
+                    DEF C6 Group { },
+                    DEF C7 Group { },
+                    DEF C8 Group { },
+                    DEF C9 Group { },
+                    DEF CA Group { },
+                    DEF CB Group { },
+                    DEF CC Group { },
+                    DEF CD Group { },
+                    DEF CE Group { },
+                    DEF CF Group { },
+                    DEF CG Group { },
+                    DEF CH Group { },
+                    DEF CI Group { }
+                ]
+              }
+           ]
+         }
+)";
+
+std::string validSwitchNodeWithMulipleChoices = R"(
+
+	#VRML V2.0 utf8
+
+    DEF box Box { } # size 2 2 2
+
+    Group {
+          children [ 
+            DEF A1 Switch {
+                whichChoice 3
+                choice [
+                    DEF C1 Group { },
+                    DEF C2 Group { },
+                    DEF C3 Group { },
+                    DEF C4 Transform {
+                        scale 2 2 2
+                        children [
+                            Shape { geometry USE box },
+                            Shape { geometry USE box }
+                        ]
+                    }
+                ]
+              }
+           ]
+         }
+)";
+
+std::string validSwitchNodeEmpty = R"(
+
+	#VRML V2.0 utf8
+
+    Group {
+          children [ 
+                Switch {
+              }
+           ]
+         }
+)";
+
+std::string invalidSwitchNodeWithWrongMulipleChoices = R"(
+
+	#VRML V2.0 utf8
+
+    Group {
+          children [ 
+            DEF A1 Switch {
+                whichChoice 3
+                choice DEF C1 Group { }
+                choice DEF C2 Group { }
+                choice DEF C3 Group { }
+                choice DEF C4 Group { }
+              }
+           ]
+         }
+)";
+
+std::string invalidSwitchNodeInvalidFieldType = R"(
+
+	#VRML V2.0 utf8
+
+    Group {
+          children [ 
+            DEF A1 Switch {
+                whichChoice 0
+                choice [ 7, 8, 5 ]
+              }
+           ]
+         }
+)";
+
+std::string invalidSwitchNodeWrongIndexUpper = R"(
+
+	#VRML V2.0 utf8
+
+    Group {
+          children [ 
+            DEF A1 Switch {
+                whichChoice 18
+                choice [
+                    DEF C1 Group { },
+                    DEF C2 Group { },
+                    DEF C3 Group { },
+                    DEF C4 Group { },
+                    DEF C5 Group { },
+                    DEF C6 Group { },
+                    DEF C7 Group { },
+                    DEF C8 Group { },
+                    DEF C9 Group { },
+                    DEF CA Group { },
+                    DEF CB Group { },
+                    DEF CC Group { },
+                    DEF CD Group { },
+                    DEF CE Group { },
+                    DEF CF Group { },
+                    DEF CG Group { },
+                    DEF CH Group { },
+                    DEF CI Group { }
+                ]
+              }
+           ]
+         }
+)";
+
+std::string invalidSwitchNodeWrongIndexLower = R"(
+
+	#VRML V2.0 utf8
+
+    Group {
+          children [ 
+            DEF A1 Switch {
+                whichChoice -1
+                choice [
+                    DEF C1 Group { },
+                    DEF C2 Group { },
+                    DEF C3 Group { },
+                    DEF C4 Group { },
+                    DEF C5 Group { },
+                    DEF C6 Group { },
+                    DEF C7 Group { },
+                    DEF C8 Group { },
+                    DEF C9 Group { },
+                    DEF CA Group { },
+                    DEF CB Group { },
+                    DEF CC Group { },
+                    DEF CD Group { },
+                    DEF CE Group { },
+                    DEF CF Group { },
+                    DEF CG Group { },
+                    DEF CH Group { },
+                    DEF CI Group { }
+                ]
+              }
+           ]
+         }
+)";
+
+
+std::string invalidSwitchNodeEmptyChoice = R"(
+
+	#VRML V2.0 utf8
+
+    Group {
+          children [ 
+            DEF A1 Switch {
+                whichChoice 0
+                choice [ ]
+              }
+           ]
+         }
+)";

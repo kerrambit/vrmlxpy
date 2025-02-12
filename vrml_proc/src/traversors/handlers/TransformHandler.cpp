@@ -72,11 +72,11 @@ cpp::result<std::shared_ptr<ConversionContext>, std::shared_ptr<vrml_proc::core:
     std::any cachedTranslation = validator.GetCachedTranslation(defaultTranslation);
 
     return vrml_proc::traversor::utils::ConversionContextActionExecutor::TryToExecute<ConversionContext>(actionMap, context.node.header, {
-        std::cref(cachedBoxCenter),
-        std::cref(cachedBoxSize),
         std::cref(cachedCenter),
         std::cref(cachedRotation),
         std::cref(cachedScale),
         std::cref(cachedScaleOrientation),
-        std::cref(cachedTranslation) }, { resolvedChildren });
+        std::cref(cachedTranslation),
+        std::cref(cachedBoxCenter),
+        std::cref(cachedBoxSize) }, { resolvedChildren });
 }

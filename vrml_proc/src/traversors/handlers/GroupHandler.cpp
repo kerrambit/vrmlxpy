@@ -35,7 +35,7 @@ cpp::result<std::shared_ptr<ConversionContext>, std::shared_ptr<vrml_proc::core:
 
     std::vector<std::shared_ptr<ConversionContext>> resolvedChildren;
     for (const auto& child : validator.GetCachedChildren()) {
-        auto recursiveResult = vrml_proc::traversor::VrmlNodeTraversor::Traverse<ConversionContext>({ child, context.manager, context.IsDescendantOfShape }, actionMap);
+        auto recursiveResult = vrml_proc::traversor::VrmlNodeTraversor::Traverse<ConversionContext>({ child, context.manager, context.IsDescendantOfShape, context.transformation }, actionMap);
         if (recursiveResult.has_error()) {
             return cpp::fail(recursiveResult.error());
         }

@@ -6,12 +6,13 @@
 #include <result.hpp>
 
 #include "ConversionContextActionMap.hpp"
-#include "Vec3fArrayConversionContext.hpp"
 #include "GeometryAction.hpp"
 #include "IndexedFaceSetHandler.hpp"
 #include "Logger.hpp"
 #include "MeshConversionContext.hpp"
+#include "TransformationMatrix.hpp"
 #include "Vec3fArray.hpp"
+#include "Vec3fArrayConversionContext.hpp"
 #include "VrmlFieldExtractor.hpp"
 #include "VrmlNodeManager.hpp"
 #include "VrmlNodeTraversor.hpp"
@@ -67,13 +68,13 @@ namespace to_stl {
 				assert(false && "Invalid arguments for NormalAction");
 				});
 
-			auto coordResult = vrml_proc::traversor::VrmlNodeTraversor::Traverse<conversion_context::Vec3fArrayConversionContext>({ m_properties.coord.get(), manager, false}, map);
+			auto coordResult = vrml_proc::traversor::VrmlNodeTraversor::Traverse<conversion_context::Vec3fArrayConversionContext>({ m_properties.coord.get(), manager, false, vrml_proc::math::TransformationMatrix() }, map);
 			std::shared_ptr<to_stl::conversion_context::Vec3fArrayConversionContext> coord;
 			if (coordResult.has_value()) {
 				 coord = coordResult.value();
 			}
 
-			auto normalResult = vrml_proc::traversor::VrmlNodeTraversor::Traverse<conversion_context::Vec3fArrayConversionContext>({ m_properties.coord.get(), manager, false }, map);
+			auto normalResult = vrml_proc::traversor::VrmlNodeTraversor::Traverse<conversion_context::Vec3fArrayConversionContext>({ m_properties.coord.get(), manager, false, vrml_proc::math::TransformationMatrix() }, map);
 			std::shared_ptr<to_stl::conversion_context::Vec3fArrayConversionContext> normal;
 			if (normalResult.has_value()) {
 				normal = normalResult.value();

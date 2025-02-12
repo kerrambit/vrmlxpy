@@ -150,6 +150,7 @@ add_library(vrmlproc SHARED
     "src/traversors/handlers/ColorHandler.cpp"
     "src/traversors/handlers/TextureCoordinateHandler.hpp"
     "src/traversors/handlers/TextureCoordinateHandler.cpp"
+    "src/traversors/handlers/SwitchHandler.hpp"
 
     "src/traversors/validators/NodeValidator.hpp"
     "src/traversors/validators/BoxNodeValidator.hpp"
@@ -162,6 +163,7 @@ add_library(vrmlproc SHARED
     "src/traversors/validators/NormalNodeValidator.hpp"
     "src/traversors/validators/ColorNodeValidator.hpp"
     "src/traversors/validators/TextureCoordinateNodeValidator.hpp"
+    "src/traversors/validators/SwitchNodeValidator.hpp"
 
     "src/traversors/validators/errors/NodeValidationError.hpp"
 

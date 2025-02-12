@@ -28,7 +28,7 @@ cpp::result<std::shared_ptr<ConversionContext>, std::shared_ptr<vrml_proc::core:
 		vrml_proc::core::logger::LogInfo(vrml_proc::core::utils::FormatString("Found root node of type <", root.header, ">."), LOGGING_INFO);
 
 		cpp::result<std::shared_ptr<ConversionContext>, std::shared_ptr<vrml_proc::core::error::Error>> result =
-			vrml_proc::traversor::VrmlNodeTraversor::Traverse<ConversionContext>(vrml_proc::traversor::FullParsedVrmlNodeContext(root, context.manager), actionMap);
+			vrml_proc::traversor::VrmlNodeTraversor::Traverse<ConversionContext>(vrml_proc::traversor::FullParsedVrmlNodeContext(root, context.manager, false, vrml_proc::math::TransformationMatrix()), actionMap);
 
 		if (result.has_error()) {
 			vrml_proc::core::logger::LogError(vrml_proc::core::utils::FormatString("While traversing root node <", root.header, "> error occured!"), LOGGING_INFO);
