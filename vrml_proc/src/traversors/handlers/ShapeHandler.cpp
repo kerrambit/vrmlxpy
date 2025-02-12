@@ -33,12 +33,12 @@ cpp::result<std::shared_ptr<ConversionContext>, std::shared_ptr<vrml_proc::core:
     vrml_proc::parser::VrmlNode defaultAppearance;
     vrml_proc::parser::VrmlNode defaultGeometry;
 
-    auto resolvedAppearance = vrml_proc::traversor::VrmlNodeTraversor::Traverse<ConversionContext>({ validator.GetCachedAppearance(defaultAppearance).get(), context.manager, true}, actionMap);
+    auto resolvedAppearance = vrml_proc::traversor::VrmlNodeTraversor::Traverse<ConversionContext>({ validator.GetCachedAppearance(defaultAppearance).get(), context.manager, true, context.transformation}, actionMap);
     if (resolvedAppearance.has_error()) {
         return cpp::fail(resolvedAppearance.error());
     }
 
-    auto resolvedGeometry = vrml_proc::traversor::VrmlNodeTraversor::Traverse<ConversionContext>({ validator.GetCachedGeometry(defaultGeometry).get(), context.manager, true}, actionMap);
+    auto resolvedGeometry = vrml_proc::traversor::VrmlNodeTraversor::Traverse<ConversionContext>({ validator.GetCachedGeometry(defaultGeometry).get(), context.manager, true, context.transformation }, actionMap);
     if (resolvedGeometry.has_error()) {
         return cpp::fail(resolvedGeometry.error());
     }
