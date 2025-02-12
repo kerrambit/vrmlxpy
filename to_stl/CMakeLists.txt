@@ -43,6 +43,8 @@ add_library(tostl SHARED
     "src/actions/ShapeAction.cpp"
     "src/actions/TransformAction.hpp"
     "src/actions/TransformAction.cpp"
+    "src/actions/SwitchAction.hpp"
+    "src/actions/SwitchAction.cpp"
 
     # Conversion contexts
     "src/conversion_context/Vec3fArrayConversionContext.hpp"

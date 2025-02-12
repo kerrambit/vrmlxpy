@@ -17,7 +17,10 @@
 #include <MeshConversionContext.hpp>
 #include <ParserResult.hpp>
 #include <ShapeAction.hpp>
+#include <SwitchAction.hpp>
+#include <TransformAction.hpp>
 #include <Vec3f.hpp>
+#include <Vec4f.hpp>
 #include <VrmlFile.hpp>
 #include <VrmlFileTraversor.hpp>
 #include <VrmlNodeManager.hpp>
@@ -81,6 +84,58 @@ static vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_conte
             }
 
             assert(false && "Invalid arguments for GroupAction");
+        });
+
+    actionMap.AddAction("Transform", [](const vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext>::ReferencedArguments& refArgs,
+        const vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext>::CopiedArguments& copyArgs) {
+
+            if (refArgs.size() == 7 &&
+                refArgs[0].get().type() == typeid(std::reference_wrapper<const vrml_proc::parser::Vec3f>) &&
+                refArgs[1].get().type() == typeid(std::reference_wrapper<const vrml_proc::parser::Vec4f>) &&
+                refArgs[2].get().type() == typeid(std::reference_wrapper<const vrml_proc::parser::Vec3f>) &&
+                refArgs[3].get().type() == typeid(std::reference_wrapper<const vrml_proc::parser::Vec4f>) &&
+                refArgs[4].get().type() == typeid(std::reference_wrapper<const vrml_proc::parser::Vec3f>) &&
+                refArgs[5].get().type() == typeid(std::reference_wrapper<const vrml_proc::parser::Vec3f>) &&
+                refArgs[6].get().type() == typeid(std::reference_wrapper<const vrml_proc::parser::Vec3f>) &&
+                copyArgs.size() == 1 &&
+                copyArgs[0].type() == typeid(std::vector<std::shared_ptr<vrml_proc::conversion_context::MeshConversionContext>>)) {
+
+                to_stl::action::TransformAction::TransformProperties properties{
+                    std::any_cast<std::reference_wrapper<const vrml_proc::parser::Vec3f>>(refArgs[0]),
+                    std::any_cast<std::reference_wrapper<const vrml_proc::parser::Vec4f>>(refArgs[1]),
+                    std::any_cast<std::reference_wrapper<const vrml_proc::parser::Vec3f>>(refArgs[2]),
+                    std::any_cast<std::reference_wrapper<const vrml_proc::parser::Vec4f>>(refArgs[3]),
+                    std::any_cast<std::reference_wrapper<const vrml_proc::parser::Vec3f>>(refArgs[4]),
+                    std::any_cast<std::reference_wrapper<const vrml_proc::parser::Vec3f>>(refArgs[5]),
+                    std::any_cast<std::reference_wrapper<const vrml_proc::parser::Vec3f>>(refArgs[6]),
+                    std::any_cast<std::vector<std::shared_ptr<vrml_proc::conversion_context::MeshConversionContext>>>(copyArgs[0])
+                };
+
+                return std::make_shared<to_stl::action::TransformAction>(
+                    properties
+                );
+            }
+
+            assert(false && "Invalid arguments for Transform");
+        });
+
+    actionMap.AddAction("Switch", [](const vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext>::ReferencedArguments& refArgs,
+        const vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext>::CopiedArguments& copyArgs) {
+
+            if (refArgs.size() == 0 &&
+                copyArgs.size() == 1 &&
+                copyArgs[0].type() == typeid(std::shared_ptr<vrml_proc::conversion_context::MeshConversionContext>)) {
+
+                to_stl::action::SwitchAction::SwitchProperties properties{
+                    std::any_cast<std::shared_ptr<vrml_proc::conversion_context::MeshConversionContext>>(copyArgs[0])
+                };
+
+                return std::make_shared<to_stl::action::SwitchAction>(
+                    properties
+                );
+            }
+
+            assert(false && "Invalid arguments for SwitchAction");
         });
 
     actionMap.AddAction("Shape", [](const vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext>::ReferencedArguments& refArgs,
@@ -467,6 +522,130 @@ TEST_CASE("Parse VRML File - Valid Input - Simple VRML File - Transformation nod
 
     auto traversorResult = vrml_proc::traversor::VrmlFileTraversor::Traverse<vrml_proc::conversion_context::MeshConversionContext>({ parseResult.value(), manager }, actionMap);
     REQUIRE(traversorResult.has_value());
+}
+
+TEST_CASE("Parse VRML File - Valid Input - Simple VRML File - Switch node I.", "[parsing][valid]") {
+
+    vrml_proc::parser::VrmlNodeManager manager;
+    auto parseResult = ParseVrmlFile(validSwitchNodeWithOneChoiceEmpty, manager);
+    REQUIRE(parseResult);
+
+    vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext> actionMap = GetActionMap();
+
+    auto traversorResult = vrml_proc::traversor::VrmlFileTraversor::Traverse<vrml_proc::conversion_context::MeshConversionContext>({ parseResult.value(), manager }, actionMap);
+    REQUIRE(traversorResult.has_value());
+    auto& meshContext = traversorResult.value()->GetData();
+    REQUIRE(meshContext.size() == 0);
+}
+
+TEST_CASE("Parse VRML File - Valid Input - Simple VRML File - Switch node II.", "[parsing][valid]") {
+
+    vrml_proc::parser::VrmlNodeManager manager;
+    auto parseResult = ParseVrmlFile(validSwitchNodeWithMulipleChoicesEmpty, manager);
+    REQUIRE(parseResult);
+
+    vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext> actionMap = GetActionMap();
+
+    auto traversorResult = vrml_proc::traversor::VrmlFileTraversor::Traverse<vrml_proc::conversion_context::MeshConversionContext>({ parseResult.value(), manager }, actionMap);
+    REQUIRE(traversorResult.has_value());
+    auto& meshContext = traversorResult.value()->GetData();
+    REQUIRE(meshContext.size() == 0);
+}
+
+TEST_CASE("Parse VRML File - Valid Input - Simple VRML File - Switch node III.", "[parsing][valid]") {
+
+    vrml_proc::parser::VrmlNodeManager manager;
+    auto parseResult = ParseVrmlFile(validSwitchNodeEmpty, manager);
+    REQUIRE(parseResult);
+
+    vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext> actionMap = GetActionMap();
+
+    auto traversorResult = vrml_proc::traversor::VrmlFileTraversor::Traverse<vrml_proc::conversion_context::MeshConversionContext>({ parseResult.value(), manager }, actionMap);
+    REQUIRE(traversorResult.has_value());
+    auto& meshContext = traversorResult.value()->GetData();
+    REQUIRE(meshContext.size() == 0);
+}
+
+TEST_CASE("Parse VRML File - Valid Input - Simple VRML File - Switch node IV.", "[parsing][valid]") {
+
+    vrml_proc::parser::VrmlNodeManager manager;
+    auto parseResult = ParseVrmlFile(validSwitchNodeWithMulipleChoices, manager);
+    REQUIRE(parseResult);
+
+    vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext> actionMap = GetActionMap();
+
+    auto traversorResult = vrml_proc::traversor::VrmlFileTraversor::Traverse<vrml_proc::conversion_context::MeshConversionContext>({ parseResult.value(), manager }, actionMap);
+    REQUIRE(traversorResult.has_value());
+    auto& meshContext = traversorResult.value()->GetData();
+    REQUIRE(meshContext.size() == 2);
+}
+
+TEST_CASE("Parse VRML File - Invalid Input - Simple VRML File - Switch node I.", "[parsing][invalid]") {
+
+    vrml_proc::parser::VrmlNodeManager manager;
+    auto parseResult = ParseVrmlFile(invalidSwitchNodeWithWrongMulipleChoices, manager);
+    REQUIRE(parseResult);
+
+    vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext> actionMap = GetActionMap();
+
+    auto traversorResult = vrml_proc::traversor::VrmlFileTraversor::Traverse<vrml_proc::conversion_context::MeshConversionContext>({ parseResult.value(), manager }, actionMap);
+    REQUIRE(traversorResult.has_error());
+    HandleRootLevelError(traversorResult);
+}
+
+TEST_CASE("Parse VRML File - Invalid Input - Simple VRML File - Switch node II.", "[parsing][invalid]") {
+
+    vrml_proc::parser::VrmlNodeManager manager;
+    auto parseResult = ParseVrmlFile(invalidSwitchNodeInvalidFieldType, manager);
+    REQUIRE(parseResult);
+
+    vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext> actionMap = GetActionMap();
+
+    auto traversorResult = vrml_proc::traversor::VrmlFileTraversor::Traverse<vrml_proc::conversion_context::MeshConversionContext>({ parseResult.value(), manager }, actionMap);
+    REQUIRE(traversorResult.has_error());
+    HandleRootLevelError(traversorResult);
+}
+
+TEST_CASE("Parse VRML File - Invalid Input - Simple VRML File - Switch node III.", "[parsing][invalid]") {
+
+    vrml_proc::parser::VrmlNodeManager manager;
+    auto parseResult = ParseVrmlFile(invalidSwitchNodeWrongIndexUpper, manager);
+    REQUIRE(parseResult);
+
+    vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext> actionMap = GetActionMap();
+
+    auto traversorResult = vrml_proc::traversor::VrmlFileTraversor::Traverse<vrml_proc::conversion_context::MeshConversionContext>({ parseResult.value(), manager }, actionMap);
+    REQUIRE(traversorResult.has_value());
+    auto& meshContext = traversorResult.value()->GetData();
+    REQUIRE(meshContext.size() == 0);
+}
+
+TEST_CASE("Parse VRML File - Invalid Input - Simple VRML File - Switch node IV.", "[parsing][invalid]") {
+
+    vrml_proc::parser::VrmlNodeManager manager;
+    auto parseResult = ParseVrmlFile(invalidSwitchNodeWrongIndexLower, manager);
+    REQUIRE(parseResult);
+
+    vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext> actionMap = GetActionMap();
+
+    auto traversorResult = vrml_proc::traversor::VrmlFileTraversor::Traverse<vrml_proc::conversion_context::MeshConversionContext>({ parseResult.value(), manager }, actionMap);
+    REQUIRE(traversorResult.has_value());
+    auto& meshContext = traversorResult.value()->GetData();
+    REQUIRE(meshContext.size() == 0);
+}
+
+TEST_CASE("Parse VRML File - Invalid Input - Simple VRML File - Switch node V.", "[parsing][invalid]") {
+
+    vrml_proc::parser::VrmlNodeManager manager;
+    auto parseResult = ParseVrmlFile(invalidSwitchNodeEmptyChoice, manager);
+    REQUIRE(parseResult);
+
+    vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext> actionMap = GetActionMap();
+
+    auto traversorResult = vrml_proc::traversor::VrmlFileTraversor::Traverse<vrml_proc::conversion_context::MeshConversionContext>({ parseResult.value(), manager }, actionMap);
+    REQUIRE(traversorResult.has_value());
+    auto& meshContext = traversorResult.value()->GetData();
+    REQUIRE(meshContext.size() == 0);
 }
 
 //TEST_CASE("Parse VRMLFile From File - Valid Input - Tubulin", "[parsing][valid][fromfile]") {
