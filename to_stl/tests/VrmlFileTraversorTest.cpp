@@ -177,7 +177,7 @@ static vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_conte
                 refArgs[12].get().type() == typeid(std::reference_wrapper<const bool>) &&
                 refArgs[13].get().type() == typeid(std::reference_wrapper<const Int32Array>)
                 ) {
-                vrml_proc::traversor::handler::IndexedFaceSetHandler::IndexedFaceSetProperties properties{
+                to_stl::action::IndexedFaceSetAction::Properties properties{
                     std::any_cast<std::reference_wrapper<const VrmlNode>>(refArgs[0]),
                     std::any_cast<std::reference_wrapper<const VrmlNode>>(refArgs[1]),
                     std::any_cast<std::reference_wrapper<const VrmlNode>>(refArgs[2]),
