@@ -6,6 +6,7 @@
 #include <vector>
 
 #include <BoxCalculator.hpp>
+#include <IndexedFaceSetCalculator.hpp>
 #include <Logger.hpp>
 #include <MemoryMappedFileReader.hpp>
 #include <MeshConversionContext.hpp>
@@ -18,6 +19,7 @@
 #include <VrmlFile.hpp>
 #include <VrmlNodeManager.hpp>
 #include <VrmlParser.hpp>
+#include <Int32Array.hpp>
 #include <VrmlUnits.hpp>
 
 template <typename T>
@@ -241,6 +243,42 @@ TEST_CASE("BoxCalculator - invalid", "[invalid]") {
         auto result = calculator.Generate3DMesh({ std::cref(size) }, matrix);
         REQUIRE(result.has_error());
         CHECK(CheckInnermostError<vrml_proc::parser::model::validator::error::NumberOutOfRangeError<vrml_proc::parser::float32_t>>(result.error()));
+        HandleRootLevelError(result.error());
+    }
+}
+
+TEST_CASE("IndexedFaceSetCalculator - valid I.", "[valid]") {
+
+    to_stl::calculator::IndexedFaceSetCalculator calculator = to_stl::calculator::IndexedFaceSetCalculator();
+
+    vrml_proc::parser::Int32Array indices;
+    vrml_proc::parser::Vec3fArray points;
+    bool isConvex = false;
+
+    vrml_proc::math::TransformationMatrix matrix;
+
+    {
+        auto result = calculator.Generate3DMesh(std::cref(indices), std::cref(points), std::cref(isConvex), matrix);
+        REQUIRE(result.has_value());
+        REQUIRE(result.value()->is_empty());
+    }
+}
+
+TEST_CASE("IndexedFaceSetCalculator - invalid I.", "[invalid]") {
+
+    to_stl::calculator::IndexedFaceSetCalculator calculator = to_stl::calculator::IndexedFaceSetCalculator();
+
+    vrml_proc::parser::Int32Array indices;
+    indices.integers.emplace_back(0); indices.integers.emplace_back(1); indices.integers.emplace_back(2); indices.integers.emplace_back(-1);
+    vrml_proc::parser::Vec3fArray points;
+    bool isConvex = false;
+
+    vrml_proc::math::TransformationMatrix matrix;
+
+    {
+        auto result = calculator.Generate3DMesh(std::cref(indices), std::cref(points), std::cref(isConvex), matrix);
+        REQUIRE(result.has_error());
+        CHECK(CheckInnermostError<vrml_proc::parser::model::validator::error::EmptyArrayError>(result.error()));
         HandleRootLevelError(result.error());
     }
 }
