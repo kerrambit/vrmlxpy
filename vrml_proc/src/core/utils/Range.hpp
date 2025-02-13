@@ -2,12 +2,14 @@
 
 #include "Comparable.hpp"
 
+#include "VrmlProcessingExport.hpp"
+
 namespace vrml_proc {
 	namespace core {
 		namespace utils {
 
 			template <contract::Comparable T>
-			struct Range {
+			struct VRMLPROCESSING_API Range {
 
 				Range(T min, T max)
 					: min(min), max(max) {}
