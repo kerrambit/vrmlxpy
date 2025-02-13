@@ -36,7 +36,7 @@ private:
 namespace to_stl {
 	namespace action {
 
-		IndexedFaceSetAction::IndexedFaceSetAction(vrml_proc::traversor::handler::IndexedFaceSetHandler::IndexedFaceSetProperties properties, bool containedByShape) :
+		IndexedFaceSetAction::IndexedFaceSetAction(IndexedFaceSetAction::Properties properties, bool containedByShape) :
 			vrml_proc::action::GeometryAction(containedByShape), m_properties(properties) {}
 
 		std::shared_ptr<vrml_proc::conversion_context::MeshConversionContext> IndexedFaceSetAction::Execute() {
