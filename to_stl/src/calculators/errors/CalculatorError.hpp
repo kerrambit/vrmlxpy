@@ -40,4 +40,18 @@ namespace to_stl::calculator::error {
 			return stream.str();
 		}
 	};
+
+	class IndexedFaceSetCalculatorError : public CalculatorError {
+	public:
+		IndexedFaceSetCalculatorError(std::shared_ptr<vrml_proc::core::error::Error> innerError) {
+			SetInnerError(innerError);
+		}
+		IndexedFaceSetCalculatorError() = default;
+	protected:
+		std::string GetMessageInternal() const override {
+			std::ostringstream stream;
+			stream << CalculatorError::GetMessageInternal() << "[IndexedFaceSetCalculator]: error occured!\n";
+			return stream.str();
+		}
+	};
 }

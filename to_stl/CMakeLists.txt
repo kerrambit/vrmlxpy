@@ -66,6 +66,8 @@ add_library(tostl SHARED
     # Calculators.
     "src/calculators/BoxCalculator.hpp"
     "src/calculators/BoxCalculator.cpp"
+    "src/calculators/IndexedFaceSetCalculator.hpp"
+    "src/calculators/IndexedFaceSetCalculator.cpp"
     "src/calculators/errors/CalculatorError.hpp"
     "src/calculators/test.hpp"
 )
