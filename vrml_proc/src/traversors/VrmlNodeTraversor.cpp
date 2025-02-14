@@ -43,6 +43,10 @@ cpp::result<std::shared_ptr<ConversionContext>, std::shared_ptr<vrml_proc::core:
 	else if (context.node.header == "Shape") {
 		return vrml_proc::traversor::handler::ShapeHandler::Handle<ConversionContext>(context, actionMap);
 	}
+	else if (context.node.header == "Appearance") {
+		// TODO
+		return std::make_shared<ConversionContext>();
+	}
 	else if (context.node.header == "IndexedFaceSet") {
 		return vrml_proc::traversor::handler::IndexedFaceSetHandler::Handle<ConversionContext>(context, actionMap);
 	}

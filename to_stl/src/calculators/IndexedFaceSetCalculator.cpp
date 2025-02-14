@@ -21,6 +21,8 @@
 #include "Range.hpp"
 #include "UnsupportedOperationError.hpp"
 
+#include <test.hpp>
+
 namespace to_stl::calculator {
     cpp::result<std::shared_ptr<core::Mesh>, std::shared_ptr<vrml_proc::core::error::Error>>
         IndexedFaceSetCalculator::Generate3DMesh(std::reference_wrapper<const vrml_proc::parser::Int32Array> coordinateIndices, std::reference_wrapper<const vrml_proc::parser::Vec3fArray> coordinates, std::reference_wrapper<const bool> isConvex, const vrml_proc::math::TransformationMatrix& matrix) {
@@ -100,6 +102,7 @@ namespace to_stl::calculator {
             end++;
         }
 
+        export_to_stl(*mesh, R"(C:\Users\marek\Documents\FI_MUNI\sem_05\SBAPR\vrmlxpy\EXPERIMENT2.stl)");
         return mesh;
 	}
 }

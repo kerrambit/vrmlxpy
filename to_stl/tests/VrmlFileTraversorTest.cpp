@@ -661,16 +661,14 @@ TEST_CASE("Parse VRML File - Invalid Input - Simple VRML File - Switch node V.",
     REQUIRE(meshContext.size() == 0);
 }
 
-//TEST_CASE("Parse VRMLFile From File - Valid Input - Tubulin", "[parsing][valid][fromfile]") {
+//TEST_CASE("Parse VRMLFile From File - Valid Input - Actin", "[parsing][valid][fromfile]") {
 //
 //    vrml_proc::parser::VrmlNodeManager manager;
-//    auto parseResult = ParseVrmlFile(std::filesystem::path(R"(C:\Users\marek\Documents\FI_MUNI\sem_05\SBAPR\Datasets\classic - more data.wrl)"), manager);
+//    auto parseResult = ParseVrmlFile(std::filesystem::path(R"(C:\Users\marek\Documents\FI_MUNI\sem_05\SBAPR\Datasets\Segmented cells\actin.wrl)"), manager);
 //    REQUIRE(parseResult);
 //
 //    vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext> actionMap = GetActionMap();
 //
 //    auto traversorResult = vrml_proc::traversor::VrmlFileTraversor::Traverse<vrml_proc::conversion_context::MeshConversionContext>({ parseResult.value(), manager }, actionMap);
 //    REQUIRE(traversorResult.has_value());
-//    auto& meshContext = traversorResult.value()->GetData();
-//    REQUIRE(meshContext.size() == 1);
 //}
