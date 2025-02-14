@@ -51,7 +51,7 @@ namespace vrml_proc {
 
 					// --------------------------------------------------------
 
-					auto childrenResult = vrml_proc::traversor::validator::NodeValidator::ExtractVrmlNodeArrayWithValidation("children", m_node.fields, m_manager);
+					auto childrenResult = vrml_proc::traversor::validator::NodeValidator::ExtractVrmlNodeArrayWithValidation("children", m_node.fields, m_manager, true);
 					if (childrenResult.has_error()) {
 						return cpp::fail(childrenResult.error());
 					}
