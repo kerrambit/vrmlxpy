@@ -397,7 +397,7 @@ TEST_CASE("Parse VRML File - Invalid Input - Simple VRML File - Shape node", "[p
     HandleRootLevelError(traversorResult);;
 }
 
-TEST_CASE("Parse VRML File - Valid Input - Simple VRML File - IndexedShapeSet node I.", "[parsing][valid]") {
+TEST_CASE("Parse VRML File - Valid Input - Simple VRML File - IndexedFaceSet node I.", "[parsing][valid]") {
 
     vrml_proc::parser::VrmlNodeManager manager;
     auto parseResult = ParseVrmlFile(validIndexedFaceSetNode, manager);
@@ -410,7 +410,7 @@ TEST_CASE("Parse VRML File - Valid Input - Simple VRML File - IndexedShapeSet no
     REQUIRE(meshContext.size() == 1);
 }
 
-TEST_CASE("Parse VRML File - Valid Input - Simple VRML File - IndexedShapeSet node II.", "[parsing][valid]") {
+TEST_CASE("Parse VRML File - Valid Input - Simple VRML File - IndexedFaceSet node II.", "[parsing][valid]") {
 
     vrml_proc::parser::VrmlNodeManager manager;
     auto parseResult = ParseVrmlFile(validIndexedFaceSetNodeNotInShape, manager);
@@ -423,7 +423,20 @@ TEST_CASE("Parse VRML File - Valid Input - Simple VRML File - IndexedShapeSet no
     REQUIRE(meshContext.size() == 0);
 }
 
-TEST_CASE("Parse VRML File - Invalid Input - Simple VRML File - IndexedShapeSet node I.", "[parsing][invalid]") {
+TEST_CASE("Parse VRML File - Valid Input - Simple VRML File - IndexedFaceSet node III.", "[parsing][valid]") {
+
+    vrml_proc::parser::VrmlNodeManager manager;
+    auto parseResult = ParseVrmlFile(validIndexedFaceSetPyramid, manager);
+    REQUIRE(parseResult);
+    vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext> actionMap = GetActionMap();
+
+    auto traversorResult = vrml_proc::traversor::VrmlFileTraversor::Traverse<vrml_proc::conversion_context::MeshConversionContext>({ parseResult.value(), manager }, actionMap);
+    REQUIRE(traversorResult.has_value());
+    auto& meshContext = traversorResult.value()->GetData();
+    REQUIRE(meshContext.size() == 1);
+}
+
+TEST_CASE("Parse VRML File - Invalid Input - Simple VRML File - IndexedFaceSet node I.", "[parsing][invalid]") {
 
     vrml_proc::parser::VrmlNodeManager manager;
     auto parseResult = ParseVrmlFile(invalidIndexedFaceSetNodeWrongFieldNodeHeader, manager);
