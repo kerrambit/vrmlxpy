@@ -330,7 +330,7 @@ std::string validIndexedFaceSetNodeNotInShape = R"(
                 colorPerVertex TRUE
                 normalPerVertex TRUE
                 solid FALSE
-                creaseAngle 0.5
+                creaseAngle 0
             }
         ]
     }

@@ -207,6 +207,9 @@ namespace vrml_proc::parser::model::utils::VrmlFieldExtractor {
     }
 }
 
+/**
+ * @warning Not a thread-safe struct!
+ */
 template <typename T>
 struct ExtractorVisitor : public boost::static_visitor<cpp::result<std::reference_wrapper<const T>, std::optional<std::string>>> {
 
@@ -323,6 +326,14 @@ struct ExtractorVisitor : public boost::static_visitor<cpp::result<std::referenc
             return std::cref(value);
         }
 
+        if constexpr (std::is_same<T, int32_t>::value) {
+            if (value == static_cast<int32_t>(value)) {
+                static int32_t intValue = static_cast<int32_t>(value);
+                vrml_proc::core::logger::Log(vrml_proc::core::utils::FormatString("Edge case: float32_t is a whole number and thus can be extracted as static int32_t with address: <", &intValue, ">."), vrml_proc::core::logger::Level::Debug, LOGGING_INFO);
+                return std::cref(intValue);
+            }
+        }
+
         vrml_proc::core::logger::Log("Float32_t could not be extracted.", vrml_proc::core::logger::Level::Debug, LOGGING_INFO);
         return cpp::fail(std::optional<std::string>(vrml_proc::core::utils::TypeToString<float>()));
     }
@@ -334,6 +345,14 @@ struct ExtractorVisitor : public boost::static_visitor<cpp::result<std::referenc
         if constexpr (std::is_same<T, int32_t>::value) {
             vrml_proc::core::logger::Log("Extract as int32_t.", vrml_proc::core::logger::Level::Debug, LOGGING_INFO);
             return std::cref(value);
+        }
+
+        if constexpr (std::is_same<T, float>::value) {
+            if (value == static_cast<float>(value)) {
+                static float floatValue = static_cast<float>(value);
+                vrml_proc::core::logger::Log(vrml_proc::core::utils::FormatString("Edge case: int32_t can be expressed and extracted as static float32_t with address: <", &floatValue, ">."), vrml_proc::core::logger::Level::Debug, LOGGING_INFO);
+                return std::cref(floatValue);
+            }
         }
 
         vrml_proc::core::logger::Log("Int32_t could not be extracted.", vrml_proc::core::logger::Level::Debug, LOGGING_INFO);
