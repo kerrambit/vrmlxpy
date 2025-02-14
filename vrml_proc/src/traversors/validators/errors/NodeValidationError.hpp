@@ -93,15 +93,16 @@ namespace vrml_proc {
 
                 class InvalidFieldValueType : public NodeValidationError {
                 public:
-                    InvalidFieldValueType(const std::string& expectedType, const std::string& actualType)
-                        : m_expectedType(expectedType), m_actualType(actualType) {}
+                    InvalidFieldValueType(const std::string& fieldName, const std::string& expectedType, const std::string& actualType)
+                        : m_fieldName(fieldName), m_expectedType(expectedType), m_actualType(actualType) {}
                 protected:
                     std::string GetMessageInternal() const override {
                         std::ostringstream oss;
-                        oss << NodeValidationError::GetMessageInternal() << "[InvalidFieldValueType]: expected type was <" << m_expectedType << ">, actual: <" << m_actualType << ">!\n";
+                        oss << NodeValidationError::GetMessageInternal() << "[InvalidFieldValueType]: field <" << m_fieldName << "> expected type <" << m_expectedType << ">, but received <" << m_actualType << ">!\n";
                         return oss.str();
                     }
                 private:
+                    std::string m_fieldName;
                     std::string m_expectedType;
                     std::string m_actualType;
                 };
