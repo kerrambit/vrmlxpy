@@ -13,7 +13,7 @@ namespace vrml_proc {
 		namespace model {
 			namespace validator {
 
-				VRMLPROCESSING_API cpp::result<void, std::shared_ptr<error::ModelValidationError>> CheckVec3fIsGreaterThanZero(const Vec3f& vector) {
+				VRMLPROCESSING_API inline cpp::result<void, std::shared_ptr<error::ModelValidationError>> CheckVec3fIsGreaterThanZero(const Vec3f& vector) {
 
 					core::utils::Range<float> range;
 					range.SetMinimum(0.0f);

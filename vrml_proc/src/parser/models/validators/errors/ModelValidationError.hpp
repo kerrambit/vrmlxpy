@@ -19,6 +19,24 @@ namespace vrml_proc::parser::model::validator::error {
 		}
 	};
 
+	class EmptyArrayError : public ModelValidationError {
+	public:
+		EmptyArrayError(std::string name)
+			: m_name(name) {}
+	protected:
+		std::string GetMessageInternal() const override {
+
+			using core::utils::TypeToString;
+
+			std::ostringstream oss;
+			oss << ModelValidationError::GetMessageInternal() << "[EmptyArrayError]: array <" << m_name << "> cannot be empty!\n";
+
+			return oss.str();
+		}
+	private:
+		std::string m_name;
+	};
+
 	template <core::contract::Comparable T>
 	class NumberOutOfRangeError : public ModelValidationError {
 	public:

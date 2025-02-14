@@ -177,7 +177,7 @@ static vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_conte
                 refArgs[12].get().type() == typeid(std::reference_wrapper<const bool>) &&
                 refArgs[13].get().type() == typeid(std::reference_wrapper<const Int32Array>)
                 ) {
-                vrml_proc::traversor::handler::IndexedFaceSetHandler::IndexedFaceSetProperties properties{
+                to_stl::action::IndexedFaceSetAction::Properties properties{
                     std::any_cast<std::reference_wrapper<const VrmlNode>>(refArgs[0]),
                     std::any_cast<std::reference_wrapper<const VrmlNode>>(refArgs[1]),
                     std::any_cast<std::reference_wrapper<const VrmlNode>>(refArgs[2]),
@@ -397,7 +397,7 @@ TEST_CASE("Parse VRML File - Invalid Input - Simple VRML File - Shape node", "[p
     HandleRootLevelError(traversorResult);;
 }
 
-TEST_CASE("Parse VRML File - Valid Input - Simple VRML File - IndexedShapeSet node I.", "[parsing][valid]") {
+TEST_CASE("Parse VRML File - Valid Input - Simple VRML File - IndexedFaceSet node I.", "[parsing][valid]") {
 
     vrml_proc::parser::VrmlNodeManager manager;
     auto parseResult = ParseVrmlFile(validIndexedFaceSetNode, manager);
@@ -410,7 +410,7 @@ TEST_CASE("Parse VRML File - Valid Input - Simple VRML File - IndexedShapeSet no
     REQUIRE(meshContext.size() == 1);
 }
 
-TEST_CASE("Parse VRML File - Valid Input - Simple VRML File - IndexedShapeSet node II.", "[parsing][valid]") {
+TEST_CASE("Parse VRML File - Valid Input - Simple VRML File - IndexedFaceSet node II.", "[parsing][valid]") {
 
     vrml_proc::parser::VrmlNodeManager manager;
     auto parseResult = ParseVrmlFile(validIndexedFaceSetNodeNotInShape, manager);
@@ -423,7 +423,20 @@ TEST_CASE("Parse VRML File - Valid Input - Simple VRML File - IndexedShapeSet no
     REQUIRE(meshContext.size() == 0);
 }
 
-TEST_CASE("Parse VRML File - Invalid Input - Simple VRML File - IndexedShapeSet node I.", "[parsing][invalid]") {
+TEST_CASE("Parse VRML File - Valid Input - Simple VRML File - IndexedFaceSet node III.", "[parsing][valid]") {
+
+    vrml_proc::parser::VrmlNodeManager manager;
+    auto parseResult = ParseVrmlFile(validIndexedFaceSetPyramid, manager);
+    REQUIRE(parseResult);
+    vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext> actionMap = GetActionMap();
+
+    auto traversorResult = vrml_proc::traversor::VrmlFileTraversor::Traverse<vrml_proc::conversion_context::MeshConversionContext>({ parseResult.value(), manager }, actionMap);
+    REQUIRE(traversorResult.has_value());
+    auto& meshContext = traversorResult.value()->GetData();
+    REQUIRE(meshContext.size() == 1);
+}
+
+TEST_CASE("Parse VRML File - Invalid Input - Simple VRML File - IndexedFaceSet node I.", "[parsing][invalid]") {
 
     vrml_proc::parser::VrmlNodeManager manager;
     auto parseResult = ParseVrmlFile(invalidIndexedFaceSetNodeWrongFieldNodeHeader, manager);
@@ -648,16 +661,14 @@ TEST_CASE("Parse VRML File - Invalid Input - Simple VRML File - Switch node V.",
     REQUIRE(meshContext.size() == 0);
 }
 
-//TEST_CASE("Parse VRMLFile From File - Valid Input - Tubulin", "[parsing][valid][fromfile]") {
+//TEST_CASE("Parse VRMLFile From File - Valid Input - Actin", "[parsing][valid][fromfile]") {
 //
 //    vrml_proc::parser::VrmlNodeManager manager;
-//    auto parseResult = ParseVrmlFile(std::filesystem::path(R"(C:\Users\marek\Documents\FI_MUNI\sem_05\SBAPR\Datasets\classic - more data.wrl)"), manager);
+//    auto parseResult = ParseVrmlFile(std::filesystem::path(R"(C:\Users\marek\Documents\FI_MUNI\sem_05\SBAPR\Datasets\Segmented cells\actin.wrl)"), manager);
 //    REQUIRE(parseResult);
 //
 //    vrml_proc::action::ConversionContextActionMap<vrml_proc::conversion_context::MeshConversionContext> actionMap = GetActionMap();
 //
 //    auto traversorResult = vrml_proc::traversor::VrmlFileTraversor::Traverse<vrml_proc::conversion_context::MeshConversionContext>({ parseResult.value(), manager }, actionMap);
 //    REQUIRE(traversorResult.has_value());
-//    auto& meshContext = traversorResult.value()->GetData();
-//    REQUIRE(meshContext.size() == 1);
 //}

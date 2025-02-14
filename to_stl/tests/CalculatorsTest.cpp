@@ -6,6 +6,7 @@
 #include <vector>
 
 #include <BoxCalculator.hpp>
+#include <IndexedFaceSetCalculator.hpp>
 #include <Logger.hpp>
 #include <MemoryMappedFileReader.hpp>
 #include <MeshConversionContext.hpp>
@@ -18,7 +19,9 @@
 #include <VrmlFile.hpp>
 #include <VrmlNodeManager.hpp>
 #include <VrmlParser.hpp>
+#include <Int32Array.hpp>
 #include <VrmlUnits.hpp>
+#include <CalculatorError.hpp>
 
 template <typename T>
 static bool CheckInnermostError(std::shared_ptr<vrml_proc::core::error::Error> error) {
@@ -242,5 +245,320 @@ TEST_CASE("BoxCalculator - invalid", "[invalid]") {
         REQUIRE(result.has_error());
         CHECK(CheckInnermostError<vrml_proc::parser::model::validator::error::NumberOutOfRangeError<vrml_proc::parser::float32_t>>(result.error()));
         HandleRootLevelError(result.error());
+    }
+}
+
+TEST_CASE("IndexedFaceSetCalculator - valid I.", "[valid]") {
+
+    to_stl::calculator::IndexedFaceSetCalculator calculator = to_stl::calculator::IndexedFaceSetCalculator();
+
+    vrml_proc::parser::Int32Array indices;
+    vrml_proc::parser::Vec3fArray points;
+    bool isConvex = false;
+
+    vrml_proc::math::TransformationMatrix matrix;
+
+    {
+        auto result = calculator.Generate3DMesh(std::cref(indices), std::cref(points), std::cref(isConvex), matrix);
+        REQUIRE(result.has_value());
+        REQUIRE(result.value()->is_empty());
+    }
+}
+
+TEST_CASE("IndexedFaceSetCalculator - invalid I.", "[invalid]") {
+
+    to_stl::calculator::IndexedFaceSetCalculator calculator = to_stl::calculator::IndexedFaceSetCalculator();
+
+    vrml_proc::parser::Int32Array indices;
+    indices.integers.emplace_back(0); indices.integers.emplace_back(1); indices.integers.emplace_back(2); indices.integers.emplace_back(-1);
+    vrml_proc::parser::Vec3fArray points;
+    bool isConvex = false;
+
+    vrml_proc::math::TransformationMatrix matrix;
+
+    {
+        auto result = calculator.Generate3DMesh(std::cref(indices), std::cref(points), std::cref(isConvex), matrix);
+        REQUIRE(result.has_error());
+        CHECK(CheckInnermostError<vrml_proc::parser::model::validator::error::EmptyArrayError>(result.error()));
+        HandleRootLevelError(result.error());
+    }
+}
+
+TEST_CASE("IndexedFaceSetCalculator - invalid II.", "[invalid]") {
+
+    using vrml_proc::parser::Vec3f;
+
+    to_stl::calculator::IndexedFaceSetCalculator calculator = to_stl::calculator::IndexedFaceSetCalculator();
+
+    vrml_proc::parser::Int32Array indices;
+    indices.integers.emplace_back(-1);
+
+    vrml_proc::parser::Vec3fArray points;
+    points.vectors.emplace_back(Vec3f(0.0f, 0.0f, 0.0f)); points.vectors.emplace_back(Vec3f(1.0f, 0.0f, 0.0f)); points.vectors.emplace_back(Vec3f(1.0f, 1.0f, 0.0f));
+    points.vectors.emplace_back(Vec3f(0.0f, 1.0f, 0.0f)); points.vectors.emplace_back(Vec3f(0.5f, 0.5f, 1.0f));
+
+    bool isConvex = false;
+
+    vrml_proc::math::TransformationMatrix matrix;
+
+    {
+        auto result = calculator.Generate3DMesh(std::cref(indices), std::cref(points), std::cref(isConvex), matrix);
+        REQUIRE(result.has_error());
+        CHECK(CheckInnermostError<to_stl::calculator::error::InvalidNumberOfCoordinatesForFaceError>(result.error()));
+        HandleRootLevelError(result.error());
+    }
+}
+
+TEST_CASE("IndexedFaceSetCalculator - invalid III.", "[invalid]") {
+
+    using vrml_proc::parser::Vec3f;
+
+    to_stl::calculator::IndexedFaceSetCalculator calculator = to_stl::calculator::IndexedFaceSetCalculator();
+
+    vrml_proc::parser::Int32Array indices;
+    indices.integers.emplace_back(0); indices.integers.emplace_back(-1);
+
+    vrml_proc::parser::Vec3fArray points;
+    points.vectors.emplace_back(Vec3f(0.0f, 0.0f, 0.0f)); points.vectors.emplace_back(Vec3f(1.0f, 0.0f, 0.0f)); points.vectors.emplace_back(Vec3f(1.0f, 1.0f, 0.0f));
+    points.vectors.emplace_back(Vec3f(0.0f, 1.0f, 0.0f)); points.vectors.emplace_back(Vec3f(0.5f, 0.5f, 1.0f));
+
+    bool isConvex = false;
+
+    vrml_proc::math::TransformationMatrix matrix;
+
+    {
+        auto result = calculator.Generate3DMesh(std::cref(indices), std::cref(points), std::cref(isConvex), matrix);
+        REQUIRE(result.has_error());
+        CHECK(CheckInnermostError<to_stl::calculator::error::InvalidNumberOfCoordinatesForFaceError>(result.error()));
+        HandleRootLevelError(result.error());
+    }
+}
+
+TEST_CASE("IndexedFaceSetCalculator - invalid IV.", "[invalid]") {
+
+    using vrml_proc::parser::Vec3f;
+
+    to_stl::calculator::IndexedFaceSetCalculator calculator = to_stl::calculator::IndexedFaceSetCalculator();
+
+    vrml_proc::parser::Int32Array indices;
+    indices.integers.emplace_back(0); indices.integers.emplace_back(1); indices.integers.emplace_back(-1);
+
+    vrml_proc::parser::Vec3fArray points;
+    points.vectors.emplace_back(Vec3f(0.0f, 0.0f, 0.0f)); points.vectors.emplace_back(Vec3f(1.0f, 0.0f, 0.0f)); points.vectors.emplace_back(Vec3f(1.0f, 1.0f, 0.0f));
+    points.vectors.emplace_back(Vec3f(0.0f, 1.0f, 0.0f)); points.vectors.emplace_back(Vec3f(0.5f, 0.5f, 1.0f));
+
+    bool isConvex = false;
+
+    vrml_proc::math::TransformationMatrix matrix;
+
+    {
+        auto result = calculator.Generate3DMesh(std::cref(indices), std::cref(points), std::cref(isConvex), matrix);
+        REQUIRE(result.has_error());
+        CHECK(CheckInnermostError<to_stl::calculator::error::InvalidNumberOfCoordinatesForFaceError>(result.error()));
+        HandleRootLevelError(result.error());
+    }
+}
+
+TEST_CASE("IndexedFaceSetCalculator - valid II.", "[invalid]") {
+
+    using vrml_proc::parser::Vec3f;
+
+    to_stl::calculator::IndexedFaceSetCalculator calculator = to_stl::calculator::IndexedFaceSetCalculator();
+
+    vrml_proc::parser::Int32Array indices;
+    indices.integers.emplace_back(0); indices.integers.emplace_back(1); indices.integers.emplace_back(2); indices.integers.emplace_back(-1);
+    indices.integers.emplace_back(0); indices.integers.emplace_back(2); indices.integers.emplace_back(3); indices.integers.emplace_back(-1);
+
+    vrml_proc::parser::Vec3fArray points;
+    points.vectors.emplace_back(Vec3f(0.0f, 0.0f, 0.0f)); points.vectors.emplace_back(Vec3f(1.0f, 0.0f, 0.0f)); points.vectors.emplace_back(Vec3f(1.0f, 1.0f, 0.0f));
+    points.vectors.emplace_back(Vec3f(0.0f, 1.0f, 0.0f)); points.vectors.emplace_back(Vec3f(0.5f, 0.5f, 1.0f));
+
+    bool isConvex = false;
+
+    vrml_proc::math::TransformationMatrix matrix;
+
+    {
+        auto result = calculator.Generate3DMesh(std::cref(indices), std::cref(points), std::cref(isConvex), matrix);
+        REQUIRE(result.has_value());
+        export_to_stl(*(result.value()), R"(C:\Users\marek\Documents\FI_MUNI\sem_05\SBAPR\vrmlxpy\IFS_Quad.stl)");
+    }
+}
+
+TEST_CASE("IndexedFaceSetCalculator - invalid V.", "[invalid]") {
+
+    using vrml_proc::parser::Vec3f;
+
+    to_stl::calculator::IndexedFaceSetCalculator calculator = to_stl::calculator::IndexedFaceSetCalculator();
+
+    vrml_proc::parser::Int32Array indices;
+    indices.integers.emplace_back(-2); indices.integers.emplace_back(1); indices.integers.emplace_back(2); indices.integers.emplace_back(-1);
+
+    vrml_proc::parser::Vec3fArray points;
+    points.vectors.emplace_back(Vec3f(0.0f, 0.0f, 0.0f)); points.vectors.emplace_back(Vec3f(1.0f, 0.0f, 0.0f)); points.vectors.emplace_back(Vec3f(1.0f, 1.0f, 0.0f));
+    points.vectors.emplace_back(Vec3f(0.0f, 1.0f, 0.0f)); points.vectors.emplace_back(Vec3f(0.5f, 0.5f, 1.0f));
+
+    bool isConvex = false;
+
+    vrml_proc::math::TransformationMatrix matrix;
+
+    {
+        auto result = calculator.Generate3DMesh(std::cref(indices), std::cref(points), std::cref(isConvex), matrix);
+        REQUIRE(result.has_error());
+        CHECK(CheckInnermostError<vrml_proc::parser::model::validator::error::NumberOutOfRangeError<int32_t>>(result.error()));
+        HandleRootLevelError(result.error());
+    }
+}
+
+TEST_CASE("IndexedFaceSetCalculator - invalid VI.", "[invalid]") {
+
+    using vrml_proc::parser::Vec3f;
+
+    to_stl::calculator::IndexedFaceSetCalculator calculator = to_stl::calculator::IndexedFaceSetCalculator();
+
+    vrml_proc::parser::Int32Array indices;
+    indices.integers.emplace_back(5); indices.integers.emplace_back(1); indices.integers.emplace_back(2); indices.integers.emplace_back(-1);
+
+    vrml_proc::parser::Vec3fArray points;
+    points.vectors.emplace_back(Vec3f(0.0f, 0.0f, 0.0f)); points.vectors.emplace_back(Vec3f(1.0f, 0.0f, 0.0f)); points.vectors.emplace_back(Vec3f(1.0f, 1.0f, 0.0f));
+    points.vectors.emplace_back(Vec3f(0.0f, 1.0f, 0.0f)); points.vectors.emplace_back(Vec3f(0.5f, 0.5f, 1.0f));
+
+    bool isConvex = false;
+
+    vrml_proc::math::TransformationMatrix matrix;
+
+    {
+        auto result = calculator.Generate3DMesh(std::cref(indices), std::cref(points), std::cref(isConvex), matrix);
+        REQUIRE(result.has_error());
+        CHECK(CheckInnermostError<vrml_proc::parser::model::validator::error::NumberOutOfRangeError<int32_t>>(result.error()));
+        HandleRootLevelError(result.error());
+    }
+}
+
+TEST_CASE("IndexedFaceSetCalculator - invalid VII.", "[invalid]") {
+
+    using vrml_proc::parser::Vec3f;
+
+    to_stl::calculator::IndexedFaceSetCalculator calculator = to_stl::calculator::IndexedFaceSetCalculator();
+
+    vrml_proc::parser::Int32Array indices;
+    indices.integers.emplace_back(0); indices.integers.emplace_back(-2); indices.integers.emplace_back(2); indices.integers.emplace_back(-1);
+
+    vrml_proc::parser::Vec3fArray points;
+    points.vectors.emplace_back(Vec3f(0.0f, 0.0f, 0.0f)); points.vectors.emplace_back(Vec3f(1.0f, 0.0f, 0.0f)); points.vectors.emplace_back(Vec3f(1.0f, 1.0f, 0.0f));
+    points.vectors.emplace_back(Vec3f(0.0f, 1.0f, 0.0f)); points.vectors.emplace_back(Vec3f(0.5f, 0.5f, 1.0f));
+
+    bool isConvex = false;
+
+    vrml_proc::math::TransformationMatrix matrix;
+
+    {
+        auto result = calculator.Generate3DMesh(std::cref(indices), std::cref(points), std::cref(isConvex), matrix);
+        REQUIRE(result.has_error());
+        CHECK(CheckInnermostError<vrml_proc::parser::model::validator::error::NumberOutOfRangeError<int32_t>>(result.error()));
+        HandleRootLevelError(result.error());
+    }
+}
+
+TEST_CASE("IndexedFaceSetCalculator - invalid VIII.", "[invalid]") {
+
+    using vrml_proc::parser::Vec3f;
+
+    to_stl::calculator::IndexedFaceSetCalculator calculator = to_stl::calculator::IndexedFaceSetCalculator();
+
+    vrml_proc::parser::Int32Array indices;
+    indices.integers.emplace_back(0); indices.integers.emplace_back(5); indices.integers.emplace_back(2); indices.integers.emplace_back(-1);
+
+    vrml_proc::parser::Vec3fArray points;
+    points.vectors.emplace_back(Vec3f(0.0f, 0.0f, 0.0f)); points.vectors.emplace_back(Vec3f(1.0f, 0.0f, 0.0f)); points.vectors.emplace_back(Vec3f(1.0f, 1.0f, 0.0f));
+    points.vectors.emplace_back(Vec3f(0.0f, 1.0f, 0.0f)); points.vectors.emplace_back(Vec3f(0.5f, 0.5f, 1.0f));
+
+    bool isConvex = false;
+
+    vrml_proc::math::TransformationMatrix matrix;
+
+    {
+        auto result = calculator.Generate3DMesh(std::cref(indices), std::cref(points), std::cref(isConvex), matrix);
+        REQUIRE(result.has_error());
+        CHECK(CheckInnermostError<vrml_proc::parser::model::validator::error::NumberOutOfRangeError<int32_t>>(result.error()));
+        HandleRootLevelError(result.error());
+    }
+}
+
+TEST_CASE("IndexedFaceSetCalculator - invalid IX.", "[invalid]") {
+
+    using vrml_proc::parser::Vec3f;
+
+    to_stl::calculator::IndexedFaceSetCalculator calculator = to_stl::calculator::IndexedFaceSetCalculator();
+
+    vrml_proc::parser::Int32Array indices;
+    indices.integers.emplace_back(0); indices.integers.emplace_back(1); indices.integers.emplace_back(-2); indices.integers.emplace_back(-1);
+
+    vrml_proc::parser::Vec3fArray points;
+    points.vectors.emplace_back(Vec3f(0.0f, 0.0f, 0.0f)); points.vectors.emplace_back(Vec3f(1.0f, 0.0f, 0.0f)); points.vectors.emplace_back(Vec3f(1.0f, 1.0f, 0.0f));
+    points.vectors.emplace_back(Vec3f(0.0f, 1.0f, 0.0f)); points.vectors.emplace_back(Vec3f(0.5f, 0.5f, 1.0f));
+
+    bool isConvex = false;
+
+    vrml_proc::math::TransformationMatrix matrix;
+
+    {
+        auto result = calculator.Generate3DMesh(std::cref(indices), std::cref(points), std::cref(isConvex), matrix);
+        REQUIRE(result.has_error());
+        CHECK(CheckInnermostError<vrml_proc::parser::model::validator::error::NumberOutOfRangeError<int32_t>>(result.error()));
+        HandleRootLevelError(result.error());
+    }
+}
+
+TEST_CASE("IndexedFaceSetCalculator - invalid X.", "[invalid]") {
+
+    using vrml_proc::parser::Vec3f;
+
+    to_stl::calculator::IndexedFaceSetCalculator calculator = to_stl::calculator::IndexedFaceSetCalculator();
+
+    vrml_proc::parser::Int32Array indices;
+    indices.integers.emplace_back(0); indices.integers.emplace_back(1); indices.integers.emplace_back(5); indices.integers.emplace_back(-1);
+
+    vrml_proc::parser::Vec3fArray points;
+    points.vectors.emplace_back(Vec3f(0.0f, 0.0f, 0.0f)); points.vectors.emplace_back(Vec3f(1.0f, 0.0f, 0.0f)); points.vectors.emplace_back(Vec3f(1.0f, 1.0f, 0.0f));
+    points.vectors.emplace_back(Vec3f(0.0f, 1.0f, 0.0f)); points.vectors.emplace_back(Vec3f(0.5f, 0.5f, 1.0f));
+
+    bool isConvex = false;
+
+    vrml_proc::math::TransformationMatrix matrix;
+
+    {
+        auto result = calculator.Generate3DMesh(std::cref(indices), std::cref(points), std::cref(isConvex), matrix);
+        REQUIRE(result.has_error());
+        CHECK(CheckInnermostError<vrml_proc::parser::model::validator::error::NumberOutOfRangeError<int32_t>>(result.error()));
+        HandleRootLevelError(result.error());
+    }
+}
+
+TEST_CASE("IndexedFaceSetCalculator - valid III.", "[valid]") {
+
+    using vrml_proc::parser::Vec3f;
+
+    to_stl::calculator::IndexedFaceSetCalculator calculator = to_stl::calculator::IndexedFaceSetCalculator();
+
+    vrml_proc::parser::Int32Array indices;
+    indices.integers.emplace_back(0); indices.integers.emplace_back(1); indices.integers.emplace_back(2); indices.integers.emplace_back(-1);
+    indices.integers.emplace_back(0); indices.integers.emplace_back(2); indices.integers.emplace_back(3); indices.integers.emplace_back(-1);
+    indices.integers.emplace_back(0); indices.integers.emplace_back(1); indices.integers.emplace_back(4); indices.integers.emplace_back(-1);
+    indices.integers.emplace_back(1); indices.integers.emplace_back(2); indices.integers.emplace_back(4); indices.integers.emplace_back(-1);
+    indices.integers.emplace_back(2); indices.integers.emplace_back(3); indices.integers.emplace_back(4); indices.integers.emplace_back(-1);
+    indices.integers.emplace_back(3); indices.integers.emplace_back(0); indices.integers.emplace_back(4); indices.integers.emplace_back(-1);
+
+    vrml_proc::parser::Vec3fArray points;
+    points.vectors.emplace_back(Vec3f(0.0f, 0.0f, 0.0f)); points.vectors.emplace_back(Vec3f(1.0f, 0.0f, 0.0f)); points.vectors.emplace_back(Vec3f(1.0f, 1.0f, 0.0f));
+    points.vectors.emplace_back(Vec3f(0.0f, 1.0f, 0.0f)); points.vectors.emplace_back(Vec3f(0.5f, 0.5f, 1.0f));
+
+    bool isConvex = false;
+
+    vrml_proc::math::TransformationMatrix matrix;
+
+    {
+        auto result = calculator.Generate3DMesh(std::cref(indices), std::cref(points), std::cref(isConvex), matrix);
+        REQUIRE(result.has_value());
+        export_to_stl(*(result.value()), R"(C:\Users\marek\Documents\FI_MUNI\sem_05\SBAPR\vrmlxpy\IFS_Pyradamid.stl)");
     }
 }
