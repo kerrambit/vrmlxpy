@@ -1,9 +1,8 @@
 #include "IndexedFaceSetCalculator.hpp"
 
+#include <cstdint>
 #include <cstdlib>
 #include <memory>
-#include <stdlib.h>
-#include <cstdint>
 #include <vector>
 
 #include <CGAL/Kernel/interface_macros.h>
@@ -15,11 +14,12 @@
 #include "CalculatorError.hpp"
 #include "CGALBaseTypesForVrml.hpp"
 #include "Error.hpp"
-#include "Mesh.hpp"
+#include "Int32Array.hpp"
 #include "Logger.hpp"
-#include "Range.hpp"
+#include "Mesh.hpp"
 #include "ModelValidationError.hpp"
-#include <Vec3f.hpp>
+#include "Range.hpp"
+#include "UnsupportedOperationError.hpp"
 
 namespace to_stl::calculator {
     cpp::result<std::shared_ptr<core::Mesh>, std::shared_ptr<vrml_proc::core::error::Error>>
@@ -48,19 +48,31 @@ namespace to_stl::calculator {
             if (indicides[i] == -1) {
 
                 if (end - start <= 2) {
-                    // Error: not a valid face.
+                    return cpp::fail(error << (std::make_shared<error::PropertiesError>() <<
+                        std::make_shared<error::InvalidNumberOfCoordinatesForFaceError>(end - start)));
                 }
 
                 if (end - start == 3) {
 
+                    using NumberOutOfRangeError = vrml_proc::parser::model::validator::error::NumberOutOfRangeError<int32_t>;
+
                     if (!range.CheckValueInRangeInclusive(indicides[start])) {
-                        // Error!
+                        return cpp::fail(std::make_shared<error::IndexedFaceSetCalculatorError>() <<
+                            (std::make_shared<error::PropertiesError>() <<
+                                (std::make_shared<error::VertexIndexOutOfRangeError>() <<
+                                    std::make_shared<NumberOutOfRangeError>(range, indicides[start]))));
                     }
                     if (!range.CheckValueInRangeInclusive(indicides[start + 1])) {
-                        // Error!
+                        return cpp::fail(std::make_shared<error::IndexedFaceSetCalculatorError>() <<
+                            (std::make_shared<error::PropertiesError>() <<
+                                (std::make_shared<error::VertexIndexOutOfRangeError>() <<
+                                    std::make_shared<NumberOutOfRangeError>(range, indicides[start + 1]))));
                     }
                     if (!range.CheckValueInRangeInclusive(indicides[start + 2])) {
-                        // Error!
+                        return cpp::fail(std::make_shared<error::IndexedFaceSetCalculatorError>() <<
+                            (std::make_shared<error::PropertiesError>() <<
+                                (std::make_shared<error::VertexIndexOutOfRangeError>() <<
+                                    std::make_shared<NumberOutOfRangeError>(range, indicides[start + 2]))));
                     }
 
                     auto vertex1 = vrml_proc::math::cgal::CGALPoint(points[indicides[start]].x,
@@ -78,10 +90,11 @@ namespace to_stl::calculator {
                     mesh->add_face(mesh->add_vertex(matrix.transform(vertex1)), mesh->add_vertex(matrix.transform(vertex2)), mesh->add_vertex(matrix.transform(vertex3)));
                 }
                 else {
-                    // Warning: polygon faces not supported yet, triangulation is needed.
+                    return cpp::fail(std::make_shared<error::IndexedFaceSetCalculatorError>() <<
+                        std::make_shared<vrml_proc::core::error::UnsupportedOperationError>("Face is constructed from more than 3 coordinates. IndexedFaceSetCalculator does not support fan triangulation or any other algorithms for such a task yet. Thus, mesh cannot be generated fully."));
                 }
 
-                start = end;
+                start = end + 1;
             }
 
             end++;

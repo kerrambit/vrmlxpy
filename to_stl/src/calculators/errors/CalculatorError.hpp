@@ -27,6 +27,34 @@ namespace to_stl::calculator::error {
 		}
 	};
 
+	class InvalidNumberOfCoordinatesForFaceError : public vrml_proc::core::error::Error {
+	public:
+		InvalidNumberOfCoordinatesForFaceError(size_t numberOfCoordinates)
+			: m_numberOfCoordinates(numberOfCoordinates) {}
+	protected:
+		virtual std::string GetMessageInternal() const {
+			std::ostringstream stream;
+			stream << "[InvalidNumberOfCoordinatesForFaceError]: minimal number of coordinates to form a face is 3! The actual number received is <" << m_numberOfCoordinates << ">.\n";
+			return stream.str();
+		}
+	private:
+		size_t m_numberOfCoordinates;
+	};
+
+	class VertexIndexOutOfRangeError : public vrml_proc::core::error::Error {
+	public:
+		VertexIndexOutOfRangeError(std::shared_ptr<vrml_proc::core::error::Error> innerError) {
+			SetInnerError(innerError);
+		}
+		VertexIndexOutOfRangeError() = default;
+	protected:
+		virtual std::string GetMessageInternal() const {
+			std::ostringstream stream;
+			stream << "[VertexIndexOutOfRangeError]: vertex index must point to valid index inside coordinates array!\n";
+			return stream.str();
+		}
+	};
+
 	class BoxCalculatorError : public CalculatorError {
 	public:
 		BoxCalculatorError(std::shared_ptr<vrml_proc::core::error::Error> innerError) {
