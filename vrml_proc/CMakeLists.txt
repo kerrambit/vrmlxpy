@@ -20,8 +20,8 @@ add_library(vrmlproc SHARED
     # Third party libraries.
     "${CMAKE_CURRENT_SOURCE_DIR}/../vendor/result/result.hpp"
 
-    "src/GroupHandler.MeshConversionContext.cpp"
-    "src/TransformHandler.MeshConversionContext.cpp"
+    #"src/GroupHandler.MeshConversionContext.cpp"
+    #"src/TransformHandler.MeshConversionContext.cpp"
 
     # DLL export macro.
     "src/VrmlProcessingExport.hpp"
@@ -118,9 +118,9 @@ add_library(vrmlproc SHARED
 
     # Traversors.
     "src/traversors/VrmlNodeTraversor.hpp"
-    "src/traversors/VrmlNodeTraversor.cpp"
+    #"src/traversors/VrmlNodeTraversor.cpp"
     "src/traversors/VrmlFileTraversor.hpp"
-    "src/traversors/VrmlFileTraversor.cpp"
+    #"src/traversors/VrmlFileTraversor.cpp"
     "src/traversors/FullParsedVrmlNodeContext.hpp"
     "src/traversors/FullParsedVrmlFileContext.hpp"
 
@@ -130,27 +130,27 @@ add_library(vrmlproc SHARED
     "src/traversors/utils/ConversionContextActionExecutor.hpp"
 
     "src/traversors/handlers/ShapeHandler.hpp"
-    "src/traversors/handlers/ShapeHandler.cpp"
+    #"src/traversors/handlers/ShapeHandler.cpp"
     "src/traversors/handlers/GroupHandler.hpp"
-    "src/traversors/handlers/GroupHandler.cpp"
+    #"src/traversors/handlers/GroupHandler.cpp"
     "src/traversors/handlers/TransformHandler.hpp"
-    "src/traversors/handlers/TransformHandler.cpp"
+    #"src/traversors/handlers/TransformHandler.cpp"
     "src/traversors/handlers/WorldInfoHandler.hpp"
-    "src/traversors/handlers/WorldInfoHandler.cpp"
+    #"src/traversors/handlers/WorldInfoHandler.cpp"
     "src/traversors/handlers/BoxHandler.hpp"
-    "src/traversors/handlers/BoxHandler.cpp"
+    #"src/traversors/handlers/BoxHandler.cpp"
     "src/traversors/handlers/SpotlightHandler.hpp"
-    "src/traversors/handlers/SpotlightHandler.cpp"
+    #"src/traversors/handlers/SpotlightHandler.cpp"
     "src/traversors/handlers/IndexedFaceSetHandler.hpp"
-    "src/traversors/handlers/IndexedFaceSetHandler.cpp"
+    #"src/traversors/handlers/IndexedFaceSetHandler.cpp"
     "src/traversors/handlers/CoordinateHandler.hpp"
-    "src/traversors/handlers/CoordinateHandler.cpp"
+    #"src/traversors/handlers/CoordinateHandler.cpp"
     "src/traversors/handlers/NormalHandler.hpp"
-    "src/traversors/handlers/NormalHandler.cpp"
+    #"src/traversors/handlers/NormalHandler.cpp"
     "src/traversors/handlers/ColorHandler.hpp"
-    "src/traversors/handlers/ColorHandler.cpp"
+    #"src/traversors/handlers/ColorHandler.cpp"
     "src/traversors/handlers/TextureCoordinateHandler.hpp"
-    "src/traversors/handlers/TextureCoordinateHandler.cpp"
+    #"src/traversors/handlers/TextureCoordinateHandler.cpp"
     "src/traversors/handlers/SwitchHandler.hpp"
 
     "src/traversors/validators/NodeValidator.hpp"
@@ -170,7 +170,7 @@ add_library(vrmlproc SHARED
 
     # Actions.
     "src/actions/ConversionContextActionMap.hpp"
-    "src/actions/ConversionContextActionMap.cpp"
+    #"src/actions/ConversionContextActionMap.cpp"
     "src/actions/ConversionContextAction.hpp"
     "src/actions/GeometryAction.hpp"
 

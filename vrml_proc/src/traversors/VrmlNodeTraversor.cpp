@@ -4,23 +4,72 @@
 
 #include <result.hpp>
 
-#include "ColorHandler.hpp"
-#include "CoordinateHandler.hpp"
 #include "Error.hpp"
 #include "FormatString.hpp"
-#include "GroupHandler.hpp"
-#include "IndexedFaceSetHandler.hpp"
 #include "Logger.hpp"
 #include "MeshConversionContext.hpp"
 #include "NodeTraversorError.hpp"
-#include "NormalHandler.hpp"
-#include "ShapeHandler.hpp"
-#include "SpotlightHandler.hpp"
-#include "SwitchHandler.hpp"
-#include "TextureCoordinateHandler.hpp"
-#include "TransformHandler.hpp"
 #include "VrmlNode.hpp"
-#include "WorldInfoHandler.hpp"
+
+namespace vrml_proc::traversor::handler::WorldInfoHandler {
+	template<typename ConversionContext>
+	VRMLPROCESSING_API inline cpp::result<std::shared_ptr<ConversionContext>, std::shared_ptr<vrml_proc::core::error::Error>> Handle(vrml_proc::traversor::FullParsedVrmlNodeContext context, const vrml_proc::action::ConversionContextActionMap<ConversionContext>& actionMap);
+}
+
+namespace vrml_proc::traversor::handler::GroupHandler {
+	template<typename ConversionContext>
+	VRMLPROCESSING_API inline cpp::result<std::shared_ptr<ConversionContext>, std::shared_ptr<vrml_proc::core::error::Error>> Handle(vrml_proc::traversor::FullParsedVrmlNodeContext context, const vrml_proc::action::ConversionContextActionMap<ConversionContext>& actionMap);
+}
+
+namespace vrml_proc::traversor::handler::TransformHandler {
+	template<typename ConversionContext>
+	VRMLPROCESSING_API inline cpp::result<std::shared_ptr<ConversionContext>, std::shared_ptr<vrml_proc::core::error::Error>> Handle(vrml_proc::traversor::FullParsedVrmlNodeContext context, const vrml_proc::action::ConversionContextActionMap<ConversionContext>& actionMap);
+}
+
+namespace vrml_proc::traversor::handler::ShapeHandler {
+	template<typename ConversionContext>
+	VRMLPROCESSING_API inline cpp::result<std::shared_ptr<ConversionContext>, std::shared_ptr<vrml_proc::core::error::Error>> Handle(vrml_proc::traversor::FullParsedVrmlNodeContext context, const vrml_proc::action::ConversionContextActionMap<ConversionContext>& actionMap);
+}
+
+namespace vrml_proc::traversor::handler::IndexedFaceSetHandler {
+	template<typename ConversionContext>
+	VRMLPROCESSING_API inline cpp::result<std::shared_ptr<ConversionContext>, std::shared_ptr<vrml_proc::core::error::Error>> Handle(vrml_proc::traversor::FullParsedVrmlNodeContext context, const vrml_proc::action::ConversionContextActionMap<ConversionContext>& actionMap);
+}
+
+namespace vrml_proc::traversor::handler::CoordinateHandler {
+	template<typename ConversionContext>
+	VRMLPROCESSING_API inline cpp::result<std::shared_ptr<ConversionContext>, std::shared_ptr<vrml_proc::core::error::Error>> Handle(vrml_proc::traversor::FullParsedVrmlNodeContext context, const vrml_proc::action::ConversionContextActionMap<ConversionContext>& actionMap);
+}
+
+namespace vrml_proc::traversor::handler::NormalHandler {
+	template<typename ConversionContext>
+	VRMLPROCESSING_API inline cpp::result<std::shared_ptr<ConversionContext>, std::shared_ptr<vrml_proc::core::error::Error>> Handle(vrml_proc::traversor::FullParsedVrmlNodeContext context, const vrml_proc::action::ConversionContextActionMap<ConversionContext>& actionMap);
+}
+
+namespace vrml_proc::traversor::handler::TextureCoordinateHandler {
+	template<typename ConversionContext>
+	VRMLPROCESSING_API inline cpp::result<std::shared_ptr<ConversionContext>, std::shared_ptr<vrml_proc::core::error::Error>> Handle(vrml_proc::traversor::FullParsedVrmlNodeContext context, const vrml_proc::action::ConversionContextActionMap<ConversionContext>& actionMap);
+}
+
+namespace vrml_proc::traversor::handler::ColorHandler {
+	template<typename ConversionContext>
+	VRMLPROCESSING_API inline cpp::result<std::shared_ptr<ConversionContext>, std::shared_ptr<vrml_proc::core::error::Error>> Handle(vrml_proc::traversor::FullParsedVrmlNodeContext context, const vrml_proc::action::ConversionContextActionMap<ConversionContext>& actionMap);
+}
+
+namespace vrml_proc::traversor::handler::BoxHandler {
+	template<typename ConversionContext>
+	VRMLPROCESSING_API inline cpp::result<std::shared_ptr<ConversionContext>, std::shared_ptr<vrml_proc::core::error::Error>> Handle(vrml_proc::traversor::FullParsedVrmlNodeContext context, const vrml_proc::action::ConversionContextActionMap<ConversionContext>& actionMap);
+}
+
+namespace vrml_proc::traversor::handler::SwitchHandler {
+	template<typename ConversionContext>
+	VRMLPROCESSING_API inline cpp::result<std::shared_ptr<ConversionContext>, std::shared_ptr<vrml_proc::core::error::Error>> Handle(vrml_proc::traversor::FullParsedVrmlNodeContext context, const vrml_proc::action::ConversionContextActionMap<ConversionContext>& actionMap);
+}
+
+namespace vrml_proc::traversor::handler::SpotlightHandler {
+	template<typename ConversionContext>
+	VRMLPROCESSING_API inline cpp::result<std::shared_ptr<ConversionContext>, std::shared_ptr<vrml_proc::core::error::Error>> Handle(vrml_proc::traversor::FullParsedVrmlNodeContext context, const vrml_proc::action::ConversionContextActionMap<ConversionContext>& actionMap);
+}
 
 template<typename ConversionContext>
 cpp::result<std::shared_ptr<ConversionContext>, std::shared_ptr<vrml_proc::core::error::Error>> vrml_proc::traversor::VrmlNodeTraversor::Traverse(vrml_proc::traversor::FullParsedVrmlNodeContext context, const vrml_proc::action::ConversionContextActionMap<ConversionContext>& actionMap) {
@@ -32,13 +81,13 @@ cpp::result<std::shared_ptr<ConversionContext>, std::shared_ptr<vrml_proc::core:
 		return std::make_shared<ConversionContext>();
 	}
 	else if (context.node.header == "WorldInfo") {
-		return vrml_proc::traversor::handler::WorldInfoHandler::Handle(context, actionMap);
+		return vrml_proc::traversor::handler::WorldInfoHandler::Handle<ConversionContext>(context, actionMap);
 	}
 	else if (context.node.header == "Group") {
 		return vrml_proc::traversor::handler::GroupHandler::Handle<ConversionContext>(context, actionMap);
 	}
 	else if (context.node.header == "Transform") {
-		return vrml_proc::traversor::handler::TransformHandler::Handle(context, actionMap);
+		return vrml_proc::traversor::handler::TransformHandler::Handle<ConversionContext>(context, actionMap);
 	}
 	else if (context.node.header == "Shape") {
 		return vrml_proc::traversor::handler::ShapeHandler::Handle<ConversionContext>(context, actionMap);

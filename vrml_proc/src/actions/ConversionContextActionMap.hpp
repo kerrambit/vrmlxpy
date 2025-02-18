@@ -6,6 +6,9 @@
 #include <string>
 
 #include "ConversionContextAction.hpp"
+#include "Logger.hpp"
+#include "MeshConversionContext.hpp"
+#include "FormatString.hpp"
 
 #include "VrmlProcessingExport.hpp"
 
@@ -39,14 +42,24 @@ namespace vrml_proc {
 			 * @param key key which will be mapped to the Action
 			 * @param action ActionFunctor representing the given Action
 			 */
-			void AddAction(const std::string& key, ActionFunctor action);
+			void AddAction(const std::string& key, ActionFunctor action) {
+				vrml_proc::core::logger::LogInfo(vrml_proc::core::utils::FormatString("Add new action with key <", key, ">."), LOGGING_INFO);
+				m_actions[key] = std::move(action);
+			}
 			/**
 			 * @brief Verifies if the given key exists in the ActionMap.
 			 * 
 			 * @param key key identifying the given Action
 			 * @return true if the key is present, false if the key is not present.
 			 */
-			bool VerifyKey(const std::string& key) const;
+			bool VerifyKey(const std::string& key) const {
+				bool result = (m_actions.find(key) != m_actions.end());
+				vrml_proc::core::logger::LogTrace(vrml_proc::core::utils::FormatString("Verify key <", key, ">."), LOGGING_INFO);
+				if (result) {
+					vrml_proc::core::logger::LogTrace(vrml_proc::core::utils::FormatString("Key <", key, "> was not found!"), LOGGING_INFO);
+				}
+				return result;
+			}
 			/**
 			 * @brief Gets a shared pointer owning a ConversionContextAction object. The function creates new object using functor
 			 * stored in the ActionMap and passed `args` which are passed in to the Action constructor.
@@ -55,7 +68,15 @@ namespace vrml_proc {
 			 * @param args arguments passed into the function responsible for creating the given Action
 			 * @returns nullptr if the key does not exists, otherwise shared pointer owning the given ConversionContextAction object
 			 */
-			std::shared_ptr<ConversionContextAction<ConversionContext>> GetAction(const std::string& key, const ReferencedArguments& refArgs, const CopiedArguments& copyArgs) const;
+			std::shared_ptr<ConversionContextAction<ConversionContext>> GetAction(const std::string& key, const ReferencedArguments& refArgs, const CopiedArguments& copyArgs) const {
+				vrml_proc::core::logger::LogInfo(vrml_proc::core::utils::FormatString("Retrieve action by key <", key, ">."), LOGGING_INFO);
+				auto iterator = m_actions.find(key);
+				if (iterator != m_actions.end()) {
+					return iterator->second(refArgs, copyArgs);
+				}
+				vrml_proc::core::logger::LogWarning(vrml_proc::core::utils::FormatString("Action with key <", key, "> was not found!"), LOGGING_INFO);
+				return nullptr;
+			}
 
 		private:
 			std::unordered_map<std::string, ActionFunctor> m_actions;
