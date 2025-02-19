@@ -46,12 +46,6 @@ static vrml_proc::parser::ParserResult<vrml_proc::parser::VrmlFile> ParseVrmlFil
     return parser.Parse(readResult.value());
 }
 
-static void HandleRootLevelError(const cpp::result<std::shared_ptr<vrml_proc::conversion_context::MeshConversionContext>, std::shared_ptr<vrml_proc::core::error::Error>>& result) {
-    if (result.has_error()) {
-        vrml_proc::core::logger::LogUnformattedText("caught application error", result.error()->GetMessage(), vrml_proc::core::logger::Level::Error, LOGGING_INFO);
-    }
-}
-
 static void HandleRootLevelError(std::shared_ptr<vrml_proc::core::error::Error> error) {
     vrml_proc::core::logger::LogUnformattedText("caught application error", error->GetMessage(), vrml_proc::core::logger::Level::Error, LOGGING_INFO);
 }
