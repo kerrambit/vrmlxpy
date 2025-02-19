@@ -25,6 +25,7 @@ add_library(tostl SHARED
 
     # Core.
     "src/core/Mesh.hpp"
+    "src/core/MeshTask.hpp"
 
     # Actions.
     "src/actions/GeometryAction.hpp"
@@ -49,6 +50,7 @@ add_library(tostl SHARED
 
     # Conversion contexts
     "src/conversion_context/Vec3fArrayConversionContext.hpp"
+    "src/conversion_context/MeshTaskConversionContext.hpp"
     #"src/conversion_context/ConversionContextMap.Vec3fArrayConversionContext.cpp"
     #"src/conversion_context/VrmlNodeTraversor.Vec3fArrayConversionContext.cpp"
 
@@ -65,6 +67,7 @@ add_library(tostl SHARED
     #"src/conversion_context/TextureCoordinateHandler.Vec3fArrayConversionContext.cpp"
 
     # Calculators.
+    "src/calculators/CalculatorResult.hpp"
     "src/calculators/BoxCalculator.hpp"
     "src/calculators/BoxCalculator.cpp"
     "src/calculators/IndexedFaceSetCalculator.hpp"
