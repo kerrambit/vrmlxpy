@@ -13,7 +13,20 @@
 #include "Logger.hpp"
 #include "NodeTraversorError.hpp"
 #include "SwitchNodeValidator.hpp"
-#include "VrmlNodeTraversor.hpp"
+
+
+
+namespace vrml_proc {
+    namespace traversor {
+        namespace VrmlNodeTraversor {
+            template<typename ConversionContext>
+            VRMLPROCESSING_API cpp::result<std::shared_ptr<ConversionContext>, std::shared_ptr<vrml_proc::core::error::Error>> Traverse(
+                vrml_proc::traversor::FullParsedVrmlNodeContext context,
+                const vrml_proc::action::ConversionContextActionMap<ConversionContext>& actionMap);
+        }
+    }
+}
+
 
 #include "VrmlProcessingExport.hpp"
 
