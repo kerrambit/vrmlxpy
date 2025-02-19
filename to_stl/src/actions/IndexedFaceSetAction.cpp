@@ -25,7 +25,7 @@ public:
 
 	std::shared_ptr<to_stl::conversion_context::Vec3fArrayConversionContext> Execute() {
 		auto toReturn = std::make_shared<to_stl::conversion_context::Vec3fArrayConversionContext>();
-		toReturn->Add(m_data);
+		toReturn->CopyAndAdd(m_data);
 		return toReturn;
 	}
 
