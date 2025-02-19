@@ -16,17 +16,13 @@
 
 #include "VrmlProcessingExport.hpp"
 
-namespace vrml_proc {
-    namespace traversor {
-        namespace VrmlNodeTraversor {
-            template<typename ConversionContext>
-            VRMLPROCESSING_API cpp::result<std::shared_ptr<ConversionContext>, std::shared_ptr<vrml_proc::core::error::Error>> Traverse(
-                vrml_proc::traversor::FullParsedVrmlNodeContext context,
-                const vrml_proc::action::ConversionContextActionMap<ConversionContext>& actionMap);
-        }
-    }
+// Forward declaration.
+namespace vrml_proc::traversor::VrmlNodeTraversor {
+    template<typename ConversionContext>
+    VRMLPROCESSING_API cpp::result<std::shared_ptr<ConversionContext>, std::shared_ptr<vrml_proc::core::error::Error>> Traverse(
+        vrml_proc::traversor::FullParsedVrmlNodeContext context,
+        const vrml_proc::action::ConversionContextActionMap<ConversionContext>& actionMap);
 }
-
 
 namespace vrml_proc::traversor::handler::GroupHandler {
 

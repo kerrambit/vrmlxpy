@@ -5,22 +5,13 @@
 #include <any>
 #include <result.hpp>
 
+#include "ColorNodeValidator.hpp"
 #include "ConversionContextActionExecutor.hpp"
 #include "ConversionContextActionMap.hpp"
-#include "ColorNodeValidator.hpp"
 #include "Error.hpp"
-#include "Logger.hpp"
-#include "MeshConversionContext.hpp"
-#include "NodeTraversorError.hpp"
-#include "Vec3fArray.hpp"
-#include "FullParsedVrmlNodeContext.hpp"
-#include "ConversionContextActionExecutor.hpp"
-#include "ConversionContextActionMap.hpp"
-#include "ColorNodeValidator.hpp"
-#include "Error.hpp"
-#include "Logger.hpp"
 #include "FormatString.hpp"
-#include "MeshConversionContext.hpp"
+#include "FullParsedVrmlNodeContext.hpp"
+#include "Logger.hpp"
 #include "NodeTraversorError.hpp"
 #include "Vec3fArray.hpp"
 
@@ -28,11 +19,7 @@
 
 namespace vrml_proc::traversor::handler::ColorHandler {
     template<typename ConversionContext>
-    VRMLPROCESSING_API inline cpp::result<std::shared_ptr<ConversionContext>, std::shared_ptr<vrml_proc::core::error::Error>>
-        Handle(
-            vrml_proc::traversor::FullParsedVrmlNodeContext context,
-            const vrml_proc::action::ConversionContextActionMap<ConversionContext>& actionMap
-        ) {
+    VRMLPROCESSING_API inline cpp::result<std::shared_ptr<ConversionContext>, std::shared_ptr<vrml_proc::core::error::Error>> Handle(vrml_proc::traversor::FullParsedVrmlNodeContext context, const vrml_proc::action::ConversionContextActionMap<ConversionContext>& actionMap) {
         vrml_proc::core::logger::LogInfo(vrml_proc::core::utils::FormatString("Handle VRML node <", context.node.header, ">."), LOGGING_INFO);
 
         vrml_proc::traversor::validator::ColorNodeValidator validator(context.node);
