@@ -172,7 +172,6 @@ add_library(vrmlproc SHARED
     "src/actions/ConversionContextActionMap.hpp"
     #"src/actions/ConversionContextActionMap.cpp"
     "src/actions/ConversionContextAction.hpp"
-    "src/actions/GeometryAction.hpp"
 
     # Math
     "src/math/Transformation.hpp"

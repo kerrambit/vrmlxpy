@@ -27,6 +27,7 @@ add_library(tostl SHARED
     "src/core/Mesh.hpp"
 
     # Actions.
+    "src/actions/GeometryAction.hpp"
     "src/actions/IndexedFaceSetAction.hpp"
     "src/actions/IndexedFaceSetAction.cpp"
     "src/actions/CoordinateAction.hpp"
