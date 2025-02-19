@@ -6,28 +6,24 @@
 #include <vector>
 
 #include "ConversionContextAction.hpp"
-#include "MeshConversionContext.hpp"
+#include "MeshTaskConversionContext.hpp"
 
 #include "VrmlProcessingExport.hpp"
 
 namespace to_stl {
 	namespace action {
-		/**
-		 * @brief Represents a concrete type of Action.
-		 *
-		 * @implements ConversionContextAction
-		 */
-		class VRMLPROCESSING_API SwitchAction : public vrml_proc::action::ConversionContextAction<vrml_proc::conversion_context::MeshConversionContext> {
+
+		class VRMLPROCESSING_API SwitchAction : public vrml_proc::action::ConversionContextAction<to_stl::conversion_context::MeshTaskConversionContext> {
 
 		public:
 
 			struct SwitchProperties {
-				std::shared_ptr<vrml_proc::conversion_context::MeshConversionContext> choice;
+				std::shared_ptr<to_stl::conversion_context::MeshTaskConversionContext> choice;
 			};
 
 			SwitchAction(SwitchProperties properties);
 
-			std::shared_ptr<vrml_proc::conversion_context::MeshConversionContext> Execute() override;
+			std::shared_ptr<to_stl::conversion_context::MeshTaskConversionContext> Execute() override;
 
 		private:
 			SwitchProperties m_properties;

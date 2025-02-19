@@ -17,18 +17,18 @@
 
 namespace to_stl {
 	namespace calculator {
-		cpp::result<std::shared_ptr<core::Mesh>, std::shared_ptr<vrml_proc::core::error::Error>> BoxCalculator::Generate3DMesh(const to_stl::action::BoxAction::BoxProperties& properties, const vrml_proc::math::TransformationMatrix& matrix) {
+		cpp::result<std::shared_ptr<core::Mesh>, std::shared_ptr<vrml_proc::core::error::Error>> BoxCalculator::Generate3DMesh(std::reference_wrapper<const vrml_proc::parser::Vec3f> size, const vrml_proc::math::TransformationMatrix& matrix) {
 
-            auto checkResult = vrml_proc::parser::model::validator::CheckVec3fIsGreaterThanZero(properties.size.get());
+            auto checkResult = vrml_proc::parser::model::validator::CheckVec3fIsGreaterThanZero(size.get());
             if (checkResult.has_error()) {
                 return cpp::fail(std::make_shared<error::BoxCalculatorError>() << (std::make_shared<error::PropertiesError>() << checkResult.error()));
             }
 
             auto mesh = std::make_shared<core::Mesh>();
 
-            double half_x = properties.size.get().x / 2.0;
-            double half_y = properties.size.get().y / 2.0;
-            double half_z = properties.size.get().z / 2.0;
+            double half_x = size.get().x / 2.0;
+            double half_y = size.get().y / 2.0;
+            double half_z = size.get().z / 2.0;
 
             vrml_proc::math::cgal::CGALPoint vertices[8] = {
                 /** Left back down. */

@@ -4,7 +4,7 @@
 #include <vector>
 
 #include "ConversionContextAction.hpp"
-#include "MeshConversionContext.hpp"
+#include "MeshTaskConversionContext.hpp"
 #include "Vec3f.hpp"
 #include "Vec4f.hpp"
 
@@ -12,12 +12,8 @@
 
 namespace to_stl {
 	namespace action {
-		/**
-		 * @brief Represents a concrete type of Action.
-		 *
-		 * @implements ConversionContextAction
-		 */
-		class VRMLPROCESSING_API TransformAction : public vrml_proc::action::ConversionContextAction<vrml_proc::conversion_context::MeshConversionContext> {
+
+		class VRMLPROCESSING_API TransformAction : public vrml_proc::action::ConversionContextAction<to_stl::conversion_context::MeshTaskConversionContext> {
 
 		public:
 
@@ -29,12 +25,12 @@ namespace to_stl {
 				std::reference_wrapper<const vrml_proc::parser::Vec3f> translation;
 				std::reference_wrapper<const vrml_proc::parser::Vec3f> bboxCenter;
 				std::reference_wrapper<const vrml_proc::parser::Vec3f> bboxSize;
-				std::vector<std::shared_ptr<vrml_proc::conversion_context::MeshConversionContext>> children;
+				std::vector<std::shared_ptr<to_stl::conversion_context::MeshTaskConversionContext>> children;
 			};
 
 			TransformAction(TransformProperties properties);
 
-			std::shared_ptr<vrml_proc::conversion_context::MeshConversionContext> Execute() override;
+			std::shared_ptr<to_stl::conversion_context::MeshTaskConversionContext> Execute() override;
 
 		private:
 			TransformProperties m_properties;

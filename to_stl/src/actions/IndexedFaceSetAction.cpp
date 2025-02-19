@@ -10,13 +10,12 @@
 #include "IndexedFaceSetCalculator.hpp"
 #include "IndexedFaceSetHandler.hpp"
 #include "Logger.hpp"
-#include "MeshConversionContext.hpp"
+#include "MeshTaskConversionContext.hpp"
 #include "TransformationMatrix.hpp"
 #include "Vec3fArray.hpp"
 #include "Vec3fArrayConversionContext.hpp"
 #include "VrmlNodeManager.hpp"
 #include "VrmlNodeTraversor.hpp"
-#include <StlBaseStructure.hpp>
 
 class HelperCoordAction : public vrml_proc::action::ConversionContextAction<to_stl::conversion_context::Vec3fArrayConversionContext> {
 public:
@@ -37,13 +36,13 @@ namespace to_stl {
 	namespace action {
 
 		IndexedFaceSetAction::IndexedFaceSetAction(IndexedFaceSetAction::Properties properties, bool containedByShape) :
-			vrml_proc::action::GeometryAction(containedByShape), m_properties(properties) {}
+			to_stl::action::GeometryAction(containedByShape), m_properties(properties) {}
 
-		std::shared_ptr<vrml_proc::conversion_context::MeshConversionContext> IndexedFaceSetAction::Execute() {
+		std::shared_ptr<to_stl::conversion_context::MeshTaskConversionContext> IndexedFaceSetAction::Execute() {
 
 			vrml_proc::core::logger::LogInfo("Execute IndexedFaceSetAction.", LOGGING_INFO);
 
-			auto result = std::make_shared<vrml_proc::conversion_context::MeshConversionContext>();
+			auto result = std::make_shared<to_stl::conversion_context::MeshTaskConversionContext>();
 			if (!m_containedByShape) {
 				vrml_proc::core::logger::LogDebug("Return empty data because IndexedFaceSet node is not a child of a Shape node.", LOGGING_INFO);
 				return result;
@@ -66,12 +65,17 @@ namespace to_stl {
 				 coord = coordResult.value();
 			}
 
-			vrml_proc::conversion_context::StlBaseStructure entity = vrml_proc::conversion_context::StlBaseStructure({ 1.0, 1.0, 1.0 }, { {1.0, 1.0, 1.0}, {1.0, 1.0, 1.0}, {1.0, 1.0, 1.0} });
-			result->Add(std::move(entity));
+			std::reference_wrapper<const vrml_proc::parser::Vec3fArray> points = std::cref((coordResult.value())->GetData().at(0));
+			std::reference_wrapper<const vrml_proc::parser::Int32Array> indices = m_properties.coordIndex;
+			std::reference_wrapper<const bool> isConvex = m_properties.convex;
 
-			to_stl::calculator::IndexedFaceSetCalculator calculator;
-			auto res = calculator.Generate3DMesh(m_properties.coordIndex, std::cref((coordResult.value())->GetData().at(0)), m_properties.convex, vrml_proc::math::TransformationMatrix());
 
+			vrml_proc::math::TransformationMatrix matrix;
+			result->Add([=]() {
+				to_stl::calculator::IndexedFaceSetCalculator calculator = to_stl::calculator::IndexedFaceSetCalculator();
+				return calculator.Generate3DMesh(indices, points, isConvex, matrix);
+			});
+			
 			return result;
 		}
 	}

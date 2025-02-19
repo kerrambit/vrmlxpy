@@ -5,7 +5,7 @@
 
 #include "GeometryAction.hpp"
 #include "Int32Array.hpp"
-#include "MeshConversionContext.hpp"
+#include "MeshTaskConversionContext.hpp"
 #include "VrmlNode.hpp"
 #include "Int32Array.hpp"
 #include "VrmlUnits.hpp"
@@ -15,7 +15,7 @@
 namespace to_stl {
 	namespace action {
 
-		class VRMLPROCESSING_API IndexedFaceSetAction : public vrml_proc::action::GeometryAction {
+		class VRMLPROCESSING_API IndexedFaceSetAction : public to_stl::action::GeometryAction {
 
 		public:
 
@@ -37,7 +37,7 @@ namespace to_stl {
             };
 
 			IndexedFaceSetAction(Properties properties, bool containedByShape);
-			std::shared_ptr<vrml_proc::conversion_context::MeshConversionContext> Execute() override;
+			std::shared_ptr<to_stl::conversion_context::MeshTaskConversionContext> Execute() override;
 
 		private:
 			Properties m_properties;
