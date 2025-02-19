@@ -25,6 +25,7 @@
 #include <VrmlFileTraversor.hpp>
 #include <VrmlNodeManager.hpp>
 #include <VrmlParser.hpp>
+#include <test.hpp>
 
 static vrml_proc::parser::ParserResult<vrml_proc::parser::VrmlFile> ParseVrmlFile(std::string& text, vrml_proc::parser::VrmlNodeManager& manager) {
 
@@ -659,6 +660,8 @@ TEST_CASE("Parse VRML File - Invalid Input - Simple VRML File - Switch node V.",
     REQUIRE(traversorResult.has_value());
     auto& meshContext = traversorResult.value()->GetData();
     REQUIRE(meshContext.size() == 0);
+
+    taskflow_test();
 }
 
 //TEST_CASE("Parse VRMLFile From File - Valid Input - Actin", "[parsing][valid][fromfile]") {

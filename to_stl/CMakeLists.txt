@@ -113,6 +113,11 @@ target_link_libraries(tostl PRIVATE vrmlproc)
 add_executable(VrmlFileTraversorUnitTests "tests/VrmlFileTraversorTest.cpp")
 add_executable(CalculatorsUnitTests "tests/CalculatorsTest.cpp")
 
+# Apply /bigobj flag for MSVC.
+if (MSVC)
+    target_compile_options(VrmlFileTraversorUnitTests PRIVATE /bigobj)
+endif()
+
 # Link Catch2 with the test executables.
 target_link_libraries(VrmlFileTraversorUnitTests PRIVATE Catch2::Catch2WithMain vrmlproc tostl)
 target_link_libraries(CalculatorsUnitTests PRIVATE Catch2::Catch2WithMain vrmlproc tostl)
