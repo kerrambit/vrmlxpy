@@ -1,9 +1,18 @@
 #include <catch2/catch_test_macros.hpp>
 
+#include <algorithm>
 #include <any>
 #include <cassert>
 #include <filesystem>
+#include <future>
 #include <memory>
+#include <vector>
+#include <any>
+#include <cassert>
+#include <filesystem>
+#include <future>
+#include <memory>
+#include <string>
 #include <vector>
 
 #include "test_data/VrmlFileTraversorTestDataset.hpp"
@@ -13,10 +22,12 @@
 #include <IndexedFaceSetAction.hpp>
 #include <Logger.hpp>
 #include <MemoryMappedFileReader.hpp>
+#include <Mesh.hpp>
 #include <MeshTaskConversionContext.hpp>
 #include <ParserResult.hpp>
 #include <ShapeAction.hpp>
 #include <SwitchAction.hpp>
+#include <test.hpp>
 #include <TransformAction.hpp>
 #include <Vec3f.hpp>
 #include <Vec4f.hpp>
@@ -24,10 +35,6 @@
 #include <VrmlFileTraversor.hpp>
 #include <VrmlNodeManager.hpp>
 #include <VrmlParser.hpp>
-#include <test.hpp>
-#include <future>
-#include <Mesh.hpp>
-#include <algorithm>
 
 #define BASE_OUTPUT_PATH R"(C:\Users\marek\Documents\FI_MUNI\sem_05\SBAPR\vrmlxpy\)"
 
