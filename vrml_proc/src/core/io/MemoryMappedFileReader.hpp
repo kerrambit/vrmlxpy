@@ -12,8 +12,7 @@ namespace vrml_proc::core::io {
 
 	struct MemoryMappedFile {
 
-		MemoryMappedFile(const std::string& filepath)
-			: m_mappedFile(filepath, boost::iostreams::mapped_file::readonly) {}
+		MemoryMappedFile(const std::string& filepath);
 
 		const char* GetBegin() const { return m_mappedFile.const_data(); }
 		const char* GetEnd() const { return m_mappedFile.const_data() + m_mappedFile.size(); }

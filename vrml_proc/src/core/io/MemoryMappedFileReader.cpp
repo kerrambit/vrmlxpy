@@ -12,6 +12,9 @@
 #include "Logger.hpp"
 #include "ManualTimer.hpp"
 
+vrml_proc::core::io::MemoryMappedFile::MemoryMappedFile(const std::string& filepath)
+    : m_mappedFile(filepath, boost::iostreams::mapped_file::readonly) {}
+
 vrml_proc::core::io::FileReader<vrml_proc::core::io::MemoryMappedFile>::LoadFileResult vrml_proc::core::io::MemoryMappedFileReader::Read(const std::filesystem::path& filepath)
 {
     using namespace vrml_proc::core::error;
