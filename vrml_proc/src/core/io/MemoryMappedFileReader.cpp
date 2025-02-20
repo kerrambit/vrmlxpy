@@ -4,11 +4,12 @@
 
 #include <boost/iostreams/device/mapped_file.hpp>
 
+#include "FileReader.hpp"
 #include "Logger.hpp"
 #include "FormatString.hpp"
 #include "ScopedTimer.hpp"
 
-vrml_proc::core::io::FileReader::LoadFileResult vrml_proc::core::io::MemoryMappedFileReader::LoadFile(const std::filesystem::path& filepath)
+vrml_proc::core::io::FileReader<std::string>::LoadFileResult vrml_proc::core::io::MemoryMappedFileReader::Read(const std::filesystem::path& filepath)
 {
     double time;
     std::size_t fileSize;
@@ -21,5 +22,5 @@ vrml_proc::core::io::FileReader::LoadFileResult vrml_proc::core::io::MemoryMappe
     }
 
     vrml_proc::core::logger::LogInfo(vrml_proc::core::utils::FormatString("Time to read and load file <", filepath.string(), "> of size ", fileSize, " bytes into string took ", time, " seconds."), LOGGING_INFO);
-    return { std::move(fileContents) };
+    return std::move(fileContents);
 }
