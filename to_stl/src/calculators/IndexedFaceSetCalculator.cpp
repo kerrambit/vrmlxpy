@@ -42,7 +42,7 @@ namespace to_stl::calculator {
             return cpp::fail(error << (std::make_shared<error::PropertiesError>() << std::make_shared<vrml_proc::parser::model::validator::error::EmptyArrayError>("coordinateIndices")));
         }
 
-        auto timer = vrmlproc::core::utils::ManualTimer();
+        auto timer = vrml_proc::core::utils::ManualTimer();
         timer.Start();
 
         size_t start = 0; size_t end = 0;

@@ -2,7 +2,7 @@
 
 #include <chrono>
 
-namespace vrmlproc {
+namespace vrml_proc {
     namespace core {
         namespace utils {
 

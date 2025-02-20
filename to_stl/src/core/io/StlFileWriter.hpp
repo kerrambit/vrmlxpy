@@ -49,7 +49,7 @@ namespace to_stl::core::io {
             double time;
             bool result;
             {
-                vrmlproc::core::utils::ScopedTimer timer(time);
+                vrml_proc::core::utils::ScopedTimer timer(time);
                 result = CGAL::IO::write_STL(filepath.string(), data);
             }
 

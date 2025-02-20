@@ -27,7 +27,7 @@ namespace vrml_proc {
             double time = 0.0;
             bool success = false;
             {
-                auto timer = vrmlproc::core::utils::ScopedTimer(time);
+                auto timer = vrml_proc::core::utils::ScopedTimer(time);
                 success = boost::spirit::qi::phrase_parse(begin, end, m_grammar, m_skipper, parsedData);
             }
 
@@ -37,7 +37,7 @@ namespace vrml_proc {
                 vrml_proc::core::logger::LogInfo("Populate VrmlNodeManager with DEF nodes.", LOGGING_INFO);
                 double time = 0.0;
                 {
-                    auto timer = vrmlproc::core::utils::ScopedTimer(time);
+                    auto timer = vrml_proc::core::utils::ScopedTimer(time);
                     for (const auto& root : parsedData) {
                         VrmlNodeManagerPopulator::Populate(m_manager, root);
                     }
