@@ -8,7 +8,7 @@
 #include "FormatString.hpp"
 #include "ScopedTimer.hpp"
 
-vrml_proc::core::FileReader::LoadFileResult vrml_proc::core::MemoryMappedFileReader::LoadFile(const std::filesystem::path& filepath)
+vrml_proc::core::io::FileReader::LoadFileResult vrml_proc::core::io::MemoryMappedFileReader::LoadFile(const std::filesystem::path& filepath)
 {
     double time;
     std::size_t fileSize;

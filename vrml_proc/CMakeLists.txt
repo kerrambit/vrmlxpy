@@ -27,12 +27,13 @@ add_library(vrmlproc SHARED
     "src/VrmlProcessingExport.hpp"
 
     # Core.
-    "src/core/FileReader.hpp"
-    "src/core/FileWriter.hpp"
-    "src/core/SimpleFileReader.hpp"
-    "src/core/SimpleFileReader.cpp"
-    "src/core/MemoryMappedFileReader.hpp"
-    "src/core/MemoryMappedFileReader.cpp"
+    "src/core/io/FileReader.hpp"
+    "src/core/io/FileWriter.hpp"
+    "src/core/io/SimpleFileReader.hpp"
+    "src/core/io/SimpleFileReader.cpp"
+    "src/core/io/MemoryMappedFileReader.hpp"
+    "src/core/io/MemoryMappedFileReader.cpp"
+    "src/core/io/errors/IoError.hpp"
 
     "src/core/errors/Error.hpp"
     "src/core/errors/NullPointerError.hpp"
@@ -189,6 +190,8 @@ target_include_directories(vrmlproc PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src
 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/core
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/core/io
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/core/io/errors
     ${CMAKE_CURRENT_SOURCE_DIR}/src/core/contracts
     ${CMAKE_CURRENT_SOURCE_DIR}/src/core/errors
     ${CMAKE_CURRENT_SOURCE_DIR}/src/core/utils
