@@ -31,7 +31,7 @@ static bool CheckInnermostError(std::shared_ptr<vrml_proc::core::error::Error> e
 static vrml_proc::parser::ParserResult<vrml_proc::parser::VrmlFile> ParseVrmlFile(std::string& text, vrml_proc::parser::VrmlNodeManager& manager) {
 
     vrml_proc::parser::VrmlParser parser(manager);
-    return parser.Parse(text);
+    return parser.Parse(text.c_str(), text.c_str() + text.size());
 }
 
 static vrml_proc::parser::ParserResult<vrml_proc::parser::VrmlFile> ParseVrmlFile(const std::filesystem::path& filepath, vrml_proc::parser::VrmlNodeManager& manager) {
@@ -43,7 +43,7 @@ static vrml_proc::parser::ParserResult<vrml_proc::parser::VrmlFile> ParseVrmlFil
     }
 
     vrml_proc::parser::VrmlParser parser(manager);
-    return parser.Parse(readResult.value());
+    return parser.Parse(readResult.value().GetBegin(), readResult.value().GetEnd());
 }
 
 static void HandleRootLevelError(std::shared_ptr<vrml_proc::core::error::Error> error) {

@@ -13,11 +13,11 @@ static std::optional<vrml_proc::parser::Vec3f> ParseVec3f(std::string& text) {
 
     auto iterator = text.begin();
 
-    vrml_proc::parser::Vec3fGrammar <std::string::iterator, vrml_proc::parser::CommentSkipper> grammar;
+    vrml_proc::parser::Vec3fGrammar <const char*, vrml_proc::parser::CommentSkipper> grammar;
     vrml_proc::parser::Vec3f data;
     vrml_proc::parser::CommentSkipper skipper;
 
-    bool success = boost::spirit::qi::phrase_parse(iterator, text.end(), grammar, skipper, data);
+    bool success = boost::spirit::qi::phrase_parse(text.c_str(), text.c_str() + text.size(), grammar, skipper, data);
     if (success) {
         return data;
     }

@@ -18,21 +18,20 @@ namespace vrml_proc {
 
 	namespace parser {
 
-        ParserResult<VrmlFile> VrmlParser::Parse(std::string& string)
+        ParserResult<VrmlFile> VrmlParser::Parse(const char* begin, const char* end)
 		{
             vrml_proc::core::logger::LogInfo("Parse VRML file content.", LOGGING_INFO);
 
-            auto iterator = string.begin();
             std::vector<VrmlNode> parsedData;
 
             double time = 0.0;
             bool success = false;
             {
                 auto timer = vrmlproc::core::utils::ScopedTimer(time);
-                success = boost::spirit::qi::phrase_parse(iterator, string.end(), m_grammar, m_skipper, parsedData);
+                success = boost::spirit::qi::phrase_parse(begin, end, m_grammar, m_skipper, parsedData);
             }
 
-            if (success && iterator == string.end()) {
+            if (success && begin == end) {
                 vrml_proc::core::logger::LogInfo(vrml_proc::core::utils::FormatString("Parsing was successful. The whole parsing and AST creation process took ", time, "seconds."), LOGGING_INFO);
 
                 vrml_proc::core::logger::LogInfo("Populate VrmlNodeManager with DEF nodes.", LOGGING_INFO);

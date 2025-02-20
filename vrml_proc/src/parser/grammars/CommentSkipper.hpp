@@ -7,7 +7,7 @@
 namespace vrml_proc {
     namespace parser {
 
-        struct CommentSkipper : boost::spirit::qi::grammar<std::string::iterator> {
+        struct CommentSkipper : boost::spirit::qi::grammar<const char*> {
 
             CommentSkipper()
                 : CommentSkipper::base_type(start) {
@@ -20,8 +20,8 @@ namespace vrml_proc {
                 BOOST_SPIRIT_DEBUG_NODE(start);
             }
 
-            boost::spirit::qi::rule<std::string::iterator> singleLineComment;
-            boost::spirit::qi::rule<std::string::iterator> start;
+            boost::spirit::qi::rule<const char*> singleLineComment;
+            boost::spirit::qi::rule<const char*> start;
         };
     }
 }

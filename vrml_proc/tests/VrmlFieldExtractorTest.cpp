@@ -29,7 +29,7 @@
 static vrml_proc::parser::ParserResult<vrml_proc::parser::VrmlFile> ParseVrmlFile(std::string& text, vrml_proc::parser::VrmlNodeManager& manager) {
 
     vrml_proc::parser::VrmlParser parser(manager);
-    return parser.Parse(text);
+    return parser.Parse(text.c_str(), text.c_str() + text.size());
 }
 
 TEST_CASE("Initialization") {
