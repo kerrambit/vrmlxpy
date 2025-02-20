@@ -26,6 +26,7 @@ add_library(tostl SHARED
     # Core.
     "src/core/Mesh.hpp"
     "src/core/MeshTask.hpp"
+    "src/core/io/StlFileWriter.hpp"
 
     # Actions.
     "src/actions/GeometryAction.hpp"
@@ -79,6 +80,7 @@ target_include_directories(tostl PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src/calculators
     ${CMAKE_CURRENT_SOURCE_DIR}/src/calculators/errors
     ${CMAKE_CURRENT_SOURCE_DIR}/src/core
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/core/io
 
     ${CMAKE_CURRENT_SOURCE_DIR}/../vrml_proc/src
 

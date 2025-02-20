@@ -29,6 +29,7 @@
 #include <VrmlFileTraversor.hpp>
 #include <VrmlNodeManager.hpp>
 #include <VrmlParser.hpp>
+#include <StlFileWriter.hpp>
 
 #define BASE_OUTPUT_PATH R"(C:\Users\marek\Documents\FI_MUNI\sem_05\SBAPR\vrmlxpy\)"
 
@@ -45,8 +46,8 @@ static vrml_proc::parser::ParserResult<vrml_proc::parser::VrmlFile> ParseVrmlFil
 
 static vrml_proc::parser::ParserResult<vrml_proc::parser::VrmlFile> ParseVrmlFile(const std::filesystem::path& filepath, vrml_proc::parser::VrmlNodeManager& manager) {
 
-    vrml_proc::core::MemoryMappedFileReader reader;
-    auto readResult = reader.LoadFile(filepath);
+    vrml_proc::core::io::MemoryMappedFileReader reader;
+    auto readResult = reader.Read(filepath);
     if (!readResult.has_value()) {
         return {};
     }
@@ -82,7 +83,8 @@ static void ExportToStl(const std::vector<to_stl::core::MeshTask>& meshContext, 
         }
     };
 
-    export_to_stl(mesh, filepath.string());
+    to_stl::core::io::StlFileWriter writer;
+    writer.Write(filepath, mesh);
 }
 
 static vrml_proc::action::ConversionContextActionMap<to_stl::conversion_context::MeshTaskConversionContext>& GetActionMap() {

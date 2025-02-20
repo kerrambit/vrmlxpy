@@ -36,8 +36,8 @@ static vrml_proc::parser::ParserResult<vrml_proc::parser::VrmlFile> ParseVrmlFil
 
 static vrml_proc::parser::ParserResult<vrml_proc::parser::VrmlFile> ParseVrmlFile(const std::filesystem::path& filepath, vrml_proc::parser::VrmlNodeManager& manager) {
 
-    vrml_proc::core::MemoryMappedFileReader reader;
-    auto readResult = reader.LoadFile(filepath);
+    vrml_proc::core::io::MemoryMappedFileReader reader;
+    auto readResult = reader.Read(filepath);
     if (!readResult.has_value()) {
         return {};
     }
