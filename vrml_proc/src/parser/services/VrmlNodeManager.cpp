@@ -3,6 +3,7 @@
 #include <optional>
 #include <functional>
 #include <string>
+
 #include "Logger.hpp"
 #include "FormatString.hpp"
 
@@ -25,12 +26,12 @@ void vrml_proc::parser::VrmlNodeManager::AddDefinitionNode(const std::string& id
 
 std::optional<std::reference_wrapper<const vrml_proc::parser::VrmlNode>> vrml_proc::parser::VrmlNodeManager::GetDefinitionNode(const std::string& id) const
 {
-    vrml_proc::core::logger::LogInfo(vrml_proc::core::utils::FormatString("Retrieve DEF node with id <", id, "> from the map."), LOGGING_INFO);
+    vrml_proc::core::logger::LogDebug(vrml_proc::core::utils::FormatString("Retrieve DEF node with id <", id, "> from the map."), LOGGING_INFO);
     auto it = m_definitionNodes.find(id);
     if (it != m_definitionNodes.end()) {
         return it->second;
     }
 
-    vrml_proc::core::logger::LogWarning(vrml_proc::core::utils::FormatString("DEF node with id <", id, "> was not found in the map!"), LOGGING_INFO);
+    vrml_proc::core::logger::LogDebug(vrml_proc::core::utils::FormatString("DEF node with id <", id, "> was not found in the map!"), LOGGING_INFO);
     return {};
 }
