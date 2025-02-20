@@ -10,19 +10,27 @@
 
 #include "BoxAction.hpp"
 #include "CalculatorError.hpp"
+#include "CGALBaseTypesForVrml.hpp"
 #include "Error.hpp"
+#include "FormatString.hpp"
+#include "Logger.hpp"
+#include "ManualTimer.hpp"
 #include "Mesh.hpp"
 #include "ModelValidator.hpp"
-#include "CGALBaseTypesForVrml.hpp"
 
 namespace to_stl {
 	namespace calculator {
 		cpp::result<std::shared_ptr<core::Mesh>, std::shared_ptr<vrml_proc::core::error::Error>> BoxCalculator::Generate3DMesh(std::reference_wrapper<const vrml_proc::parser::Vec3f> size, const vrml_proc::math::TransformationMatrix& matrix) {
 
+            vrml_proc::core::logger::LogInfo("Generate 3D mesh using BoxCalculator.", LOGGING_INFO);
+
             auto checkResult = vrml_proc::parser::model::validator::CheckVec3fIsGreaterThanZero(size.get());
             if (checkResult.has_error()) {
                 return cpp::fail(std::make_shared<error::BoxCalculatorError>() << (std::make_shared<error::PropertiesError>() << checkResult.error()));
             }
+
+            auto timer = vrmlproc::core::utils::ManualTimer();
+            timer.Start();
 
             auto mesh = std::make_shared<core::Mesh>();
 
@@ -78,6 +86,9 @@ namespace to_stl {
             /** Left face. */
             mesh->add_face(v[0], v[4], v[7]);
             mesh->add_face(v[0], v[7], v[3]);
+
+            double time = timer.End();
+            vrml_proc::core::logger::LogInfo(vrml_proc::core::utils::FormatString("Mesh was generated successfully. The generation took ", time, " seconds."), LOGGING_INFO);
 
             return mesh;
 		}
