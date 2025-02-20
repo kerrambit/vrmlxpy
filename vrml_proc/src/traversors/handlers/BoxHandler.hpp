@@ -32,6 +32,6 @@ namespace vrml_proc::traversor::handler::BoxHandler {
 		static vrml_proc::parser::Vec3f defaultSize = { 2.0f, 2.0f, 2.0f };
 		std::any cachedSize = validator.GetCachedSize(defaultSize);
 
-		return vrml_proc::traversor::utils::ConversionContextActionExecutor::TryToExecute<ConversionContext>(actionMap, "Box", { std::cref(cachedSize) }, { context.IsDescendantOfShape });
+		return vrml_proc::traversor::utils::ConversionContextActionExecutor::TryToExecute<ConversionContext>(actionMap, "Box", { std::cref(cachedSize) }, { context.IsDescendantOfShape, context.transformation });
 	}
 }

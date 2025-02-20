@@ -7,7 +7,6 @@
 #include "Int32Array.hpp"
 #include "MeshTaskConversionContext.hpp"
 #include "VrmlNode.hpp"
-#include "Int32Array.hpp"
 #include "VrmlUnits.hpp"
 
 #include "VrmlProcessingExport.hpp"
@@ -36,7 +35,7 @@ namespace to_stl {
                 std::reference_wrapper<const vrml_proc::parser::Int32Array> texCoordIndex;
             };
 
-			IndexedFaceSetAction(Properties properties, bool containedByShape);
+			IndexedFaceSetAction(Properties properties, GeometryAction::Properties geometryProperties);
 			std::shared_ptr<to_stl::conversion_context::MeshTaskConversionContext> Execute() override;
 
 		private:

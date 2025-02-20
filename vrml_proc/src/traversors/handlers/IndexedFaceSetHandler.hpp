@@ -83,6 +83,6 @@ namespace vrml_proc::traversor::handler::IndexedFaceSetHandler {
                 std::cref(normalPerVertex),
                 std::cref(solid),
                 std::cref(texCoordIndex),
-            }, { context.IsDescendantOfShape });
+            }, { context.IsDescendantOfShape, context.transformation });
     }
 }

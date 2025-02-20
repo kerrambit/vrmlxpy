@@ -4,6 +4,7 @@
 
 #include "ConversionContextAction.hpp"
 #include "MeshTaskConversionContext.hpp"
+#include "TransformationMatrix.hpp"
 
 namespace to_stl {
 	namespace action {
@@ -11,12 +12,18 @@ namespace to_stl {
 		class GeometryAction : public vrml_proc::action::ConversionContextAction<to_stl::conversion_context::MeshTaskConversionContext> {
 
 		public:
-			explicit GeometryAction(bool containedByShape) :
-				m_containedByShape(containedByShape) {}
+
+			struct Properties {
+				bool containedByShape;
+				vrml_proc::math::TransformationMatrix matrix;
+			};
+
+			explicit GeometryAction(Properties properties) :
+				m_geometryProperties(properties) {}
 
 			virtual std::shared_ptr<to_stl::conversion_context::MeshTaskConversionContext> Execute() = 0;
 		protected:
-			bool m_containedByShape;
+			Properties m_geometryProperties;
 		};
 	}
 }

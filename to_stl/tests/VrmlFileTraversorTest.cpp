@@ -6,12 +6,6 @@
 #include <filesystem>
 #include <future>
 #include <memory>
-#include <vector>
-#include <any>
-#include <cassert>
-#include <filesystem>
-#include <future>
-#include <memory>
 #include <string>
 #include <vector>
 
@@ -96,10 +90,22 @@ static vrml_proc::action::ConversionContextActionMap<to_stl::conversion_context:
     static vrml_proc::action::ConversionContextActionMap<to_stl::conversion_context::MeshTaskConversionContext> actionMap;
 
     actionMap.AddAction("Box", [](const vrml_proc::action::ConversionContextActionMap<to_stl::conversion_context::MeshTaskConversionContext>::ReferencedArguments& refArgs,
+        
         const vrml_proc::action::ConversionContextActionMap<to_stl::conversion_context::MeshTaskConversionContext>::CopiedArguments& copyArgs) {
-            if (refArgs.size() == 1 && refArgs[0].get().type() == typeid(std::reference_wrapper<const vrml_proc::parser::Vec3f>) &&
-                copyArgs.size() == 1 && copyArgs[0].type() == typeid(bool)) {
-                return std::make_shared<to_stl::action::BoxAction>(std::any_cast<std::reference_wrapper<const vrml_proc::parser::Vec3f>>(refArgs[0]), std::any_cast<bool>(copyArgs[0]));
+            if (refArgs.size() == 1 &&
+                refArgs[0].get().type() == typeid(std::reference_wrapper<const vrml_proc::parser::Vec3f>) &&
+                copyArgs.size() == 2 &&
+                copyArgs[0].type() == typeid(bool) &&
+                copyArgs[1].type() == typeid(vrml_proc::math::TransformationMatrix)) {
+
+
+                return std::make_shared<to_stl::action::BoxAction>(
+                    to_stl::action::BoxAction::Properties{ std::any_cast<std::reference_wrapper<const vrml_proc::parser::Vec3f>>(refArgs[0])},
+                    to_stl::action::GeometryAction::Properties{
+                        std::any_cast<bool>(copyArgs[0]),
+                        std::any_cast<vrml_proc::math::TransformationMatrix>(copyArgs[1])
+                    }
+                );
             }
             assert(false && "Invalid arguments for BoxAction");
         });
@@ -197,8 +203,9 @@ static vrml_proc::action::ConversionContextActionMap<to_stl::conversion_context:
             using vrml_proc::parser::Int32Array;
             using vrml_proc::parser::float32_t;
 
-            if (refArgs.size() == 14 && copyArgs.size() == 1 &&
+            if (refArgs.size() == 14 && copyArgs.size() == 2 &&
                 copyArgs[0].type() == typeid(bool) &&
+                copyArgs[1].type() == typeid(vrml_proc::math::TransformationMatrix) &&
                 refArgs[0].get().type() == typeid(std::reference_wrapper<const VrmlNode>) &&
                 refArgs[1].get().type() == typeid(std::reference_wrapper<const VrmlNode>) &&
                 refArgs[2].get().type() == typeid(std::reference_wrapper<const VrmlNode>) &&
@@ -233,7 +240,10 @@ static vrml_proc::action::ConversionContextActionMap<to_stl::conversion_context:
 
                 return std::make_shared<to_stl::action::IndexedFaceSetAction>(
                     properties,
-                    std::any_cast<bool>(copyArgs[0])
+                    to_stl::action::GeometryAction::Properties{
+                        std::any_cast<bool>(copyArgs[0]),
+                        std::any_cast<vrml_proc::math::TransformationMatrix>(copyArgs[1])
+                    }
                 );
             }
 

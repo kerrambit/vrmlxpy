@@ -19,7 +19,7 @@ namespace to_stl {
 				std::reference_wrapper<const vrml_proc::parser::Vec3f> size;
 			};
 
-			BoxAction(std::reference_wrapper<const vrml_proc::parser::Vec3f> size, bool containedByShape);
+			BoxAction(Properties properties, GeometryAction::Properties geometryProperties);
 			std::shared_ptr<to_stl::conversion_context::MeshTaskConversionContext> Execute() override;
 
 		private:
