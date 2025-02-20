@@ -37,6 +37,19 @@ namespace vrml_proc::core::io::error {
         std::string m_directoryPath;
     };
 
+    class FileNotFoundError : public IoError {
+    public:
+        FileNotFoundError(const std::string& filePath) : m_filePath(filePath) {}
+    protected:
+        std::string GetMessageInternal() const override {
+            std::ostringstream oss;
+            oss << IoError::GetMessageInternal() << "[FileNotFoundError]: file <" << m_filePath << "> was not found!\n";
+            return oss.str();
+        }
+    private:
+        std::string m_filePath;
+    };
+
     class GeneralWriteError : public IoError {
     public:
         GeneralWriteError(const std::string& filepath) : m_filepath(filepath) {}
