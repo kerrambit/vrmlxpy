@@ -1,7 +1,6 @@
 #include "IndexedFaceSetCalculator.hpp"
 
 #include <cstdint>
-#include <cstdlib>
 #include <memory>
 #include <vector>
 
@@ -14,18 +13,20 @@
 #include "CalculatorError.hpp"
 #include "CGALBaseTypesForVrml.hpp"
 #include "Error.hpp"
+#include "FormatString.hpp"
 #include "Int32Array.hpp"
 #include "Logger.hpp"
+#include "ManualTimer.hpp"
 #include "Mesh.hpp"
 #include "ModelValidationError.hpp"
 #include "Range.hpp"
 #include "UnsupportedOperationError.hpp"
 
-#include <test.hpp>
-
 namespace to_stl::calculator {
     cpp::result<std::shared_ptr<core::Mesh>, std::shared_ptr<vrml_proc::core::error::Error>>
         IndexedFaceSetCalculator::Generate3DMesh(std::reference_wrapper<const vrml_proc::parser::Int32Array> coordinateIndices, std::reference_wrapper<const vrml_proc::parser::Vec3fArray> coordinates, std::reference_wrapper<const bool> isConvex, const vrml_proc::math::TransformationMatrix& matrix) {
+
+        vrml_proc::core::logger::LogInfo("Generate 3D mesh using IndexedFaceSetCalculator.", LOGGING_INFO);
 
         auto mesh = std::make_shared<core::Mesh>();
         auto error = std::make_shared<error::IndexedFaceSetCalculatorError>();
@@ -41,10 +42,11 @@ namespace to_stl::calculator {
             return cpp::fail(error << (std::make_shared<error::PropertiesError>() << std::make_shared<vrml_proc::parser::model::validator::error::EmptyArrayError>("coordinateIndices")));
         }
 
-        vrml_proc::core::utils::Range<int32_t> range(0, points.size() - 1);
+        auto timer = vrmlproc::core::utils::ManualTimer();
+        timer.Start();
 
-        size_t start = 0;
-        size_t end = 0;
+        size_t start = 0; size_t end = 0;
+        vrml_proc::core::utils::Range<int32_t> range(0, points.size() - 1);
         for (size_t i = 0; i < indicides.size(); ++i) {
             
             if (indicides[i] == -1) {
@@ -102,7 +104,9 @@ namespace to_stl::calculator {
             end++;
         }
 
-        export_to_stl(*mesh, R"(C:\Users\marek\Documents\FI_MUNI\sem_05\SBAPR\vrmlxpy\EXPERIMENT2.stl)");
+        double time = timer.End();
+        vrml_proc::core::logger::LogInfo(vrml_proc::core::utils::FormatString("Mesh was generated successfully. The generation took ", time, " seconds."), LOGGING_INFO);
+
         return mesh;
 	}
 }

@@ -25,16 +25,12 @@ add_library(tostl SHARED
 
     # Core.
     "src/core/Mesh.hpp"
+    "src/core/MeshTask.hpp"
 
     # Actions.
+    "src/actions/GeometryAction.hpp"
     "src/actions/IndexedFaceSetAction.hpp"
-    "src/actions/IndexedFaceSetAction.cpp"
-    "src/actions/CoordinateAction.hpp"
-    "src/actions/CoordinateAction.cpp"
-    "src/actions/NormalAction.hpp"
-    "src/actions/NormalAction.cpp"
-    "src/actions/TextureCoordinateAction.hpp"
-    "src/actions/TextureCoordinateAction.cpp"
+    "src/actions/IndexedFaceSetAction.cpp"      
     "src/actions/GroupAction.hpp"
     "src/actions/GroupAction.cpp"
     "src/actions/BoxAction.hpp"
@@ -48,6 +44,7 @@ add_library(tostl SHARED
 
     # Conversion contexts
     "src/conversion_context/Vec3fArrayConversionContext.hpp"
+    "src/conversion_context/MeshTaskConversionContext.hpp"
     #"src/conversion_context/ConversionContextMap.Vec3fArrayConversionContext.cpp"
     #"src/conversion_context/VrmlNodeTraversor.Vec3fArrayConversionContext.cpp"
 
@@ -64,6 +61,7 @@ add_library(tostl SHARED
     #"src/conversion_context/TextureCoordinateHandler.Vec3fArrayConversionContext.cpp"
 
     # Calculators.
+    "src/calculators/CalculatorResult.hpp"
     "src/calculators/BoxCalculator.hpp"
     "src/calculators/BoxCalculator.cpp"
     "src/calculators/IndexedFaceSetCalculator.hpp"
@@ -112,6 +110,11 @@ target_link_libraries(tostl PRIVATE vrmlproc)
 # Add the test executables.
 add_executable(VrmlFileTraversorUnitTests "tests/VrmlFileTraversorTest.cpp")
 add_executable(CalculatorsUnitTests "tests/CalculatorsTest.cpp")
+
+# Apply /bigobj flag for MSVC.
+if (MSVC)
+    target_compile_options(VrmlFileTraversorUnitTests PRIVATE /bigobj)
+endif()
 
 # Link Catch2 with the test executables.
 target_link_libraries(VrmlFileTraversorUnitTests PRIVATE Catch2::Catch2WithMain vrmlproc tostl)

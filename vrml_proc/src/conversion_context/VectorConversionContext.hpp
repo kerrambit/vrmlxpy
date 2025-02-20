@@ -37,7 +37,15 @@ namespace vrml_proc {
 			 * 
 			 * @param entity new data entity
 			 */
-			inline void Add(T entity) {
+			inline void Add(T&& entity) {
+				this->m_data.push_back(std::move(entity));
+			}
+			/**
+			 * @brief Adds new data entity by a copy.
+			 *
+			 * @param entity new data entity
+			 */
+			inline void CopyAndAdd(T entity) {
 				this->m_data.push_back(entity);
 			}
 			/**

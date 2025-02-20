@@ -3,7 +3,7 @@
 #include <memory>
 
 #include "GeometryAction.hpp"
-#include "MeshConversionContext.hpp"
+#include "MeshTaskConversionContext.hpp"
 #include "Vec3f.hpp"
 
 #include "VrmlProcessingExport.hpp"
@@ -11,16 +11,16 @@
 namespace to_stl {
 	namespace action {
 
-		class VRMLPROCESSING_API BoxAction : public vrml_proc::action::GeometryAction {
+		class VRMLPROCESSING_API BoxAction : public to_stl::action::GeometryAction {
 
 		public:
 
-			struct BoxProperties {
+			struct Properties {
 				std::reference_wrapper<const vrml_proc::parser::Vec3f> size;
 			};
 
-			BoxAction(std::reference_wrapper<const vrml_proc::parser::Vec3f> size, bool containedByShape);
-			std::shared_ptr<vrml_proc::conversion_context::MeshConversionContext> Execute() override;
+			BoxAction(Properties properties, GeometryAction::Properties geometryProperties);
+			std::shared_ptr<to_stl::conversion_context::MeshTaskConversionContext> Execute() override;
 
 		private:
 			std::reference_wrapper<const vrml_proc::parser::Vec3f> m_size;

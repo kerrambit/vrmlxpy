@@ -39,6 +39,7 @@ add_library(vrmlproc SHARED
     "src/core/errors/UnsupportedOperationError.hpp"
 
     "src/core/utils/ScopedTimer.hpp"
+    "src/core/utils/ManualTimer.hpp"
     "src/core/utils/TypeToString.hpp"
     "src/core/utils/Range.hpp"
     "src/core/utils/FormatString.hpp"
@@ -172,7 +173,6 @@ add_library(vrmlproc SHARED
     "src/actions/ConversionContextActionMap.hpp"
     #"src/actions/ConversionContextActionMap.cpp"
     "src/actions/ConversionContextAction.hpp"
-    "src/actions/GeometryAction.hpp"
 
     # Math
     "src/math/Transformation.hpp"
