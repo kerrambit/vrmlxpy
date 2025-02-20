@@ -93,6 +93,7 @@ add_library(vrmlproc SHARED
     "src/parser/interfaces/Printable.hpp"
     "src/parser/interfaces/Printable.cpp"
 
+    "src/parser/BufferView.hpp"
     "src/parser/Parser.hpp"
     "src/parser/ParserResult.hpp"
     "src/parser/VrmlParser.hpp"

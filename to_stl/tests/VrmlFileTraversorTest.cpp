@@ -30,6 +30,7 @@
 #include <VrmlNodeManager.hpp>
 #include <VrmlParser.hpp>
 #include <StlFileWriter.hpp>
+#include <BufferView.hpp>
 
 #define BASE_OUTPUT_PATH R"(C:\Users\marek\Documents\FI_MUNI\sem_05\SBAPR\vrmlxpy\)"
 
@@ -41,7 +42,7 @@
 static vrml_proc::parser::ParserResult<vrml_proc::parser::VrmlFile> ParseVrmlFile(std::string& text, vrml_proc::parser::VrmlNodeManager& manager) {
 
     vrml_proc::parser::VrmlParser parser(manager);
-    return parser.Parse(text.c_str(), text.c_str() + text.size());
+    return parser.Parse(vrml_proc::parser::BufferView(text.c_str(), text.c_str() + text.size()));
 }
 
 static vrml_proc::parser::ParserResult<vrml_proc::parser::VrmlFile> ParseVrmlFile(const std::filesystem::path& filepath, vrml_proc::parser::VrmlNodeManager& manager) {
@@ -54,7 +55,7 @@ static vrml_proc::parser::ParserResult<vrml_proc::parser::VrmlFile> ParseVrmlFil
 
     vrml_proc::parser::VrmlParser parser(manager);
     vrml_proc::core::io::MemoryMappedFile file = readResult.value();
-    return parser.Parse(file.GetBegin(), file.GetEnd());
+    return parser.Parse(vrml_proc::parser::BufferView(file.GetBegin(), file.GetEnd()));
 }
 
 static void HandleRootLevelError(const cpp::result<std::shared_ptr<to_stl::conversion_context::MeshTaskConversionContext>, std::shared_ptr<vrml_proc::core::error::Error>>& result) {

@@ -16,7 +16,7 @@ namespace vrml_proc {
 
 			virtual ~Parser() = default;
 
-			virtual ParserResult<ResultType> Parse(SourceType start, SourceType end) = 0;
+			virtual ParserResult<ResultType> Parse(SourceType source) = 0;
 		};
 	}
 }
