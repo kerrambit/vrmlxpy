@@ -11,6 +11,8 @@
 
 #include "test_data/VrmlFileTraversorTestDataset.hpp"
 #include <BoxAction.hpp>
+#include <BufferView.hpp>
+#include <CalculatorResult.hpp>
 #include <ConversionContextActionMap.hpp>
 #include <GroupAction.hpp>
 #include <IndexedFaceSetAction.hpp>
@@ -20,8 +22,8 @@
 #include <MeshTaskConversionContext.hpp>
 #include <ParserResult.hpp>
 #include <ShapeAction.hpp>
+#include <StlFileWriter.hpp>
 #include <SwitchAction.hpp>
-#include <test.hpp>
 #include <TransformAction.hpp>
 #include <Vec3f.hpp>
 #include <Vec4f.hpp>
@@ -29,8 +31,6 @@
 #include <VrmlFileTraversor.hpp>
 #include <VrmlNodeManager.hpp>
 #include <VrmlParser.hpp>
-#include <StlFileWriter.hpp>
-#include <BufferView.hpp>
 
 #define BASE_OUTPUT_PATH R"(C:\Users\marek\Documents\FI_MUNI\sem_05\SBAPR\vrmlxpy\)"
 
@@ -70,7 +70,7 @@ static void HandleRootLevelError(std::shared_ptr<vrml_proc::core::error::Error> 
 
 static void ExportToStl(const std::vector<to_stl::core::MeshTask>& meshContext, const std::filesystem::path& filepath) {
 
-    std::vector<std::future<CalculatorResult>> results;
+    std::vector<std::future<to_stl::calculator::CalculatorResult>> results;
 
     for (const auto& task : meshContext) {
         if (task) {
@@ -92,6 +92,15 @@ static void ExportToStl(const std::vector<to_stl::core::MeshTask>& meshContext, 
 static vrml_proc::action::ConversionContextActionMap<to_stl::conversion_context::MeshTaskConversionContext>& GetActionMap() {
 
     static vrml_proc::action::ConversionContextActionMap<to_stl::conversion_context::MeshTaskConversionContext> actionMap;
+    static bool initialized = false;
+
+    if (initialized) {
+        return actionMap;
+    }
+
+    if (!initialized) {
+        initialized = true;
+    }
 
     actionMap.AddAction("Box", [](const vrml_proc::action::ConversionContextActionMap<to_stl::conversion_context::MeshTaskConversionContext>::ReferencedArguments& refArgs,
         
