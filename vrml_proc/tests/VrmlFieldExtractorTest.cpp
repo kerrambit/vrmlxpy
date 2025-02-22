@@ -570,3 +570,124 @@ TEST_CASE("ExtractVrmlNodeExtended - VrmlNode", "[valid]") {
     REQUIRE(result.has_value());
     CHECK(&(result.value().get()) == &geometry);
 }
+
+TEST_CASE("ExtractByNameExtended - Edge cases - Int as int", "[valid]") {
+
+    vrml_proc::parser::VrmlNodeManager manager;
+    auto parseResult = ParseVrmlFile(floatIntEdgeCase, manager);
+    REQUIRE(parseResult);
+
+    auto& fieldsOfRoot = parseResult.value().at(0).fields;
+    int32_t* ptr = boost::get<int32_t>(&fieldsOfRoot.at(0).value);
+
+    std::string invalidType;
+    auto result = vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractByNameExtended<int32_t>("int", fieldsOfRoot, invalidType);
+    REQUIRE(result.has_value());
+    CHECK(ptr == &(result.value().get()));
+}
+
+TEST_CASE("ExtractByNameExtended - Edge cases - Int as float", "[valid]") {
+
+    vrml_proc::parser::VrmlNodeManager manager;
+    auto parseResult = ParseVrmlFile(floatIntEdgeCase, manager);
+    REQUIRE(parseResult);
+
+    auto& fieldsOfRoot = parseResult.value().at(0).fields;
+    vrml_proc::parser::float32_t* ptr = boost::get<vrml_proc::parser::float32_t>(&fieldsOfRoot.at(0).value);
+
+    std::string invalidType;
+    auto result = vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractByNameExtended<vrml_proc::parser::float32_t>("int", fieldsOfRoot, invalidType);
+    REQUIRE(result.has_value());
+}
+
+TEST_CASE("ExtractByNameExtended - Edge cases - Float without decimal as int", "[valid]") {
+
+    vrml_proc::parser::VrmlNodeManager manager;
+    auto parseResult = ParseVrmlFile(floatIntEdgeCase, manager);
+    REQUIRE(parseResult);
+
+    auto& fieldsOfRoot = parseResult.value().at(0).fields;
+    int32_t* ptr = boost::get<int32_t>(&fieldsOfRoot.at(1).value);
+
+    std::string invalidType;
+    auto result = vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractByNameExtended<int32_t>("float_without_decimals", fieldsOfRoot, invalidType);
+    REQUIRE(result.has_value());
+}
+
+TEST_CASE("ExtractByNameExtended - Edge cases - Float without decimal as float", "[valid]") {
+
+    vrml_proc::parser::VrmlNodeManager manager;
+    auto parseResult = ParseVrmlFile(floatIntEdgeCase, manager);
+    REQUIRE(parseResult);
+
+    auto& fieldsOfRoot = parseResult.value().at(0).fields;
+    vrml_proc::parser::float32_t* ptr = boost::get<vrml_proc::parser::float32_t>(&fieldsOfRoot.at(1).value);
+
+    std::string invalidType;
+    auto result = vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractByNameExtended<vrml_proc::parser::float32_t>("float_without_decimals", fieldsOfRoot, invalidType);
+    REQUIRE(result.has_value());
+    CHECK(ptr == &(result.value().get()));
+}
+
+TEST_CASE("ExtractByNameExtended - Edge cases - Float as int", "[valid]") {
+
+    vrml_proc::parser::VrmlNodeManager manager;
+    auto parseResult = ParseVrmlFile(floatIntEdgeCase, manager);
+    REQUIRE(parseResult);
+
+    auto& fieldsOfRoot = parseResult.value().at(0).fields;
+    int32_t* ptr = boost::get<int32_t>(&fieldsOfRoot.at(2).value);
+
+    std::string invalidType;
+    auto result = vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractByNameExtended<int32_t>("float", fieldsOfRoot, invalidType);
+    REQUIRE(result.has_error());
+}
+
+TEST_CASE("ExtractByNameExtended - Edge cases - Float as float", "[valid]") {
+
+    vrml_proc::parser::VrmlNodeManager manager;
+    auto parseResult = ParseVrmlFile(floatIntEdgeCase, manager);
+    REQUIRE(parseResult);
+
+    auto& fieldsOfRoot = parseResult.value().at(0).fields;
+    vrml_proc::parser::float32_t* ptr = boost::get<vrml_proc::parser::float32_t>(&fieldsOfRoot.at(2).value);
+
+    std::string invalidType;
+    auto result = vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractByNameExtended<vrml_proc::parser::float32_t>("float", fieldsOfRoot, invalidType);
+    REQUIRE(result.has_value());
+    CHECK(ptr == &(result.value().get()));
+}
+
+TEST_CASE("ExtractByNameExtended - Edge cases - Complicated example", "[valid]") {
+
+    vrml_proc::parser::VrmlNodeManager manager;
+    auto parseResult = ParseVrmlFile(complicatedEdgeCase, manager);
+    REQUIRE(parseResult);
+
+    auto& fieldsOfFirst = parseResult.value().at(1).fields;
+    auto& nodeFirst = vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractVrmlNode("children", fieldsOfFirst, manager).value().get();
+    auto result1 = vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractByName<vrml_proc::parser::float32_t>("float", nodeFirst.fields);
+    REQUIRE(result1.has_value());
+
+    auto& fieldsOfSecond = parseResult.value().at(2).fields;
+    auto& nodeSecond = vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractVrmlNode("children", fieldsOfSecond, manager).value().get();
+    auto result2 = vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractByName<vrml_proc::parser::float32_t>("float", nodeSecond.fields);
+    REQUIRE(result2.has_value());
+
+    CHECK(&(result1.value().get()) == &(result2.value().get()));
+
+    auto result3 = vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractByName<int32_t>("int", nodeFirst.fields);
+    REQUIRE(result3.has_value());
+
+    auto result4 = vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractByName<int32_t>("int", nodeSecond.fields);
+    REQUIRE(result4.has_value());
+
+    CHECK(&(result3.value().get()) == &(result4.value().get()));
+    
+    auto& fieldsOfThird = parseResult.value().at(3).fields;
+    auto result5 = vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractByName<vrml_proc::parser::float32_t>("float", fieldsOfThird);
+    auto result6 = vrml_proc::parser::model::utils::VrmlFieldExtractor::ExtractByName<int32_t>("int", fieldsOfThird);
+
+    CHECK_FALSE(&(result5.value().get()) == &(result1.value().get()));
+    CHECK_FALSE(&(result6.value().get()) == &(result3.value().get()));
+}

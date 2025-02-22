@@ -31,9 +31,9 @@ namespace vrml_proc {
 			public:
 
 				/**
-				 * @brief Pure virtual method. Method validates an entity and returns NodeValidationError.
+				 * @brief Pure virtual method. Method validates an entity.
 				 * 
-				 * @returns result type representing NodeValidationError
+				 * @returns result type representing NodeValidationError if error occurs, else void
 				 */
 				virtual cpp::result<void, std::shared_ptr<error::NodeValidationError>> Validate() = 0;
 
@@ -80,7 +80,7 @@ namespace vrml_proc {
 				}
 
 				/**
-				 * @brief Static helper method which validates field entry. Field should be of type VrmlNode (or UseNode which is evaluated to VrmlNode in the aftermath).
+				 * @brief Static helper method which validates field entry. Field should be of type VrmlNode (or UseNode which is evaluated to VrmlNode).
 				 * 
 				 * @param name name of the field
 				 * @param fields list of all node's fields
@@ -140,6 +140,7 @@ namespace vrml_proc {
 				 * @param fieldName name of the field
 				 * @param fields vector of node's fields
 				 * @param manager VRML manager
+				 * @param enableSingleArrayNode flag which enables to extract also signular VRML node instead of VRML node array
 				 * 
 				 * @returns NodeValidationError if the field has wrong type (or if any USE node cannot found its corresponding DEF node); otherwise
 				 * it returns empty optional (field is missing) or optional containing vector of const references to VRML nodes
