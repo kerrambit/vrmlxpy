@@ -46,6 +46,7 @@ add_library(tostl SHARED
     # Conversion contexts
     "src/conversion_context/Vec3fArrayConversionContext.hpp"
     "src/conversion_context/MeshTaskConversionContext.hpp"
+    "src/conversion_context/StlActionMap.hpp"
     #"src/conversion_context/ConversionContextMap.Vec3fArrayConversionContext.cpp"
     #"src/conversion_context/VrmlNodeTraversor.Vec3fArrayConversionContext.cpp"
 
