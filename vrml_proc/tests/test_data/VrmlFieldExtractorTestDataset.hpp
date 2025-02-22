@@ -93,3 +93,33 @@ std::string children = R"(
         bboxCenter 58.7E-3 0.0 15
     }
 )";
+
+std::string floatIntEdgeCase = R"(
+
+	#VRML V2.0 utf8
+
+	Test {
+        int 0
+        float_without_decimals 5.0
+        float 5.5
+	}
+)";
+
+std::string complicatedEdgeCase = R"(
+
+    #VRML V2.0 utf8
+
+    DEF id Test {
+        int 0
+        float 5.5
+	}
+
+    Group { children USE id }
+
+    Group { children USE id }
+
+    Test {
+        int 10
+        float 15.5
+    }
+)";

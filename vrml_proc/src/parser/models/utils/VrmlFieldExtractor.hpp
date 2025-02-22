@@ -12,6 +12,7 @@
 
 #include <result.hpp>
 
+#include "ExtractorCache.hpp"
 #include "FormatString.hpp"
 #include "Logger.hpp"
 #include "TypeToString.hpp"
@@ -208,22 +209,47 @@ namespace vrml_proc::parser::model::utils::VrmlFieldExtractor {
 }
 
 /**
- * @warning Not a thread-safe struct!
+* @brief Visitor for VRML field value extraction.
+* 
+ * @returns result type where value is const reference to queried data entry; if there is error, string describing unexpected error type is returned (or possibly other error message)
+ * 
+ * @note The visitor should be thread-safe. It uses only read-only data. There are two exceptions to this. 1. case is for Vec3fArray, where it is needed to examine,
+ * if the value is not empty array, then we check other possible types <T> if they are not equal. Possibly we create empty static array in such cases only initialized
+ * once (guaranteed by C++11+ thread-safe static initialization). So it should be safe. 2. case is about float/int situation. The grammar handles all (singular!) number without
+ * decimal points as ints. The following table shows the behavirour ('X' signs where the spexial treatment has to be made to be able to e.g. take value '0' as both int and float):
+ * 
+ * number 0 (as int)
+ * number 0 (as float) X
+ * number 5.0 (as int) X
+ * number 5.0 (as float)
+ * number 5.5 (as float)
+ * 
+ * The logic is that we convert int to float and then store this value inside cache (see ExtractorCache class) or we try to convert float to int (must be in format xyz.0) and also store it.
+ * If we encounter the query for the problematic value, we look it up inside the map to retrieve the same valid reference. ExtractorCache is thread-safe.
+ *
+ * @details 
+ * @code
+ * ExtractorVisitor<std::string> visitor;
+ * auto result = boost::apply_visitor(visitor, fieldValue);
+ * @endcode
  */
 template <typename T>
 struct ExtractorVisitor : public boost::static_visitor<cpp::result<std::reference_wrapper<const T>, std::optional<std::string>>> {
 
     cpp::result<std::reference_wrapper<const T>, std::optional<std::string>> operator()(const std::string& value) const {
 
-        vrml_proc::core::logger::Log(vrml_proc::core::utils::FormatString("Visit string. Object address is <", &value, ">."), vrml_proc::core::logger::Level::Debug, LOGGING_INFO);
+        using namespace vrml_proc::core::logger;
+        using namespace vrml_proc::core::utils;
+        
+        LogDebug(FormatString("Visit string. Object address is <", &value, ">."), LOGGING_INFO);
 
         if constexpr (std::is_same<T, std::string>::value) {
-            vrml_proc::core::logger::Log("Extract as string.", vrml_proc::core::logger::Level::Debug, LOGGING_INFO);
+            LogDebug("Extract as string.", LOGGING_INFO);
             return std::cref(value);
         }
 
-        vrml_proc::core::logger::Log("String could not be extracted.", vrml_proc::core::logger::Level::Debug, LOGGING_INFO);
-        return cpp::fail(std::optional<std::string>(vrml_proc::core::utils::TypeToString<std::string>()));
+        LogDebug("String could not be extracted.", LOGGING_INFO);
+        return cpp::fail(std::optional<std::string>(TypeToString<std::string>()));
     }
 
     cpp::result<std::reference_wrapper<const T>, std::optional<std::string>> operator()(const bool& value) const {
@@ -319,44 +345,75 @@ struct ExtractorVisitor : public boost::static_visitor<cpp::result<std::referenc
 
     cpp::result<std::reference_wrapper<const T>, std::optional<std::string>> operator()(const float& value) const {
         
-        vrml_proc::core::logger::Log(vrml_proc::core::utils::FormatString("Visit float32_t. Object address is <", &value, ">."), vrml_proc::core::logger::Level::Debug, LOGGING_INFO);
+        using namespace vrml_proc::core::logger;
+        using namespace vrml_proc::core::utils;
+        using namespace vrml_proc::parser::model::utils;
+
+        LogDebug(FormatString("Visit float32_t. Object address is <", &value, ">."), LOGGING_INFO);
 
         if constexpr (std::is_same<T, float>::value) {
-            vrml_proc::core::logger::Log("Extract as float32_t.", vrml_proc::core::logger::Level::Debug, LOGGING_INFO);
+            LogDebug("Extract as float32_t.", LOGGING_INFO);
             return std::cref(value);
         }
 
         if constexpr (std::is_same<T, int32_t>::value) {
+
             if (value == static_cast<int32_t>(value)) {
-                static int32_t intValue = static_cast<int32_t>(value);
-                vrml_proc::core::logger::Log(vrml_proc::core::utils::FormatString("Edge case: float32_t is a whole number and thus can be extracted as static int32_t with address: <", &intValue, ">."), vrml_proc::core::logger::Level::Debug, LOGGING_INFO);
-                return std::cref(intValue);
+
+                static ExtractorCache cache;
+                auto intValue = cache.GetInt(reinterpret_cast<std::uintptr_t>(&value));
+
+                if (intValue.has_value()) {
+                    LogDebug(FormatString("Edge case: float32_t is a whole number and thus can be extracted as int32_t with address: <", &(intValue.value()), ">."), LOGGING_INFO);
+                    return intValue.value();
+                }
+                else {
+                    cache.StoreInt(reinterpret_cast<std::uintptr_t>(&value), static_cast<int32_t>(value));
+                    auto newIntValue = cache.GetInt(reinterpret_cast<std::uintptr_t>(&value)).value();
+                    LogDebug(FormatString("Edge case: float32_t is a whole number and thus can be extracted as int32_t with address: <", &(newIntValue), ">."), LOGGING_INFO);
+                    return newIntValue;
+                }
             }
         }
 
-        vrml_proc::core::logger::Log("Float32_t could not be extracted.", vrml_proc::core::logger::Level::Debug, LOGGING_INFO);
-        return cpp::fail(std::optional<std::string>(vrml_proc::core::utils::TypeToString<float>()));
+        LogDebug("Float32_t could not be extracted.", LOGGING_INFO);
+        return cpp::fail(std::optional<std::string>(TypeToString<float>()));
     }
 
     cpp::result<std::reference_wrapper<const T>, std::optional<std::string>> operator()(const int32_t& value) const {
         
-        vrml_proc::core::logger::Log(vrml_proc::core::utils::FormatString("Visit int32_t. Object address is <", &value, ">."), vrml_proc::core::logger::Level::Debug, LOGGING_INFO);
+        using namespace vrml_proc::core::logger;
+        using namespace vrml_proc::core::utils;
+        using namespace vrml_proc::parser::model::utils;
+
+        LogDebug(FormatString("Visit int32_t. Object address is <", &value, ">."), LOGGING_INFO);
 
         if constexpr (std::is_same<T, int32_t>::value) {
-            vrml_proc::core::logger::Log("Extract as int32_t.", vrml_proc::core::logger::Level::Debug, LOGGING_INFO);
+            LogDebug("Extract as int32_t.", LOGGING_INFO);
             return std::cref(value);
         }
 
         if constexpr (std::is_same<T, float>::value) {
             if (value == static_cast<float>(value)) {
-                static float floatValue = static_cast<float>(value);
-                vrml_proc::core::logger::Log(vrml_proc::core::utils::FormatString("Edge case: int32_t can be expressed and extracted as static float32_t with address: <", &floatValue, ">."), vrml_proc::core::logger::Level::Debug, LOGGING_INFO);
-                return std::cref(floatValue);
+
+                static ExtractorCache cache;
+                auto floatValue = cache.GetFloat(reinterpret_cast<std::uintptr_t>(&value));
+
+                if (floatValue.has_value()) {
+                    LogDebug(FormatString("Edge case: int32_t can be expressed and extracted as static float32_t with address: <", &(floatValue.value()), ">."), LOGGING_INFO);
+                    return floatValue.value();
+                }
+                else {
+                    cache.StoreFloat(reinterpret_cast<std::uintptr_t>(&value), static_cast<vrml_proc::parser::float32_t>(value));
+                    auto newFloatValue = cache.GetFloat(reinterpret_cast<std::uintptr_t>(&value)).value();
+                    LogDebug(FormatString("Edge case: int32_t can be expressed and extracted as static float32_t with address: <", &(newFloatValue), ">."), LOGGING_INFO);
+                    return newFloatValue;
+                }
             }
         }
 
-        vrml_proc::core::logger::Log("Int32_t could not be extracted.", vrml_proc::core::logger::Level::Debug, LOGGING_INFO);
-        return cpp::fail(std::optional<std::string>(vrml_proc::core::utils::TypeToString<int32_t>()));
+        LogDebug("Int32_t could not be extracted.", LOGGING_INFO);
+        return cpp::fail(std::optional<std::string>(TypeToString<int32_t>()));
     }
 
     cpp::result<std::reference_wrapper<const T>, std::optional<std::string>> operator()(const vrml_proc::parser::Vec2f& value) const {
