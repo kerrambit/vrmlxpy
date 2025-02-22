@@ -19,6 +19,7 @@ add_library(vrmlproc SHARED
 
     # Third party libraries.
     "${CMAKE_CURRENT_SOURCE_DIR}/../vendor/result/result.hpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/../vendor/json/nlohmann"
 
     #"src/GroupHandler.MeshConversionContext.cpp"
     #"src/TransformHandler.MeshConversionContext.cpp"
@@ -33,6 +34,7 @@ add_library(vrmlproc SHARED
     "src/core/io/SimpleFileReader.cpp"
     "src/core/io/MemoryMappedFileReader.hpp"
     "src/core/io/MemoryMappedFileReader.cpp"
+    "src/core/io/JsonFileReader.hpp"
     "src/core/io/errors/IoError.hpp"
 
     "src/core/errors/Error.hpp"
@@ -224,6 +226,7 @@ target_include_directories(vrmlproc PUBLIC
 
     # ${CMAKE_CURRENT_SOURCE_DIR}/../vendor/pybind11/include/pybind11
     ${CMAKE_CURRENT_SOURCE_DIR}/../vendor/result
+    ${CMAKE_CURRENT_SOURCE_DIR}/../vendor/json
     ${CGAL_INCLUDE_DIRS}
 )
 
