@@ -43,7 +43,7 @@ namespace vrml_proc {
 			 * @param action ActionFunctor representing the given Action
 			 */
 			void AddAction(const std::string& key, ActionFunctor action) {
-				vrml_proc::core::logger::LogInfo(vrml_proc::core::utils::FormatString("Add new action with key <", key, ">."), LOGGING_INFO);
+				vrml_proc::core::logger::LogDebug(vrml_proc::core::utils::FormatString("Add new action with key <", key, ">."), LOGGING_INFO);
 				m_actions[key] = std::move(action);
 			}
 			/**
@@ -69,7 +69,7 @@ namespace vrml_proc {
 			 * @returns nullptr if the key does not exists, otherwise shared pointer owning the given ConversionContextAction object
 			 */
 			std::shared_ptr<ConversionContextAction<ConversionContext>> GetAction(const std::string& key, const ReferencedArguments& refArgs, const CopiedArguments& copyArgs) const {
-				vrml_proc::core::logger::LogInfo(vrml_proc::core::utils::FormatString("Retrieve action by key <", key, ">."), LOGGING_INFO);
+				vrml_proc::core::logger::LogDebug(vrml_proc::core::utils::FormatString("Retrieve action by key <", key, ">."), LOGGING_INFO);
 				auto iterator = m_actions.find(key);
 				if (iterator != m_actions.end()) {
 					return iterator->second(refArgs, copyArgs);

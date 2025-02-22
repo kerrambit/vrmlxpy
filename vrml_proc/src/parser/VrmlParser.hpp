@@ -7,21 +7,24 @@
 #include "VrmlFile.hpp"
 #include "VrmlFileGrammar.hpp"
 #include "VrmlProcessingExport.hpp"
+#include "BufferView.hpp"
+
+#include "MemoryMappedFileReader.hpp"
 
 namespace vrml_proc {
     namespace parser {
 
-        class VRMLPROCESSING_API VrmlParser : public Parser<VrmlFile> {
+        class VRMLPROCESSING_API VrmlParser : public Parser<BufferView, VrmlFile> {
         public:
             VrmlParser() = delete;
 
             VrmlParser(VrmlNodeManager& manager)
-                : Parser<VrmlFile>(), m_manager(manager), m_grammar(), m_skipper() {} 
+                : Parser<BufferView, VrmlFile>(), m_manager(manager), m_grammar(), m_skipper() {}
 
-            ParserResult<VrmlFile> Parse(std::string& string) override;
+            ParserResult<VrmlFile> Parse(BufferView buffer) override;
 
         private:
-            VrmlFileGrammar<std::string::iterator, CommentSkipper> m_grammar;
+            VrmlFileGrammar<const char*, CommentSkipper> m_grammar;
             CommentSkipper m_skipper;
             VrmlNodeManager& m_manager;
         };

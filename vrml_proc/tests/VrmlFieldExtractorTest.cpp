@@ -25,11 +25,12 @@
 #include <VrmlNodeManager.hpp>
 #include <VrmlParser.hpp>
 #include <Logger.hpp>
+#include <BufferView.hpp>
 
 static vrml_proc::parser::ParserResult<vrml_proc::parser::VrmlFile> ParseVrmlFile(std::string& text, vrml_proc::parser::VrmlNodeManager& manager) {
 
     vrml_proc::parser::VrmlParser parser(manager);
-    return parser.Parse(text);
+    return parser.Parse(vrml_proc::parser::BufferView(text.c_str(), text.c_str() + text.size()));
 }
 
 TEST_CASE("Initialization") {

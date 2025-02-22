@@ -29,7 +29,7 @@ vrml_proc::core::io::FileReader<std::string>::LoadFileResult vrml_proc::core::io
     std::size_t fileSize;
     std::string fileContents;
     {
-        auto timer = vrmlproc::core::utils::ScopedTimer(time);
+        auto timer = vrml_proc::core::utils::ScopedTimer(time);
         std::ifstream file(filepath.string(), std::ios::in);
 
         if (!file) {

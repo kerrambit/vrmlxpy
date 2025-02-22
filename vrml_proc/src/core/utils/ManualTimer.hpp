@@ -2,13 +2,13 @@
 
 #include <chrono>
 
-namespace vrmlproc {
+namespace vrml_proc {
     namespace core {
         namespace utils {
 
             /**
- * @brief The ManualTimer class represents a simple manual timer.
- */
+             * @brief The ManualTimer class represents a simple manual timer.
+             */
             class ManualTimer {
 
             public:

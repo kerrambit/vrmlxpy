@@ -37,41 +37,41 @@ namespace vrml_proc::traversor::VrmlNodeTraversor {
 			vrml_proc::core::logger::LogInfo("Handle empty VRML node.", LOGGING_INFO);
 			return std::make_shared<ConversionContext>();
 		}
-		else if (context.node.header == "WorldInfo") {
+		else if (context.node.header == "WorldInfo" || context.node.header == "VRMLWorldInfo") {
 			return vrml_proc::traversor::handler::WorldInfoHandler::Handle(context, actionMap);
 		}
-		else if (context.node.header == "Group") {
+		else if (context.node.header == "Group" || context.node.header == "VRMLGroup") {
 			return vrml_proc::traversor::handler::GroupHandler::Handle(context, actionMap);
 		}
-		else if (context.node.header == "Transform") {
+		else if (context.node.header == "Transform" || context.node.header == "VRMLTransform") {
 			return vrml_proc::traversor::handler::TransformHandler::Handle(context, actionMap);
 		}
-		else if (context.node.header == "Shape") {
+		else if (context.node.header == "Shape" || context.node.header == "VRMLShape") {
 			return vrml_proc::traversor::handler::ShapeHandler::Handle(context, actionMap);
 		}
-		else if (context.node.header == "Appearance") {
+		else if (context.node.header == "Appearance" || context.node.header == "VRMLAppearance") {
 			// TODO
 			return std::make_shared<ConversionContext>();
 		}
-		else if (context.node.header == "IndexedFaceSet") {
+		else if (context.node.header == "IndexedFaceSet" || context.node.header == "VRMLIndexedFaceSet") {
 			return vrml_proc::traversor::handler::IndexedFaceSetHandler::Handle(context, actionMap);
 		}
-		else if (context.node.header == "Coordinate") {
+		else if (context.node.header == "Coordinate" || context.node.header == "VRMLCoordinate") {
 			return vrml_proc::traversor::handler::CoordinateHandler::Handle(context, actionMap);
 		}
-		else if (context.node.header == "Normal") {
+		else if (context.node.header == "Normal" || context.node.header == "VRMLNormal") {
 			return vrml_proc::traversor::handler::NormalHandler::Handle(context, actionMap);
 		}
-		else if (context.node.header == "TextureCoordinate") {
+		else if (context.node.header == "TextureCoordinate" || context.node.header == "VRMLTextureCoordinate") {
 			return vrml_proc::traversor::handler::TextureCoordinateHandler::Handle(context, actionMap);
 		}
-		else if (context.node.header == "Color") {
+		else if (context.node.header == "Color" || context.node.header == "VRMLColor") {
 			return vrml_proc::traversor::handler::ColorHandler::Handle(context, actionMap);
 		}
-		else if (context.node.header == "Box") {
+		else if (context.node.header == "Box" || context.node.header == "VRMLBox") {
 			return vrml_proc::traversor::handler::BoxHandler::Handle(context, actionMap);
 		}
-		else if (context.node.header == "Switch") {
+		else if (context.node.header == "Switch" || context.node.header == "VRMLSwitch") {
 			return vrml_proc::traversor::handler::SwitchHandler::Handle(context, actionMap);
 		}
 		else if (context.node.header == "Spotlight") {

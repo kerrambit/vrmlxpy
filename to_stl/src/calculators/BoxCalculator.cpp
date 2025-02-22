@@ -29,7 +29,7 @@ namespace to_stl {
                 return cpp::fail(std::make_shared<error::BoxCalculatorError>() << (std::make_shared<error::PropertiesError>() << checkResult.error()));
             }
 
-            auto timer = vrmlproc::core::utils::ManualTimer();
+            auto timer = vrml_proc::core::utils::ManualTimer();
             timer.Start();
 
             auto mesh = std::make_shared<core::Mesh>();

@@ -43,14 +43,14 @@ namespace vrml_proc {
                  * _3 is Iterator of the error position
                  * _4 is info object containing expected rule
                  */
-                boost::spirit::qi::on_error<boost::spirit::qi::fail>(
+                /*boost::spirit::qi::on_error<boost::spirit::qi::fail>(
                     this->m_start,
                     std::cout << boost::phoenix::val("Error! Expecting: ")
                     << boost::spirit::qi::_4 
                     << boost::phoenix::val(". Error position")
                     << boost::phoenix::bind(&Vec3fGrammar::ConstructErrorPositionString, this, boost::spirit::qi::_1, boost::spirit::qi::_3, boost::spirit::qi::_2, boost::spirit::qi::_4, 16)
                     << std::endl
-                );
+                );*/
             }
 
             std::string ConstructErrorPositionString(const Iterator& begin, const Iterator& errorPosition, const Iterator& end, const boost::spirit::info& expectedRule, size_t maxLength) {

@@ -65,7 +65,7 @@ namespace vrml_proc {
 					}
 
 					if (coordResult.value().has_value()) {
-						auto headerResult = vrml_proc::traversor::validator::NodeValidator::CheckForOnlyAllowedVrmlNodeHeaders({ "Coordinate" }, coordResult.value().value().get(), "coord");
+						auto headerResult = vrml_proc::traversor::validator::NodeValidator::CheckForOnlyAllowedVrmlNodeHeaders({ "Coordinate", "VRMLCoordinate" }, coordResult.value().value().get(), "coord");
 						if (headerResult.has_error()) {
 							//OG_ERROR() << "VRML node <" << coordResult.value().value().get().header << "> is not valid node for <coord> field.";
 							return cpp::fail(headerResult.error());

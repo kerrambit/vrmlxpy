@@ -46,6 +46,7 @@ add_library(tostl SHARED
     # Conversion contexts
     "src/conversion_context/Vec3fArrayConversionContext.hpp"
     "src/conversion_context/MeshTaskConversionContext.hpp"
+    "src/conversion_context/StlActionMap.hpp"
     #"src/conversion_context/ConversionContextMap.Vec3fArrayConversionContext.cpp"
     #"src/conversion_context/VrmlNodeTraversor.Vec3fArrayConversionContext.cpp"
 
@@ -119,7 +120,7 @@ if (MSVC)
 endif()
 
 # Link Catch2 with the test executables.
-target_link_libraries(VrmlFileTraversorUnitTests PRIVATE Catch2::Catch2WithMain vrmlproc tostl)
+target_link_libraries(VrmlFileTraversorUnitTests PRIVATE Boost::iostreams Boost::log Boost::date_time Boost::log_setup Boost::system Boost::thread Catch2::Catch2WithMain vrmlproc tostl)
 target_link_libraries(CalculatorsUnitTests PRIVATE Catch2::Catch2WithMain vrmlproc tostl)
 
 # Enable testing (use CTest to run the unit tests).
