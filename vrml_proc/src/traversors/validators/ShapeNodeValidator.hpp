@@ -46,7 +46,7 @@ namespace vrml_proc {
 					}
 
 					if (appearanceResult.value().has_value()) {
-						auto headerResult = vrml_proc::traversor::validator::NodeValidator::CheckForOnlyAllowedVrmlNodeHeaders({ "Appearance" }, appearanceResult.value().value().get(), "appearance");
+						auto headerResult = vrml_proc::traversor::validator::NodeValidator::CheckForOnlyAllowedVrmlNodeHeaders({ "Appearance", "VRMLAppearance"}, appearanceResult.value().value().get(), "appearance");
 						if (headerResult.has_error()) {
 							//LOG_ERROR() << "VRML node <" << appearanceResult.value().value().get().header << "> is not valid node for <appearance> field.";
 							return cpp::fail(headerResult.error());
@@ -64,7 +64,7 @@ namespace vrml_proc {
 					}
 
 					if (geometryResult.value().has_value()) {
-						auto headerResult = vrml_proc::traversor::validator::NodeValidator::CheckForOnlyAllowedVrmlNodeHeaders({ "Box", "Cone", "Cylinder", "ElevationGrid", "Extrusion", "IndexedFaceSet", "IndexedLineSet", "PointSet", "Sphere", "Text" }, geometryResult.value().value().get(), "geometry");
+						auto headerResult = vrml_proc::traversor::validator::NodeValidator::CheckForOnlyAllowedVrmlNodeHeaders({ "Box", "Cone", "Cylinder", "ElevationGrid", "Extrusion", "IndexedFaceSet", "VRMLIndexedFaceSet", "IndexedLineSet", "VRMLIndexedLineSet", "PointSet", "Sphere", "Text" }, geometryResult.value().value().get(), "geometry");
 						if (headerResult.has_error()) {
 							//LOG_ERROR() << "VRML node <" << geometryResult.value().value().get().header << "> is not valid node for <geometry> field.";
 							return cpp::fail(headerResult.error());
