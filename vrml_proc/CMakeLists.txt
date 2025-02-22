@@ -82,6 +82,7 @@ add_library(vrmlproc SHARED
     "src/parser/models/UseNode.cpp"
 
     "src/parser/models/utils/VrmlFieldExtractor.hpp"
+    "src/parser/models/utils/ExtractorCache.hpp"
     "src/parser/models/validators/ModelValidator.hpp"
     "src/parser/models/validators/errors/ModelValidationError.hpp"
 
