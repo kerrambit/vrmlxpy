@@ -48,10 +48,7 @@ namespace vrml_proc::traversor::VrmlFileTraversor {
 			if (result.value() == nullptr) {
 				auto time = timer.End();
 				vrml_proc::core::logger::LogError(vrml_proc::core::utils::FormatString("While traversing ", index, ". root node <", "> unxpected internal error occured! The process was aborted after ", time, " seconds."), LOGGING_INFO);
-				auto nullPointerError = std::make_shared<vrml_proc::core::error::NullPointerError>();
-				auto fileError = std::make_shared<vrml_proc::traversor::error::FileTraversorError>(
-					nullPointerError, root
-				);
+				auto fileError = std::make_shared<vrml_proc::traversor::error::FileTraversorError>(root) << std::make_shared<vrml_proc::core::error::NullPointerError>();
 				return cpp::fail(fileError);
 			}
 
