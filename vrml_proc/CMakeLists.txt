@@ -103,6 +103,8 @@ add_library(vrmlproc SHARED
     "src/parser/VrmlParser.hpp"
     "src/parser/VrmlParser.cpp"
 
+    "src/parser/errors/ParserError.hpp"
+
     "src/parser/grammars/BaseGrammar.hpp"
     "src/parser/grammars/CommentSkipper.hpp"
     "src/parser/grammars/IdentifierGrammar.hpp"
