@@ -36,6 +36,7 @@ add_library(vrmlproc SHARED
     "src/core/io/MemoryMappedFileReader.cpp"
     "src/core/io/JsonFileReader.hpp"
     "src/core/io/errors/IoError.hpp"
+    "src/core/config/VrmlProcConfig.hpp"
 
     "src/core/errors/Error.hpp"
     "src/core/errors/NullPointerError.hpp"
@@ -200,6 +201,7 @@ target_include_directories(vrmlproc PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src/core/errors
     ${CMAKE_CURRENT_SOURCE_DIR}/src/core/utils
     ${CMAKE_CURRENT_SOURCE_DIR}/src/core/logger
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/core/config
 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/parser
     ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/models
