@@ -20,8 +20,9 @@ add_library(tostl SHARED
     # Third party libraries.
     "${CMAKE_CURRENT_SOURCE_DIR}/../vendor/result/result.hpp"
 
-    # DLL export macro.
+    # DLL export macro & VrmlToStlConvertor.
     "src/VrmlToStlExport.hpp"
+    "src/VrmlToStlConvertor.hpp"
 
     # Core.
     "src/core/Mesh.hpp"
