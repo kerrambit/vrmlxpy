@@ -25,6 +25,7 @@ vrml_proc::core::io::FileReader<vrml_proc::core::io::MemoryMappedFile>::LoadFile
     LogInfo(FormatString("Read file <", filepath.string(), ">."), LOGGING_INFO);
 
     if (!std::filesystem::exists(filepath)) {
+        LogError(FormatString("File <", filepath.string(), "> does not exits and thus cannot be read!"), LOGGING_INFO);
         std::shared_ptr<Error> error = std::make_shared<IoError>();
         return cpp::fail(error << (std::make_shared<FileNotFoundError>(filepath.string())));
     }

@@ -16,6 +16,8 @@ namespace vrml_proc {
 					: m_node(errorNode) {
 					SetInnerError(innerError);
 				}
+				FileTraversorError(const vrml_proc::parser::VrmlNode& errorNode)
+					: m_node(errorNode) {}
 				const vrml_proc::parser::VrmlNode& GetErrorNode() const {
 					return m_node;
 				}
