@@ -24,8 +24,9 @@ add_library(vrmlproc SHARED
     #"src/GroupHandler.MeshConversionContext.cpp"
     #"src/TransformHandler.MeshConversionContext.cpp"
 
-    # DLL export macro.
+    # DLL export macro and VrmlProcessor function.
     "src/VrmlProcessingExport.hpp"
+    "src/VrmlProcessor.hpp"
 
     # Core.
     "src/core/io/FileReader.hpp"
@@ -102,6 +103,8 @@ add_library(vrmlproc SHARED
     "src/parser/ParserResult.hpp"
     "src/parser/VrmlParser.hpp"
     "src/parser/VrmlParser.cpp"
+
+    "src/parser/errors/ParserError.hpp"
 
     "src/parser/grammars/BaseGrammar.hpp"
     "src/parser/grammars/CommentSkipper.hpp"
@@ -210,6 +213,7 @@ target_include_directories(vrmlproc PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/models/utils
     ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/interfaces
     ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/grammars
+     ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/errors
     ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/services
 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/conversion_context

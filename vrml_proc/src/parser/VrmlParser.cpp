@@ -6,14 +6,15 @@
 
 #include <boost/spirit/home/qi/parse.hpp>
 
+#include "BufferView.hpp"
+#include "FormatString.hpp"
 #include "Logger.hpp"
+#include "ParserError.hpp"
 #include "ParserResult.hpp"
 #include "ScopedTimer.hpp"
 #include "VrmlFile.hpp"
 #include "VrmlNode.hpp"
 #include "VrmlNodeManagerPopulator.hpp"
-#include "FormatString.hpp"
-#include "BufferView.hpp"
 
 namespace vrml_proc {
 	namespace parser {
@@ -48,7 +49,7 @@ namespace vrml_proc {
             }
 
             vrml_proc::core::logger::LogInfo(vrml_proc::core::utils::FormatString("Parsing was not successful. The process took ", time, " seconds."), LOGGING_INFO);
-            return {};
+            return cpp::fail(std::make_shared<vrml_proc::parser::error::ParserError>());
 		}
 	}
 }
