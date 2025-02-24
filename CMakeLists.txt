@@ -50,9 +50,23 @@ else()
     message(FATAL_ERROR "CGAL not found. Please set CGAL_DIR to the correct path.")
 endif()
 
-# Add vendor dependencies.
-# include_directories(vendor/pybind11/include)
-
 # Add the vrml_proc and to_stl directories.
 add_subdirectory(vrml_proc)
 add_subdirectory(to_stl)
+
+# Add pybind11 from local vendor folder.
+add_subdirectory(vendor/pybind11)
+
+# Create the Python bindings module.
+pybind11_add_module(vrmlxpy SHARED src/vrmlxpy.cpp)
+
+# Link against your C++ libraries.
+target_link_libraries(vrmlxpy PRIVATE vrmlproc tostl pybind11::module)
+
+# Ensure vrmlxpy.cpp can access headers from vrml_proc and to_stl
+target_include_directories(vrmlxpy PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/src
+    ${CMAKE_CURRENT_SOURCE_DIR}/vrml_proc
+    ${CMAKE_CURRENT_SOURCE_DIR}/to_stl
+    ${CMAKE_CURRENT_SOURCE_DIR}/../vendor/pybind11/include/pybind11
+)

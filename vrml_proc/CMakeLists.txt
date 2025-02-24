@@ -257,21 +257,6 @@ target_link_libraries(vrmlproc PRIVATE CGAL::CGAL Boost::iostreams Boost::log Bo
 
 # --------------------------------------------------------------------------------------- #
 
-# Create the Python bindings module.
-#pybind11_add_module(pypyvrml SHARED bindings/MyLibBindings.cpp)
-
-# Link pybind11 and Python libraries to the bindings module.
-#target_link_libraries(pypyvrml PRIVATE
-#    pyvrml
-#)
-
-# Add include directories for the bindings module.
-#target_include_directories(pypyvrml PRIVATE
-#    ${CMAKE_CURRENT_SOURCE_DIR}/src
-#)
-
-# --------------------------------------------------------------------------------------- #
-
 # Add the test executables.
 add_executable(VRMLFileGrammarUnitTests "tests/VRMLFileGrammarTest.cpp")
 add_executable(Vec3fGrammarUnitTests "tests/Vec3fGrammarTest.cpp")
