@@ -70,3 +70,13 @@ target_include_directories(vrmlxpy PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/to_stl
     ${CMAKE_CURRENT_SOURCE_DIR}/../vendor/pybind11/include/pybind11
 )
+
+# Copy vrmlproc.dll and tostl.dll to the folder for binding to run.
+add_custom_command(TARGET vrmlxpy POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "$<TARGET_FILE:vrmlproc>"
+        "$<TARGET_FILE_DIR:vrmlxpy>"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "$<TARGET_FILE:tostl>"
+        "$<TARGET_FILE_DIR:vrmlxpy>"
+)
