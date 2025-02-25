@@ -86,7 +86,7 @@ namespace vrmlxpy {
             return false;
         }
 
-        std::cout << "File " << std::filesystem::path(outputFilepath).string() << " was succesfully written." << std::endl;
+        std::cout << "File " << std::filesystem::path(outputFilename).string() << " was succesfully written." << std::endl;
 
         std::cout << "Conversion finished succesfully!";
         return true;
