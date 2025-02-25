@@ -69,6 +69,7 @@ add_library(tostl SHARED
     "src/calculators/BoxCalculator.cpp"
     "src/calculators/IndexedFaceSetCalculator.hpp"
     "src/calculators/IndexedFaceSetCalculator.cpp"
+    "src/calculators/MeshSimplificator.hpp"
     "src/calculators/errors/CalculatorError.hpp"
     "src/calculators/test.hpp"
 )
