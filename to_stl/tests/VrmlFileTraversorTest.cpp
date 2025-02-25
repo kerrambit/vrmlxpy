@@ -8,6 +8,8 @@
 #include <string>
 #include <vector>
 
+#include <result.hpp>
+
 #include "test_data/VrmlFileTraversorTestDataset.hpp"
 #include <BoxAction.hpp>
 #include <BufferView.hpp>
@@ -31,6 +33,67 @@
     std::string testName = Catch::getResultCapture().getCurrentTestName(); \
     std::replace(testName.begin(), testName.end(), ' ', '_'); \
     std::filesystem::path filepath = std::filesystem::path(BASE_OUTPUT_PATH) / (testName + ".stl")
+
+static void HandleRootLevelError(const cpp::result<std::shared_ptr<to_stl::conversion_context::MeshTaskConversionContext>, std::shared_ptr<vrml_proc::core::error::Error>>& result) {
+    if (result.has_error()) {
+        vrml_proc::core::logger::LogUnformattedText("caught application error", result.error()->GetMessage(), vrml_proc::core::logger::Level::Error, LOGGING_INFO);
+    }
+}
+
+static void HandleRootLevelError(std::shared_ptr<vrml_proc::core::error::Error> error) {
+    vrml_proc::core::logger::LogUnformattedText("caught application error", error->GetMessage(), vrml_proc::core::logger::Level::Error, LOGGING_INFO);
+
+}
+static bool ConvertVrmlToStl(const std::string& inputFilename, const std::string& outputFilepath) {
+
+    vrml_proc::core::io::MemoryMappedFileReader reader;
+    auto readResult = reader.Read(std::filesystem::path(inputFilename));
+    if (readResult.has_error()) {
+        HandleRootLevelError(readResult.error());
+        return false;
+    }
+
+    vrml_proc::parser::VrmlNodeManager manager;
+    vrml_proc::parser::VrmlParser parser(manager);
+    auto parseResult = parser.Parse(vrml_proc::parser::BufferView(readResult.value().GetBegin(), readResult.value().GetEnd()));
+    if (parseResult.has_error()) {
+        HandleRootLevelError(parseResult.error());
+        return false;
+    }
+
+    auto convertResult = vrml_proc::traversor::VrmlFileTraversor::Traverse<to_stl::conversion_context::MeshTaskConversionContext>({ parseResult.value(), manager }, to_stl::conversion_context::CreateActionMap());
+    if (convertResult.has_error()) {
+        HandleRootLevelError(convertResult.error());
+        return false;
+    }
+
+    std::vector<std::future<to_stl::calculator::CalculatorResult>> results;
+    for (const auto& task : convertResult.value()->GetData()) {
+        if (task) {
+            results.emplace_back(std::async(std::launch::async, task));
+        }
+    }
+
+    to_stl::core::Mesh mesh;
+    for (auto& future : results) {
+        auto meshResult = future.get();
+        if (meshResult.has_value()) {
+            mesh.join(*(meshResult.value()));
+        }
+        else {
+            std::cout << "Error in mesh!" << std::endl;
+        }
+    };
+
+    to_stl::core::io::StlFileWriter writer;
+    auto writeResult = writer.Write(std::filesystem::path(outputFilepath), mesh);
+    if (writeResult.has_error()) {
+        HandleRootLevelError(writeResult.error());
+        return false;
+    }
+
+    return true;
+}
 
 static vrml_proc::parser::ParserResult<vrml_proc::parser::VrmlFile> ParseVrmlFile(std::string& text, vrml_proc::parser::VrmlNodeManager& manager) {
 
@@ -59,16 +122,6 @@ static bool CheckInnermostError(std::shared_ptr<vrml_proc::core::error::Error> e
 template <typename T>
 static std::shared_ptr<T> GetInnermostError(std::shared_ptr<vrml_proc::core::error::Error> error) {
     return std::dynamic_pointer_cast<T>(vrml_proc::core::error::Error::GetInnermostError(error));
-}
-
-static void HandleRootLevelError(const cpp::result<std::shared_ptr<to_stl::conversion_context::MeshTaskConversionContext>, std::shared_ptr<vrml_proc::core::error::Error>>& result) {
-    if (result.has_error()) {
-        vrml_proc::core::logger::LogUnformattedText("caught application error", result.error()->GetMessage(), vrml_proc::core::logger::Level::Error, LOGGING_INFO);
-    }
-}
-
-static void HandleRootLevelError(std::shared_ptr<vrml_proc::core::error::Error> error) {
-    vrml_proc::core::logger::LogUnformattedText("caught application error", error->GetMessage(), vrml_proc::core::logger::Level::Error, LOGGING_INFO);
 }
 
 static void ExportToStl(const std::vector<to_stl::core::MeshTask>& meshContext, const std::filesystem::path& filepath) {
