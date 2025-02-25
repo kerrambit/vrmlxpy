@@ -63,7 +63,7 @@ pybind11_add_module(vrmlxpy SHARED src/vrmlxpy.cpp)
 # Link against your C++ libraries.
 target_link_libraries(vrmlxpy PRIVATE vrmlproc tostl pybind11::module)
 
-# Ensure vrmlxpy.cpp can access headers from vrml_proc and to_stl
+# Ensure vrmlxpy.cpp can access headers from vrml_proc, to_stl and pybind11 projects.
 target_include_directories(vrmlxpy PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/src
     ${CMAKE_CURRENT_SOURCE_DIR}/vrml_proc
@@ -71,7 +71,7 @@ target_include_directories(vrmlxpy PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/../vendor/pybind11/include/pybind11
 )
 
-# Copy vrmlproc.dll and tostl.dll to the folder for binding to run.
+# Copy vrmlproc.dll and tostl.dll to the folder for the binding to run.
 add_custom_command(TARGET vrmlxpy POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
         "$<TARGET_FILE:vrmlproc>"
