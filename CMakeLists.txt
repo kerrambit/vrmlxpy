@@ -61,7 +61,7 @@ add_subdirectory(vendor/pybind11)
 pybind11_add_module(vrmlxpy SHARED src/vrmlxpy.cpp)
 
 # Link against your C++ libraries.
-target_link_libraries(vrmlxpy PRIVATE vrmlproc tostl pybind11::module)
+target_link_libraries(vrmlxpy PRIVATE vrmlproc tostl pybind11::module Boost::iostreams Boost::log Boost::date_time Boost::log_setup Boost::system Boost::thread)
 
 # Ensure vrmlxpy.cpp can access headers from vrml_proc, to_stl and pybind11 projects.
 target_include_directories(vrmlxpy PRIVATE
