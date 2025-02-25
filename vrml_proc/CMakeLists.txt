@@ -230,7 +230,6 @@ target_include_directories(vrmlproc PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src/math
     ${CMAKE_CURRENT_SOURCE_DIR}/src/math/cgal
 
-    # ${CMAKE_CURRENT_SOURCE_DIR}/../vendor/pybind11/include/pybind11
     ${CMAKE_CURRENT_SOURCE_DIR}/../vendor/result
     ${CMAKE_CURRENT_SOURCE_DIR}/../vendor/json
     ${CGAL_INCLUDE_DIRS}
@@ -254,21 +253,6 @@ endif()
 
 # Explicitly link Boost::iostreams (problems with compilation on Linux with GNU 11.4.0).
 target_link_libraries(vrmlproc PRIVATE CGAL::CGAL Boost::iostreams Boost::log Boost::date_time Boost::log_setup Boost::system Boost::thread)
-
-# --------------------------------------------------------------------------------------- #
-
-# Create the Python bindings module.
-#pybind11_add_module(pypyvrml SHARED bindings/MyLibBindings.cpp)
-
-# Link pybind11 and Python libraries to the bindings module.
-#target_link_libraries(pypyvrml PRIVATE
-#    pyvrml
-#)
-
-# Add include directories for the bindings module.
-#target_include_directories(pypyvrml PRIVATE
-#    ${CMAKE_CURRENT_SOURCE_DIR}/src
-#)
 
 # --------------------------------------------------------------------------------------- #
 

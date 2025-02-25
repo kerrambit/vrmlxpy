@@ -50,9 +50,33 @@ else()
     message(FATAL_ERROR "CGAL not found. Please set CGAL_DIR to the correct path.")
 endif()
 
-# Add vendor dependencies.
-# include_directories(vendor/pybind11/include)
-
 # Add the vrml_proc and to_stl directories.
 add_subdirectory(vrml_proc)
 add_subdirectory(to_stl)
+
+# Add pybind11 from local vendor folder.
+add_subdirectory(vendor/pybind11)
+
+# Create the Python bindings module.
+pybind11_add_module(vrmlxpy SHARED src/vrmlxpy.cpp)
+
+# Link against your C++ libraries.
+target_link_libraries(vrmlxpy PRIVATE vrmlproc tostl pybind11::module Boost::iostreams Boost::log Boost::date_time Boost::log_setup Boost::system Boost::thread)
+
+# Ensure vrmlxpy.cpp can access headers from vrml_proc, to_stl and pybind11 projects.
+target_include_directories(vrmlxpy PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/src
+    ${CMAKE_CURRENT_SOURCE_DIR}/vrml_proc
+    ${CMAKE_CURRENT_SOURCE_DIR}/to_stl
+    ${CMAKE_CURRENT_SOURCE_DIR}/../vendor/pybind11/include/pybind11
+)
+
+# Copy vrmlproc.dll and tostl.dll to the folder for the binding to run.
+add_custom_command(TARGET vrmlxpy POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "$<TARGET_FILE:vrmlproc>"
+        "$<TARGET_FILE_DIR:vrmlxpy>"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "$<TARGET_FILE:tostl>"
+        "$<TARGET_FILE_DIR:vrmlxpy>"
+)

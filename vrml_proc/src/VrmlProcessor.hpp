@@ -11,6 +11,7 @@
 #include "ParserError.hpp"
 #include "VrmlNodeManager.hpp"
 #include "VrmlParser.hpp"
+#include "VrmlFileTraversor.hpp"
 
 #include "VrmlProcessingExport.hpp"
 
