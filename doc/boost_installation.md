@@ -10,7 +10,8 @@ Before you can build this project, you'll need to have the Boost libraries insta
    - The easiest way how to get Boost on Windows is to download prebuilt binaries. Check [Boost C++ Libraries Files on SourceForge](https://sourceforge.net/projects/boost/files/boost-binaries/), choose version and download
      executable file such as *boost_1_87_0-msvc-14.3-64.exe*. Run the installer and place unzipped data for example to the ```/vendor``` folder.
 
-2. **Manual building**:
+2. **(Manual building)**:
+   - **Before continuing, note that build pipeline was tested only with prebuilt binaries!**
    - If you wish not to download prebuilt binaries and you want to build Boost yourself, then you should visit the [Boost Downloads Page](https://www.boost.org/users/download/) and download the latest Boost release (e.g., `boost_1_87_0.zip`).
    - Extract the Boost archive to a directory of your choice. For example, extract it to:
      ```
@@ -43,18 +44,12 @@ Before you can build this project, you'll need to have the Boost libraries insta
 
 4. **Set the `BOOST_ROOT` environment variable**:
    - Set the `BOOST_ROOT` environment variable to the Boost installation directory. This can be done permanently or temporarily:
-   - This step is important, because CMakeLists uses `BOOST_ROOT` environment variable to set up the project.
-   
-   - **Temporarily** (only for the current terminal session): 
-       ```
-       set BOOST_ROOT=C:\path\to\your\boost
-       ```
-
-    - **Permanently**:
+   - This step is important, because CMake uses `BOOST_ROOT` environment variable to set up the project.
+   - If you do not know how to set up environment variables, see the following steps:
         - Go to **System Properties** → **Advanced** → **Environment Variables**.
         - Under **System variables**, click **New** and add:
-         - **Variable Name**: `BOOST_ROOT`
-        - **Variable Value**: `C:\path\to\your\boost`
+            - **Variable Name**: `BOOST_ROOT`
+            - **Variable Value**: `C:\path\to\your\boost`
 
 5. **Verify the setup**:
 - To verify that Boost is correctly set up, you can run the CMake command in your project directory. It should detect Boost automatically if `BOOST_ROOT` is set.

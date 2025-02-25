@@ -1,9 +1,11 @@
 # vrmlxpy
-A Python-based toolkit for VRML parsing and STL conversion. Includes a standalone VRML parser library and a conversion library for transforming VRML geometry into STL format, with modular C++ backends and Python bindings.
+Toolkit for VRML parsing and traversing.
+Includes a standalone VRML parser library and a conversion library for transforming VRML geometry into STL format, with modular C++ backends and Python bindings.
 
 ## Prerequisites
 - You need to have the [Boost](https://www.boost.org/) installed on your system. Please follow instructions [here](doc/boost_installation.md).
 - Other third part library used is called [CGAL](https://www.cgal.org/). Follow instructions [here](doc/cgal_installation.md).
+- For Python bindings creation, the solution uses [pybind11](https://github.com/pybind/pybind11). See the steps [here](doc/pybind11_installation.md).
 - The project uses [Ninja](https://ninja-build.org/) build system. Please follow the installation instructions of this software based on your system vendor.
 - It comes naturally that you should have [CMake](https://cmake.org/) installed on your system as well.
 - C++ compiler.
@@ -27,10 +29,10 @@ A Python-based toolkit for VRML parsing and STL conversion. Includes a standalon
 
 ### Windows
 - It is recommended to develop in *Visual Studio*.
-- To open this project, navigate yourself to ```File - Open - Cmake...``` and choose the root *CMakeLists.txt*.
-- *Visual Studio* should take care of the burden connecting with generating and building the library itself.
+- To open the project, navigate yourself to ```File - Open - Cmake...``` and choose the root *CMakeLists.txt*.
+- *Visual Studio* should handle the process of generating and building the library automatically.
 
-## Run
+## Run C++ executable files
 ### Linux
 - If your system has *Valgrind* installed, you can run the following commands like this:
 
@@ -47,5 +49,8 @@ A Python-based toolkit for VRML parsing and STL conversion. Includes a standalon
 
 ### Windows
 - TODO
+
+## Run Python
+- To get the idea how to use the library, have a look at example [script](scripts/run_vrmlxpy_lib.py).
 
 ## Troubleshooting
