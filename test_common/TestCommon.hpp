@@ -32,7 +32,7 @@
  * @brief Reads error and logs the error into logging file.
  * @param error error to log
  */
-static void HandleRootLevelError(std::shared_ptr<vrml_proc::core::error::Error> error) {
+static void LogError(std::shared_ptr<vrml_proc::core::error::Error> error) {
     vrml_proc::core::logger::LogUnformattedText("caught application error", error->GetMessage(), vrml_proc::core::logger::Level::Error, LOGGING_INFO);
 }
 
@@ -40,7 +40,7 @@ static void HandleRootLevelError(std::shared_ptr<vrml_proc::core::error::Error> 
  * @brief Reads error message and logs it into logging file.
  * @param error error to log
  */
-static void HandleRootLevelError(const std::string& error) {
+static void LogError(const std::string& error) {
     vrml_proc::core::logger::LogUnformattedText("caught application error", error, vrml_proc::core::logger::Level::Error, LOGGING_INFO);
 }
 
@@ -50,9 +50,9 @@ static void HandleRootLevelError(const std::string& error) {
  * @param result result to check
  */
 template<typename T>
-static void HandleRootLevelError(const cpp::result<std::shared_ptr<T>, std::shared_ptr<vrml_proc::core::error::Error>>& result) {
+static void LogError(const cpp::result<std::shared_ptr<T>, std::shared_ptr<vrml_proc::core::error::Error>>& result) {
     if (result.has_error()) {
-        HandleRootLevelError(result.error());
+        LogError(result.error());
     }
 }
 
@@ -92,7 +92,7 @@ static bool InitTesting(const std::filesystem::path& filepath) {
         return true;
     }
     else {
-        HandleRootLevelError(json.error());
+        LogError(json.error());
         return false;
     }
 }
@@ -149,7 +149,7 @@ bool HaveSimiliarSizes(const std::filesystem::path& filepath1, const std::filesy
     auto size2 = std::filesystem::file_size(filepath2);
     bool result = std::abs(static_cast<std::ptrdiff_t>(size1) - static_cast<std::ptrdiff_t>(size2)) <= static_cast<std::ptrdiff_t>(toleranceInBytes);
     if (!result) {
-        HandleRootLevelError(vrml_proc::core::utils::FormatString("Filesizes are not in the tolerance: ", size1, " B != ", size2, " B (tolerance is +-", toleranceInBytes, " B)."));
+        LogError(vrml_proc::core::utils::FormatString("Filesizes are not in the tolerance: ", size1, " B != ", size2, " B (tolerance is +-", toleranceInBytes, " B)."));
     }
     return result;
 }
@@ -177,7 +177,7 @@ static vrml_proc::parser::ParserResult<vrml_proc::parser::VrmlFile> ParseVrmlFil
     vrml_proc::core::io::MemoryMappedFileReader reader;
     auto readResult = reader.Read(filepath);
     if (readResult.has_error()) {
-        HandleRootLevelError(readResult.error());
+        LogError(readResult.error());
         return {};
     }
 
@@ -199,12 +199,12 @@ static bool TraverseVrmlFileToMeshTask(vrml_proc::parser::ParserResult<vrml_proc
 
     auto traversorResult = vrml_proc::traversor::VrmlFileTraversor::Traverse<to_stl::conversion_context::MeshTaskConversionContext>({ parseResult.value(), manager }, to_stl::conversion_context::CreateActionMap());
     if (traversorResult.has_error()) {
-        HandleRootLevelError(traversorResult.error());
+        LogError(traversorResult.error());
         return false;
     }
     else {
         if (traversorResult.value()->GetData().size() != expectedConversionContextSize) {
-            HandleRootLevelError(vrml_proc::core::utils::FormatString("Size of traversor result is not the same as expected: ", traversorResult.value()->GetData().size(), " != ", expectedConversionContextSize, "."));
+            LogError(vrml_proc::core::utils::FormatString("Size of traversor result is not the same as expected: ", traversorResult.value()->GetData().size(), " != ", expectedConversionContextSize, "."));
             return false;
         }
         return true;
@@ -228,12 +228,12 @@ static bool TraverseVrmlFileToMeshTask(vrml_proc::parser::ParserResult<vrml_proc
 
     auto traversorResult = vrml_proc::traversor::VrmlFileTraversor::Traverse<to_stl::conversion_context::MeshTaskConversionContext>({ parseResult.value(), manager }, to_stl::conversion_context::CreateActionMap());
     if (traversorResult.has_error()) {
-        HandleRootLevelError(traversorResult.error());
+        LogError(traversorResult.error());
         return false;
     }
 
     if (traversorResult.value()->GetData().size() != expectedConversionContextSize) {
-        HandleRootLevelError(vrml_proc::core::utils::FormatString("Size of traversor result is not the same as expected: ", traversorResult.value()->GetData().size(), " != ", expectedConversionContextSize, "."));
+        LogError(vrml_proc::core::utils::FormatString("Size of traversor result is not the same as expected: ", traversorResult.value()->GetData().size(), " != ", expectedConversionContextSize, "."));
         return false;
     }
 
@@ -253,19 +253,19 @@ static bool TraverseVrmlFileToMeshTask(vrml_proc::parser::ParserResult<vrml_proc
             currentSubmesh++;
         }
         else {
-            HandleRootLevelError(meshResult.error());
+            LogError(meshResult.error());
         }
     };
 
     if (currentSubmesh != expectedSubmeshesCount) {
-        HandleRootLevelError(vrml_proc::core::utils::FormatString("Count of submeshes is not equal to expected count: ", currentSubmesh, " != ", expectedSubmeshesCount, "."));
+        LogError(vrml_proc::core::utils::FormatString("Count of submeshes is not equal to expected count: ", currentSubmesh, " != ", expectedSubmeshesCount, "."));
         return false;
     }
 
     to_stl::core::io::StlFileWriter writer;
     auto writeResult = writer.Write(std::filesystem::path(outputFilepath), mesh);
     if (writeResult.has_error()) {
-        HandleRootLevelError(writeResult.error());
+        LogError(writeResult.error());
         return false;
     }
 
@@ -282,7 +282,7 @@ static bool TraverseVrmlFileToMeshTask(vrml_proc::parser::ParserResult<vrml_proc
                                        const vrml_proc::parser::VrmlNodeManager& manager) {
     auto traversorResult = vrml_proc::traversor::VrmlFileTraversor::Traverse<to_stl::conversion_context::MeshTaskConversionContext>({ parseResult.value(), manager }, to_stl::conversion_context::CreateActionMap());
     if (traversorResult.has_error()) {
-        HandleRootLevelError(traversorResult.error());
+        LogError(traversorResult.error());
         return false;
     }
     else return true;
