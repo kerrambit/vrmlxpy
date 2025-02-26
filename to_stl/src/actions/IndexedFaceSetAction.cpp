@@ -57,12 +57,17 @@ namespace to_stl {
 					return std::make_shared<HelperCoordAction>(coord);
 				}
 				assert(false && "Invalid arguments for CoordinateAction");
-			});
+				});
 
 			auto coordResult = vrml_proc::traversor::VrmlNodeTraversor::Traverse<conversion_context::Vec3fArrayConversionContext>({ m_properties.coord.get(), manager, false, vrml_proc::math::TransformationMatrix() }, map);
 			std::shared_ptr<to_stl::conversion_context::Vec3fArrayConversionContext> coord;
 			if (coordResult.has_value()) {
-				 coord = coordResult.value();
+				coord = coordResult.value();
+			}
+
+			if (coordResult.value()->GetData().empty()) {
+				vrml_proc::core::logger::LogDebug("Return empty data because IndexedFaceSet node has no points.", LOGGING_INFO);
+				return result;
 			}
 
 			std::reference_wrapper<const vrml_proc::parser::Vec3fArray> points = std::cref((coordResult.value())->GetData().at(0));
