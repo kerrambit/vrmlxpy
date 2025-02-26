@@ -3,9 +3,11 @@
 
 #include <filesystem>
 
-#include "../../test_common/TestCommon.hpp"
 #include "test_data/VrmlFileTraversorTestDataset.hpp"
 #include <Logger.hpp>
+
+#include "../../test_utils/TestCommon.hpp"
+#include "../../test_utils/TestTraversor.hpp"
 
 #include <VrmlNodeManager.hpp>
 

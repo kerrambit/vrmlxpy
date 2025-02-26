@@ -11,10 +11,8 @@
 #include <boost/variant/variant.hpp>
 
 #include "test_data/VrmlFileGrammarTestDataset.hpp"
-#include <BufferView.hpp>
 #include <Int32Array.hpp>
 #include <Logger.hpp>
-#include <MemoryMappedFileReader.hpp>
 #include <ParserResult.hpp>
 #include <UseNode.hpp>
 #include <Vec3f.hpp>
@@ -26,23 +24,7 @@
 #include <VrmlParser.hpp>
 #include <VrmlUnits.hpp>
 
-static vrml_proc::parser::ParserResult<vrml_proc::parser::VrmlFile> ParseVrmlFile(std::string& text, vrml_proc::parser::VrmlNodeManager& manager) {
-
-    vrml_proc::parser::VrmlParser parser(manager);
-    return parser.Parse(vrml_proc::parser::BufferView(text.c_str(), text.c_str() + text.size()));
-}
-
-static vrml_proc::parser::ParserResult<vrml_proc::parser::VrmlFile> ParseVrmlFile(const std::filesystem::path& filepath, vrml_proc::parser::VrmlNodeManager& manager) {
-
-    vrml_proc::core::io::MemoryMappedFileReader reader;
-    auto readResult = reader.Read(filepath);
-    if (!readResult.has_value()) {
-        return {};
-    }
-
-    vrml_proc::parser::VrmlParser parser(manager);
-    return parser.Parse(vrml_proc::parser::BufferView(readResult.value().GetBegin(), readResult.value().GetEnd()));
-}
+#include "../../test_utils/TestCommon.hpp"
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------ //
 

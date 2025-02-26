@@ -17,7 +17,7 @@
 #include <Vec3f.hpp>
 #include <VrmlUnits.hpp>
 
-#include "../../test_common/TestCommon.hpp"
+#include "../../test_utils/TestCommon.hpp"
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------ //
 
