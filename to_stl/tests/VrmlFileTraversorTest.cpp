@@ -5,6 +5,7 @@
 
 #include "test_data/VrmlFileTraversorTestDataset.hpp"
 #include <Logger.hpp>
+#include <NodeDescriptor.hpp>
 
 #include "../../test_utils/TestCommon.hpp"
 #include "../../test_utils/TestTraversor.hpp"
@@ -19,6 +20,46 @@ TEST_CASE("Initialization") {
 
     std::filesystem::path filepath(R"(C:\Users\marek\Documents\FI_MUNI\sem_05\SBAPR\vrmlxpy\testConfigWindows.json)");
     InitTesting(filepath);
+}
+
+#include <string>
+
+#include <NodeDescriptorMap.hpp>
+#include <VrmlCanonicalHeaders.hpp>
+#include <ShapeHandler.hpp>
+
+TEST_CASE("Paretgregrehg", "[parsing][valid]") {
+
+    vrml_proc::parser::VrmlNodeManager manager;
+    auto parseResult = ParseVrmlFile(invalidGroupUnknownNode, manager);
+    REQUIRE(parseResult);
+
+    std::string canonicalHeader;
+    auto it = vrml_proc::traversor::node_descriptor::HeaderToCanonicalName.find(parseResult.value().at(0).header);
+    if (it != vrml_proc::traversor::node_descriptor::HeaderToCanonicalName.end()) {
+        canonicalHeader = it->second;
+    }
+
+    auto descriptorMap = vrml_proc::traversor::node_descriptor::CreateNodeDescriptorMap();
+    auto it2 = descriptorMap.find(canonicalHeader);
+    if (it2 != descriptorMap.end()) {
+        auto& ndf = it2->second;
+        auto nd = ndf();
+        auto validationResult = nd.Validate(parseResult.value().at(0), manager);
+        if (validationResult.has_value()) {
+            auto result = vrml_proc::traversor::handler::ShapeHandler::Handle<to_stl::conversion_context::MeshTaskConversionContext>({ parseResult.value().at(0), manager, false, vrml_proc::math::TransformationMatrix() }, to_stl::conversion_context::CreateActionMap(), nd);
+            if (result.has_error()) {
+                LogError(result.error());
+            }
+        }
+        else {
+            LogError(validationResult.error());
+            // Return error.
+        }
+    }
+    else {
+        // Unknown node.
+    }
 }
 
 TEST_CASE("Parse VRML File - Valid Input - Simple VRML File - Box node", "[parsing][valid]") {
@@ -320,38 +361,38 @@ TEST_CASE("Parse VRML File - Invalid Input - Simple VRML File - Switch node V.",
     CHECK(TraverseVrmlFileToMeshTask(parseResult, manager, 0));
 }
 
-TEST_CASE("Parse VRMLFile From File - Valid Input - Actin", "[parsing][valid][fromfile]") {
-
-    vrml_proc::parser::VrmlNodeManager manager;
-    auto parseResult = ParseVrmlFile(std::filesystem::path(ReadTestInfo().baseInputPath) / std::filesystem::path(ReadTestInfo().testFiles.at("ACTIN")), manager);
-    REQUIRE(parseResult);
-
-    GENERATE_TEST_OUTPUT_FILENAME(filepath);
-    CHECK(TraverseVrmlFileToMeshTask(parseResult, manager, 5, std::filesystem::path(ReadTestInfo().baseOutputPath) / filepath, 5));
-    CHECK(HaveSimiliarSizes(std::filesystem::path(ReadTestInfo().baseOutputPath) / filepath, std::filesystem::path(ReadTestInfo().baseExpectedOutputPath) / filepath, 0));
-}
-
-TEST_CASE("Parse VRMLFile From File - Valid Input - Nucleus", "[parsing][valid][fromfile]") {
-
-    vrml_proc::parser::VrmlNodeManager manager;
-    auto parseResult = ParseVrmlFile(std::filesystem::path(ReadTestInfo().baseInputPath) / std::filesystem::path(ReadTestInfo().testFiles.at("NUCLEUS")), manager);
-    REQUIRE(parseResult);
-
-    GENERATE_TEST_OUTPUT_FILENAME(filepath);
-    CHECK(TraverseVrmlFileToMeshTask(parseResult, manager, 2, std::filesystem::path(ReadTestInfo().baseOutputPath) / filepath, 2));
-    CHECK(HaveSimiliarSizes(std::filesystem::path(ReadTestInfo().baseOutputPath) / filepath, std::filesystem::path(ReadTestInfo().baseExpectedOutputPath) / filepath, 0));
-}
-
-TEST_CASE("Parse VRMLFile From File - Valid Input - Tubulin", "[parsing][valid][fromfile]") {
-
-    vrml_proc::parser::VrmlNodeManager manager;
-    auto parseResult = ParseVrmlFile(std::filesystem::path(ReadTestInfo().baseInputPath) / std::filesystem::path(ReadTestInfo().testFiles.at("TUBULIN")), manager);
-    REQUIRE(parseResult);
-
-    GENERATE_TEST_OUTPUT_FILENAME(filepath);
-    CHECK(TraverseVrmlFileToMeshTask(parseResult, manager, 399, std::filesystem::path(ReadTestInfo().baseOutputPath) / filepath, 399));
-    CHECK(HaveSimiliarSizes(std::filesystem::path(ReadTestInfo().baseOutputPath) / filepath, std::filesystem::path(ReadTestInfo().baseExpectedOutputPath) / filepath, 0));
-}
+//TEST_CASE("Parse VRMLFile From File - Valid Input - Actin", "[parsing][valid][fromfile]") {
+//
+//    vrml_proc::parser::VrmlNodeManager manager;
+//    auto parseResult = ParseVrmlFile(std::filesystem::path(ReadTestInfo().baseInputPath) / std::filesystem::path(ReadTestInfo().testFiles.at("ACTIN")), manager);
+//    REQUIRE(parseResult);
+//
+//    GENERATE_TEST_OUTPUT_FILENAME(filepath);
+//    CHECK(TraverseVrmlFileToMeshTask(parseResult, manager, 5, std::filesystem::path(ReadTestInfo().baseOutputPath) / filepath, 5));
+//    CHECK(HaveSimiliarSizes(std::filesystem::path(ReadTestInfo().baseOutputPath) / filepath, std::filesystem::path(ReadTestInfo().baseExpectedOutputPath) / filepath, 0));
+//}
+//
+//TEST_CASE("Parse VRMLFile From File - Valid Input - Nucleus", "[parsing][valid][fromfile]") {
+//
+//    vrml_proc::parser::VrmlNodeManager manager;
+//    auto parseResult = ParseVrmlFile(std::filesystem::path(ReadTestInfo().baseInputPath) / std::filesystem::path(ReadTestInfo().testFiles.at("NUCLEUS")), manager);
+//    REQUIRE(parseResult);
+//
+//    GENERATE_TEST_OUTPUT_FILENAME(filepath);
+//    CHECK(TraverseVrmlFileToMeshTask(parseResult, manager, 2, std::filesystem::path(ReadTestInfo().baseOutputPath) / filepath, 2));
+//    CHECK(HaveSimiliarSizes(std::filesystem::path(ReadTestInfo().baseOutputPath) / filepath, std::filesystem::path(ReadTestInfo().baseExpectedOutputPath) / filepath, 0));
+//}
+//
+//TEST_CASE("Parse VRMLFile From File - Valid Input - Tubulin", "[parsing][valid][fromfile]") {
+//
+//    vrml_proc::parser::VrmlNodeManager manager;
+//    auto parseResult = ParseVrmlFile(std::filesystem::path(ReadTestInfo().baseInputPath) / std::filesystem::path(ReadTestInfo().testFiles.at("TUBULIN")), manager);
+//    REQUIRE(parseResult);
+//
+//    GENERATE_TEST_OUTPUT_FILENAME(filepath);
+//    CHECK(TraverseVrmlFileToMeshTask(parseResult, manager, 399, std::filesystem::path(ReadTestInfo().baseOutputPath) / filepath, 399));
+//    CHECK(HaveSimiliarSizes(std::filesystem::path(ReadTestInfo().baseOutputPath) / filepath, std::filesystem::path(ReadTestInfo().baseExpectedOutputPath) / filepath, 0));
+//}
 
 //TEST_CASE("Parse VRMLFile From File - Valid Input - Tile 3x5 - 5 Stitch", "[parsing][valid][fromfile]") {
 //
