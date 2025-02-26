@@ -13,6 +13,7 @@
 #include "NodeTraversorError.hpp"
 #include "ShapeNodeValidator.hpp"
 #include "VrmlNode.hpp"
+#include "NodeDescriptor.hpp"
 
 #include "VrmlProcessingExport.hpp"
 
@@ -53,4 +54,22 @@ namespace vrml_proc::traversor::handler::ShapeHandler {
 
         return vrml_proc::traversor::utils::ConversionContextActionExecutor::TryToExecute<ConversionContext>(actionMap, "Shape", {}, { resolvedAppearance.value(), resolvedGeometry.value() });
 	}
+
+    template<typename ConversionContext>
+    VRMLPROCESSING_API inline cpp::result<std::shared_ptr<ConversionContext>, std::shared_ptr<vrml_proc::core::error::Error>> Handle(vrml_proc::traversor::FullParsedVrmlNodeContext context, const vrml_proc::action::ConversionContextActionMap<ConversionContext>& actionMap, const vrml_proc::traversor::node_descriptor::NodeDescriptor& nd) {
+
+        vrml_proc::core::logger::LogInfo(vrml_proc::core::utils::FormatString("Handle VRML node <", context.node.header, ">."), LOGGING_INFO);
+
+        auto resolvedAppearance = vrml_proc::traversor::VrmlNodeTraversor::Traverse<ConversionContext>({ nd.GetField<std::reference_wrapper<const vrml_proc::parser::VrmlNode>>("appearance").get(), context.manager, true, context.transformation }, actionMap);
+        if (resolvedAppearance.has_error()) {
+            return cpp::fail(resolvedAppearance.error());
+        }
+
+        auto resolvedGeometry = vrml_proc::traversor::VrmlNodeTraversor::Traverse<ConversionContext>({ nd.GetField<std::reference_wrapper<const vrml_proc::parser::VrmlNode>>("geometry").get(), context.manager, true, context.transformation }, actionMap);
+        if (resolvedGeometry.has_error()) {
+            return cpp::fail(resolvedGeometry.error());
+        }
+
+        return vrml_proc::traversor::utils::ConversionContextActionExecutor::TryToExecute<ConversionContext>(actionMap, context.node.header, {}, { resolvedAppearance.value(), resolvedGeometry.value() });
+    }
 }
