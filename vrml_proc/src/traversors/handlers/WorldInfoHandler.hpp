@@ -37,4 +37,15 @@ namespace vrml_proc::traversor::handler::WorldInfoHandler {
 
 		return vrml_proc::traversor::utils::ConversionContextActionExecutor::TryToExecute<ConversionContext>(actionMap, context.node.header, { std::cref(cachedInfo), std::cref(cachedTitle) }, { context.IsDescendantOfShape });
 	}
+
+	template<typename ConversionContext>
+	VRMLPROCESSING_API inline cpp::result<std::shared_ptr<ConversionContext>, std::shared_ptr<vrml_proc::core::error::Error>> Handle(vrml_proc::traversor::FullParsedVrmlNodeContext context, const vrml_proc::action::ConversionContextActionMap<ConversionContext>& actionMap, const vrml_proc::traversor::node_descriptor::NodeDescriptor& nd) {
+
+		vrml_proc::core::logger::LogInfo(vrml_proc::core::utils::FormatString("Handle VRML node <", context.node.header, ">."), LOGGING_INFO);
+
+		std::any cachedInfo = nd.GetField<std::reference_wrapper<const std::string>>("info");
+		std::any cachedTitle = nd.GetField<std::reference_wrapper<const std::string>>("title");
+
+		return vrml_proc::traversor::utils::ConversionContextActionExecutor::TryToExecute<ConversionContext>(actionMap, nd.GetId(), {std::cref(cachedInfo), std::cref(cachedTitle)}, {context.IsDescendantOfShape});
+	}
 }

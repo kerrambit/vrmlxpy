@@ -77,6 +77,6 @@ namespace vrml_proc::traversor::handler::GroupHandler {
         std::any cachedBoxCenter = nd.GetField<std::reference_wrapper<const vrml_proc::parser::Vec3f>>("bboxCenter");
         std::any cachedBoxSize = nd.GetField<std::reference_wrapper<const vrml_proc::parser::Vec3f>>("bboxSize");
 
-        return vrml_proc::traversor::utils::ConversionContextActionExecutor::TryToExecute<ConversionContext>(actionMap, context.node.header, { std::cref(cachedBoxCenter), std::cref(cachedBoxSize) }, { resolvedChildren });
+        return vrml_proc::traversor::utils::ConversionContextActionExecutor::TryToExecute<ConversionContext>(actionMap, nd.GetId(), {std::cref(cachedBoxCenter), std::cref(cachedBoxSize)}, {resolvedChildren});
     }
 }

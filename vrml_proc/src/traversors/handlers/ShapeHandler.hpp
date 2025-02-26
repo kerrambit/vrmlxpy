@@ -70,6 +70,6 @@ namespace vrml_proc::traversor::handler::ShapeHandler {
             return cpp::fail(resolvedGeometry.error());
         }
 
-        return vrml_proc::traversor::utils::ConversionContextActionExecutor::TryToExecute<ConversionContext>(actionMap, context.node.header, {}, { resolvedAppearance.value(), resolvedGeometry.value() });
+        return vrml_proc::traversor::utils::ConversionContextActionExecutor::TryToExecute<ConversionContext>(actionMap, nd.GetId(), {}, {resolvedAppearance.value(), resolvedGeometry.value()});
     }
 }
