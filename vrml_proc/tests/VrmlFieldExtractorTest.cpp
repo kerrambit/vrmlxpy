@@ -11,11 +11,12 @@
 
 #include "test_data/VrmlFieldExtractorTestDataset.hpp"
 #include <Int32Array.hpp>
+#include <Logger.hpp>
 #include <ParserResult.hpp>
 #include <UseNode.hpp>
 #include <Vec2f.hpp>
-#include <Vec3f.hpp>
 #include <Vec2fArray.hpp>
+#include <Vec3f.hpp>
 #include <Vec3fArray.hpp>
 #include <Vec4f.hpp>
 #include <VrmlField.hpp>
@@ -24,14 +25,8 @@
 #include <VrmlNode.hpp>
 #include <VrmlNodeManager.hpp>
 #include <VrmlParser.hpp>
-#include <Logger.hpp>
-#include <BufferView.hpp>
 
-static vrml_proc::parser::ParserResult<vrml_proc::parser::VrmlFile> ParseVrmlFile(std::string& text, vrml_proc::parser::VrmlNodeManager& manager) {
-
-    vrml_proc::parser::VrmlParser parser(manager);
-    return parser.Parse(vrml_proc::parser::BufferView(text.c_str(), text.c_str() + text.size()));
-}
+#include "../../test_utils/TestCommon.hpp"
 
 TEST_CASE("Initialization") {
     vrml_proc::core::logger::InitLogging();

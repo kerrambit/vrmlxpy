@@ -6,50 +6,18 @@
 #include <vector>
 
 #include <BoxCalculator.hpp>
+#include <CalculatorError.hpp>
 #include <IndexedFaceSetCalculator.hpp>
+#include <Int32Array.hpp>
 #include <Logger.hpp>
-#include <MemoryMappedFileReader.hpp>
-#include <MeshConversionContext.hpp>
 #include <ModelValidationError.hpp>
-#include <ParserResult.hpp>
-#include <test.hpp>
+#include <StlFileWriter.hpp>
 #include <Transformation.hpp>
 #include <TransformationMatrix.hpp>
 #include <Vec3f.hpp>
-#include <VrmlFile.hpp>
-#include <VrmlNodeManager.hpp>
-#include <VrmlParser.hpp>
-#include <Int32Array.hpp>
 #include <VrmlUnits.hpp>
-#include <CalculatorError.hpp>
-#include <BufferView.hpp>
 
-template <typename T>
-static bool CheckInnermostError(std::shared_ptr<vrml_proc::core::error::Error> error) {
-    return std::dynamic_pointer_cast<T>(vrml_proc::core::error::Error::GetInnermostError(error)) != nullptr;
-}
-
-static vrml_proc::parser::ParserResult<vrml_proc::parser::VrmlFile> ParseVrmlFile(std::string& text, vrml_proc::parser::VrmlNodeManager& manager) {
-
-    vrml_proc::parser::VrmlParser parser(manager);
-    parser.Parse(vrml_proc::parser::BufferView(text.c_str(), text.c_str() + text.size()));
-}
-
-static vrml_proc::parser::ParserResult<vrml_proc::parser::VrmlFile> ParseVrmlFile(const std::filesystem::path& filepath, vrml_proc::parser::VrmlNodeManager& manager) {
-
-    vrml_proc::core::io::MemoryMappedFileReader reader;
-    auto readResult = reader.Read(filepath);
-    if (!readResult.has_value()) {
-        return {};
-    }
-
-    vrml_proc::parser::VrmlParser parser(manager);
-    return parser.Parse(vrml_proc::parser::BufferView(readResult.value().GetBegin(), readResult.value().GetEnd()));
-}
-
-static void HandleRootLevelError(std::shared_ptr<vrml_proc::core::error::Error> error) {
-    vrml_proc::core::logger::LogUnformattedText("caught application error", error->GetMessage(), vrml_proc::core::logger::Level::Error, LOGGING_INFO);
-}
+#include "../../test_utils/TestCommon.hpp"
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------ //
 
@@ -199,23 +167,19 @@ TEST_CASE("BoxCalculator - Basic tests", "[valid]") {
 
     // --- //
 
-    /*to_stl::core::Mesh mesh;
-    mesh.join(*result1);
-    mesh.join(*result2);
-    mesh.join(*result3);*/
-    //mesh.join(*result4);
-    //mesh.join(*result5);
-    export_to_stl(*result1, R"(C:\Users\marek\Documents\FI_MUNI\sem_05\SBAPR\vrmlxpy\export1.stl)");
-    export_to_stl(*result2, R"(C:\Users\marek\Documents\FI_MUNI\sem_05\SBAPR\vrmlxpy\export2.stl)");
-    export_to_stl(*result3, R"(C:\Users\marek\Documents\FI_MUNI\sem_05\SBAPR\vrmlxpy\export3.stl)");
-    export_to_stl(*result4, R"(C:\Users\marek\Documents\FI_MUNI\sem_05\SBAPR\vrmlxpy\export4.stl)");
-    export_to_stl(*result5, R"(C:\Users\marek\Documents\FI_MUNI\sem_05\SBAPR\vrmlxpy\export5.stl)");
-    export_to_stl(*result6, R"(C:\Users\marek\Documents\FI_MUNI\sem_05\SBAPR\vrmlxpy\export6.stl)");
-    export_to_stl(*result7, R"(C:\Users\marek\Documents\FI_MUNI\sem_05\SBAPR\vrmlxpy\export7.stl)");
-    export_to_stl(*result8, R"(C:\Users\marek\Documents\FI_MUNI\sem_05\SBAPR\vrmlxpy\export8.stl)");
-    export_to_stl(*result9, R"(C:\Users\marek\Documents\FI_MUNI\sem_05\SBAPR\vrmlxpy\export9.stl)");
-    export_to_stl(*result10, R"(C:\Users\marek\Documents\FI_MUNI\sem_05\SBAPR\vrmlxpy\export10.stl)");
-    export_to_stl(*result11, R"(C:\Users\marek\Documents\FI_MUNI\sem_05\SBAPR\vrmlxpy\export11.stl)");
+    /*to_stl::core::io::StlFileWriter writer;
+    writer.Write(std::filesystem::path(R"(C:\Users\marek\Documents\FI_MUNI\sem_05\SBAPR\vrmlxpy\export1.stl)"), *result1);
+    writer.Write(std::filesystem::path(R"(C:\Users\marek\Documents\FI_MUNI\sem_05\SBAPR\vrmlxpy\export2.stl)"), *result2);
+    writer.Write(std::filesystem::path(R"(C:\Users\marek\Documents\FI_MUNI\sem_05\SBAPR\vrmlxpy\export3.stl)"), *result3);
+    writer.Write(std::filesystem::path(R"(C:\Users\marek\Documents\FI_MUNI\sem_05\SBAPR\vrmlxpy\export4.stl)"), *result4);
+    writer.Write(std::filesystem::path(R"(C:\Users\marek\Documents\FI_MUNI\sem_05\SBAPR\vrmlxpy\export5.stl)"), *result5);
+    writer.Write(std::filesystem::path(R"(C:\Users\marek\Documents\FI_MUNI\sem_05\SBAPR\vrmlxpy\export6.stl)"), *result6);
+    writer.Write(std::filesystem::path(R"(C:\Users\marek\Documents\FI_MUNI\sem_05\SBAPR\vrmlxpy\export7.stl)"), *result7);
+    writer.Write(std::filesystem::path(R"(C:\Users\marek\Documents\FI_MUNI\sem_05\SBAPR\vrmlxpy\export8.stl)"), *result8);
+    writer.Write(std::filesystem::path(R"(C:\Users\marek\Documents\FI_MUNI\sem_05\SBAPR\vrmlxpy\export9.stl)"), *result9);
+    writer.Write(std::filesystem::path(R"(C:\Users\marek\Documents\FI_MUNI\sem_05\SBAPR\vrmlxpy\export10.stl)"), *result10);
+    writer.Write(std::filesystem::path(R"(C:\Users\marek\Documents\FI_MUNI\sem_05\SBAPR\vrmlxpy\export11.stl)"), *result11);*/
+
 }
 
 TEST_CASE("BoxCalculator - invalid", "[invalid]") {
@@ -231,7 +195,7 @@ TEST_CASE("BoxCalculator - invalid", "[invalid]") {
         auto result = calculator.Generate3DMesh({ std::cref(size) }, matrix);
         REQUIRE(result.has_error());
         CHECK(CheckInnermostError<vrml_proc::parser::model::validator::error::NumberOutOfRangeError<vrml_proc::parser::float32_t>>(result.error()));
-        HandleRootLevelError(result.error());
+        LogError(result.error());
     }
 
     size.x = 50.5f; size.y = 20.0f; size.z = -0.0001f;
@@ -239,7 +203,7 @@ TEST_CASE("BoxCalculator - invalid", "[invalid]") {
         auto result = calculator.Generate3DMesh({ std::cref(size) }, matrix);
         REQUIRE(result.has_error());
         CHECK(CheckInnermostError<vrml_proc::parser::model::validator::error::NumberOutOfRangeError<vrml_proc::parser::float32_t>>(result.error()));
-        HandleRootLevelError(result.error());
+        LogError(result.error());
     }
 }
 
@@ -275,7 +239,7 @@ TEST_CASE("IndexedFaceSetCalculator - invalid I.", "[invalid]") {
         auto result = calculator.Generate3DMesh(std::cref(indices), std::cref(points), std::cref(isConvex), matrix);
         REQUIRE(result.has_error());
         CHECK(CheckInnermostError<vrml_proc::parser::model::validator::error::EmptyArrayError>(result.error()));
-        HandleRootLevelError(result.error());
+        LogError(result.error());
     }
 }
 
@@ -300,7 +264,7 @@ TEST_CASE("IndexedFaceSetCalculator - invalid II.", "[invalid]") {
         auto result = calculator.Generate3DMesh(std::cref(indices), std::cref(points), std::cref(isConvex), matrix);
         REQUIRE(result.has_error());
         CHECK(CheckInnermostError<to_stl::calculator::error::InvalidNumberOfCoordinatesForFaceError>(result.error()));
-        HandleRootLevelError(result.error());
+        LogError(result.error());
     }
 }
 
@@ -325,7 +289,7 @@ TEST_CASE("IndexedFaceSetCalculator - invalid III.", "[invalid]") {
         auto result = calculator.Generate3DMesh(std::cref(indices), std::cref(points), std::cref(isConvex), matrix);
         REQUIRE(result.has_error());
         CHECK(CheckInnermostError<to_stl::calculator::error::InvalidNumberOfCoordinatesForFaceError>(result.error()));
-        HandleRootLevelError(result.error());
+        LogError(result.error());
     }
 }
 
@@ -350,7 +314,7 @@ TEST_CASE("IndexedFaceSetCalculator - invalid IV.", "[invalid]") {
         auto result = calculator.Generate3DMesh(std::cref(indices), std::cref(points), std::cref(isConvex), matrix);
         REQUIRE(result.has_error());
         CHECK(CheckInnermostError<to_stl::calculator::error::InvalidNumberOfCoordinatesForFaceError>(result.error()));
-        HandleRootLevelError(result.error());
+        LogError(result.error());
     }
 }
 
@@ -375,7 +339,9 @@ TEST_CASE("IndexedFaceSetCalculator - valid II.", "[invalid]") {
     {
         auto result = calculator.Generate3DMesh(std::cref(indices), std::cref(points), std::cref(isConvex), matrix);
         REQUIRE(result.has_value());
-        export_to_stl(*(result.value()), R"(C:\Users\marek\Documents\FI_MUNI\sem_05\SBAPR\vrmlxpy\IFS_Quad.stl)");
+
+        /*to_stl::core::io::StlFileWriter writer;
+        writer.Write(std::filesystem::path(R"(C:\Users\marek\Documents\FI_MUNI\sem_05\SBAPR\vrmlxpy\IFS_Quad.stl)"), *(result.value()));*/
     }
 }
 
@@ -400,7 +366,7 @@ TEST_CASE("IndexedFaceSetCalculator - invalid V.", "[invalid]") {
         auto result = calculator.Generate3DMesh(std::cref(indices), std::cref(points), std::cref(isConvex), matrix);
         REQUIRE(result.has_error());
         CHECK(CheckInnermostError<vrml_proc::parser::model::validator::error::NumberOutOfRangeError<int32_t>>(result.error()));
-        HandleRootLevelError(result.error());
+        LogError(result.error());
     }
 }
 
@@ -425,7 +391,7 @@ TEST_CASE("IndexedFaceSetCalculator - invalid VI.", "[invalid]") {
         auto result = calculator.Generate3DMesh(std::cref(indices), std::cref(points), std::cref(isConvex), matrix);
         REQUIRE(result.has_error());
         CHECK(CheckInnermostError<vrml_proc::parser::model::validator::error::NumberOutOfRangeError<int32_t>>(result.error()));
-        HandleRootLevelError(result.error());
+        LogError(result.error());
     }
 }
 
@@ -450,7 +416,7 @@ TEST_CASE("IndexedFaceSetCalculator - invalid VII.", "[invalid]") {
         auto result = calculator.Generate3DMesh(std::cref(indices), std::cref(points), std::cref(isConvex), matrix);
         REQUIRE(result.has_error());
         CHECK(CheckInnermostError<vrml_proc::parser::model::validator::error::NumberOutOfRangeError<int32_t>>(result.error()));
-        HandleRootLevelError(result.error());
+        LogError(result.error());
     }
 }
 
@@ -475,7 +441,7 @@ TEST_CASE("IndexedFaceSetCalculator - invalid VIII.", "[invalid]") {
         auto result = calculator.Generate3DMesh(std::cref(indices), std::cref(points), std::cref(isConvex), matrix);
         REQUIRE(result.has_error());
         CHECK(CheckInnermostError<vrml_proc::parser::model::validator::error::NumberOutOfRangeError<int32_t>>(result.error()));
-        HandleRootLevelError(result.error());
+        LogError(result.error());
     }
 }
 
@@ -500,7 +466,7 @@ TEST_CASE("IndexedFaceSetCalculator - invalid IX.", "[invalid]") {
         auto result = calculator.Generate3DMesh(std::cref(indices), std::cref(points), std::cref(isConvex), matrix);
         REQUIRE(result.has_error());
         CHECK(CheckInnermostError<vrml_proc::parser::model::validator::error::NumberOutOfRangeError<int32_t>>(result.error()));
-        HandleRootLevelError(result.error());
+        LogError(result.error());
     }
 }
 
@@ -525,7 +491,7 @@ TEST_CASE("IndexedFaceSetCalculator - invalid X.", "[invalid]") {
         auto result = calculator.Generate3DMesh(std::cref(indices), std::cref(points), std::cref(isConvex), matrix);
         REQUIRE(result.has_error());
         CHECK(CheckInnermostError<vrml_proc::parser::model::validator::error::NumberOutOfRangeError<int32_t>>(result.error()));
-        HandleRootLevelError(result.error());
+        LogError(result.error());
     }
 }
 
@@ -554,6 +520,7 @@ TEST_CASE("IndexedFaceSetCalculator - valid III.", "[valid]") {
     {
         auto result = calculator.Generate3DMesh(std::cref(indices), std::cref(points), std::cref(isConvex), matrix);
         REQUIRE(result.has_value());
-        export_to_stl(*(result.value()), R"(C:\Users\marek\Documents\FI_MUNI\sem_05\SBAPR\vrmlxpy\IFS_Pyradamid.stl)");
+        /*to_stl::core::io::StlFileWriter writer;
+        writer.Write(std::filesystem::path(R"(C:\Users\marek\Documents\FI_MUNI\sem_05\SBAPR\vrmlxpy\IFS_Pyramid.stl)"), *(result.value()));*/
     }
 }
