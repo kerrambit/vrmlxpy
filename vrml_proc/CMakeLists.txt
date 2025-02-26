@@ -257,7 +257,7 @@ target_link_libraries(vrmlproc PRIVATE CGAL::CGAL Boost::iostreams Boost::log Bo
 # --------------------------------------------------------------------------------------- #
 
 # Add the test executables.
-add_executable(VRMLFileGrammarUnitTests "tests/VRMLFileGrammarTest.cpp")
+add_executable(VrmlFileGrammarUnitTests "tests/VrmlFileGrammarTest.cpp")
 add_executable(Vec3fGrammarUnitTests "tests/Vec3fGrammarTest.cpp")
 add_executable(Vec4fGrammarUnitTests "tests/Vec4fGrammarTest.cpp")
 add_executable(Vec3fArrayGrammarUnitTests "tests/Vec3fArrayGrammarTest.cpp")
@@ -265,7 +265,7 @@ add_executable(Int32ArrayGrammarUnitTests "tests/Int32ArrayGrammarTest.cpp")
 add_executable(VrmlFieldExtractorUnitTests "tests/VrmlFieldExtractorTest.cpp")
 
 # Link Catch2 with the test executables.
-target_link_libraries(VRMLFileGrammarUnitTests PRIVATE Catch2::Catch2WithMain vrmlproc)
+target_link_libraries(VrmlFileGrammarUnitTests PRIVATE Catch2::Catch2WithMain vrmlproc)
 target_link_libraries(Vec3fGrammarUnitTests PRIVATE Catch2::Catch2WithMain vrmlproc)
 target_link_libraries(Vec4fGrammarUnitTests PRIVATE Catch2::Catch2WithMain vrmlproc)
 target_link_libraries(Vec3fArrayGrammarUnitTests PRIVATE Catch2::Catch2WithMain vrmlproc)
@@ -274,7 +274,7 @@ target_link_libraries(VrmlFieldExtractorUnitTests PRIVATE Catch2::Catch2WithMain
 
 # Enable testing (use CTest to run the unit tests).
 enable_testing()
-add_test(NAME VRMLFileGrammarUnitTests COMMAND VRMLFileGrammarUnitTests)
+add_test(NAME VrmlFileGrammarUnitTests COMMAND VrmlFileGrammarUnitTests)
 add_test(NAME Vec3fGrammarUnitTests COMMAND Vec3fGrammarUnitTests)
 add_test(NAME Vec4fGrammarUnitTests COMMAND Vec4fGrammarUnitTests)
 add_test(NAME Vec3fArrayGrammarUnitTests COMMAND Vec3fArrayGrammarUnitTests)
