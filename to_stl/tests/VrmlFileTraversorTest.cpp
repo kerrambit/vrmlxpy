@@ -15,7 +15,7 @@ TEST_CASE("Initialization") {
 
     vrml_proc::core::logger::InitLogging();
 
-    std::filesystem::path filepath(R"(C:\Users\marek\Documents\FI_MUNI\sem_05\SBAPR\vrmlxpy\testConfig.json)");
+    std::filesystem::path filepath(R"(C:\Users\marek\Documents\FI_MUNI\sem_05\SBAPR\vrmlxpy\testConfigWindows.json)");
     InitTesting(filepath);
 }
 
