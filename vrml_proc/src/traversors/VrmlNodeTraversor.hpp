@@ -23,6 +23,8 @@
 #include "TransformHandler.hpp"
 #include "VrmlNode.hpp"
 #include "WorldInfoHandler.hpp"
+#include <NodeDescriptorMap.hpp>
+#include <VrmlCanonicalHeaders.hpp>
 
 #include "VrmlProcessingExport.hpp"
 
@@ -42,50 +44,74 @@ namespace vrml_proc::traversor::VrmlNodeTraversor {
 			LogInfo("Handle empty VRML node.", LOGGING_INFO);
 			return std::make_shared<ConversionContext>();
 		}
-		else if (context.node.header == "WorldInfo" || context.node.header == "VRMLWorldInfo") {
+
+		std::string canonicalHeader;
+		auto it = vrml_proc::traversor::node_descriptor::HeaderToCanonicalName.find(context.node.header);
+		if (it != vrml_proc::traversor::node_descriptor::HeaderToCanonicalName.end()) {
+			canonicalHeader = it->second;
+		}
+
+		// TMP
+		if (canonicalHeader == "Appearance" || canonicalHeader == "VRMLAppearance") {
+			return std::make_shared<ConversionContext>();
+		}
+
+		auto descriptorMap = vrml_proc::traversor::node_descriptor::CreateNodeDescriptorMap();
+		auto it2 = descriptorMap.find(canonicalHeader);
+		if (it2 != descriptorMap.end()) {
+			auto& ndf = it2->second;
+			auto nd = ndf();
+			auto validationResult = nd.Validate(context.node, context.manager);
+			if (validationResult.has_error()) {
+				LogError(FormatString("Validation for node <", context.node.header, "> failed!"), LOGGING_INFO);
+				return cpp::fail(std::make_shared<NodeTraversorError>(validationResult.error(), context.node));
+			}
+		}
+		else {
+			LogError(FormatString("No handler for VRML node with name <", context.node.header, "> was found! It is unknown VRML node."), LOGGING_INFO);
+			std::shared_ptr<UnknownVrmlNode> innerError = std::make_shared<UnknownVrmlNode>(context.node.header);
+			return cpp::fail(std::make_shared<NodeTraversorError>(innerError, context.node));
+		}
+
+		if (canonicalHeader == "WorldInfo") {
 			return WorldInfoHandler::Handle(context, actionMap);
 		}
-		else if (context.node.header == "Group" || context.node.header == "VRMLGroup") {
+		else if (canonicalHeader == "Group") {
 			return GroupHandler::Handle(context, actionMap);
 		}
-		else if (context.node.header == "Transform" || context.node.header == "VRMLTransform") {
+		else if (canonicalHeader == "Transform") {
 			return TransformHandler::Handle(context, actionMap);
 		}
-		else if (context.node.header == "Shape" || context.node.header == "VRMLShape") {
+		else if (canonicalHeader == "Shape") {
 			return ShapeHandler::Handle(context, actionMap);
 		}
-		else if (context.node.header == "Appearance" || context.node.header == "VRMLAppearance") {
+		else if (canonicalHeader == "Appearance") {
 			// TODO
 			return std::make_shared<ConversionContext>();
 		}
-		else if (context.node.header == "IndexedFaceSet" || context.node.header == "VRMLIndexedFaceSet") {
+		else if (canonicalHeader == "IndexedFaceSet") {
 			return IndexedFaceSetHandler::Handle(context, actionMap);
 		}
-		else if (context.node.header == "Coordinate" || context.node.header == "VRMLCoordinate") {
+		else if (canonicalHeader == "Coordinate") {
 			return CoordinateHandler::Handle(context, actionMap);
 		}
-		else if (context.node.header == "Normal" || context.node.header == "VRMLNormal") {
+		else if (canonicalHeader == "Normal") {
 			return NormalHandler::Handle(context, actionMap);
 		}
-		else if (context.node.header == "TextureCoordinate" || context.node.header == "VRMLTextureCoordinate") {
+		else if (canonicalHeader == "TextureCoordinate") {
 			return TextureCoordinateHandler::Handle(context, actionMap);
 		}
-		else if (context.node.header == "Color" || context.node.header == "VRMLColor") {
+		else if (canonicalHeader == "Color") {
 			return ColorHandler::Handle(context, actionMap);
 		}
-		else if (context.node.header == "Box" || context.node.header == "VRMLBox") {
+		else if (canonicalHeader == "Box") {
 			return BoxHandler::Handle(context, actionMap);
 		}
-		else if (context.node.header == "Switch" || context.node.header == "VRMLSwitch") {
+		else if (canonicalHeader == "Switch") {
 			return SwitchHandler::Handle(context, actionMap);
 		}
-		else if (context.node.header == "Spotlight") {
+		else if (canonicalHeader == "Spotlight") {
 			//return SpotlightHandler::Handle(context, actionMap);
 		}
-
-		LogError(FormatString("No handler for VRML node with name <", context.node.header, "> was found! It is unknown VRML node."), LOGGING_INFO);
-		std::shared_ptr<UnknownVrmlNode> innerError = std::make_shared<UnknownVrmlNode>(context.node.header);
-		
-		return cpp::fail(std::make_shared<NodeTraversorError>(innerError, context.node));
 	}
 }
