@@ -370,6 +370,10 @@ namespace vrml_proc::traversor::node_descriptor {
 			return m_nodeArrayFields.at(fieldName).value();
 		}
 
+		std::string GetId() const {
+			return m_id;
+		}
+
 	private:
 
 		std::string m_id;
