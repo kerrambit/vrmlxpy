@@ -137,6 +137,10 @@ add_library(vrmlproc SHARED
     "src/traversors/errors/FileTraversorError.hpp"
     "src/traversors/errors/NodeTraversorError.hpp"
 
+    "src/traversors/node_descriptors/NodeDescriptor.hpp"
+    "src/traversors/node_descriptors/NodeDescriptorMap.hpp"
+    "src/traversors/node_descriptors/VrmlCanonicalHeaders.hpp"
+
     "src/traversors/utils/ConversionContextActionExecutor.hpp"
 
     "src/traversors/handlers/ShapeHandler.hpp"
@@ -221,6 +225,7 @@ target_include_directories(vrmlproc PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src/actions
 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/traversors
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/traversors/node_descriptors
     ${CMAKE_CURRENT_SOURCE_DIR}/src/traversors/utils
     ${CMAKE_CURRENT_SOURCE_DIR}/src/traversors/errors
     ${CMAKE_CURRENT_SOURCE_DIR}/src/traversors/validators
