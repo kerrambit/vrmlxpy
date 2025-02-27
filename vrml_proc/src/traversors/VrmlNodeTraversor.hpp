@@ -39,7 +39,7 @@ namespace vrml_proc::traversor::VrmlNodeTraversor {
 		using namespace vrml_proc::traversor::error;
 		using namespace vrml_proc::traversor::node_descriptor;
 
-		bool ignoreUnknownNodeFlag = false;
+		bool ignoreUnknownNodeFlag = context.config.ignoreUnknownNode;
 
 		LogInfo(FormatString("Find handler for VRML node with name <", context.node.header, ">."), LOGGING_INFO);
 
@@ -54,11 +54,6 @@ namespace vrml_proc::traversor::VrmlNodeTraversor {
 			if (it != HeaderToCanonicalName.end()) {
 				canonicalHeader = it->second;
 			}
-		}
-
-		// TMP, first config file must be read!
-		if (canonicalHeader == "Appearance" || canonicalHeader == "VRMLAppearance") {
-			return std::make_shared<ConversionContext>();
 		}
 
 		auto descriptorMap = CreateNodeDescriptorMap();
@@ -82,38 +77,46 @@ namespace vrml_proc::traversor::VrmlNodeTraversor {
 			return cpp::fail(std::make_shared<NodeTraversorError>(innerError, context.node));
 		}
 
+		cpp::result<std::shared_ptr<ConversionContext>, std::shared_ptr<vrml_proc::core::error::Error>> handlerResult;
+
 		if (canonicalHeader == "WorldInfo") {
-			return WorldInfoHandler::Handle(context, actionMap);
+			handlerResult = WorldInfoHandler::Handle(context, actionMap);
 		}
 		else if (canonicalHeader == "Group") {
-			return GroupHandler::Handle(context, actionMap);
+			handlerResult = GroupHandler::Handle(context, actionMap);
 		}
 		else if (canonicalHeader == "Transform") {
-			return TransformHandler::Handle(context, actionMap);
+			handlerResult = TransformHandler::Handle(context, actionMap);
 		}
 		else if (canonicalHeader == "Shape") {
-			return ShapeHandler::Handle(context, actionMap);
+			handlerResult = ShapeHandler::Handle(context, actionMap);
 		}
 		else if (canonicalHeader == "IndexedFaceSet") {
-			return IndexedFaceSetHandler::Handle(context, actionMap);
+			handlerResult = IndexedFaceSetHandler::Handle(context, actionMap);
 		}
 		else if (canonicalHeader == "Coordinate") {
-			return CoordinateHandler::Handle(context, actionMap);
+			handlerResult = CoordinateHandler::Handle(context, actionMap);
 		}
 		else if (canonicalHeader == "Normal") {
-			return NormalHandler::Handle(context, actionMap);
+			handlerResult = NormalHandler::Handle(context, actionMap);
 		}
 		else if (canonicalHeader == "TextureCoordinate") {
-			return TextureCoordinateHandler::Handle(context, actionMap);
+			handlerResult = TextureCoordinateHandler::Handle(context, actionMap);
 		}
 		else if (canonicalHeader == "Color") {
-			return ColorHandler::Handle(context, actionMap);
+			handlerResult = ColorHandler::Handle(context, actionMap);
 		}
 		else if (canonicalHeader == "Box") {
-			return BoxHandler::Handle(context, actionMap);
+			handlerResult = BoxHandler::Handle(context, actionMap);
 		}
 		else if (canonicalHeader == "Switch") {
-			return SwitchHandler::Handle(context, actionMap);
+			handlerResult = SwitchHandler::Handle(context, actionMap);
 		}
+
+		if (handlerResult.has_error()) {
+			return cpp::fail(std::make_shared<NodeTraversorError>(handlerResult.error(), context.node));
+		}
+
+		return handlerResult;
 	}
 }
