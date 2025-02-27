@@ -42,6 +42,7 @@ add_library(vrmlproc SHARED
     "src/core/errors/Error.hpp"
     "src/core/errors/NullPointerError.hpp"
     "src/core/errors/UnsupportedOperationError.hpp"
+    "src/core/errors/JsonError.hpp"
 
     "src/core/utils/ScopedTimer.hpp"
     "src/core/utils/ManualTimer.hpp"
