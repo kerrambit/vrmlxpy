@@ -39,7 +39,7 @@ namespace vrml_proc::traversor::VrmlNodeTraversor {
 		using namespace vrml_proc::traversor::error;
 		using namespace vrml_proc::traversor::node_descriptor;
 
-		bool ignoreUnknownNodeFlag = true;
+		bool ignoreUnknownNodeFlag = false;
 
 		LogInfo(FormatString("Find handler for VRML node with name <", context.node.header, ">."), LOGGING_INFO);
 
@@ -54,6 +54,11 @@ namespace vrml_proc::traversor::VrmlNodeTraversor {
 			if (it != HeaderToCanonicalName.end()) {
 				canonicalHeader = it->second;
 			}
+		}
+
+		// TMP, first config file must be read!
+		if (canonicalHeader == "Appearance" || canonicalHeader == "VRMLAppearance") {
+			return std::make_shared<ConversionContext>();
 		}
 
 		auto descriptorMap = CreateNodeDescriptorMap();
