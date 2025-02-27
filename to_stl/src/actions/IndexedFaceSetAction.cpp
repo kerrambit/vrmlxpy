@@ -59,7 +59,8 @@ namespace to_stl {
 				assert(false && "Invalid arguments for CoordinateAction");
 				});
 
-			auto coordResult = vrml_proc::traversor::VrmlNodeTraversor::Traverse<conversion_context::Vec3fArrayConversionContext>({ m_properties.coord.get(), manager, false, vrml_proc::math::TransformationMatrix() }, map);
+			vrml_proc::core::config::VrmlProcConfig config;
+			auto coordResult = vrml_proc::traversor::VrmlNodeTraversor::Traverse<conversion_context::Vec3fArrayConversionContext>({ m_properties.coord.get(), manager, false, vrml_proc::math::TransformationMatrix(), config }, map);
 			std::shared_ptr<to_stl::conversion_context::Vec3fArrayConversionContext> coord;
 			if (coordResult.has_value()) {
 				coord = coordResult.value();

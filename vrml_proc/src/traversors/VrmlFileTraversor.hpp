@@ -36,7 +36,7 @@ namespace vrml_proc::traversor::VrmlFileTraversor {
 			vrml_proc::core::logger::LogInfo(vrml_proc::core::utils::FormatString("Found ", index, ". root node. It is type <", root.header, ">."), LOGGING_INFO);
 
 			cpp::result<std::shared_ptr<ConversionContext>, std::shared_ptr<vrml_proc::core::error::Error>> result =
-				vrml_proc::traversor::VrmlNodeTraversor::Traverse<ConversionContext>(vrml_proc::traversor::FullParsedVrmlNodeContext(root, context.manager, false, vrml_proc::math::TransformationMatrix()), actionMap);
+				vrml_proc::traversor::VrmlNodeTraversor::Traverse<ConversionContext>(vrml_proc::traversor::FullParsedVrmlNodeContext(root, context.manager, false, vrml_proc::math::TransformationMatrix(), context.config), actionMap);
 
 			if (result.has_error()) {
 				auto time = timer.End();

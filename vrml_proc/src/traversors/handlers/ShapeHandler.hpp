@@ -42,12 +42,12 @@ namespace vrml_proc::traversor::handler::ShapeHandler {
         vrml_proc::parser::VrmlNode defaultAppearance;
         vrml_proc::parser::VrmlNode defaultGeometry;
 
-        auto resolvedAppearance = vrml_proc::traversor::VrmlNodeTraversor::Traverse<ConversionContext>({ validator.GetCachedAppearance(defaultAppearance).get(), context.manager, true, context.transformation }, actionMap);
+        auto resolvedAppearance = vrml_proc::traversor::VrmlNodeTraversor::Traverse<ConversionContext>({ validator.GetCachedAppearance(defaultAppearance).get(), context.manager, true, context.transformation, context.config }, actionMap);
         if (resolvedAppearance.has_error()) {
             return cpp::fail(resolvedAppearance.error());
         }
 
-        auto resolvedGeometry = vrml_proc::traversor::VrmlNodeTraversor::Traverse<ConversionContext>({ validator.GetCachedGeometry(defaultGeometry).get(), context.manager, true, context.transformation }, actionMap);
+        auto resolvedGeometry = vrml_proc::traversor::VrmlNodeTraversor::Traverse<ConversionContext>({ validator.GetCachedGeometry(defaultGeometry).get(), context.manager, true, context.transformation, context.config }, actionMap);
         if (resolvedGeometry.has_error()) {
             return cpp::fail(resolvedGeometry.error());
         }

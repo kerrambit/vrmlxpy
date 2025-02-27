@@ -47,7 +47,7 @@ namespace vrml_proc::traversor::handler::SwitchHandler {
 
         std::shared_ptr<ConversionContext> resolvedChild = std::make_shared<ConversionContext>();
         if (whichChoice >= 0 && validator.GetCachedChoice().size() != 0 && whichChoice <= validator.GetCachedChoice().size() - 1) {
-            auto recursiveResult = vrml_proc::traversor::VrmlNodeTraversor::Traverse<ConversionContext>({ validator.GetCachedChoice().at(whichChoice), context.manager, context.IsDescendantOfShape, context.transformation}, actionMap);
+            auto recursiveResult = vrml_proc::traversor::VrmlNodeTraversor::Traverse<ConversionContext>({ validator.GetCachedChoice().at(whichChoice), context.manager, context.IsDescendantOfShape, context.transformation, context.config }, actionMap);
             if (recursiveResult.has_error()) {
                 return cpp::fail(recursiveResult.error());
             }

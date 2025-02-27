@@ -42,7 +42,7 @@ namespace vrml_proc::traversor::handler::GroupHandler {
         std::vector<std::shared_ptr<ConversionContext>> resolvedChildren;
         for (const auto& child : validator.GetCachedChildren()) {
             auto recursiveResult = vrml_proc::traversor::VrmlNodeTraversor::Traverse<ConversionContext>(
-                { child, context.manager, context.IsDescendantOfShape, context.transformation }, actionMap);
+                { child, context.manager, context.IsDescendantOfShape, context.transformation, context.config }, actionMap);
             if (recursiveResult.has_error()) {
                 return cpp::fail(recursiveResult.error());
             }
@@ -67,7 +67,7 @@ namespace vrml_proc::traversor::handler::GroupHandler {
         std::vector<std::shared_ptr<ConversionContext>> resolvedChildren;
         for (const auto& child : nd.GetField<std::vector<std::reference_wrapper<const vrml_proc::parser::VrmlNode>>>("children")) {
             auto recursiveResult = vrml_proc::traversor::VrmlNodeTraversor::Traverse<ConversionContext>(
-                { child, context.manager, context.IsDescendantOfShape, context.transformation }, actionMap);
+                { child, context.manager, context.IsDescendantOfShape, context.transformation, context.config }, actionMap);
             if (recursiveResult.has_error()) {
                 return cpp::fail(recursiveResult.error());
             }
