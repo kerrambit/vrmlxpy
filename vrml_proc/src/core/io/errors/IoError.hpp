@@ -63,4 +63,26 @@ namespace vrml_proc::core::io::error {
         std::string m_filepath;
     };
 
+    class GeneralReadError : public IoError {
+    public:
+        GeneralReadError(const std::string& filepath) : m_filepath(filepath), m_details("") {}
+        GeneralReadError(const std::string& filepath, const std::string& details) : m_filepath(filepath), m_details(details) {}
+    protected:
+        std::string GetMessageInternal() const override {
+            std::ostringstream oss;
+            oss << IoError::GetMessageInternal()
+                << "[GeneralReadError]: when reading data from <" << m_filepath << ">, an unknown error occurred!";
+
+            if (!m_details.empty()) {
+                oss << " Details: <" << m_details << ">.";
+            }
+
+            oss << "\n";
+            return oss.str();
+        }
+
+    private:
+        std::string m_filepath;
+        std::string m_details;
+    };
 }
