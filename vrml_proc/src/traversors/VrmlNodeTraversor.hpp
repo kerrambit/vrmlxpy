@@ -37,30 +37,29 @@ namespace vrml_proc::traversor::VrmlNodeTraversor {
 		using namespace vrml_proc::core::utils;
 		using namespace vrml_proc::traversor::handler;
 		using namespace vrml_proc::traversor::error;
+		using namespace vrml_proc::traversor::node_descriptor;
+
+		bool ignoreUnknownNodeFlag = true;
 
 		LogInfo(FormatString("Find handler for VRML node with name <", context.node.header, ">."), LOGGING_INFO);
 
-		if (context.node.header == "") {
+		if (context.node.header.empty()) {
 			LogInfo("Handle empty VRML node.", LOGGING_INFO);
 			return std::make_shared<ConversionContext>();
 		}
 
 		std::string canonicalHeader;
-		auto it = vrml_proc::traversor::node_descriptor::HeaderToCanonicalName.find(context.node.header);
-		if (it != vrml_proc::traversor::node_descriptor::HeaderToCanonicalName.end()) {
-			canonicalHeader = it->second;
+		{
+			auto it = HeaderToCanonicalName.find(context.node.header);
+			if (it != HeaderToCanonicalName.end()) {
+				canonicalHeader = it->second;
+			}
 		}
 
-		// TMP
-		if (canonicalHeader == "Appearance" || canonicalHeader == "VRMLAppearance") {
-			return std::make_shared<ConversionContext>();
-		}
-
-		auto descriptorMap = vrml_proc::traversor::node_descriptor::CreateNodeDescriptorMap();
-		auto it2 = descriptorMap.find(canonicalHeader);
-		if (it2 != descriptorMap.end()) {
-			auto& ndf = it2->second;
-			auto nd = ndf();
+		auto descriptorMap = CreateNodeDescriptorMap();
+		auto it = descriptorMap.find(canonicalHeader);
+		if (it != descriptorMap.end()) {
+			auto nd = it->second();
 			auto validationResult = nd.Validate(context.node, context.manager);
 			if (validationResult.has_error()) {
 				LogError(FormatString("Validation for node <", context.node.header, "> failed!"), LOGGING_INFO);
@@ -68,6 +67,11 @@ namespace vrml_proc::traversor::VrmlNodeTraversor {
 			}
 		}
 		else {
+			if (ignoreUnknownNodeFlag) {
+				LogInfo(FormatString("No handler for VRML node with name <", context.node.header, "> was found! The unknown node will be ignored."), LOGGING_INFO);
+				return std::make_shared<ConversionContext>();
+			}
+
 			LogError(FormatString("No handler for VRML node with name <", context.node.header, "> was found! It is unknown VRML node."), LOGGING_INFO);
 			std::shared_ptr<UnknownVrmlNode> innerError = std::make_shared<UnknownVrmlNode>(context.node.header);
 			return cpp::fail(std::make_shared<NodeTraversorError>(innerError, context.node));
@@ -84,10 +88,6 @@ namespace vrml_proc::traversor::VrmlNodeTraversor {
 		}
 		else if (canonicalHeader == "Shape") {
 			return ShapeHandler::Handle(context, actionMap);
-		}
-		else if (canonicalHeader == "Appearance") {
-			// TODO
-			return std::make_shared<ConversionContext>();
 		}
 		else if (canonicalHeader == "IndexedFaceSet") {
 			return IndexedFaceSetHandler::Handle(context, actionMap);
@@ -109,9 +109,6 @@ namespace vrml_proc::traversor::VrmlNodeTraversor {
 		}
 		else if (canonicalHeader == "Switch") {
 			return SwitchHandler::Handle(context, actionMap);
-		}
-		else if (canonicalHeader == "Spotlight") {
-			//return SpotlightHandler::Handle(context, actionMap);
 		}
 	}
 }
