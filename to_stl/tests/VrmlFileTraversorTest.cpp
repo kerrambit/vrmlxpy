@@ -18,7 +18,8 @@ TEST_CASE("Initialization") {
 
     vrml_proc::core::logger::InitLogging();
 
-    std::filesystem::path filepath(R"(C:\Users\marek\Documents\FI_MUNI\sem_05\SBAPR\vrmlxpy\testConfigWindows.json)");
+    std::filesystem::path executablePath = std::filesystem::current_path();
+    std::filesystem::path filepath = executablePath / "testConfig.json";
     InitTesting(filepath);
 }
 

@@ -29,7 +29,7 @@ namespace vrmlxpy {
 
     bool ConvertVrmlToStl(const std::string& inputFilename, const std::string& outputFilename, const std::string& configFilename) {
 
-        vrml_proc::core::logger::InitLogging(R"(C:\Users\marek\Documents\FI_MUNI\sem_05\SBAPR\vrmlxpy\out\build\Debug)", "vrmlxpy");
+        vrml_proc::core::logger::InitLogging(std::filesystem::current_path().string(), "vrmlxpy");
 
         std::cout << "Conversion from VRML to STL file has begun." << std::endl;
 
