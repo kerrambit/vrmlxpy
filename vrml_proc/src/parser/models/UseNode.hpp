@@ -7,15 +7,13 @@
 #include "VrmlProcessingExport.hpp"
 
 namespace vrml_proc {
-	namespace parser {
-		struct VRMLPROCESSING_API UseNode : public Printable {
+  namespace parser {
+    struct VRMLPROCESSING_API UseNode : public Printable {
+      UseNode() : Printable(std::cout) {}
 
-			UseNode()
-				: Printable(std::cout) {}
+      void Print(Printable::IndentationLevel indentationLevel) const override;
 
-			void Print(Printable::IndentationLevel indentationLevel) const override;
-
-			std::string identifier;
-		};
-	}
-}
+      std::string identifier;
+    };
+  }  // namespace parser
+}  // namespace vrml_proc

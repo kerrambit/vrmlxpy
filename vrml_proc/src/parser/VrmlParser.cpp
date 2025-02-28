@@ -17,40 +17,46 @@
 #include "VrmlNodeManagerPopulator.hpp"
 
 namespace vrml_proc {
-	namespace parser {
+  namespace parser {
 
-        ParserResult<VrmlFile> VrmlParser::Parse(BufferView buffer)
-		{
-            vrml_proc::core::logger::LogInfo("Parse VRML file content.", LOGGING_INFO);
+    ParserResult<VrmlFile> VrmlParser::Parse(BufferView buffer) {
+      vrml_proc::core::logger::LogInfo("Parse VRML file content.", LOGGING_INFO);
 
-            std::vector<VrmlNode> parsedData;
+      std::vector<VrmlNode> parsedData;
 
-            double time = 0.0;
-            bool success = false;
-            {
-                auto timer = vrml_proc::core::utils::ScopedTimer(time);
-                success = boost::spirit::qi::phrase_parse(buffer.begin, buffer.end, m_grammar, m_skipper, parsedData);
-            }
+      double time = 0.0;
+      bool success = false;
+      {
+        auto timer = vrml_proc::core::utils::ScopedTimer(time);
+        success = boost::spirit::qi::phrase_parse(buffer.begin, buffer.end, m_grammar, m_skipper, parsedData);
+      }
 
-            if (success && buffer.begin == buffer.end) {
-                vrml_proc::core::logger::LogInfo(vrml_proc::core::utils::FormatString("Parsing was successful. The whole parsing and AST creation process took ", time, " seconds."), LOGGING_INFO);
+      if (success && buffer.begin == buffer.end) {
+        vrml_proc::core::logger::LogInfo(
+            vrml_proc::core::utils::FormatString(
+                "Parsing was successful. The whole parsing and AST creation process took ", time, " seconds."),
+            LOGGING_INFO);
 
-                vrml_proc::core::logger::LogInfo("Populate VrmlNodeManager with DEF nodes.", LOGGING_INFO);
-                double time = 0.0;
-                {
-                    auto timer = vrml_proc::core::utils::ScopedTimer(time);
-                    for (const auto& root : parsedData) {
-                        VrmlNodeManagerPopulator::Populate(m_manager, root);
-                    }
-                }
-                vrml_proc::core::logger::LogInfo(vrml_proc::core::utils::FormatString("DEF nodes populating has finished. The whole process took ", time, " seconds."), LOGGING_INFO);
+        vrml_proc::core::logger::LogInfo("Populate VrmlNodeManager with DEF nodes.", LOGGING_INFO);
+        double time = 0.0;
+        {
+          auto timer = vrml_proc::core::utils::ScopedTimer(time);
+          for (const auto& root : parsedData) {
+            VrmlNodeManagerPopulator::Populate(m_manager, root);
+          }
+        }
+        vrml_proc::core::logger::LogInfo(
+            vrml_proc::core::utils::FormatString("DEF nodes populating has finished. The whole process took ", time,
+                                                 " seconds."),
+            LOGGING_INFO);
 
-                return parsedData;
-            }
+        return parsedData;
+      }
 
-            vrml_proc::core::logger::LogInfo(vrml_proc::core::utils::FormatString("Parsing was not successful. The process took ", time, " seconds."), LOGGING_INFO);
-            return cpp::fail(std::make_shared<vrml_proc::parser::error::ParserError>());
-		}
-	}
-}
-
+      vrml_proc::core::logger::LogInfo(
+          vrml_proc::core::utils::FormatString("Parsing was not successful. The process took ", time, " seconds."),
+          LOGGING_INFO);
+      return cpp::fail(std::make_shared<vrml_proc::parser::error::ParserError>());
+    }
+  }  // namespace parser
+}  // namespace vrml_proc

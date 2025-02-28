@@ -19,47 +19,62 @@
 
 namespace vrml_proc::traversor::VrmlFileTraversor {
 
-	template<typename ConversionContext>
-	VRMLPROCESSING_API inline cpp::result<std::shared_ptr<ConversionContext>, std::shared_ptr<vrml_proc::core::error::Error>> Traverse(const FullParsedVrmlFileContext& context, const vrml_proc::action::ConversionContextActionMap<ConversionContext>& actionMap) {
+  template <typename ConversionContext>
+  VRMLPROCESSING_API inline cpp::result<std::shared_ptr<ConversionContext>,
+                                        std::shared_ptr<vrml_proc::core::error::Error>>
+  Traverse(const FullParsedVrmlFileContext& context,
+           const vrml_proc::action::ConversionContextActionMap<ConversionContext>& actionMap) {
+    using namespace vrml_proc::core::logger;
+    using namespace vrml_proc::core::utils;
 
-		using namespace vrml_proc::core::logger;
-		using namespace vrml_proc::core::utils;
+    LogInfo("Traverse VRML file.", LOGGING_INFO);
+    ManualTimer timer;
+    timer.Start();
 
-		LogInfo("Traverse VRML file.", LOGGING_INFO);
-		ManualTimer timer; timer.Start();
+    std::shared_ptr<ConversionContext> traversedFile = std::make_shared<ConversionContext>();
 
-		std::shared_ptr<ConversionContext> traversedFile = std::make_shared<ConversionContext>();
+    size_t index = 1;
+    for (const auto& root : context.file) {
+      vrml_proc::core::logger::LogInfo(
+          vrml_proc::core::utils::FormatString("Found ", index, ". root node. It is type <", root.header, ">."),
+          LOGGING_INFO);
 
-		size_t index = 1;
-		for (const auto& root : context.file) {
+      cpp::result<std::shared_ptr<ConversionContext>, std::shared_ptr<vrml_proc::core::error::Error>> result =
+          vrml_proc::traversor::VrmlNodeTraversor::Traverse<ConversionContext>(
+              vrml_proc::traversor::FullParsedVrmlNodeContext(root, context.manager, false,
+                                                              vrml_proc::math::TransformationMatrix(), context.config),
+              actionMap);
 
-			vrml_proc::core::logger::LogInfo(vrml_proc::core::utils::FormatString("Found ", index, ". root node. It is type <", root.header, ">."), LOGGING_INFO);
+      if (result.has_error()) {
+        auto time = timer.End();
+        vrml_proc::core::logger::LogError(
+            vrml_proc::core::utils::FormatString("While traversing ", index, ". root node <", root.header,
+                                                 "> error occured! The process was aborted after ", time, " seconds."),
+            LOGGING_INFO);
+        auto fileError = std::make_shared<vrml_proc::traversor::error::FileTraversorError>(result.error(), root);
+        return cpp::fail(fileError);
+      }
 
-			cpp::result<std::shared_ptr<ConversionContext>, std::shared_ptr<vrml_proc::core::error::Error>> result =
-				vrml_proc::traversor::VrmlNodeTraversor::Traverse<ConversionContext>(vrml_proc::traversor::FullParsedVrmlNodeContext(root, context.manager, false, vrml_proc::math::TransformationMatrix(), context.config), actionMap);
+      if (result.value() == nullptr) {
+        auto time = timer.End();
+        vrml_proc::core::logger::LogError(
+            vrml_proc::core::utils::FormatString("While traversing ", index, ". root node <",
+                                                 "> unxpected internal error occured! The process was aborted after ",
+                                                 time, " seconds."),
+            LOGGING_INFO);
+        auto fileError = std::make_shared<vrml_proc::traversor::error::FileTraversorError>(root)
+                         << std::make_shared<vrml_proc::core::error::NullPointerError>();
+        return cpp::fail(fileError);
+      }
 
-			if (result.has_error()) {
-				auto time = timer.End();
-				vrml_proc::core::logger::LogError(vrml_proc::core::utils::FormatString("While traversing ", index, ". root node <", root.header, "> error occured! The process was aborted after ", time, " seconds."), LOGGING_INFO);
-				auto fileError = std::make_shared<vrml_proc::traversor::error::FileTraversorError>(result.error(), root);
-				return cpp::fail(fileError);
-			}
+      traversedFile->Merge(result.value().get());
 
-			if (result.value() == nullptr) {
-				auto time = timer.End();
-				vrml_proc::core::logger::LogError(vrml_proc::core::utils::FormatString("While traversing ", index, ". root node <", "> unxpected internal error occured! The process was aborted after ", time, " seconds."), LOGGING_INFO);
-				auto fileError = std::make_shared<vrml_proc::traversor::error::FileTraversorError>(root) << std::make_shared<vrml_proc::core::error::NullPointerError>();
-				return cpp::fail(fileError);
-			}
+      index++;
+    }
 
-			traversedFile->Merge(result.value().get());
+    auto time = timer.End();
+    LogInfo(FormatString("Traversing finished successfully. The process took ", time, " seconds."), LOGGING_INFO);
 
-			index++;
-		}
-
-		auto time = timer.End();
-		LogInfo(FormatString("Traversing finished successfully. The process took ", time, " seconds."), LOGGING_INFO);
-
-		return traversedFile;
-	}
-}
+    return traversedFile;
+  }
+}  // namespace vrml_proc::traversor::VrmlFileTraversor

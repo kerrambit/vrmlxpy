@@ -10,32 +10,27 @@
 #include "Vec2fGrammar.hpp"
 #include "BaseGrammar.hpp"
 
-BOOST_FUSION_ADAPT_STRUCT(
-    vrml_proc::parser::Vec2fArray,
-    (std::vector<vrml_proc::parser::Vec2f>, vectors)
-)
+BOOST_FUSION_ADAPT_STRUCT(vrml_proc::parser::Vec2fArray, (std::vector<vrml_proc::parser::Vec2f>, vectors))
 
 namespace vrml_proc {
-    namespace parser {
+  namespace parser {
 
-        template <typename Iterator, typename Skipper>
-        class Vec2fArrayGrammar
-            : public boost::spirit::qi::grammar<Iterator, Vec2fArray(), Skipper>,
-            public BaseGrammar<Iterator, Vec2fArray(), Skipper> {
+    template <typename Iterator, typename Skipper>
+    class Vec2fArrayGrammar : public boost::spirit::qi::grammar<Iterator, Vec2fArray(), Skipper>,
+                              public BaseGrammar<Iterator, Vec2fArray(), Skipper> {
+     public:
+      Vec2fArrayGrammar() : Vec2fArrayGrammar::base_type(this->m_start) {
+        m_vec2f = std::make_unique<Vec2fGrammar<Iterator, Skipper>>();
 
-        public:
-            Vec2fArrayGrammar() : Vec2fArrayGrammar::base_type(this->m_start) {
+        this->m_start = boost::spirit::qi::lit('[') >>
+                        -((m_vec2f->GetStartRule() % boost::spirit::qi::lit(',')) >> -boost::spirit::qi::lit(',')) >>
+                        boost::spirit::qi::lit(']');
 
-                m_vec2f = std::make_unique<Vec2fGrammar<Iterator, Skipper>>();
+        BOOST_SPIRIT_DEBUG_NODE(this->m_start);
+      }
 
-                this->m_start = boost::spirit::qi::lit('[') >>
-                    -((m_vec2f->GetStartRule() % boost::spirit::qi::lit(',')) >> -boost::spirit::qi::lit(',')) >>
-                    boost::spirit::qi::lit(']');
-
-                BOOST_SPIRIT_DEBUG_NODE(this->m_start);
-            }
-        private:
-            std::unique_ptr<Vec2fGrammar<Iterator, Skipper>> m_vec2f;
-        };
-    }
-}
+     private:
+      std::unique_ptr<Vec2fGrammar<Iterator, Skipper>> m_vec2f;
+    };
+  }  // namespace parser
+}  // namespace vrml_proc

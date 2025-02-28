@@ -5,18 +5,16 @@
 #include "ParserResult.hpp"
 
 namespace vrml_proc {
-	namespace parser {
+  namespace parser {
 
-		template <typename SourceType, typename ResultType>
-		class Parser {
+    template <typename SourceType, typename ResultType>
+    class Parser {
+     public:
+      Parser() = default;
 
-		public:
+      virtual ~Parser() = default;
 
-			Parser() = default;
-
-			virtual ~Parser() = default;
-
-			virtual ParserResult<ResultType> Parse(SourceType source) = 0;
-		};
-	}
-}
+      virtual ParserResult<ResultType> Parse(SourceType source) = 0;
+    };
+  }  // namespace parser
+}  // namespace vrml_proc

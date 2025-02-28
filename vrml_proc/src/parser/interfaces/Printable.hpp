@@ -9,27 +9,24 @@
 #define ONE_INDENTATION_LEVEL_LENGTH 2
 
 class VRMLPROCESSING_API Printable {
+ public:
+  Printable(std::ostream& defaultOutputStream) : m_stream(&defaultOutputStream) {}
 
-public:
+  virtual ~Printable() = default;
 
-	Printable(std::ostream& defaultOutputStream)
-		: m_stream(&defaultOutputStream) {}
+  using IndentationLevel = uint16_t;
 
-	virtual ~Printable() = default;
+  virtual void Print(IndentationLevel indentationLevel) const = 0;
 
-	using IndentationLevel = uint16_t;
+  VRMLPROCESSING_API friend std::ostream& operator<<(std::ostream& os, const Printable& obj);
 
-	virtual void Print(IndentationLevel indentationLevel) const = 0;
+  inline static std::string CreateIndentationString(IndentationLevel indentationLevel) {
+    return std::string(ONE_INDENTATION_LEVEL_LENGTH * indentationLevel, ' ');
+  }
 
-	VRMLPROCESSING_API friend std::ostream& operator<<(std::ostream& os, const Printable& obj);
+ protected:
+  inline std::ostream* AccessStreamPointer() const { return m_stream; }
 
-	inline static std::string CreateIndentationString(IndentationLevel indentationLevel) {
-		return std::string(ONE_INDENTATION_LEVEL_LENGTH * indentationLevel, ' ');
-	}
-protected:
-	inline std::ostream* AccessStreamPointer() const {
-		return m_stream;
-	}
-private:
-	std::ostream* m_stream;
+ private:
+  std::ostream* m_stream;
 };

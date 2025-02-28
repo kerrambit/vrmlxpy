@@ -9,21 +9,19 @@
 #include "VrmlProcessingExport.hpp"
 
 namespace to_stl {
-	namespace action {
+  namespace action {
 
-		class VRMLPROCESSING_API BoxAction : public to_stl::action::GeometryAction {
+    class VRMLPROCESSING_API BoxAction : public to_stl::action::GeometryAction {
+     public:
+      struct Properties {
+        std::reference_wrapper<const vrml_proc::parser::Vec3f> size;
+      };
 
-		public:
+      BoxAction(Properties properties, GeometryAction::Properties geometryProperties);
+      std::shared_ptr<to_stl::conversion_context::MeshTaskConversionContext> Execute() override;
 
-			struct Properties {
-				std::reference_wrapper<const vrml_proc::parser::Vec3f> size;
-			};
-
-			BoxAction(Properties properties, GeometryAction::Properties geometryProperties);
-			std::shared_ptr<to_stl::conversion_context::MeshTaskConversionContext> Execute() override;
-
-		private:
-			std::reference_wrapper<const vrml_proc::parser::Vec3f> m_size;
-		};
-	}
-}
+     private:
+      std::reference_wrapper<const vrml_proc::parser::Vec3f> m_size;
+    };
+  }  // namespace action
+}  // namespace to_stl

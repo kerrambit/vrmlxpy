@@ -26,7 +26,8 @@
  * @param error error to log
  */
 static void LogError(std::shared_ptr<vrml_proc::core::error::Error> error) {
-    vrml_proc::core::logger::LogUnformattedText("caught application error", error->GetMessage(), vrml_proc::core::logger::Level::Error, LOGGING_INFO);
+  vrml_proc::core::logger::LogUnformattedText("caught application error", error->GetMessage(),
+                                              vrml_proc::core::logger::Level::Error, LOGGING_INFO);
 }
 
 /**
@@ -34,7 +35,8 @@ static void LogError(std::shared_ptr<vrml_proc::core::error::Error> error) {
  * @param error error to log
  */
 static void LogError(const std::string& error) {
-    vrml_proc::core::logger::LogUnformattedText("caught application error", error, vrml_proc::core::logger::Level::Error, LOGGING_INFO);
+  vrml_proc::core::logger::LogUnformattedText("caught application error", error, vrml_proc::core::logger::Level::Error,
+                                              LOGGING_INFO);
 }
 
 /**
@@ -42,21 +44,21 @@ static void LogError(const std::string& error) {
  * @tparam T parameter of value inside result
  * @param result result to check
  */
-template<typename T>
+template <typename T>
 static void LogError(const cpp::result<std::shared_ptr<T>, std::shared_ptr<vrml_proc::core::error::Error>>& result) {
-    if (result.has_error()) {
-        LogError(result.error());
-    }
+  if (result.has_error()) {
+    LogError(result.error());
+  }
 }
 
 /**
  * @brief Contains all data loaded from test configuration file.
  */
 struct TestInfo {
-    std::string baseInputPath;
-    std::string baseOutputPath;
-    std::string baseExpectedOutputPath;
-    std::map<std::string, std::string> testFiles;
+  std::string baseInputPath;
+  std::string baseOutputPath;
+  std::string baseExpectedOutputPath;
+  std::map<std::string, std::string> testFiles;
 };
 
 /**
@@ -70,41 +72,37 @@ static TestInfo g_testInfo;
  * @return true if file was loaded succesfully, else false
  */
 static bool InitTesting(const std::filesystem::path& filepath) {
+  vrml_proc::core::io::JsonFileReader reader;
+  auto json = reader.Read(std::filesystem::path(filepath));
 
-    vrml_proc::core::io::JsonFileReader reader;
-    auto json = reader.Read(std::filesystem::path(filepath));
+  if (json.has_value()) {
+    g_testInfo.baseInputPath = (json.value())["baseInputPath"];
+    g_testInfo.baseOutputPath = (json.value())["baseOutputPath"];
+    g_testInfo.baseExpectedOutputPath = (json.value())["baseExpectedOutputPath"];
 
-    if (json.has_value()) {
-        g_testInfo.baseInputPath = (json.value())["baseInputPath"];
-        g_testInfo.baseOutputPath = (json.value())["baseOutputPath"];
-        g_testInfo.baseExpectedOutputPath = (json.value())["baseExpectedOutputPath"];
-
-        for (auto& element : (json.value())["testFiles"].items()) {
-            g_testInfo.testFiles[element.key()] = element.value();
-        }
-        return true;
+    for (auto& element : (json.value())["testFiles"].items()) {
+      g_testInfo.testFiles[element.key()] = element.value();
     }
-    else {
-        LogError(json.error());
-        return false;
-    }
+    return true;
+  } else {
+    LogError(json.error());
+    return false;
+  }
 }
 
 /**
  * @brief Retrieves read-only reference to global test information structure.
  * @return  test information structure
  */
-static const TestInfo& ReadTestInfo() {
-    return g_testInfo;
-}
+static const TestInfo& ReadTestInfo() { return g_testInfo; }
 
 /**
-* @brief Generates file (with .stl extension) name based on test case name.
-*/
-#define GENERATE_TEST_OUTPUT_FILENAME(filepath) \
-    std::string testName = Catch::getResultCapture().getCurrentTestName(); \
-    std::replace(testName.begin(), testName.end(), ' ', '_'); \
-    std::filesystem::path filepath = std::filesystem::path((testName + ".stl"))
+ * @brief Generates file (with .stl extension) name based on test case name.
+ */
+#define GENERATE_TEST_OUTPUT_FILENAME(filepath)                          \
+  std::string testName = Catch::getResultCapture().getCurrentTestName(); \
+  std::replace(testName.begin(), testName.end(), ' ', '_');              \
+  std::filesystem::path filepath = std::filesystem::path((testName + ".stl"))
 
 /**
  * @brief Checks if the most inner error is equal to expected type.
@@ -114,7 +112,8 @@ static const TestInfo& ReadTestInfo() {
  */
 template <typename ExpectedErrorType>
 static bool CheckInnermostError(std::shared_ptr<vrml_proc::core::error::Error> error) {
-    return std::dynamic_pointer_cast<ExpectedErrorType>(vrml_proc::core::error::Error::GetInnermostError(error)) != nullptr;
+  return std::dynamic_pointer_cast<ExpectedErrorType>(vrml_proc::core::error::Error::GetInnermostError(error)) !=
+         nullptr;
 }
 
 /**
@@ -122,29 +121,32 @@ static bool CheckInnermostError(std::shared_ptr<vrml_proc::core::error::Error> e
  * @tparam WantedErrorType type of error to retrieve
  * @param error error to get inner error from
  * @return shared pointer owning the inner error
- * 
+ *
  * @warning nullptr can be returned if WantedErrorType is not the most inner error!
  */
 template <typename WantedErrorType>
 static std::shared_ptr<WantedErrorType> GetInnermostError(std::shared_ptr<vrml_proc::core::error::Error> error) {
-    return std::dynamic_pointer_cast<WantedErrorType>(vrml_proc::core::error::Error::GetInnermostError(error));
+  return std::dynamic_pointer_cast<WantedErrorType>(vrml_proc::core::error::Error::GetInnermostError(error));
 }
 
 /**
  * @brief Checks if two files have similiar size in bytes.
  * @param filepath1 first path to check
  * @param filepath2 second path to check
- * @param toleranceInBytes ± tolerance between sizes in bytes 
+ * @param toleranceInBytes ± tolerance between sizes in bytes
  * @return true if the sizes are similiar else false
  */
-bool HaveSimiliarSizes(const std::filesystem::path& filepath1, const std::filesystem::path& filepath2, std::size_t toleranceInBytes) {
-    auto size1 = std::filesystem::file_size(filepath1);
-    auto size2 = std::filesystem::file_size(filepath2);
-    bool result = std::abs(static_cast<std::ptrdiff_t>(size1) - static_cast<std::ptrdiff_t>(size2)) <= static_cast<std::ptrdiff_t>(toleranceInBytes);
-    if (!result) {
-        LogError(vrml_proc::core::utils::FormatString("Filesizes are not in the tolerance: ", size1, " B != ", size2, " B (tolerance is +-", toleranceInBytes, " B)."));
-    }
-    return result;
+bool HaveSimiliarSizes(const std::filesystem::path& filepath1, const std::filesystem::path& filepath2,
+                       std::size_t toleranceInBytes) {
+  auto size1 = std::filesystem::file_size(filepath1);
+  auto size2 = std::filesystem::file_size(filepath2);
+  bool result = std::abs(static_cast<std::ptrdiff_t>(size1) - static_cast<std::ptrdiff_t>(size2)) <=
+                static_cast<std::ptrdiff_t>(toleranceInBytes);
+  if (!result) {
+    LogError(vrml_proc::core::utils::FormatString("Filesizes are not in the tolerance: ", size1, " B != ", size2,
+                                                  " B (tolerance is +-", toleranceInBytes, " B)."));
+  }
+  return result;
 }
 
 /**
@@ -153,10 +155,10 @@ bool HaveSimiliarSizes(const std::filesystem::path& filepath1, const std::filesy
  * @param manager VRML node manager
  * @return result containing VRMLFile object or error
  */
-static vrml_proc::parser::ParserResult<vrml_proc::parser::VrmlFile> ParseVrmlFile(std::string& text, vrml_proc::parser::VrmlNodeManager& manager) {
-
-    vrml_proc::parser::VrmlParser parser(manager);
-    return parser.Parse(vrml_proc::parser::BufferView(text.c_str(), text.c_str() + text.size()));
+static vrml_proc::parser::ParserResult<vrml_proc::parser::VrmlFile> ParseVrmlFile(
+    std::string& text, vrml_proc::parser::VrmlNodeManager& manager) {
+  vrml_proc::parser::VrmlParser parser(manager);
+  return parser.Parse(vrml_proc::parser::BufferView(text.c_str(), text.c_str() + text.size()));
 }
 
 /**
@@ -165,16 +167,16 @@ static vrml_proc::parser::ParserResult<vrml_proc::parser::VrmlFile> ParseVrmlFil
  * @param manager VRML node manager
  * @return result containing VRMLFile object or error
  */
-static vrml_proc::parser::ParserResult<vrml_proc::parser::VrmlFile> ParseVrmlFile(const std::filesystem::path& filepath, vrml_proc::parser::VrmlNodeManager& manager) {
+static vrml_proc::parser::ParserResult<vrml_proc::parser::VrmlFile> ParseVrmlFile(
+    const std::filesystem::path& filepath, vrml_proc::parser::VrmlNodeManager& manager) {
+  vrml_proc::core::io::MemoryMappedFileReader reader;
+  auto readResult = reader.Read(filepath);
+  if (readResult.has_error()) {
+    LogError(readResult.error());
+    return {};
+  }
 
-    vrml_proc::core::io::MemoryMappedFileReader reader;
-    auto readResult = reader.Read(filepath);
-    if (readResult.has_error()) {
-        LogError(readResult.error());
-        return {};
-    }
-
-    vrml_proc::parser::VrmlParser parser(manager);
-    vrml_proc::core::io::MemoryMappedFile file = readResult.value();
-    return parser.Parse(vrml_proc::parser::BufferView(file.GetBegin(), file.GetEnd()));
+  vrml_proc::parser::VrmlParser parser(manager);
+  vrml_proc::core::io::MemoryMappedFile file = readResult.value();
+  return parser.Parse(vrml_proc::parser::BufferView(file.GetBegin(), file.GetEnd()));
 }

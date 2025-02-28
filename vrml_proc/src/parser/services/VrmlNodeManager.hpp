@@ -10,20 +10,20 @@
 #include "VrmlProcessingExport.hpp"
 
 namespace vrml_proc {
-    namespace parser {
+  namespace parser {
 
-        class VRMLPROCESSING_API VrmlNodeManager {
-        public:
-            VrmlNodeManager();
+    class VRMLPROCESSING_API VrmlNodeManager {
+     public:
+      VrmlNodeManager();
 
-            void AddDefinitionNode(const std::string& id, const VrmlNode& node);
+      void AddDefinitionNode(const std::string& id, const VrmlNode& node);
 
-            std::optional<std::reference_wrapper<const VrmlNode>> GetDefinitionNode(const std::string& id) const;
+      std::optional<std::reference_wrapper<const VrmlNode>> GetDefinitionNode(const std::string& id) const;
 
-            inline size_t GetDefNodesTotalCount() const { return m_definitionNodes.size(); }
+      inline size_t GetDefNodesTotalCount() const { return m_definitionNodes.size(); }
 
-        private:
-            std::unordered_map<std::string, std::reference_wrapper<const VrmlNode>> m_definitionNodes;
-        };
-    }
-}
+     private:
+      std::unordered_map<std::string, std::reference_wrapper<const VrmlNode>> m_definitionNodes;
+    };
+  }  // namespace parser
+}  // namespace vrml_proc

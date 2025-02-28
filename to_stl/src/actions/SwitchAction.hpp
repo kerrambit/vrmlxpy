@@ -11,22 +11,21 @@
 #include "VrmlProcessingExport.hpp"
 
 namespace to_stl {
-	namespace action {
+  namespace action {
 
-		class VRMLPROCESSING_API SwitchAction : public vrml_proc::action::ConversionContextAction<to_stl::conversion_context::MeshTaskConversionContext> {
+    class VRMLPROCESSING_API SwitchAction
+        : public vrml_proc::action::ConversionContextAction<to_stl::conversion_context::MeshTaskConversionContext> {
+     public:
+      struct SwitchProperties {
+        std::shared_ptr<to_stl::conversion_context::MeshTaskConversionContext> choice;
+      };
 
-		public:
+      SwitchAction(SwitchProperties properties);
 
-			struct SwitchProperties {
-				std::shared_ptr<to_stl::conversion_context::MeshTaskConversionContext> choice;
-			};
+      std::shared_ptr<to_stl::conversion_context::MeshTaskConversionContext> Execute() override;
 
-			SwitchAction(SwitchProperties properties);
-
-			std::shared_ptr<to_stl::conversion_context::MeshTaskConversionContext> Execute() override;
-
-		private:
-			SwitchProperties m_properties;
-		};
-	}
-}
+     private:
+      SwitchProperties m_properties;
+    };
+  }  // namespace action
+}  // namespace to_stl

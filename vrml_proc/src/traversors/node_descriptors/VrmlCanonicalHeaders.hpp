@@ -6,57 +6,56 @@
 
 namespace vrml_proc::traversor::node_descriptor {
 
-    /**
-     * @brief Groups all posible header names and thei mapping to canonical VRML header name.
-     * Each pair is {POSSIBLE_NAME, CANONICAL_FORM}.
-     */
-    std::map<std::string, std::string> HeaderToCanonicalName = {
+  /**
+   * @brief Groups all posible header names and thei mapping to canonical VRML header name.
+   * Each pair is {POSSIBLE_NAME, CANONICAL_FORM}.
+   */
+  std::map<std::string, std::string> HeaderToCanonicalName = {
 
-        {"Group", "Group"},
-        {"VRMLGroup", "Group"},
+      {"Group", "Group"},
+      {"VRMLGroup", "Group"},
 
-        {"Transform", "Transform"},
-        {"VRMLTransform", "Transform"},
+      {"Transform", "Transform"},
+      {"VRMLTransform", "Transform"},
 
-        {"Switch", "Switch"},
-        {"VRMLSwitch", "Switch"},
+      {"Switch", "Switch"},
+      {"VRMLSwitch", "Switch"},
 
-        {"IndexedFaceSet", "IndexedFaceSet"},
-        {"VRMLIndexedFaceSet", "IndexedFaceSet"},
+      {"IndexedFaceSet", "IndexedFaceSet"},
+      {"VRMLIndexedFaceSet", "IndexedFaceSet"},
 
-        {"Box", "Box"},
-        {"VRMLBox", "Box"},
+      {"Box", "Box"},
+      {"VRMLBox", "Box"},
 
-        {"Shape", "Shape"},
-        {"VRMLShape", "Shape"},
+      {"Shape", "Shape"},
+      {"VRMLShape", "Shape"},
 
-        {"Color", "Color"},
-        {"VRMLColor", "Color"},
+      {"Color", "Color"},
+      {"VRMLColor", "Color"},
 
-        {"Coordinate", "Coordinate"},
-        {"VRMLCoordinate", "Coordinate"},
+      {"Coordinate", "Coordinate"},
+      {"VRMLCoordinate", "Coordinate"},
 
-        {"Normal", "Normal"},
-        {"VRMLNormal", "Normal"},
+      {"Normal", "Normal"},
+      {"VRMLNormal", "Normal"},
 
-        {"TextureCoordinate", "TextureCoordinate"},
-        {"VRMLTextureCoordinate", "TextureCoordinate"},
+      {"TextureCoordinate", "TextureCoordinate"},
+      {"VRMLTextureCoordinate", "TextureCoordinate"},
 
-        {"Appearance", "Appearance"},
-        {"VRMLAppearance", "Appearance"},
+      {"Appearance", "Appearance"},
+      {"VRMLAppearance", "Appearance"},
 
-        {"WorldInfo", "WorldInfo"},
-        {"VRMLWorldInfo", "WorldInfo"},
-    };
+      {"WorldInfo", "WorldInfo"},
+      {"VRMLWorldInfo", "WorldInfo"},
+  };
 
-    inline std::unordered_set<std::string> GetPossibleNamesForCanonical(const std::string& canonicalName) {
-
-        std::unordered_set<std::string> result;
-        for (const auto& [possible, canonical] : HeaderToCanonicalName) {
-            if (canonical == canonicalName) {
-                result.insert(possible);
-            }
-        }
-        return result;
+  inline std::unordered_set<std::string> GetPossibleNamesForCanonical(const std::string& canonicalName) {
+    std::unordered_set<std::string> result;
+    for (const auto& [possible, canonical] : HeaderToCanonicalName) {
+      if (canonical == canonicalName) {
+        result.insert(possible);
+      }
     }
-}
+    return result;
+  }
+}  // namespace vrml_proc::traversor::node_descriptor

@@ -7,7 +7,7 @@
 #include "CGALBaseTypesForVrml.hpp"
 
 namespace to_stl {
-	namespace core {
-		using Mesh = CGAL::Surface_mesh<vrml_proc::math::cgal::CGALPoint>;
-	}
-}
+  namespace core {
+    using Mesh = CGAL::Surface_mesh<vrml_proc::math::cgal::CGALPoint>;
+  }
+}  // namespace to_stl
