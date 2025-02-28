@@ -43,6 +43,8 @@ namespace vrml_proc::traversor::node_descriptor {
       NodeArray
     };
 
+    NodeDescriptor() : m_id("") {}
+
     NodeDescriptor(const std::string& id) : m_id(id) {}
 
     NodeDescriptor(const std::string& id, const std::string& additionalId)
@@ -54,6 +56,9 @@ namespace vrml_proc::traversor::node_descriptor {
     template <typename Type>
     void BindField(const std::string& fieldName, const Type& defaultValue);
 
+    template <typename T>
+    T GetField(const std::string& fieldName) const;
+
     void BindVrmlNode(const std::string& fieldName, const std::unordered_set<std::string>& validNodeHeaders,
                       const vrml_proc::parser::VrmlNode& defaultNode) {
       m_fieldTypes[fieldName] = FieldType::Node;
@@ -61,7 +66,10 @@ namespace vrml_proc::traversor::node_descriptor {
       m_nodeFields[fieldName] = std::cref(defaultNode);
     }
 
-    void BindVrmlNodeArray(const std::string& fieldName) { m_fieldTypes[fieldName] = FieldType::NodeArray; }
+    void BindVrmlNodeArray(const std::string& fieldName) {
+      m_fieldTypes[fieldName] = FieldType::NodeArray;
+      m_nodeArrayFields[fieldName] = std::vector<std::reference_wrapper<const vrml_proc::parser::VrmlNode>>{};
+    }
 
     static bool CheckHeader(const NodeDescriptor& nd, const vrml_proc::parser::VrmlNode& node) {
       return node.header == nd.m_id || nd.m_additionalIds.find(node.header) != nd.m_additionalIds.end();
@@ -186,17 +194,18 @@ namespace vrml_proc::traversor::node_descriptor {
             m_vec3fArrayFields[field.name] = value.value();
           } break;
 
-            {
-              auto value = vrml_proc::traversor::validator::NodeValidator::ExtractFieldByNameWithValidation<
-                  vrml_proc::parser::Int32Array>(field.name, node.fields);
-              if (value.has_error()) {
-                return cpp::fail(value.error());
-              }
-              m_int32ArrayFields[field.name] = value.value();
-            }
-            break;
+          case FieldType::Int32Array:
 
-          case NodeDescriptor::FieldType::Node:
+          {
+            auto value = vrml_proc::traversor::validator::NodeValidator::ExtractFieldByNameWithValidation<
+                vrml_proc::parser::Int32Array>(field.name, node.fields);
+            if (value.has_error()) {
+              return cpp::fail(value.error());
+            }
+            m_int32ArrayFields[field.name] = value.value();
+          } break;
+
+          case FieldType::Node:
 
           {
             auto vrmlNode = vrml_proc::traversor::validator::NodeValidator::ExtractVrmlNodeWithValidation(
@@ -215,7 +224,7 @@ namespace vrml_proc::traversor::node_descriptor {
             m_nodeFields[field.name] = vrmlNode.value();
           } break;
 
-          case NodeDescriptor::FieldType::NodeArray:
+          case FieldType::NodeArray:
 
           {
             auto vrmlNodeArray = vrml_proc::traversor::validator::NodeValidator::ExtractVrmlNodeArrayWithValidation(
@@ -243,9 +252,6 @@ namespace vrml_proc::traversor::node_descriptor {
       }
       return FieldType::Unknown;
     }
-
-    template <typename T>
-    T GetField(const std::string& fieldName) const;
 
     std::string GetId() const { return m_id; }
 
@@ -284,149 +290,153 @@ namespace vrml_proc::traversor::node_descriptor {
 }  // namespace vrml_proc::traversor::node_descriptor
 
 template <>
-void vrml_proc::traversor::node_descriptor::NodeDescriptor::BindField(const std::string& fieldName,
-                                                                      const bool& defaultValue) {
+inline void vrml_proc::traversor::node_descriptor::NodeDescriptor::BindField(const std::string& fieldName,
+                                                                             const bool& defaultValue) {
   m_fieldTypes[fieldName] = FieldType::Bool;
   m_boolFields[fieldName] = std::cref(defaultValue);
 }
 
 template <>
-void vrml_proc::traversor::node_descriptor::NodeDescriptor::BindField(const std::string& fieldName,
-                                                                      const std::string& defaultValue) {
+inline void vrml_proc::traversor::node_descriptor::NodeDescriptor::BindField(const std::string& fieldName,
+                                                                             const std::string& defaultValue) {
   m_fieldTypes[fieldName] = FieldType::String;
   m_stringFields[fieldName] = std::cref(defaultValue);
 }
 
 template <>
-void vrml_proc::traversor::node_descriptor::NodeDescriptor::BindField(
+inline void vrml_proc::traversor::node_descriptor::NodeDescriptor::BindField(
     const std::string& fieldName, const vrml_proc::parser::float32_t& defaultValue) {
   m_fieldTypes[fieldName] = FieldType::Float32;
   m_float32Fields[fieldName] = std::cref(defaultValue);
 }
 
 template <>
-void vrml_proc::traversor::node_descriptor::NodeDescriptor::BindField(const std::string& fieldName,
-                                                                      const int32_t& defaultValue) {
+inline void vrml_proc::traversor::node_descriptor::NodeDescriptor::BindField(const std::string& fieldName,
+                                                                             const int32_t& defaultValue) {
   m_fieldTypes[fieldName] = FieldType::Int32;
   m_int32Fields[fieldName] = std::cref(defaultValue);
 }
 
 template <>
-void vrml_proc::traversor::node_descriptor::NodeDescriptor::BindField(const std::string& fieldName,
-                                                                      const vrml_proc::parser::Vec2f& defaultValue) {
+inline void vrml_proc::traversor::node_descriptor::NodeDescriptor::BindField(
+    const std::string& fieldName, const vrml_proc::parser::Vec2f& defaultValue) {
   m_fieldTypes[fieldName] = FieldType::Vec2f;
   m_vec2fFields[fieldName] = std::cref(defaultValue);
 }
 
 template <>
-void vrml_proc::traversor::node_descriptor::NodeDescriptor::BindField(const std::string& fieldName,
-                                                                      const vrml_proc::parser::Vec3f& defaultValue) {
+inline void vrml_proc::traversor::node_descriptor::NodeDescriptor::BindField(
+    const std::string& fieldName, const vrml_proc::parser::Vec3f& defaultValue) {
   m_fieldTypes[fieldName] = FieldType::Vec3f;
   m_vec3fFields[fieldName] = std::cref(defaultValue);
 }
 
 template <>
-void vrml_proc::traversor::node_descriptor::NodeDescriptor::BindField(const std::string& fieldName,
-                                                                      const vrml_proc::parser::Vec4f& defaultValue) {
+inline void vrml_proc::traversor::node_descriptor::NodeDescriptor::BindField(
+    const std::string& fieldName, const vrml_proc::parser::Vec4f& defaultValue) {
   m_fieldTypes[fieldName] = FieldType::Vec4f;
   m_vec4fFields[fieldName] = std::cref(defaultValue);
 }
 
 template <>
-void vrml_proc::traversor::node_descriptor::NodeDescriptor::BindField(
+inline void vrml_proc::traversor::node_descriptor::NodeDescriptor::BindField(
     const std::string& fieldName, const vrml_proc::parser::Vec2fArray& defaultValue) {
   m_fieldTypes[fieldName] = FieldType::Vec2fArray;
   m_vec2fArrayFields[fieldName] = std::cref(defaultValue);
 }
 
 template <>
-void vrml_proc::traversor::node_descriptor::NodeDescriptor::BindField(
+inline void vrml_proc::traversor::node_descriptor::NodeDescriptor::BindField(
     const std::string& fieldName, const vrml_proc::parser::Vec3fArray& defaultValue) {
   m_fieldTypes[fieldName] = FieldType::Vec3fArray;
   m_vec3fArrayFields[fieldName] = std::cref(defaultValue);
 }
 
 template <>
-void vrml_proc::traversor::node_descriptor::NodeDescriptor::BindField(
+inline void vrml_proc::traversor::node_descriptor::NodeDescriptor::BindField(
     const std::string& fieldName, const vrml_proc::parser::Int32Array& defaultValue) {
   m_fieldTypes[fieldName] = FieldType::Int32Array;
   m_int32ArrayFields[fieldName] = std::cref(defaultValue);
 }
 
 template <>
-std::reference_wrapper<const bool>
+inline std::reference_wrapper<const bool>
 vrml_proc::traversor::node_descriptor::NodeDescriptor::GetField<std::reference_wrapper<const bool>>(
     const std::string& fieldName) const {
   return m_boolFields.at(fieldName).value();
 }
 
 template <>
-std::reference_wrapper<const std::string>
+inline std::reference_wrapper<const std::string>
 vrml_proc::traversor::node_descriptor::NodeDescriptor::GetField<std::reference_wrapper<const std::string>>(
     const std::string& fieldName) const {
   return m_stringFields.at(fieldName).value();
 }
 
 template <>
-std::reference_wrapper<const vrml_proc::parser::float32_t> vrml_proc::traversor::node_descriptor::NodeDescriptor::
-    GetField<std::reference_wrapper<const vrml_proc::parser::float32_t>>(const std::string& fieldName) const {
+inline std::reference_wrapper<const vrml_proc::parser::float32_t>
+vrml_proc::traversor::node_descriptor::NodeDescriptor::GetField<
+    std::reference_wrapper<const vrml_proc::parser::float32_t>>(const std::string& fieldName) const {
   return m_float32Fields.at(fieldName).value();
 }
 
 template <>
-std::reference_wrapper<const int32_t>
+inline std::reference_wrapper<const int32_t>
 vrml_proc::traversor::node_descriptor::NodeDescriptor::GetField<std::reference_wrapper<const int32_t>>(
     const std::string& fieldName) const {
   return m_int32Fields.at(fieldName).value();
 }
 
 template <>
-std::reference_wrapper<const vrml_proc::parser::Vec2f>
+inline std::reference_wrapper<const vrml_proc::parser::Vec2f>
 vrml_proc::traversor::node_descriptor::NodeDescriptor::GetField<std::reference_wrapper<const vrml_proc::parser::Vec2f>>(
     const std::string& fieldName) const {
   return m_vec2fFields.at(fieldName).value();
 }
 
 template <>
-std::reference_wrapper<const vrml_proc::parser::Vec3f>
+inline std::reference_wrapper<const vrml_proc::parser::Vec3f>
 vrml_proc::traversor::node_descriptor::NodeDescriptor::GetField<std::reference_wrapper<const vrml_proc::parser::Vec3f>>(
     const std::string& fieldName) const {
   return m_vec3fFields.at(fieldName).value();
 }
 
 template <>
-std::reference_wrapper<const vrml_proc::parser::Vec4f>
+inline std::reference_wrapper<const vrml_proc::parser::Vec4f>
 vrml_proc::traversor::node_descriptor::NodeDescriptor::GetField<std::reference_wrapper<const vrml_proc::parser::Vec4f>>(
     const std::string& fieldName) const {
   return m_vec4fFields.at(fieldName).value();
 }
 
 template <>
-std::reference_wrapper<const vrml_proc::parser::Vec2fArray> vrml_proc::traversor::node_descriptor::NodeDescriptor::
-    GetField<std::reference_wrapper<const vrml_proc::parser::Vec2fArray>>(const std::string& fieldName) const {
+inline std::reference_wrapper<const vrml_proc::parser::Vec2fArray>
+vrml_proc::traversor::node_descriptor::NodeDescriptor::GetField<
+    std::reference_wrapper<const vrml_proc::parser::Vec2fArray>>(const std::string& fieldName) const {
   return m_vec2fArrayFields.at(fieldName).value();
 }
 
 template <>
-std::reference_wrapper<const vrml_proc::parser::Vec3fArray> vrml_proc::traversor::node_descriptor::NodeDescriptor::
-    GetField<std::reference_wrapper<const vrml_proc::parser::Vec3fArray>>(const std::string& fieldName) const {
+inline std::reference_wrapper<const vrml_proc::parser::Vec3fArray>
+vrml_proc::traversor::node_descriptor::NodeDescriptor::GetField<
+    std::reference_wrapper<const vrml_proc::parser::Vec3fArray>>(const std::string& fieldName) const {
   return m_vec3fArrayFields.at(fieldName).value();
 }
 
 template <>
-std::reference_wrapper<const vrml_proc::parser::Int32Array> vrml_proc::traversor::node_descriptor::NodeDescriptor::
-    GetField<std::reference_wrapper<const vrml_proc::parser::Int32Array>>(const std::string& fieldName) const {
+inline std::reference_wrapper<const vrml_proc::parser::Int32Array>
+vrml_proc::traversor::node_descriptor::NodeDescriptor::GetField<
+    std::reference_wrapper<const vrml_proc::parser::Int32Array>>(const std::string& fieldName) const {
   return m_int32ArrayFields.at(fieldName).value();
 }
 
 template <>
-std::reference_wrapper<const vrml_proc::parser::VrmlNode> vrml_proc::traversor::node_descriptor::NodeDescriptor::
+inline std::reference_wrapper<const vrml_proc::parser::VrmlNode> vrml_proc::traversor::node_descriptor::NodeDescriptor::
     GetField<std::reference_wrapper<const vrml_proc::parser::VrmlNode>>(const std::string& fieldName) const {
   return m_nodeFields.at(fieldName).value();
 }
 
 template <>
-std::vector<std::reference_wrapper<const vrml_proc::parser::VrmlNode>>
+inline std::vector<std::reference_wrapper<const vrml_proc::parser::VrmlNode>>
 vrml_proc::traversor::node_descriptor::NodeDescriptor::GetField<
     std::vector<std::reference_wrapper<const vrml_proc::parser::VrmlNode>>>(const std::string& fieldName) const {
   return m_nodeArrayFields.at(fieldName).value();
