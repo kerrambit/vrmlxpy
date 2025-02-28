@@ -7,7 +7,6 @@
 
 #include "ConversionContextAction.hpp"
 #include "Logger.hpp"
-#include "MeshConversionContext.hpp"
 #include "FormatString.hpp"
 
 #include "VrmlProcessingExport.hpp"

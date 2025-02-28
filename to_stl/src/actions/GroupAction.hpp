@@ -5,7 +5,6 @@
 
 #include "ConversionContextAction.hpp"
 #include "MeshTaskConversionContext.hpp"
-#include "StlBaseStructure.hpp"
 #include "Vec3f.hpp"
 
 #include "VrmlProcessingExport.hpp"

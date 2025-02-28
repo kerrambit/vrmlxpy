@@ -17,7 +17,6 @@
 #include "NodeTraversorError.hpp"
 #include "NormalHandler.hpp"
 #include "ShapeHandler.hpp"
-#include "SpotlightHandler.hpp"
 #include "SwitchHandler.hpp"
 #include "TextureCoordinateHandler.hpp"
 #include "TransformHandler.hpp"
@@ -25,6 +24,7 @@
 #include "WorldInfoHandler.hpp"
 #include <NodeDescriptorMap.hpp>
 #include <VrmlCanonicalHeaders.hpp>
+#include "NodeDescriptor.hpp"
 
 #include "VrmlProcessingExport.hpp"
 
@@ -60,8 +60,9 @@ namespace vrml_proc::traversor::VrmlNodeTraversor {
 
     auto descriptorMap = CreateNodeDescriptorMap();
     auto it = descriptorMap.find(canonicalHeader);
+    NodeDescriptor nd;
     if (it != descriptorMap.end()) {
-      auto nd = it->second();
+      nd = it->second();
       auto validationResult = nd.Validate(context.node, context.manager);
       if (validationResult.has_error()) {
         LogError(FormatString("Validation for node <", context.node.header, "> failed!"), LOGGING_INFO);
@@ -85,27 +86,27 @@ namespace vrml_proc::traversor::VrmlNodeTraversor {
     cpp::result<std::shared_ptr<ConversionContext>, std::shared_ptr<vrml_proc::core::error::Error>> handlerResult;
 
     if (canonicalHeader == "WorldInfo") {
-      handlerResult = WorldInfoHandler::Handle(context, actionMap);
+      handlerResult = WorldInfoHandler::Handle(context, actionMap, nd);
     } else if (canonicalHeader == "Group") {
-      handlerResult = GroupHandler::Handle(context, actionMap);
+      handlerResult = GroupHandler::Handle(context, actionMap, nd);
     } else if (canonicalHeader == "Transform") {
-      handlerResult = TransformHandler::Handle(context, actionMap);
+      handlerResult = TransformHandler::Handle(context, actionMap, nd);
     } else if (canonicalHeader == "Shape") {
-      handlerResult = ShapeHandler::Handle(context, actionMap);
+      handlerResult = ShapeHandler::Handle(context, actionMap, nd);
     } else if (canonicalHeader == "IndexedFaceSet") {
-      handlerResult = IndexedFaceSetHandler::Handle(context, actionMap);
+      handlerResult = IndexedFaceSetHandler::Handle(context, actionMap, nd);
     } else if (canonicalHeader == "Coordinate") {
-      handlerResult = CoordinateHandler::Handle(context, actionMap);
+      handlerResult = CoordinateHandler::Handle(context, actionMap, nd);
     } else if (canonicalHeader == "Normal") {
-      handlerResult = NormalHandler::Handle(context, actionMap);
+      handlerResult = NormalHandler::Handle(context, actionMap, nd);
     } else if (canonicalHeader == "TextureCoordinate") {
-      handlerResult = TextureCoordinateHandler::Handle(context, actionMap);
+      handlerResult = TextureCoordinateHandler::Handle(context, actionMap, nd);
     } else if (canonicalHeader == "Color") {
-      handlerResult = ColorHandler::Handle(context, actionMap);
+      handlerResult = ColorHandler::Handle(context, actionMap, nd);
     } else if (canonicalHeader == "Box") {
-      handlerResult = BoxHandler::Handle(context, actionMap);
+      handlerResult = BoxHandler::Handle(context, actionMap, nd);
     } else if (canonicalHeader == "Switch") {
-      handlerResult = SwitchHandler::Handle(context, actionMap);
+      handlerResult = SwitchHandler::Handle(context, actionMap, nd);
     }
 
     if (handlerResult.has_error()) {
