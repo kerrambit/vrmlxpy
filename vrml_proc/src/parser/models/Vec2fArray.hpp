@@ -8,20 +8,15 @@
 #include "VrmlProcessingExport.hpp"
 
 namespace vrml_proc {
-    namespace parser {
-        struct VRMLPROCESSING_API Vec2fArray : Printable {
+  namespace parser {
+    struct VRMLPROCESSING_API Vec2fArray : Printable {
+      Vec2fArray() : Printable(std::cout) {}
 
-            Vec2fArray()
-                : Printable(std::cout) { }
+      std::vector<Vec2f> vectors;
 
-            std::vector<Vec2f> vectors;
+      void Add(const Vec2f& vector) { vectors.push_back(vector); }
 
-            void Add(const Vec2f& vector) {
-                vectors.push_back(vector);
-            }
-
-            void Print(Printable::IndentationLevel indentationLevel) const override;
-        };
-    }
-}
-
+      void Print(Printable::IndentationLevel indentationLevel) const override;
+    };
+  }  // namespace parser
+}  // namespace vrml_proc

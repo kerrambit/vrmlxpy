@@ -2,6 +2,10 @@
 Toolkit for VRML parsing and traversing.
 Includes a standalone VRML parser library and a conversion library for transforming VRML geometry into STL format, with modular C++ backends and Python bindings.
 
+## License
+This project is licensed under the **GNU General Public License v3.0 or later (GPL-3.0-or-later)**.  
+See the [LICENSE](LICENSE) file for details.
+
 ## Prerequisites
 - You need to have the [Boost](https://www.boost.org/) installed on your system. Please follow instructions [here](doc/boost_installation.md).
 - Other third part library used is called [CGAL](https://www.cgal.org/). Follow instructions [here](doc/cgal_installation.md).
@@ -40,6 +44,9 @@ Includes a standalone VRML parser library and a conversion library for transform
 	valgrind --leak-check=full --show-reachable=yes --track-origins=yes <YOUR PROGRAM>
   ```
 - You can use *CTest* which is a program that comes with *CMake*; it handles running the tests for the project.
+- Before running the command below, make sure that tests have access to configuration file ```testConfig.json``` which should
+  be inside ```vrmlxpy\out\build\Release\to_stl``` folder (or ```vrmlxpy\out\build\Debug\to_stl```) as one of the tests uses it.
+  The paths in the configuration file should point to directories with test data.
 - Run the following command (once again, note that you might need to exchange *Debug* with *Release* if you have built for this type):
 
 	```

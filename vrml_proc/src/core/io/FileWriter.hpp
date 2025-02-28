@@ -11,14 +11,13 @@
 
 namespace vrml_proc::core::io {
 
-	template <typename T>
-	class VRMLPROCESSING_API FileWriter {
-	public:
+  template <typename T>
+  class VRMLPROCESSING_API FileWriter {
+   public:
+    using FileWriteResult = cpp::result<void, std::shared_ptr<vrml_proc::core::error::Error>>;
 
-		using FileWriteResult = cpp::result<void, std::shared_ptr<vrml_proc::core::error::Error>>;
+    virtual ~FileWriter() = default;
 
-		virtual ~FileWriter() = default;
-
-		virtual FileWriteResult Write(const std::filesystem::path& filepath, const T& data) = 0;
-	};
-}
+    virtual FileWriteResult Write(const std::filesystem::path& filepath, const T& data) = 0;
+  };
+}  // namespace vrml_proc::core::io

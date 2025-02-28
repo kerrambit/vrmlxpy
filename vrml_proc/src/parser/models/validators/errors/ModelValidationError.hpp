@@ -12,68 +12,72 @@
 
 namespace vrml_proc::parser::model::validator::error {
 
-	class ModelValidationError : public core::error::Error {
-	protected:
-		virtual std::string GetMessageInternal() const {
-			return "[ModelValidationError]";
-		}
-	};
+  class ModelValidationError : public core::error::Error {
+   protected:
+    virtual std::string GetMessageInternal() const { return "[ModelValidationError]"; }
+  };
 
-	class EmptyArrayError : public ModelValidationError {
-	public:
-		EmptyArrayError(std::string name)
-			: m_name(name) {}
-	protected:
-		std::string GetMessageInternal() const override {
+  class EmptyArrayError : public ModelValidationError {
+   public:
+    EmptyArrayError(std::string name) : m_name(name) {}
 
-			using core::utils::TypeToString;
+   protected:
+    std::string GetMessageInternal() const override {
+      using core::utils::TypeToString;
 
-			std::ostringstream oss;
-			oss << ModelValidationError::GetMessageInternal() << "[EmptyArrayError]: array <" << m_name << "> cannot be empty!\n";
+      std::ostringstream oss;
+      oss << ModelValidationError::GetMessageInternal() << "[EmptyArrayError]: array <" << m_name
+          << "> cannot be empty!\n";
 
-			return oss.str();
-		}
-	private:
-		std::string m_name;
-	};
+      return oss.str();
+    }
 
-	template <core::contract::Comparable T>
-	class NumberOutOfRangeError : public ModelValidationError {
-	public:
-		NumberOutOfRangeError(core::utils::Range<T> expectedRange, T actual)
-			: m_expectedRange(expectedRange), m_actual(actual) {}
-	protected:
-		std::string GetMessageInternal() const override {
+   private:
+    std::string m_name;
+  };
 
-			using core::utils::TypeToString;
+  template <core::contract::Comparable T>
+  class NumberOutOfRangeError : public ModelValidationError {
+   public:
+    NumberOutOfRangeError(core::utils::Range<T> expectedRange, T actual)
+        : m_expectedRange(expectedRange), m_actual(actual) {}
 
-			std::ostringstream oss;
-			oss << ModelValidationError::GetMessageInternal() << "[NumberOutOfRangeError]: Entity of type <"
-				<< TypeToString(m_actual) << "> holding value <" << m_actual << "> is invalid. Expected range is " << m_expectedRange << "!\n";
+   protected:
+    std::string GetMessageInternal() const override {
+      using core::utils::TypeToString;
 
-			return oss.str();
-		}
-	private:
-		core::utils::Range<T> m_expectedRange;
-		T m_actual;
-	};
+      std::ostringstream oss;
+      oss << ModelValidationError::GetMessageInternal() << "[NumberOutOfRangeError]: Entity of type <"
+          << TypeToString(m_actual) << "> holding value <" << m_actual << "> is invalid. Expected range is "
+          << m_expectedRange << "!\n";
 
-	class Vec3fOutOfRangeError : public ModelValidationError {
-	public:
-		Vec3fOutOfRangeError(core::utils::Range<float32_t> expectedRange, Vec3f vector)
-			: m_expectedRange(expectedRange), m_vector(vector) {}
-	protected:
-		std::string GetMessageInternal() const override {
+      return oss.str();
+    }
 
-			using core::utils::TypeToString;
+   private:
+    core::utils::Range<T> m_expectedRange;
+    T m_actual;
+  };
 
-			std::ostringstream oss;
-			oss << ModelValidationError::GetMessageInternal() << "[Vec3fOutOfRangeError]: one (or possibly more) of the vector's components are in invalid range! Actual vector is "
-				<< m_vector << ". Expected range is " << m_expectedRange << "!\n";
-			return oss.str();
-		}
-	private:
-		core::utils::Range<vrml_proc::parser::float32_t> m_expectedRange;
-		Vec3f m_vector;
-	};
-}
+  class Vec3fOutOfRangeError : public ModelValidationError {
+   public:
+    Vec3fOutOfRangeError(core::utils::Range<float32_t> expectedRange, Vec3f vector)
+        : m_expectedRange(expectedRange), m_vector(vector) {}
+
+   protected:
+    std::string GetMessageInternal() const override {
+      using core::utils::TypeToString;
+
+      std::ostringstream oss;
+      oss << ModelValidationError::GetMessageInternal()
+          << "[Vec3fOutOfRangeError]: one (or possibly more) of the vector's components are in invalid range! Actual "
+             "vector is "
+          << m_vector << ". Expected range is " << m_expectedRange << "!\n";
+      return oss.str();
+    }
+
+   private:
+    core::utils::Range<vrml_proc::parser::float32_t> m_expectedRange;
+    Vec3f m_vector;
+  };
+}  // namespace vrml_proc::parser::model::validator::error

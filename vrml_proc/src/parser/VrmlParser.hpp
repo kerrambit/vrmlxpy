@@ -12,21 +12,21 @@
 #include "MemoryMappedFileReader.hpp"
 
 namespace vrml_proc {
-    namespace parser {
+  namespace parser {
 
-        class VRMLPROCESSING_API VrmlParser : public Parser<BufferView, VrmlFile> {
-        public:
-            VrmlParser() = delete;
+    class VRMLPROCESSING_API VrmlParser : public Parser<BufferView, VrmlFile> {
+     public:
+      VrmlParser() = delete;
 
-            VrmlParser(VrmlNodeManager& manager)
-                : Parser<BufferView, VrmlFile>(), m_manager(manager), m_grammar(), m_skipper() {}
+      VrmlParser(VrmlNodeManager& manager)
+          : Parser<BufferView, VrmlFile>(), m_manager(manager), m_grammar(), m_skipper() {}
 
-            ParserResult<VrmlFile> Parse(BufferView buffer) override;
+      ParserResult<VrmlFile> Parse(BufferView buffer) override;
 
-        private:
-            VrmlFileGrammar<const char*, CommentSkipper> m_grammar;
-            CommentSkipper m_skipper;
-            VrmlNodeManager& m_manager;
-        };
-    }
-}
+     private:
+      VrmlFileGrammar<const char*, CommentSkipper> m_grammar;
+      CommentSkipper m_skipper;
+      VrmlNodeManager& m_manager;
+    };
+  }  // namespace parser
+}  // namespace vrml_proc

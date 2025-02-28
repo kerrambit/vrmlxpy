@@ -1,0 +1,11 @@
+{
+  "baseInputPath": "PATH",
+  "baseOutputPath": "PATH",
+  "baseExpectedOutputPath": "PATH",
+  "testFiles": {
+    "ACTIN": "actin.wrl",
+    "NUCLEUS": "nucleus.wrl",
+    "TUBULIN": "tubulin.wrl",
+    "TILES": "tile3x5-5_Stitch.wrl"
+  }
+}

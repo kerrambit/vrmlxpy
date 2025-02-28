@@ -48,20 +48,6 @@ add_library(tostl SHARED
     "src/conversion_context/Vec3fArrayConversionContext.hpp"
     "src/conversion_context/MeshTaskConversionContext.hpp"
     "src/conversion_context/StlActionMap.hpp"
-    #"src/conversion_context/ConversionContextMap.Vec3fArrayConversionContext.cpp"
-    #"src/conversion_context/VrmlNodeTraversor.Vec3fArrayConversionContext.cpp"
-
-    #"src/conversion_context/TransformHandler.Vec3fArrayConversionContext.cpp"
-    #"src/conversion_context/GroupHandler.Vec3fArrayConversionContext.cpp"
-    #"src/conversion_context/BoxHandler.Vec3fArrayConversionContext.cpp"
-    #"src/conversion_context/WorldInfoHandler.Vec3fArrayConversionContext.cpp"
-    #"src/conversion_context/BoxHandler.Vec3fArrayConversionContext.cpp"
-    #"src/conversion_context/ColorHandler.Vec3fArrayConversionContext.cpp"
-    #"src/conversion_context/CoordinateHandler.Vec3fArrayConversionContext.cpp"
-    #"src/conversion_context/IndexedFaceSetHandler.Vec3fArrayConversionContext.cpp"
-    #"src/conversion_context/NormalHandler.Vec3fArrayConversionContext.cpp"
-    #"src/conversion_context/ShapeHandler.Vec3fArrayConversionContext.cpp"
-    #"src/conversion_context/TextureCoordinateHandler.Vec3fArrayConversionContext.cpp"
 
     # Calculators.
     "src/calculators/CalculatorResult.hpp"
@@ -71,7 +57,6 @@ add_library(tostl SHARED
     "src/calculators/IndexedFaceSetCalculator.cpp"
     "src/calculators/MeshSimplificator.hpp"
     "src/calculators/errors/CalculatorError.hpp"
-    "src/calculators/test.hpp"
 )
 
 # Add source files and vendor dependencies.

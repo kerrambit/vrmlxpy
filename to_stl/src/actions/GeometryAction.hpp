@@ -7,23 +7,22 @@
 #include "TransformationMatrix.hpp"
 
 namespace to_stl {
-	namespace action {
+  namespace action {
 
-		class GeometryAction : public vrml_proc::action::ConversionContextAction<to_stl::conversion_context::MeshTaskConversionContext> {
+    class GeometryAction
+        : public vrml_proc::action::ConversionContextAction<to_stl::conversion_context::MeshTaskConversionContext> {
+     public:
+      struct Properties {
+        bool containedByShape;
+        vrml_proc::math::TransformationMatrix matrix;
+      };
 
-		public:
+      explicit GeometryAction(Properties properties) : m_geometryProperties(properties) {}
 
-			struct Properties {
-				bool containedByShape;
-				vrml_proc::math::TransformationMatrix matrix;
-			};
+      virtual std::shared_ptr<to_stl::conversion_context::MeshTaskConversionContext> Execute() = 0;
 
-			explicit GeometryAction(Properties properties) :
-				m_geometryProperties(properties) {}
-
-			virtual std::shared_ptr<to_stl::conversion_context::MeshTaskConversionContext> Execute() = 0;
-		protected:
-			Properties m_geometryProperties;
-		};
-	}
-}
+     protected:
+      Properties m_geometryProperties;
+    };
+  }  // namespace action
+}  // namespace to_stl

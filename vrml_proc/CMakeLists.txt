@@ -21,9 +21,6 @@ add_library(vrmlproc SHARED
     "${CMAKE_CURRENT_SOURCE_DIR}/../vendor/result/result.hpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/../vendor/json/nlohmann"
 
-    #"src/GroupHandler.MeshConversionContext.cpp"
-    #"src/TransformHandler.MeshConversionContext.cpp"
-
     # DLL export macro and VrmlProcessor function.
     "src/VrmlProcessingExport.hpp"
     "src/VrmlProcessor.hpp"
@@ -42,6 +39,7 @@ add_library(vrmlproc SHARED
     "src/core/errors/Error.hpp"
     "src/core/errors/NullPointerError.hpp"
     "src/core/errors/UnsupportedOperationError.hpp"
+    "src/core/errors/JsonError.hpp"
 
     "src/core/utils/ScopedTimer.hpp"
     "src/core/utils/ManualTimer.hpp"
@@ -123,64 +121,40 @@ add_library(vrmlproc SHARED
     "src/conversion_context/BaseConversionContext.hpp"
     "src/conversion_context/Mergeable.hpp"
     "src/conversion_context/VectorConversionContext.hpp"
-    "src/conversion_context/MeshConversionContext.hpp"
-    "src/conversion_context/StlBaseStructure.hpp"
 
     # Traversors.
     "src/traversors/VrmlNodeTraversor.hpp"
-    #"src/traversors/VrmlNodeTraversor.cpp"
     "src/traversors/VrmlFileTraversor.hpp"
-    #"src/traversors/VrmlFileTraversor.cpp"
     "src/traversors/FullParsedVrmlNodeContext.hpp"
     "src/traversors/FullParsedVrmlFileContext.hpp"
 
     "src/traversors/errors/FileTraversorError.hpp"
     "src/traversors/errors/NodeTraversorError.hpp"
 
+    "src/traversors/node_descriptors/NodeDescriptor.hpp"
+    
+    "src/traversors/node_descriptors/NodeDescriptorMap.hpp"
+    "src/traversors/node_descriptors/VrmlCanonicalHeaders.hpp"
+
     "src/traversors/utils/ConversionContextActionExecutor.hpp"
 
     "src/traversors/handlers/ShapeHandler.hpp"
-    #"src/traversors/handlers/ShapeHandler.cpp"
     "src/traversors/handlers/GroupHandler.hpp"
-    #"src/traversors/handlers/GroupHandler.cpp"
     "src/traversors/handlers/TransformHandler.hpp"
-    #"src/traversors/handlers/TransformHandler.cpp"
     "src/traversors/handlers/WorldInfoHandler.hpp"
-    #"src/traversors/handlers/WorldInfoHandler.cpp"
     "src/traversors/handlers/BoxHandler.hpp"
-    #"src/traversors/handlers/BoxHandler.cpp"
-    "src/traversors/handlers/SpotlightHandler.hpp"
-    #"src/traversors/handlers/SpotlightHandler.cpp"
     "src/traversors/handlers/IndexedFaceSetHandler.hpp"
-    #"src/traversors/handlers/IndexedFaceSetHandler.cpp"
     "src/traversors/handlers/CoordinateHandler.hpp"
-    #"src/traversors/handlers/CoordinateHandler.cpp"
     "src/traversors/handlers/NormalHandler.hpp"
-    #"src/traversors/handlers/NormalHandler.cpp"
     "src/traversors/handlers/ColorHandler.hpp"
-    #"src/traversors/handlers/ColorHandler.cpp"
     "src/traversors/handlers/TextureCoordinateHandler.hpp"
-    #"src/traversors/handlers/TextureCoordinateHandler.cpp"
     "src/traversors/handlers/SwitchHandler.hpp"
 
     "src/traversors/validators/NodeValidator.hpp"
-    "src/traversors/validators/BoxNodeValidator.hpp"
-    "src/traversors/validators/WorldInfoNodeValidator.hpp"
-    "src/traversors/validators/ShapeNodeValidator.hpp"
-    "src/traversors/validators/GroupNodeValidator.hpp"
-    "src/traversors/validators/TransformNodeValidator.hpp"
-    "src/traversors/validators/IndexedFaceSetNodeValidator.hpp"
-    "src/traversors/validators/CoordinateNodeValidator.hpp"
-    "src/traversors/validators/NormalNodeValidator.hpp"
-    "src/traversors/validators/ColorNodeValidator.hpp"
-    "src/traversors/validators/TextureCoordinateNodeValidator.hpp"
-    "src/traversors/validators/SwitchNodeValidator.hpp"
-
     "src/traversors/validators/errors/NodeValidationError.hpp"
 
     # Actions.
     "src/actions/ConversionContextActionMap.hpp"
-    #"src/actions/ConversionContextActionMap.cpp"
     "src/actions/ConversionContextAction.hpp"
 
     # Math
@@ -221,6 +195,7 @@ target_include_directories(vrmlproc PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src/actions
 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/traversors
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/traversors/node_descriptors
     ${CMAKE_CURRENT_SOURCE_DIR}/src/traversors/utils
     ${CMAKE_CURRENT_SOURCE_DIR}/src/traversors/errors
     ${CMAKE_CURRENT_SOURCE_DIR}/src/traversors/validators

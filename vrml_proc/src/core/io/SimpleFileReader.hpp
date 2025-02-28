@@ -6,8 +6,8 @@
 #include "VrmlProcessingExport.hpp"
 
 namespace vrml_proc::core::io {
-	class VRMLPROCESSING_API SimpleFileReader : public FileReader<std::string> {
-	public:
-		LoadFileResult Read(const std::filesystem::path& filepath) override;
-	};
-}
+  class VRMLPROCESSING_API SimpleFileReader : public FileReader<std::string> {
+   public:
+    LoadFileResult Read(const std::filesystem::path& filepath) override;
+  };
+}  // namespace vrml_proc::core::io
