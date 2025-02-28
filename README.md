@@ -2,6 +2,10 @@
 Toolkit for VRML parsing and traversing.
 Includes a standalone VRML parser library and a conversion library for transforming VRML geometry into STL format, with modular C++ backends and Python bindings.
 
+## License
+This project is licensed under the **GNU General Public License v3.0 or later (GPL-3.0-or-later)**.  
+See the [LICENSE](LICENSE) file for details.
+
 ## Prerequisites
 - You need to have the [Boost](https://www.boost.org/) installed on your system. Please follow instructions [here](doc/boost_installation.md).
 - Other third part library used is called [CGAL](https://www.cgal.org/). Follow instructions [here](doc/cgal_installation.md).
