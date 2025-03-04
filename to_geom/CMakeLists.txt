@@ -27,6 +27,7 @@ add_library(togeom SHARED
     "src/core/Mesh.hpp"
     "src/core/MeshTask.hpp"
     "src/core/io/StlFileWriter.hpp"
+    "src/core/io/ObjFileWriter.hpp"
 
     # Actions.
     "src/actions/GeometryAction.hpp"
