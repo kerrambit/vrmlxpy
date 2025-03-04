@@ -14,7 +14,7 @@
 #include <MemoryMappedFileReader.hpp>
 #include <Mesh.hpp>
 #include <MeshTaskConversionContext.hpp>
-#include <StlActionMap.hpp>
+#include <ToGeomActionMap.hpp>
 #include <StlFileWriter.hpp>
 #include <VrmlFileTraversor.hpp>
 #include <VrmlNodeManager.hpp>
@@ -23,7 +23,7 @@
 
 namespace vrmlxpy {
 
-  void PrintVersion() { std::cout << "(TMP): vrmlxpy 0.1 (tostl 0.1; vrmlproc 1.0)" << std::endl; }
+  void PrintVersion() { std::cout << "(TMP): vrmlxpy 0.1 (togeom 0.1; vrmlproc 1.0)" << std::endl; }
 
   bool ConvertVrmlToStl(const std::string& inputFilename, const std::string& outputFilename,
                         const std::string& configFilename) {
@@ -62,8 +62,8 @@ namespace vrmlxpy {
     std::cout << "File " << std::filesystem::path(inputFilename).string() << " was succesfully parsed." << std::endl;
 
     auto convertResult =
-        vrml_proc::traversor::VrmlFileTraversor::Traverse<to_stl::conversion_context::MeshTaskConversionContext>(
-            {parseResult.value(), manager, config}, to_stl::conversion_context::CreateActionMap());
+        vrml_proc::traversor::VrmlFileTraversor::Traverse<to_geom::conversion_context::MeshTaskConversionContext>(
+            {parseResult.value(), manager, config}, to_geom::conversion_context::CreateActionMap());
     if (convertResult.has_error()) {
       std::cout << "Caught an application error:\n" << convertResult.error()->GetMessage() << std::endl;
       return false;
@@ -71,14 +71,14 @@ namespace vrmlxpy {
 
     std::cout << "File " << std::filesystem::path(inputFilename).string() << " was succesfully traversed." << std::endl;
 
-    std::vector<std::future<to_stl::calculator::CalculatorResult>> results;
+    std::vector<std::future<to_geom::calculator::CalculatorResult>> results;
     for (const auto& task : convertResult.value()->GetData()) {
       if (task) {
         results.emplace_back(std::async(std::launch::async, task));
       }
     }
 
-    to_stl::core::Mesh mesh;
+    to_geom::core::Mesh mesh;
     for (auto& future : results) {
       auto meshResult = future.get();
       if (meshResult.has_value()) {
@@ -90,7 +90,7 @@ namespace vrmlxpy {
 
     std::cout << "Generation of mesh has finished." << std::endl;
 
-    to_stl::core::io::StlFileWriter writer;
+    to_geom::core::io::StlFileWriter writer;
     auto writeResult = writer.Write(std::filesystem::path(outputFilename), mesh);
     if (writeResult.has_error()) {
       std::cout << "Caught an aplication error:\n" << writeResult.error()->GetMessage() << std::endl;
@@ -132,8 +132,8 @@ namespace vrmlxpy {
     std::cout << "File " << std::filesystem::path(inputFilename).string() << " was succesfully parsed." << std::endl;
 
     auto convertResult =
-        vrml_proc::traversor::VrmlFileTraversor::Traverse<to_stl::conversion_context::MeshTaskConversionContext>(
-            {parseResult.value(), manager, config}, to_stl::conversion_context::CreateActionMap());
+        vrml_proc::traversor::VrmlFileTraversor::Traverse<to_geom::conversion_context::MeshTaskConversionContext>(
+            {parseResult.value(), manager, config}, to_geom::conversion_context::CreateActionMap());
     if (convertResult.has_error()) {
       std::cout << "Caught an application error:\n" << convertResult.error()->GetMessage() << std::endl;
       std::shared_ptr<vrml_proc::traversor::error::FileTraversorError> error =
@@ -146,14 +146,14 @@ namespace vrmlxpy {
 
     std::cout << "File " << std::filesystem::path(inputFilename).string() << " was succesfully traversed." << std::endl;
 
-    std::vector<std::future<to_stl::calculator::CalculatorResult>> results;
+    std::vector<std::future<to_geom::calculator::CalculatorResult>> results;
     for (const auto& task : convertResult.value()->GetData()) {
       if (task) {
         results.emplace_back(std::async(std::launch::async, task));
       }
     }
 
-    to_stl::core::Mesh mesh;
+    to_geom::core::Mesh mesh;
     for (auto& future : results) {
       auto meshResult = future.get();
       if (meshResult.has_value()) {
@@ -165,7 +165,7 @@ namespace vrmlxpy {
 
     std::cout << "Generation of mesh has finished." << std::endl;
 
-    to_stl::core::io::StlFileWriter writer;
+    to_geom::core::io::StlFileWriter writer;
     auto writeResult = writer.Write(std::filesystem::path(outputFilename), mesh);
     if (writeResult.has_error()) {
       std::cout << "Caught an aplication error:\n" << writeResult.error()->GetMessage() << std::endl;

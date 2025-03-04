@@ -21,9 +21,8 @@ add_library(vrmlproc SHARED
     "${CMAKE_CURRENT_SOURCE_DIR}/../vendor/result/result.hpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/../vendor/json/nlohmann"
 
-    # DLL export macro and VrmlProcessor function.
+    # DLL export macro.
     "src/VrmlProcessingExport.hpp"
-    "src/VrmlProcessor.hpp"
 
     # Core.
     "src/core/io/FileReader.hpp"
