@@ -286,6 +286,54 @@ TEST_CASE("Parse VRML File - Invalid Input - Simple VRML File - Switch node V.",
   CHECK(TraverseVrmlFileToMeshTask(parseResult, manager, 0));
 }
 
+TEST_CASE("Parse VRML File - Valid Input - Simple VRML File - Appearance node I.", "[parsing][valid]") {
+  vrml_proc::parser::VrmlNodeManager manager;
+  auto parseResult = ParseVrmlFile(validAppearanceNodeEmpty, manager);
+  REQUIRE(parseResult);
+
+  CHECK(TraverseVrmlFileToMeshTask(parseResult, manager, 1));
+}
+
+TEST_CASE("Parse VRML File - Valid Input - Simple VRML File - Appearance node II.", "[parsing][valid]") {
+  vrml_proc::parser::VrmlNodeManager manager;
+  auto parseResult = ParseVrmlFile(validAppearanceNode, manager);
+  REQUIRE(parseResult);
+
+  CHECK(TraverseVrmlFileToMeshTask(parseResult, manager, 1));
+}
+
+TEST_CASE("Parse VRML File - Valid Input - Simple VRML File - Appearance node III.", "[parsing][valid]") {
+  vrml_proc::parser::VrmlNodeManager manager;
+  auto parseResult = ParseVrmlFile(validAppearanceNode2, manager);
+  REQUIRE(parseResult);
+
+  CHECK(TraverseVrmlFileToMeshTask(parseResult, manager, 1));
+}
+
+TEST_CASE("Parse VRML File - Invalid Input - Simple VRML File - Appearance node I.", "[parsing][invalid]") {
+  vrml_proc::parser::VrmlNodeManager manager;
+  auto parseResult = ParseVrmlFile(invalidAppearanceNodeWrongMaterialFieldName, manager);
+  REQUIRE(parseResult);
+
+  CHECK_FALSE(TraverseVrmlFileToMeshTask(parseResult, manager));
+}
+
+TEST_CASE("Parse VRML File - Invalid Input - Simple VRML File - Appearance node II.", "[parsing][invalid]") {
+  vrml_proc::parser::VrmlNodeManager manager;
+  auto parseResult = ParseVrmlFile(invalidAppearanceNodeWrongMaterialNodeHeader, manager);
+  REQUIRE(parseResult);
+
+  CHECK_FALSE(TraverseVrmlFileToMeshTask(parseResult, manager));
+}
+
+TEST_CASE("Parse VRML File - Invalid Input - Simple VRML File - Appearance node III.", "[parsing][invalid]") {
+  vrml_proc::parser::VrmlNodeManager manager;
+  auto parseResult = ParseVrmlFile(invalidAppearanceNodeWrongDataType, manager);
+  REQUIRE(parseResult);
+
+  CHECK_FALSE(TraverseVrmlFileToMeshTask(parseResult, manager));
+}
+
 TEST_CASE("Parse VRMLFile From File - Valid Input - Actin", "[parsing][valid][fromfile]") {
   vrml_proc::parser::VrmlNodeManager manager;
   auto parseResult = ParseVrmlFile(
@@ -294,7 +342,6 @@ TEST_CASE("Parse VRMLFile From File - Valid Input - Actin", "[parsing][valid][fr
   REQUIRE(parseResult);
 
   vrml_proc::core::config::VrmlProcConfig config;
-  config.ignoreUnknownNode = true;
 
   GENERATE_TEST_OUTPUT_FILENAME(filepath);
   CHECK(TraverseVrmlFileToMeshTask(parseResult, manager, 5,
@@ -311,7 +358,6 @@ TEST_CASE("Parse VRMLFile From File - Valid Input - Nucleus", "[parsing][valid][
   REQUIRE(parseResult);
 
   vrml_proc::core::config::VrmlProcConfig config;
-  config.ignoreUnknownNode = true;
 
   GENERATE_TEST_OUTPUT_FILENAME(filepath);
   CHECK(TraverseVrmlFileToMeshTask(parseResult, manager, 2,
@@ -328,7 +374,6 @@ TEST_CASE("Parse VRMLFile From File - Valid Input - Tubulin", "[parsing][valid][
   REQUIRE(parseResult);
 
   vrml_proc::core::config::VrmlProcConfig config;
-  config.ignoreUnknownNode = true;
 
   GENERATE_TEST_OUTPUT_FILENAME(filepath);
   CHECK(TraverseVrmlFileToMeshTask(parseResult, manager, 399,
@@ -344,7 +389,6 @@ TEST_CASE("Parse VRMLFile From File - Valid Input - Tubulin", "[parsing][valid][
 //     std::filesystem::path(ReadTestInfo().testFiles.at("TILES")), manager); REQUIRE(parseResult);
 //
 //     vrml_proc::core::config::VrmlProcConfig config;
-//     config.ignoreUnknownNode = true;
 //
 //     GENERATE_TEST_OUTPUT_FILENAME(filepath);
 //     CHECK(TraverseVrmlFileToMeshTask(parseResult, manager, 64611,

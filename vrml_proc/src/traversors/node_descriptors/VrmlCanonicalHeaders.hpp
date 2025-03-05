@@ -47,12 +47,47 @@ namespace vrml_proc::traversor::node_descriptor {
 
       {"WorldInfo", "WorldInfo"},
       {"VRMLWorldInfo", "WorldInfo"},
+
+      {"Material", "Material"},
+      {"VRMLMaterial", "Material"},
+
+      {"ImageTexture", "ImageTexture"},
+      {"VRMLImageTexture", "ImageTexture"},
+
+      {"PixelTexture", "PixelTexture"},
+      {"VRMLPixelTexture", "PixelTexture"},
+
+      {"TextureTransform", "TextureTransform"},
+      {"VRMLTextureTransform", "TextureTransform"},
   };
 
   inline std::unordered_set<std::string> GetPossibleNamesForCanonical(const std::string& canonicalName) {
     std::unordered_set<std::string> result;
     for (const auto& [possible, canonical] : HeaderToCanonicalName) {
       if (canonical == canonicalName) {
+        result.insert(possible);
+      }
+    }
+    return result;
+  }
+
+  inline std::unordered_set<std::string> GetPossibleNamesForCanonical(const std::string& canonicalName1,
+                                                                      const std::string& canonicalName2) {
+    std::unordered_set<std::string> result;
+    for (const auto& [possible, canonical] : HeaderToCanonicalName) {
+      if (canonical == canonicalName1 || canonical == canonicalName2) {
+        result.insert(possible);
+      }
+    }
+    return result;
+  }
+
+  inline std::unordered_set<std::string> GetPossibleNamesForCanonical(const std::string& canonicalName1,
+                                                                      const std::string& canonicalName2,
+                                                                      const std::string& canonicalName3) {
+    std::unordered_set<std::string> result;
+    for (const auto& [possible, canonical] : HeaderToCanonicalName) {
+      if (canonical == canonicalName1 || canonical == canonicalName2 || canonical == canonicalName3) {
         result.insert(possible);
       }
     }

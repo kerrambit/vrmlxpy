@@ -183,6 +183,77 @@ namespace vrml_proc::traversor::node_descriptor {
       return nd;
     };
 
+    nodeDescriptionMap["Material"] = []() {
+      auto nd = NodeDescriptor("Material", GetPossibleNamesForCanonical("Material"));
+      static vrml_proc::parser::float32_t defaultAmbientIntensity = 0.2f;
+      static vrml_proc::parser::Vec3f defaultDiffuseColor = {0.8f, 0.8f, 0.8f};
+      static vrml_proc::parser::Vec3f defaultEmissiveColor = {0.0f, 0.0f, 0.0f};
+      static vrml_proc::parser::float32_t defaultShiness = 0.2f;
+      static vrml_proc::parser::Vec3f defaultSpecularColor = {0.0f, 0.0f, 0.0f};
+      static vrml_proc::parser::float32_t defaultTransparency = 0.0f;
+      nd.BindField("ambientIntensity", defaultAmbientIntensity);
+      nd.BindField("diffuseColor", defaultDiffuseColor);
+      nd.BindField("emissiveColor", defaultEmissiveColor);
+      nd.BindField("shininess", defaultShiness);
+      nd.BindField("specularColor", defaultSpecularColor);
+      nd.BindField("transparency", defaultTransparency);
+
+      return nd;
+    };
+
+    nodeDescriptionMap["ImageTexture"] = []() {
+      auto nd = NodeDescriptor("ImageTexture", GetPossibleNamesForCanonical("ImageTexture"));
+      static std::string defaultUrl = "";
+      static bool defaultRepeatS = true;
+      static bool defaultRepeatT = true;
+      nd.BindField("url", defaultUrl);
+      nd.BindField("repeatS", defaultRepeatS);
+      nd.BindField("repeatT", defaultRepeatT);
+
+      return nd;
+    };
+
+    nodeDescriptionMap["PixelTexture"] = []() {
+      auto nd = NodeDescriptor("PixelTexture", GetPossibleNamesForCanonical("PixelTexture"));
+      static vrml_proc::parser::Vec3f defaultImage = {0.0f, 0.0f, 0.0f};
+      static bool defaultRepeatS = true;
+      static bool defaultRepeatT = true;
+      nd.BindField("image", defaultImage);
+      nd.BindField("repeatS", defaultRepeatS);
+      nd.BindField("repeatT", defaultRepeatT);
+
+      return nd;
+    };
+
+    nodeDescriptionMap["TextureTransform"] = []() {
+      auto nd = NodeDescriptor("TextureTransform", GetPossibleNamesForCanonical("TextureTransform"));
+      static vrml_proc::parser::Vec2f defaultCenter = {0.0f, 0.0f};
+      static vrml_proc::parser::float32_t defaultRotation = 0.0f;
+      static vrml_proc::parser::Vec2f defaultScale = {1.0f, 1.0f};
+      static vrml_proc::parser::Vec2f defaultTranslation = {0.0f, 0.0f};
+      nd.BindField("center", defaultCenter);
+      nd.BindField("rotation", defaultRotation);
+      nd.BindField("scale", defaultScale);
+      nd.BindField("translation", defaultTranslation);
+
+      return nd;
+    };
+
+    nodeDescriptionMap["Appearance"] = []() {
+      auto nd = NodeDescriptor("Appearance", GetPossibleNamesForCanonical("Appearance"));
+
+      static vrml_proc::parser::VrmlNode defaultMaterial;
+      static vrml_proc::parser::VrmlNode defaultTexture;
+      static vrml_proc::parser::VrmlNode defaultTextureTransform;
+
+      nd.BindVrmlNode("material", GetPossibleNamesForCanonical("Material"), defaultMaterial);
+      nd.BindVrmlNode("texture", GetPossibleNamesForCanonical("ImageTexture", "MovieTexture", "PixelTexture"),
+                      defaultTexture);
+      nd.BindVrmlNode("textureTransform", GetPossibleNamesForCanonical("TextureTransform"), defaultTextureTransform);
+
+      return nd;
+    };
+
     return nodeDescriptionMap;
   }
 }  // namespace vrml_proc::traversor::node_descriptor

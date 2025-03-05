@@ -1,6 +1,5 @@
 ﻿#include <string>
 
-
 std::string validWorldInfoNode = R"(
 
 	#VRML V2.0 utf8
@@ -722,7 +721,6 @@ std::string invalidSwitchNodeWrongIndexLower = R"(
          }
 )";
 
-
 std::string invalidSwitchNodeEmptyChoice = R"(
 
 	#VRML V2.0 utf8
@@ -762,6 +760,305 @@ std::string validIndexedFaceSetPyramid = R"(
                     ]
                     convex FALSE
                     solid FALSE
+                }
+            }
+        ]
+    }
+)";
+
+std::string validAppearanceNodeEmpty = R"(
+    #VRML V2.0 utf8
+
+    Group {
+        bboxCenter 0 0 0
+        bboxSize 0 0 0
+        children [
+            Shape {
+                geometry IndexedFaceSet {
+                    coord Coordinate {
+                        point [
+                            0 0 0, 1 0 0, 1 1 0, 0 1 0,  # Base square (0-3)
+                            0.5 0.5 1                    # Pyramid peak (4)
+                        ]
+                    }
+                    coordIndex [
+                        0, 1, 2, -1,
+                        0, 2, 3, -1,  # Base square
+                        0, 1, 4, -1,  # Side 1
+                        1, 2, 4, -1,  # Side 2
+                        2, 3, 4, -1,  # Side 3
+                        3, 0, 4, -1   # Side 4
+                    ]
+                    convex FALSE
+                    solid FALSE
+                }
+                appearance Appearance {
+                  
+                }
+            }
+        ]
+    }
+)";
+
+std::string validAppearanceNode = R"(
+    #VRML V2.0 utf8
+
+    Group {
+        bboxCenter 0 0 0
+        bboxSize 0 0 0
+        children [
+            Shape {
+                geometry IndexedFaceSet {
+                    coord Coordinate {
+                        point [
+                            0 0 0, 1 0 0, 1 1 0, 0 1 0,  # Base square (0-3)
+                            0.5 0.5 1                    # Pyramid peak (4)
+                        ]
+                    }
+                    coordIndex [
+                        0, 1, 2, -1,
+                        0, 2, 3, -1,  # Base square
+                        0, 1, 4, -1,  # Side 1
+                        1, 2, 4, -1,  # Side 2
+                        2, 3, 4, -1,  # Side 3
+                        3, 0, 4, -1   # Side 4
+                    ]
+                    convex FALSE
+                    solid FALSE
+                }
+
+                appearance Appearance {
+                  material Material {
+                    ambientIntensity 0.2
+                    diffuseColor 0.8 0.8 0.8
+                    emissiveColor 0 0 0
+                    shininess 0.2
+                    specularColor 0 0 0
+                    transparency 0
+                  }
+                  texture ImageTexture {
+                    url "image.jpg"
+                    repeatS TRUE
+                    repeatT TRUE
+                  }
+                  textureTransform TextureTransform {
+                    center 0 0
+                    rotation 0
+                    scale 1 1
+                    translation 0 0
+                  }
+                }
+            }
+        ]
+    }
+)";
+
+std::string validAppearanceNode2 = R"(
+    #VRML V2.0 utf8
+
+    Group {
+        bboxCenter 0 0 0
+        bboxSize 0 0 0
+        children [
+            Shape {
+                geometry IndexedFaceSet {
+                    coord Coordinate {
+                        point [
+                            0 0 0, 1 0 0, 1 1 0, 0 1 0,  # Base square (0-3)
+                            0.5 0.5 1                    # Pyramid peak (4)
+                        ]
+                    }
+                    coordIndex [
+                        0, 1, 2, -1,
+                        0, 2, 3, -1,  # Base square
+                        0, 1, 4, -1,  # Side 1
+                        1, 2, 4, -1,  # Side 2
+                        2, 3, 4, -1,  # Side 3
+                        3, 0, 4, -1   # Side 4
+                    ]
+                    convex FALSE
+                    solid FALSE
+                }
+
+                appearance Appearance {
+                  material Material {
+                    ambientIntensity 0.2
+                    diffuseColor 0.8 0.8 0.8
+                    emissiveColor 0 0 0
+                    shininess 0.2
+                    specularColor 0 0 0
+                    transparency 0
+                  }
+                  texture PixelTexture {
+                    image 0 0 0
+                    repeatS TRUE
+                    repeatT TRUE
+                  }
+                  textureTransform TextureTransform {
+                    center 0 0
+                    rotation 0
+                    scale 1 1
+                    translation 0 0
+                  }
+                }
+            }
+        ]
+    }
+)";
+
+std::string invalidAppearanceNodeWrongMaterialFieldName = R"(
+    #VRML V2.0 utf8
+
+    Group {
+        bboxCenter 0 0 0
+        bboxSize 0 0 0
+        children [
+            Shape {
+                geometry IndexedFaceSet {
+                    coord Coordinate {
+                        point [
+                            0 0 0, 1 0 0, 1 1 0, 0 1 0,  # Base square (0-3)
+                            0.5 0.5 1                    # Pyramid peak (4)
+                        ]
+                    }
+                    coordIndex [
+                        0, 1, 2, -1,
+                        0, 2, 3, -1,  # Base square
+                        0, 1, 4, -1,  # Side 1
+                        1, 2, 4, -1,  # Side 2
+                        2, 3, 4, -1,  # Side 3
+                        3, 0, 4, -1   # Side 4
+                    ]
+                    convex FALSE
+                    solid FALSE
+                }
+
+                appearance Appearance {
+                  materiall Material {
+                    ambientIntensity 0.2
+                    diffuseColor 0.8 0.8 0.8
+                    emissiveColor 0 0 0
+                    shininess 0.2
+                    specularColor 0 0 0
+                    transparency 0
+                  }
+                  texture ImageTexture {
+                    url "image.jpg"
+                    repeatS TRUE
+                    repeatT TRUE
+                  }
+                  textureTransform TextureTransform {
+                    center 0 0
+                    rotation 0
+                    scale 1 1
+                    translation 0 0
+                  }
+                }
+            }
+        ]
+    }
+)";
+
+std::string invalidAppearanceNodeWrongMaterialNodeHeader = R"(
+    #VRML V2.0 utf8
+
+    Group {
+        bboxCenter 0 0 0
+        bboxSize 0 0 0
+        children [
+            Shape {
+                geometry IndexedFaceSet {
+                    coord Coordinate {
+                        point [
+                            0 0 0, 1 0 0, 1 1 0, 0 1 0,  # Base square (0-3)
+                            0.5 0.5 1                    # Pyramid peak (4)
+                        ]
+                    }
+                    coordIndex [
+                        0, 1, 2, -1,
+                        0, 2, 3, -1,  # Base square
+                        0, 1, 4, -1,  # Side 1
+                        1, 2, 4, -1,  # Side 2
+                        2, 3, 4, -1,  # Side 3
+                        3, 0, 4, -1   # Side 4
+                    ]
+                    convex FALSE
+                    solid FALSE
+                }
+
+                appearance Appearance {
+                  material InnerData {
+                    ambientIntensity 0.2
+                    diffuseColor 0.8 0.8 0.8
+                    emissiveColor 0 0 0
+                    shininess 0.2
+                    specularColor 0 0 0
+                    transparency 0
+                  }
+                  texture ImageTexture {
+                    url "image.jpg"
+                    repeatS TRUE
+                    repeatT TRUE
+                  }
+                  textureTransform TextureTransform {
+                    center 0 0
+                    rotation 0
+                    scale 1 1
+                    translation 0 0
+                  }
+                }
+            }
+        ]
+    }
+)";
+
+std::string invalidAppearanceNodeWrongDataType = R"(
+    #VRML V2.0 utf8
+
+    Group {
+        bboxCenter 0 0 0
+        bboxSize 0 0 0
+        children [
+            Shape {
+                geometry IndexedFaceSet {
+                    coord Coordinate {
+                        point [
+                            0 0 0, 1 0 0, 1 1 0, 0 1 0,  # Base square (0-3)
+                            0.5 0.5 1                    # Pyramid peak (4)
+                        ]
+                    }
+                    coordIndex [
+                        0, 1, 2, -1,
+                        0, 2, 3, -1,  # Base square
+                        0, 1, 4, -1,  # Side 1
+                        1, 2, 4, -1,  # Side 2
+                        2, 3, 4, -1,  # Side 3
+                        3, 0, 4, -1   # Side 4
+                    ]
+                    convex FALSE
+                    solid FALSE
+                }
+
+                appearance Appearance {
+                  material Material {
+                    ambientIntensity 0.2
+                    diffuseColor 0.8 0.8 0.8
+                    emissiveColor 0 0 0
+                    shininess 0.2
+                    specularColor 0 0 0
+                    transparency 0
+                  }
+                  texture ImageTexture {
+                    url "image.jpg"
+                    repeatS TRUE
+                    repeatT TRUE
+                  }
+                  textureTransform TextureTransform {
+                    center 0 0
+                    rotation 0
+                    scale 1 1
+                    translation [ Group {} ]
+                  }
                 }
             }
         ]
