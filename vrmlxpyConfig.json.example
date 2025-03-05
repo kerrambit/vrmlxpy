@@ -1,3 +1,4 @@
 {
-    "ignoreUnknownNode": false
+    "ignoreUnknownNode": false,
+    "exportFormat": "stl"
 }

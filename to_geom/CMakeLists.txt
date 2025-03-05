@@ -26,9 +26,11 @@ add_library(togeom SHARED
     # Core.
     "src/core/Mesh.hpp"
     "src/core/MeshTask.hpp"
+    "src/core/io/ExportFormats.hpp"
     "src/core/io/StlFileWriter.hpp"
     "src/core/io/ObjFileWriter.hpp"
     "src/core/io/PlyFileWriter.hpp"
+    "src/core/config/ToGeomConfig.hpp"
 
     # Actions.
     "src/actions/GeometryAction.hpp"
@@ -70,6 +72,7 @@ target_include_directories(togeom PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src/calculators/errors
     ${CMAKE_CURRENT_SOURCE_DIR}/src/core
     ${CMAKE_CURRENT_SOURCE_DIR}/src/core/io
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/core/config
 
     ${CMAKE_CURRENT_SOURCE_DIR}/../vrml_proc/src
 

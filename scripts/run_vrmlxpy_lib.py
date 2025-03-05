@@ -10,4 +10,4 @@ output_filename = sys.argv[2]
 config_filename = sys.argv[3]
 
 print_version()
-convert_vrml_to_stl(input_filename, output_filename, config_filename)
+convert_vrml(input_filename, output_filename, config_filename)
