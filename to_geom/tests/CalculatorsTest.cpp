@@ -1,5 +1,7 @@
 #include <catch2/catch_test_macros.hpp>
+#include <catch2/interfaces/catch_interfaces_capture.hpp>
 
+#include <algorithm>
 #include <filesystem>
 #include <memory>
 #include <string>
@@ -19,9 +21,15 @@
 
 #include "../../test_utils/TestCommon.hpp"
 
-TEST_CASE("Initialization") { vrml_proc::core::logger::InitLogging(); }
+TEST_CASE("Initialization") {
+  vrml_proc::core::logger::InitLogging();
 
-TEST_CASE("BoxCalculator - Basic tests", "[valid]") {
+  std::filesystem::path executablePath = std::filesystem::current_path();
+  std::filesystem::path filepath = executablePath / "testConfig.json";
+  InitTesting(filepath);
+}
+
+TEST_CASE("BoxCalculator - Transform tests", "[valid]") {
   using vrml_proc::math::Transformation;
   using vrml_proc::math::TransformationMatrix;
   using vrml_proc::math::UpdateTransformationMatrix;
@@ -34,21 +42,32 @@ TEST_CASE("BoxCalculator - Basic tests", "[valid]") {
   size.z = 30.0f;
 
   to_geom::calculator::BoxCalculator calculator = to_geom::calculator::BoxCalculator();
+  to_geom::core::io::StlFileWriter writer;
+  std::string testName = Catch::getResultCapture().getCurrentTestName();
+  std::replace(testName.begin(), testName.end(), ' ', '_');
 
   // --- ///
 
   TransformationMatrix matrix;
   auto result0 = (calculator.Generate3DMesh({std::cref(size)}, matrix)).value();
-
-  // TODO: compare with file
+  {
+    GENERATE_TEST_OUTPUT_FILENAME_EXTRA_NAME(filepath, "noTransform");
+    writer.Write(std::filesystem::path(ReadTestInfo().baseOutputPath) / filepath, *(result0));
+    CHECK(AreBinaryFilesEqual(std::filesystem::path(ReadTestInfo().baseOutputPath) / filepath,
+                              std::filesystem::path(ReadTestInfo().baseExpectedOutputPath) / filepath));
+  }
 
   // --- //
 
   Transformation transformationData;
   matrix = UpdateTransformationMatrix(matrix, transformationData);
   auto result1 = (calculator.Generate3DMesh({std::cref(size)}, matrix)).value();
-
-  // TODO: compare with the first file (should be same)
+  {
+    GENERATE_TEST_OUTPUT_FILENAME_EXTRA_NAME(filepath, "defaultTransform");
+    writer.Write(std::filesystem::path(ReadTestInfo().baseOutputPath) / filepath, *(result1));
+    CHECK(AreBinaryFilesEqual(std::filesystem::path(ReadTestInfo().baseOutputPath) / filepath,
+                              std::filesystem::path(ReadTestInfo().baseExpectedOutputPath) / filepath));
+  }
 
   // --- //
 
@@ -57,8 +76,12 @@ TEST_CASE("BoxCalculator - Basic tests", "[valid]") {
   transformationData.rotation = Vec4f(0.0f, 0.0f, 1.0f, 0.785398163f);
   matrix = UpdateTransformationMatrix(matrix, transformationData);
   auto result2 = (calculator.Generate3DMesh({std::cref(size)}, matrix)).value();
-
-  // TODO: compare with file
+  {
+    GENERATE_TEST_OUTPUT_FILENAME_EXTRA_NAME(filepath, "zAxisRotation");
+    writer.Write(std::filesystem::path(ReadTestInfo().baseOutputPath) / filepath, *(result2));
+    CHECK(AreBinaryFilesEqual(std::filesystem::path(ReadTestInfo().baseOutputPath) / filepath,
+                              std::filesystem::path(ReadTestInfo().baseExpectedOutputPath) / filepath));
+  }
 
   // --- //
 
@@ -68,8 +91,12 @@ TEST_CASE("BoxCalculator - Basic tests", "[valid]") {
   transformationData.rotation = Vec4f(0.0f, 0.0f, 1.0f, 0.785398163f);
   matrix = UpdateTransformationMatrix(matrix, transformationData);
   auto result3 = (calculator.Generate3DMesh({std::cref(size)}, matrix)).value();
-
-  // TODO: compare with file
+  {
+    GENERATE_TEST_OUTPUT_FILENAME_EXTRA_NAME(filepath, "zAxisRotationWithCenter");
+    writer.Write(std::filesystem::path(ReadTestInfo().baseOutputPath) / filepath, *(result3));
+    CHECK(AreBinaryFilesEqual(std::filesystem::path(ReadTestInfo().baseOutputPath) / filepath,
+                              std::filesystem::path(ReadTestInfo().baseExpectedOutputPath) / filepath));
+  }
 
   // --- //
 
@@ -78,8 +105,12 @@ TEST_CASE("BoxCalculator - Basic tests", "[valid]") {
   transformationData.center = vrml_proc::parser::Vec3f(10.0f, 10.0f, 0.0f);
   matrix = UpdateTransformationMatrix(matrix, transformationData);
   auto result4 = (calculator.Generate3DMesh({std::cref(size)}, matrix)).value();
-
-  // TODO: compare with the first file (should be same)
+  {
+    GENERATE_TEST_OUTPUT_FILENAME_EXTRA_NAME(filepath, "center");
+    writer.Write(std::filesystem::path(ReadTestInfo().baseOutputPath) / filepath, *(result4));
+    CHECK(AreBinaryFilesEqual(std::filesystem::path(ReadTestInfo().baseOutputPath) / filepath,
+                              std::filesystem::path(ReadTestInfo().baseExpectedOutputPath) / filepath));
+  }
 
   // --- //
 
@@ -88,8 +119,12 @@ TEST_CASE("BoxCalculator - Basic tests", "[valid]") {
   transformationData.rotation = Vec4f(0.0f, 1.0f, 0.0f, 0.785398163f);
   matrix = UpdateTransformationMatrix(matrix, transformationData);
   auto result5 = (calculator.Generate3DMesh({std::cref(size)}, matrix)).value();
-
-  // TODO: compare with file
+  {
+    GENERATE_TEST_OUTPUT_FILENAME_EXTRA_NAME(filepath, "yAsixRotation");
+    writer.Write(std::filesystem::path(ReadTestInfo().baseOutputPath) / filepath, *(result5));
+    CHECK(AreBinaryFilesEqual(std::filesystem::path(ReadTestInfo().baseOutputPath) / filepath,
+                              std::filesystem::path(ReadTestInfo().baseExpectedOutputPath) / filepath));
+  }
 
   // --- //
 
@@ -99,8 +134,12 @@ TEST_CASE("BoxCalculator - Basic tests", "[valid]") {
   transformationData.rotation = Vec4f(0.0f, 1.0f, 0.0f, 0.785398163f);
   matrix = UpdateTransformationMatrix(matrix, transformationData);
   auto result6 = (calculator.Generate3DMesh({std::cref(size)}, matrix)).value();
-
-  // TODO: compare with file
+  {
+    GENERATE_TEST_OUTPUT_FILENAME_EXTRA_NAME(filepath, "yAsixRotationWithCenter");
+    writer.Write(std::filesystem::path(ReadTestInfo().baseOutputPath) / filepath, *(result6));
+    CHECK(AreBinaryFilesEqual(std::filesystem::path(ReadTestInfo().baseOutputPath) / filepath,
+                              std::filesystem::path(ReadTestInfo().baseExpectedOutputPath) / filepath));
+  }
 
   // --- //
 
@@ -110,8 +149,12 @@ TEST_CASE("BoxCalculator - Basic tests", "[valid]") {
   transformationData.rotation = Vec4f(0.0f, 0.0f, 1.0f, 0.785398163f);
   matrix = UpdateTransformationMatrix(matrix, transformationData);
   auto result7 = (calculator.Generate3DMesh({std::cref(size)}, matrix)).value();
-
-  // TODO: compare with file
+  {
+    GENERATE_TEST_OUTPUT_FILENAME_EXTRA_NAME(filepath, "zAsixRotationWithTranslation");
+    writer.Write(std::filesystem::path(ReadTestInfo().baseOutputPath) / filepath, *(result7));
+    CHECK(AreBinaryFilesEqual(std::filesystem::path(ReadTestInfo().baseOutputPath) / filepath,
+                              std::filesystem::path(ReadTestInfo().baseExpectedOutputPath) / filepath));
+  }
 
   // --- //
 
@@ -124,8 +167,12 @@ TEST_CASE("BoxCalculator - Basic tests", "[valid]") {
       vrml_proc::parser::Vec4f(0.0f, 0.0f, 1.0f, 0.785398163f);  // without it applies scaling to world coordinates
   matrix = vrml_proc::math::UpdateTransformationMatrix(matrix, transformationData);
   auto result8 = (calculator.Generate3DMesh({std::cref(size)}, matrix)).value();
-
-  // TODO: compare with file
+  {
+    GENERATE_TEST_OUTPUT_FILENAME_EXTRA_NAME(filepath, "zAsixRotationWithTranslationAndScale");
+    writer.Write(std::filesystem::path(ReadTestInfo().baseOutputPath) / filepath, *(result8));
+    CHECK(AreBinaryFilesEqual(std::filesystem::path(ReadTestInfo().baseOutputPath) / filepath,
+                              std::filesystem::path(ReadTestInfo().baseExpectedOutputPath) / filepath));
+  }
 
   // --- //
 
@@ -136,8 +183,12 @@ TEST_CASE("BoxCalculator - Basic tests", "[valid]") {
   transformationData.scale = vrml_proc::parser::Vec3f(2.0f, 1.0f, 1.0f);
   matrix = vrml_proc::math::UpdateTransformationMatrix(matrix, transformationData);
   auto result9 = (calculator.Generate3DMesh({std::cref(size)}, matrix)).value();
-
-  // TODO: compare with file
+  {
+    GENERATE_TEST_OUTPUT_FILENAME_EXTRA_NAME(filepath, "zAsixRotationWithTranslationAndScaleInWorldCoords");
+    writer.Write(std::filesystem::path(ReadTestInfo().baseOutputPath) / filepath, *(result9));
+    CHECK(AreBinaryFilesEqual(std::filesystem::path(ReadTestInfo().baseOutputPath) / filepath,
+                              std::filesystem::path(ReadTestInfo().baseExpectedOutputPath) / filepath));
+  }
 
   // --- //
 
@@ -146,8 +197,12 @@ TEST_CASE("BoxCalculator - Basic tests", "[valid]") {
   transformationData.rotation = vrml_proc::parser::Vec4f(1.0f, 0.0f, 0.0f, 0.785398163f);
   matrix = vrml_proc::math::UpdateTransformationMatrix(matrix, transformationData);
   auto result10 = (calculator.Generate3DMesh({std::cref(size)}, matrix)).value();
-
-  // TODO: compare with file
+  {
+    GENERATE_TEST_OUTPUT_FILENAME_EXTRA_NAME(filepath, "translationAndXAxisRotation");
+    writer.Write(std::filesystem::path(ReadTestInfo().baseOutputPath) / filepath, *(result10));
+    CHECK(AreBinaryFilesEqual(std::filesystem::path(ReadTestInfo().baseOutputPath) / filepath,
+                              std::filesystem::path(ReadTestInfo().baseExpectedOutputPath) / filepath));
+  }
 
   // --- //
 
@@ -159,25 +214,12 @@ TEST_CASE("BoxCalculator - Basic tests", "[valid]") {
   matrix = vrml_proc::math::UpdateTransformationMatrix(matrix, transformationData);
   matrix = vrml_proc::math::UpdateTransformationMatrix(matrix, transformationData);
   auto result11 = (calculator.Generate3DMesh({std::cref(size)}, matrix)).value();
-
-  // TODO: compare with file
-
-  // --- //
-
-  /*to_geom::core::io::StlFileWriter writer;
-  writer.Write(std::filesystem::path(R"(C:\Users\marek\Documents\FI_MUNI\sem_05\SBAPR\vrmlxpy\export1.stl)"), *result1);
-  writer.Write(std::filesystem::path(R"(C:\Users\marek\Documents\FI_MUNI\sem_05\SBAPR\vrmlxpy\export2.stl)"), *result2);
-  writer.Write(std::filesystem::path(R"(C:\Users\marek\Documents\FI_MUNI\sem_05\SBAPR\vrmlxpy\export3.stl)"), *result3);
-  writer.Write(std::filesystem::path(R"(C:\Users\marek\Documents\FI_MUNI\sem_05\SBAPR\vrmlxpy\export4.stl)"), *result4);
-  writer.Write(std::filesystem::path(R"(C:\Users\marek\Documents\FI_MUNI\sem_05\SBAPR\vrmlxpy\export5.stl)"), *result5);
-  writer.Write(std::filesystem::path(R"(C:\Users\marek\Documents\FI_MUNI\sem_05\SBAPR\vrmlxpy\export6.stl)"), *result6);
-  writer.Write(std::filesystem::path(R"(C:\Users\marek\Documents\FI_MUNI\sem_05\SBAPR\vrmlxpy\export7.stl)"), *result7);
-  writer.Write(std::filesystem::path(R"(C:\Users\marek\Documents\FI_MUNI\sem_05\SBAPR\vrmlxpy\export8.stl)"), *result8);
-  writer.Write(std::filesystem::path(R"(C:\Users\marek\Documents\FI_MUNI\sem_05\SBAPR\vrmlxpy\export9.stl)"), *result9);
-  writer.Write(std::filesystem::path(R"(C:\Users\marek\Documents\FI_MUNI\sem_05\SBAPR\vrmlxpy\export10.stl)"),
-  *result10);
-  writer.Write(std::filesystem::path(R"(C:\Users\marek\Documents\FI_MUNI\sem_05\SBAPR\vrmlxpy\export11.stl)"),
-  *result11);*/
+  {
+    GENERATE_TEST_OUTPUT_FILENAME_EXTRA_NAME(filepath, "multipleScale");
+    writer.Write(std::filesystem::path(ReadTestInfo().baseOutputPath) / filepath, *(result11));
+    CHECK(AreBinaryFilesEqual(std::filesystem::path(ReadTestInfo().baseOutputPath) / filepath,
+                              std::filesystem::path(ReadTestInfo().baseExpectedOutputPath) / filepath));
+  }
 }
 
 TEST_CASE("BoxCalculator - invalid", "[invalid]") {
@@ -363,9 +405,11 @@ TEST_CASE("IndexedFaceSetCalculator - valid II.", "[invalid]") {
     auto result = calculator.Generate3DMesh(std::cref(indices), std::cref(points), std::cref(isConvex), matrix);
     REQUIRE(result.has_value());
 
-    /*to_geom::core::io::StlFileWriter writer;
-    writer.Write(std::filesystem::path(R"(C:\Users\marek\Documents\FI_MUNI\sem_05\SBAPR\vrmlxpy\IFS_Quad.stl)"),
-    *(result.value()));*/
+    GENERATE_TEST_OUTPUT_FILENAME(filepath);
+    to_geom::core::io::StlFileWriter writer;
+    writer.Write(std::filesystem::path(ReadTestInfo().baseOutputPath) / filepath, *(result.value()));
+    CHECK(AreBinaryFilesEqual(std::filesystem::path(ReadTestInfo().baseOutputPath) / filepath,
+                              std::filesystem::path(ReadTestInfo().baseExpectedOutputPath) / filepath));
   }
 }
 
@@ -600,8 +644,10 @@ TEST_CASE("IndexedFaceSetCalculator - valid III.", "[valid]") {
   {
     auto result = calculator.Generate3DMesh(std::cref(indices), std::cref(points), std::cref(isConvex), matrix);
     REQUIRE(result.has_value());
-    /*to_geom::core::io::StlFileWriter writer;
-    writer.Write(std::filesystem::path(R"(C:\Users\marek\Documents\FI_MUNI\sem_05\SBAPR\vrmlxpy\IFS_Pyramid.stl)"),
-    *(result.value()));*/
+    GENERATE_TEST_OUTPUT_FILENAME(filepath);
+    to_geom::core::io::StlFileWriter writer;
+    writer.Write(std::filesystem::path(ReadTestInfo().baseOutputPath) / filepath, *(result.value()));
+    CHECK(AreBinaryFilesEqual(std::filesystem::path(ReadTestInfo().baseOutputPath) / filepath,
+                              std::filesystem::path(ReadTestInfo().baseExpectedOutputPath) / filepath));
   }
 }

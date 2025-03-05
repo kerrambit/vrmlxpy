@@ -5,7 +5,6 @@
 
 #include "test_data/VrmlFileTraversorTestDataset.hpp"
 #include <Logger.hpp>
-#include <NodeDescriptor.hpp>
 
 #include "../../test_utils/TestCommon.hpp"
 #include "../../test_utils/TestTraversor.hpp"
@@ -18,47 +17,6 @@ TEST_CASE("Initialization") {
   std::filesystem::path executablePath = std::filesystem::current_path();
   std::filesystem::path filepath = executablePath / "testConfig.json";
   InitTesting(filepath);
-}
-
-#include <string>
-
-#include <NodeDescriptorMap.hpp>
-#include <VrmlCanonicalHeaders.hpp>
-#include <WorldInfoHandler.hpp>
-
-TEST_CASE("Paretgregrehg", "[parsing][valid]") {
-  vrml_proc::parser::VrmlNodeManager manager;
-  auto parseResult = ParseVrmlFile(invalidGroupUnknownNode, manager);
-  REQUIRE(parseResult);
-
-  std::string canonicalHeader;
-  auto it = vrml_proc::traversor::node_descriptor::HeaderToCanonicalName.find(parseResult.value().at(0).header);
-  if (it != vrml_proc::traversor::node_descriptor::HeaderToCanonicalName.end()) {
-    canonicalHeader = it->second;
-  }
-
-  auto descriptorMap = vrml_proc::traversor::node_descriptor::CreateNodeDescriptorMap();
-  auto it2 = descriptorMap.find(canonicalHeader);
-  if (it2 != descriptorMap.end()) {
-    auto& ndf = it2->second;
-    auto nd = ndf();
-    auto validationResult = nd.Validate(parseResult.value().at(0), manager);
-    if (validationResult.has_value()) {
-      vrml_proc::core::config::VrmlProcConfig config;
-      auto result = vrml_proc::traversor::handler::WorldInfoHandler::Handle<
-          to_geom::conversion_context::MeshTaskConversionContext>(
-          {parseResult.value().at(0), manager, false, vrml_proc::math::TransformationMatrix(), config},
-          to_geom::conversion_context::CreateActionMap(), nd);
-      if (result.has_error()) {
-        LogError(result.error());
-      }
-    } else {
-      LogError(validationResult.error());
-      // Return error.
-    }
-  } else {
-    // Unknown node.
-  }
 }
 
 TEST_CASE("Parse VRML File - Valid Input - Simple VRML File - Box node", "[parsing][valid]") {
