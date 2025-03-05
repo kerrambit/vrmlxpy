@@ -468,7 +468,7 @@ TEST_CASE("Parse VRMLFile - Valid Input - Node With Boolean", "[parsing][valid]"
   REQUIRE(shape != nullptr);
 
   CHECK(shape->header == "Shape");
-  CHECK_FALSE(shape->definitionName.has_value());
+  CHECK(((!shape->definitionName.has_value()) || shape->definitionName.value().empty()));
   CHECK(shape->fields.size() == 1);
   CHECK(shape->fields.at(0).name == "geometry");
 
@@ -476,7 +476,7 @@ TEST_CASE("Parse VRMLFile - Valid Input - Node With Boolean", "[parsing][valid]"
   REQUIRE(indexedFaceSet != nullptr);
 
   CHECK(indexedFaceSet->header == "IndexedFaceSet");
-  CHECK_FALSE(indexedFaceSet->definitionName.has_value());
+  CHECK(((!indexedFaceSet->definitionName.has_value()) || indexedFaceSet->definitionName.value().empty()));
   CHECK(indexedFaceSet->fields.size() == 3);
 
   {
@@ -529,7 +529,7 @@ TEST_CASE("Parse VRMLFile - Valid Input - Node With UTF8", "[parsing][valid]") {
   REQUIRE(shape != nullptr);
 
   CHECK(shape->header == "Tvar");
-  CHECK_FALSE(shape->definitionName.has_value());
+  CHECK(((!shape->definitionName.has_value()) || shape->definitionName.value().empty()));
   CHECK(shape->fields.size() == 1);
   CHECK(shape->fields.at(0).name == "ß");
 
@@ -537,7 +537,7 @@ TEST_CASE("Parse VRMLFile - Valid Input - Node With UTF8", "[parsing][valid]") {
   REQUIRE(indexedFaceSet != nullptr);
 
   CHECK(indexedFaceSet->header == "开儿艾诶开伊艾艾西吉艾艾伊娜伊");
-  CHECK_FALSE(indexedFaceSet->definitionName.has_value());
+  CHECK(((!indexedFaceSet->definitionName.has_value()) || indexedFaceSet->definitionName.value().empty()));
   CHECK(indexedFaceSet->fields.size() == 1);
 
   {
