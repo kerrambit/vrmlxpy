@@ -45,7 +45,7 @@ See the [LICENSE](LICENSE) file for details.
   ```
 - You can use *CTest* which is a program that comes with *CMake*; it handles running the tests for the project.
 - Before running the command below, make sure that tests have access to configuration file ```testConfig.json``` which should
-  be inside ```vrmlxpy\out\build\Release\to_stl``` folder (or ```vrmlxpy\out\build\Debug\to_stl```) as one of the tests uses it.
+  be inside ```vrmlxpy\out\build\Release\to_geom``` folder (or ```vrmlxpy\out\build\Debug\to_geom```) as one of the tests uses it.
   The paths in the configuration file should point to directories with test data.
 - Run the following command (once again, note that you might need to exchange *Debug* with *Release* if you have built for this type):
 

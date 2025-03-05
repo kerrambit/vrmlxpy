@@ -22,7 +22,12 @@
 #include "TransformHandler.hpp"
 #include "VrmlNode.hpp"
 #include "WorldInfoHandler.hpp"
+#include "MaterialHandler.hpp"
 #include <NodeDescriptorMap.hpp>
+#include "TextureTransformHandler.hpp"
+#include "ImageTextureHandler.hpp"
+#include "PixelTextureHandler.hpp"
+#include "AppearanceHandler.hpp"
 #include <VrmlCanonicalHeaders.hpp>
 #include "NodeDescriptor.hpp"
 
@@ -107,6 +112,16 @@ namespace vrml_proc::traversor::VrmlNodeTraversor {
       handlerResult = BoxHandler::Handle(context, actionMap, nd);
     } else if (canonicalHeader == "Switch") {
       handlerResult = SwitchHandler::Handle(context, actionMap, nd);
+    } else if (canonicalHeader == "Material") {
+      handlerResult = MaterialHandler::Handle(context, actionMap, nd);
+    } else if (canonicalHeader == "ImageTexture") {
+      handlerResult = ImageTextureHandler::Handle(context, actionMap, nd);
+    } else if (canonicalHeader == "PixelTexture") {
+      handlerResult = PixelTextureHandler::Handle(context, actionMap, nd);
+    } else if (canonicalHeader == "TextureTransform") {
+      handlerResult = TextureTransformHandler::Handle(context, actionMap, nd);
+    } else if (canonicalHeader == "Appearance") {
+      handlerResult = AppearanceHandler::Handle(context, actionMap, nd);
     }
 
     if (handlerResult.has_error()) {

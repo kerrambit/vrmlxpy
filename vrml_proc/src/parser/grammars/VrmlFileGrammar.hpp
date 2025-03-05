@@ -80,14 +80,7 @@ namespace vrml_proc {
 
         m_vrmlNode =
             (-(boost::spirit::qi::lit("DEF") >> m_identifier->GetStartRule()) >> m_identifier->GetStartRule() >>
-             boost::spirit::qi::lit("{") >> *(m_vrmlField) >>
-             boost::spirit::qi::lit(
-                 "}"))[boost::phoenix::bind(&VrmlNode::definitionName, boost::phoenix::ref(boost::spirit::qi::_val)) =
-                           (boost::spirit::qi::_1),
-                       boost::phoenix::bind(&VrmlNode::header, boost::phoenix::ref(boost::spirit::qi::_val)) =
-                           (boost::spirit::qi::_2),
-                       boost::phoenix::bind(&VrmlNode::fields, boost::phoenix::ref(boost::spirit::qi::_val)) =
-                           (boost::spirit::qi::_3)];
+             boost::spirit::qi::lit("{") >> *(m_vrmlField) >> boost::spirit::qi::lit("}"));
 
         m_vrmlNodeArray = "[" >> ((m_vrmlNode | m_useNode) % ",") >> "]";
 

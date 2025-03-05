@@ -19,7 +19,7 @@
 #include <Mesh.hpp>
 #include <MeshTaskConversionContext.hpp>
 #include <ParserResult.hpp>
-#include <StlActionMap.hpp>
+#include <ToGeomActionMap.hpp>
 #include <StlFileWriter.hpp>
 #include <VrmlFile.hpp>
 #include <VrmlFileTraversor.hpp>
@@ -40,8 +40,8 @@ static bool TraverseVrmlFileToMeshTask(vrml_proc::parser::ParserResult<vrml_proc
                                        size_t expectedConversionContextSize) {
   vrml_proc::core::config::VrmlProcConfig config;
   auto traversorResult =
-      vrml_proc::traversor::VrmlFileTraversor::Traverse<to_stl::conversion_context::MeshTaskConversionContext>(
-          {parseResult.value(), manager, config}, to_stl::conversion_context::CreateActionMap());
+      vrml_proc::traversor::VrmlFileTraversor::Traverse<to_geom::conversion_context::MeshTaskConversionContext>(
+          {parseResult.value(), manager, config}, to_geom::conversion_context::CreateActionMap());
   if (traversorResult.has_error()) {
     LogError(traversorResult.error());
     return false;
@@ -74,8 +74,8 @@ static bool TraverseVrmlFileToMeshTask(vrml_proc::parser::ParserResult<vrml_proc
                                        const std::filesystem::path& outputFilepath, size_t expectedSubmeshesCount) {
   vrml_proc::core::config::VrmlProcConfig config;
   auto traversorResult =
-      vrml_proc::traversor::VrmlFileTraversor::Traverse<to_stl::conversion_context::MeshTaskConversionContext>(
-          {parseResult.value(), manager, config}, to_stl::conversion_context::CreateActionMap());
+      vrml_proc::traversor::VrmlFileTraversor::Traverse<to_geom::conversion_context::MeshTaskConversionContext>(
+          {parseResult.value(), manager, config}, to_geom::conversion_context::CreateActionMap());
   if (traversorResult.has_error()) {
     LogError(traversorResult.error());
     return false;
@@ -88,14 +88,14 @@ static bool TraverseVrmlFileToMeshTask(vrml_proc::parser::ParserResult<vrml_proc
     return false;
   }
 
-  std::vector<std::future<to_stl::calculator::CalculatorResult>> results;
+  std::vector<std::future<to_geom::calculator::CalculatorResult>> results;
   for (const auto& task : traversorResult.value()->GetData()) {
     if (task) {
       results.emplace_back(std::async(std::launch::async, task));
     }
   }
 
-  to_stl::core::Mesh mesh;
+  to_geom::core::Mesh mesh;
   size_t currentSubmesh = 0;
   for (auto& future : results) {
     auto meshResult = future.get();
@@ -113,7 +113,7 @@ static bool TraverseVrmlFileToMeshTask(vrml_proc::parser::ParserResult<vrml_proc
     return false;
   }
 
-  to_stl::core::io::StlFileWriter writer;
+  to_geom::core::io::StlFileWriter writer;
   auto writeResult = writer.Write(std::filesystem::path(outputFilepath), mesh);
   if (writeResult.has_error()) {
     LogError(writeResult.error());
@@ -142,8 +142,8 @@ static bool TraverseVrmlFileToMeshTask(vrml_proc::parser::ParserResult<vrml_proc
                                        const std::filesystem::path& outputFilepath, size_t expectedSubmeshesCount,
                                        const vrml_proc::core::config::VrmlProcConfig& config) {
   auto traversorResult =
-      vrml_proc::traversor::VrmlFileTraversor::Traverse<to_stl::conversion_context::MeshTaskConversionContext>(
-          {parseResult.value(), manager, config}, to_stl::conversion_context::CreateActionMap());
+      vrml_proc::traversor::VrmlFileTraversor::Traverse<to_geom::conversion_context::MeshTaskConversionContext>(
+          {parseResult.value(), manager, config}, to_geom::conversion_context::CreateActionMap());
   if (traversorResult.has_error()) {
     LogError(traversorResult.error());
     return false;
@@ -156,14 +156,14 @@ static bool TraverseVrmlFileToMeshTask(vrml_proc::parser::ParserResult<vrml_proc
     return false;
   }
 
-  std::vector<std::future<to_stl::calculator::CalculatorResult>> results;
+  std::vector<std::future<to_geom::calculator::CalculatorResult>> results;
   for (const auto& task : traversorResult.value()->GetData()) {
     if (task) {
       results.emplace_back(std::async(std::launch::async, task));
     }
   }
 
-  to_stl::core::Mesh mesh;
+  to_geom::core::Mesh mesh;
   size_t currentSubmesh = 0;
   for (auto& future : results) {
     auto meshResult = future.get();
@@ -181,7 +181,7 @@ static bool TraverseVrmlFileToMeshTask(vrml_proc::parser::ParserResult<vrml_proc
     return false;
   }
 
-  to_stl::core::io::StlFileWriter writer;
+  to_geom::core::io::StlFileWriter writer;
   auto writeResult = writer.Write(std::filesystem::path(outputFilepath), mesh);
   if (writeResult.has_error()) {
     LogError(writeResult.error());
@@ -201,8 +201,8 @@ static bool TraverseVrmlFileToMeshTask(vrml_proc::parser::ParserResult<vrml_proc
                                        const vrml_proc::parser::VrmlNodeManager& manager) {
   vrml_proc::core::config::VrmlProcConfig config;
   auto traversorResult =
-      vrml_proc::traversor::VrmlFileTraversor::Traverse<to_stl::conversion_context::MeshTaskConversionContext>(
-          {parseResult.value(), manager, config}, to_stl::conversion_context::CreateActionMap());
+      vrml_proc::traversor::VrmlFileTraversor::Traverse<to_geom::conversion_context::MeshTaskConversionContext>(
+          {parseResult.value(), manager, config}, to_geom::conversion_context::CreateActionMap());
   if (traversorResult.has_error()) {
     LogError(traversorResult.error());
     return false;

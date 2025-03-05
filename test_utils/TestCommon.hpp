@@ -105,6 +105,15 @@ static const TestInfo& ReadTestInfo() { return g_testInfo; }
   std::filesystem::path filepath = std::filesystem::path((testName + ".stl"))
 
 /**
+ * @brief Generates file (with .stl extension) name based on test case name. Add some extra name to the test -
+ * for example one test case can have more exports in it.
+ */
+#define GENERATE_TEST_OUTPUT_FILENAME_EXTRA_NAME(filepath, extraName)    \
+  std::string testName = Catch::getResultCapture().getCurrentTestName(); \
+  std::replace(testName.begin(), testName.end(), ' ', '_');              \
+  std::filesystem::path filepath = std::filesystem::path((testName + "_-_" + extraName + ".stl"))
+
+/**
  * @brief Checks if the most inner error is equal to expected type.
  * @tparam ExpectedErrorType expected type
  * @param error error to check
@@ -147,6 +156,34 @@ bool HaveSimiliarSizes(const std::filesystem::path& filepath1, const std::filesy
                                                   " B (tolerance is +-", toleranceInBytes, " B)."));
   }
   return result;
+}
+
+/**
+ * Checks if two binary files are the same.
+ * @param filepath1 first path to check
+ * @param filepath2 second path to check
+ * @return true if the files are same
+ */
+bool AreBinaryFilesEqual(const std::filesystem::path& filepath1, const std::filesystem::path& filepath2) {
+  std::ifstream f1(filepath1.string(), std::ios::binary);
+  std::ifstream f2(filepath2.string(), std::ios::binary);
+
+  f1.seekg(0, std::ios::end);
+  f2.seekg(0, std::ios::end);
+  if (f1.tellg() != f2.tellg()) {
+    return false;
+  }
+
+  f1.seekg(0, std::ios::beg);
+  f2.seekg(0, std::ios::beg);
+
+  char c1, c2;
+  while (f1.get(c1) && f2.get(c2)) {
+    if (c1 != c2) {
+      return false;
+    }
+  }
+  return true;
 }
 
 /**
