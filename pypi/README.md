@@ -6,13 +6,6 @@ Includes a standalone VRML parser library and a conversion library for transform
 This project is licensed under the **GNU General Public License v3.0 or later (GPL-3.0-or-later)**.  
 See the [LICENSE](LICENSE) file for details.
 
-## Run as Python library
-- The easiest way how to use this library is to use *vrmlxpy* as a Python library.
-  There is no need to worry about prerequisitires, building and so on.
-- Please visit [official vrmlxpy PyPi page](https://pypi.org/project/vrmlxpy/) to read more.
-- Basically, it is enough to install it via ```pip install vrmlxpy``` command.
-- To get the idea how to use the library, have a look at example [script](scripts/run_vrmlxpy_lib.py).
-
 ## Prerequisites
 - You need to have the [Boost](https://www.boost.org/) installed on your system. Please follow instructions [here](doc/boost_installation.md).
 - Other third part library used is called [CGAL](https://www.cgal.org/). Follow instructions [here](doc/cgal_installation.md).
@@ -63,5 +56,8 @@ See the [LICENSE](LICENSE) file for details.
 
 ### Windows
 - TODO
+
+## Run Python
+- To get the idea how to use the library, have a look at example [script](scripts/run_vrmlxpy_lib.py).
 
 ## Troubleshooting
