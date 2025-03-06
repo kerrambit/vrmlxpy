@@ -1,0 +1,3 @@
+include vrmlxpy/*.pyd
+include vrmlxpy/*.so
+include vrmlxpy/*.dll
