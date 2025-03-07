@@ -6,12 +6,23 @@ Includes a standalone VRML parser library and a conversion library for transform
 This project is licensed under the **GNU General Public License v3.0 or later (GPL-3.0-or-later)**.  
 See the [LICENSE](LICENSE) file for details.
 
-## Run as Python library
-- The easiest way how to use this library is to use *vrmlxpy* as a Python library.
-  There is no need to worry about prerequisitires, building and so on.
+## Run  as Python library
+- The easiest way how to use this library is to use *vrmlxpy* as a Python library - you do not need to build anything yourself.
 - Please visit [official vrmlxpy PyPi page](https://pypi.org/project/vrmlxpy/) to read more.
-- Basically, it is enough to install it via ```pip install vrmlxpy``` command.
-- To get the idea how to use the library, have a look at example [script](scripts/run_vrmlxpy_lib.py).
+- Basically, the steps are to install vrmlxpy library via ```pip install vrmlxpy``` command.
+- To get the idea how to use the library in action, have a look at example [script](scripts/run_vrmlxpy_lib.py).
+
+## Run as Docker container
+- Another recommended way how to run vrmlxpy is to build *Docker* image and then run it.
+- **General steps**:
+	- Make sure your systems has *Docker* installed.
+	- Download our [Dockerfile](Dockerfile) - copy/paste should be enough.
+	- Build the image using ```docker build -t <IMAGE_NAME> .```.
+	  It is possible to specify the branch from which this reposity which will be cloned by adding ```--build-arg BRANCH=<BRANCH_NAME_>```.
+	- Before running the container, make sure you have created two folders ```input``` and ```output``` on your current path.
+	- Insert into ```input``` folder your ```.wrl``` files the configuration file (it can look like [this](vrmlxpyConfig.json.example)).
+	- Use the following command to run the conversion (command is quite long, as we need to bind the fodlers into container).
+	- ```docker run -v $(pwd)/input:/app/input -v $(pwd)/output:/app/output vrmlxpy python3 /app/out/build/Release/run_vrmlxpy_from_docker.py /app/input/<YOUR_VRML_FILE> /app/output/<OUTPUT_FILENAME> /app/input/<CONFIG_FILE_>```
 
 ## Prerequisites
 - You need to have the [Boost](https://www.boost.org/) installed on your system. Please follow instructions [here](doc/boost_installation.md).
