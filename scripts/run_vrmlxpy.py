@@ -9,5 +9,5 @@ input_filename = sys.argv[1]
 output_filename = sys.argv[2]
 config_filename = sys.argv[3]
 
-print_version()
+vrmlxpy.vrmlxpy.print_version()
 vrmlxpy.vrmlxpy.convert_vrml(input_filename, output_filename, config_filename)
