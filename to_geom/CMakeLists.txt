@@ -3,15 +3,6 @@ set(CMAKE_CXX_STANDARD 20)
 
 project(togeom)
 
-# Add Catch2 unit tests using FetchContent.
-include(FetchContent)
-FetchContent_Declare(
-    Catch2
-    GIT_REPOSITORY https://github.com/catchorg/Catch2.git
-    GIT_TAG v3.4.0
-)
-FetchContent_MakeAvailable(Catch2)
-
 # --------------------------------------------------------------------------------------- #
 
 # Create the DLL.
@@ -101,6 +92,9 @@ target_link_libraries(togeom PRIVATE vrmlproc)
 
 # --------------------------------------------------------------------------------------- #
 
+if (INCLUDE_TESTS STREQUAL "ON")
+message(STATUS "Tests will be included")
+
 # Add the test executables.
 add_executable(VrmlFileTraversorUnitTests "tests/VrmlFileTraversorTest.cpp")
 add_executable(CalculatorsUnitTests "tests/CalculatorsTest.cpp")
@@ -128,3 +122,5 @@ add_custom_command(TARGET VrmlFileTraversorUnitTests POST_BUILD
         "$<TARGET_FILE:togeom>"
         "$<TARGET_FILE_DIR:VrmlFileTraversorUnitTests>"
 )
+
+endif()
