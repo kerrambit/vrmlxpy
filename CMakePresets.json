@@ -21,7 +21,7 @@
         "INCLUDE_PYTHON_BINDINGS": "ON",
         "INCLUDE_TESTS": "ON",
         "INCLUDE_RUNNER": "ON"
-      },
+      }
     },
     {
       "name": "Production",
