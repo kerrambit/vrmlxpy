@@ -57,8 +57,8 @@ namespace vrml_proc::traversor::VrmlNodeTraversor {
 
     std::string canonicalHeader;
     {
-      auto it = HeaderToCanonicalName.find(context.node.header);
-      if (it != HeaderToCanonicalName.end()) {
+      auto it = GetHeaderToCanonicalNameMap().find(context.node.header);
+      if (it != GetHeaderToCanonicalNameMap().end()) {
         canonicalHeader = it->second;
       }
     }
