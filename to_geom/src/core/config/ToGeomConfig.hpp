@@ -45,6 +45,9 @@ namespace to_geom::core::config {
         try {
           vrmlProcConfig.ignoreUnknownNode = json.value().value("ignoreUnknownNode", false);
           exportFormat = StringToExportFormat(json.value().value("exportFormat", "stl"));
+          vrmlProcConfig.logFileDirectory =
+              json.value().value("logFileDirectory", std::filesystem::current_path().string());
+          vrmlProcConfig.logFileName = json.value().value("logFileName", "vrmlproc");
         } catch (const nlohmann::json::exception& e) {
           return cpp::fail(std::make_shared<vrml_proc::core::error::JsonError>(e.what()));
         }

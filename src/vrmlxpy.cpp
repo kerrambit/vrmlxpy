@@ -128,25 +128,33 @@ namespace vrmlxpy {
       default:
         "txt";
     }
+
+    return "txt";
   }
 
   bool ConvertVrmlToGeom(const std::string& inputFilename, const std::string& outputFilename,
                          const std::string& configFilename) {
-    vrml_proc::core::logger::InitLogging(std::filesystem::current_path().string(), "vrmlxpy");
-
     std::cout << "Converting VRML to geometry format..." << std::endl;
 
     to_geom::core::config::ToGeomConfig config;
     auto configResult = config.LoadFromJsonFile(configFilename);
     if (configResult.has_error()) {
       std::cout << "Caught an application error:\n" << configResult.error()->GetMessage() << std::endl;
+      vrml_proc::core::logger::InitLogging(std::filesystem::current_path().string(), "vrmlxpy");
+      std::cout << "[Warning]: log file was created on the current path (" << std::filesystem::current_path()
+                << "). If there was a log directory specified inside "
+                   "the configuration file, do not look for it on this path as loading of configuration file failed!"
+                << std::endl;
       return false;
     }
+
+    vrml_proc::core::logger::InitLogging(config.vrmlProcConfig.logFileDirectory, config.vrmlProcConfig.logFileName);
 
     std::cout << "1/6: configuration file <" << std::filesystem::path(configFilename).string()
               << "> was succesfully parsed." << std::endl;
 
-    return HelperConvertVrmlToGeom(inputFilename, outputFilename, config);
+    bool result = HelperConvertVrmlToGeom(inputFilename, outputFilename, config);
+    return result;
   }
 
   bool ConvertVrmlToStl(const std::string& inputFilename, const std::string& outputFilename) {

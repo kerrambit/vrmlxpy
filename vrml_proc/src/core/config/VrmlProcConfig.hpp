@@ -17,6 +17,8 @@ namespace vrml_proc::core::config {
     VrmlProcConfig() = default;
 
     bool ignoreUnknownNode = false;
+    std::string logFileDirectory = std::filesystem::current_path().string();
+    std::string logFileName = "vrmlproc";
 
     cpp::result<void, std::shared_ptr<vrml_proc::core::error::Error>> LoadFromJsonFile(
         const std::filesystem::path& filepath) {
@@ -26,6 +28,8 @@ namespace vrml_proc::core::config {
       if (json.has_value()) {
         try {
           ignoreUnknownNode = json.value().value("ignoreUnknownNode", false);
+          logFileDirectory = json.value().value("logFileDirectory", std::filesystem::current_path().string());
+          logFileName = json.value().value("logFileName", "vrmlproc");
         } catch (const nlohmann::json::exception& e) {
           return cpp::fail(std::make_shared<vrml_proc::core::error::JsonError>(e.what()));
         }
