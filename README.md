@@ -1,52 +1,56 @@
 # vrmlxpy
-Toolkit for VRML parsing and traversing.
-Includes a standalone VRML parser library and a conversion library for transforming VRML geometry into STL format, with modular C++ backends and Python bindings.
+Toolkit for parsing and traversing VRML files.
+Includes a standalone VRML parser library and a conversion library for transforming VRML into geometry format (such as STL), with modular C++ backends and Python bindings.
+
+The modular architecture allows users to define their own actions—custom functions that process VRML nodes in any desired way. This flexibility enables conversions beyond STL, such as transforming VRML data into a custom geometry JSON format. Simply implement the necessary actions to achieve your desired output.
 
 ## License
-This project is licensed under the **GNU General Public License v3.0 or later (GPL-3.0-or-later)**.  
-See the [LICENSE](LICENSE) file for details.
-
-## Run  as Python library
-- The easiest way how to use this library is to use *vrmlxpy* as a Python library - you do not need to build anything yourself.
-- Please visit [official vrmlxpy PyPi page](https://pypi.org/project/vrmlxpy/) to read more.
-- Basically, the steps are to install vrmlxpy library via ```pip install vrmlxpy``` command.
-- To get the idea how to use the library in action, have a look at example [script](scripts/run_vrmlxpy_lib.py).
+This project is licensed under the **GNU General Public License v3.0 or later** (GPL-3.0-or-later). See the [LICENSE](LICENSE) file for more details.
 
 ## Run as Docker container
-- Another recommended way how to run vrmlxpy is to build *Docker* image and then run it.
-- **General steps**:
-	- Make sure your systems has *Docker* installed.
-	- Download our [Dockerfile](Dockerfile) - copy/paste should be enough.
-	- Build the image using ```docker build -t <IMAGE_NAME> .```.
-	  It is possible to specify the branch from which this reposity which will be cloned by adding ```--build-arg BRANCH=<BRANCH_NAME_>```.
-	- Before running the container, make sure you have created two folders ```input``` and ```output``` on your current path.
-	- Insert into ```input``` folder your ```.wrl``` files the configuration file (it can look like [this](vrmlxpyConfig.json.example)).
-	- Use the following command to run the conversion (command is quite long, as we need to bind the fodlers into container).
-	- ```docker run -v $(pwd)/input:/app/input -v $(pwd)/output:/app/output vrmlxpy python3 /app/out/build/Release/run_vrmlxpy_from_docker.py /app/input/<YOUR_VRML_FILE> /app/output/<OUTPUT_FILENAME> /app/input/<CONFIG_FILE_>```
+- Recommended way how to run *vrmlxpy* is to build *Docker* image and run it.
+- See steps in this [manual](doc/docker_steps.md).
+
+## [*Experimental*] Run as Python library
+- Use *vrmlxpy* as a *Python* library - you do not need to build anything yourself.
+- Please visit [official vrmlxpy PyPi page](https://pypi.org/project/vrmlxpy/) to read more.
+- Basically, the steps are to install *vrmlxpy* library via ```pip install vrmlxpy``` command.
+- To get the idea how to use the library in action, have a look at example [script](scripts/run_vrmlxpy.py).
+- **Note that it has not been tested!** It is possible that on Linux machine, you have to have certain *Boost* libraries installed. In theory, it should work out of box on Windows machines.
 
 ## Prerequisites
-- You need to have the [Boost](https://www.boost.org/) installed on your system. Please follow instructions [here](doc/boost_installation.md).
-- Other third part library used is called [CGAL](https://www.cgal.org/). Follow instructions [here](doc/cgal_installation.md).
-- For Python bindings creation, the solution uses [pybind11](https://github.com/pybind/pybind11). See the steps [here](doc/pybind11_installation.md).
-- The project uses [Ninja](https://ninja-build.org/) build system. Please follow the installation instructions of this software based on your system vendor.
-- It comes naturally that you should have [CMake](https://cmake.org/) installed on your system as well.
-- C++ compiler.
+- [Boost](https://www.boost.org/) - please follow instructions [here](doc/boost_installation.md)
+- [CGAL](https://www.cgal.org/) - study instructions [here](doc/cgal_installation.md)
+- [CMake](https://cmake.org/)
+- [Ninja](https://ninja-build.org/) - please follow the installation instructions of this software based on your system vendor
+- C++ compiler
 
 ## Build
+
+- The *vrmlxpy* project primarily consists of two libraries: *vrmlproc* and *togeom*. However, these are not standalone executables. To use them, you need an application that links against these libraries:
+	- There are test executables that perform unit testing on the solution.
+	- Additionally, you can build and link two C++ applications: *vrmlxpyConversionApp* and *vrmlxpyBulkConversionApp* (more details [here](doc/docker_steps.md)).
+	- Lastly, there is a *Python* binding that allows you to use *vrmlxpy* as a *Python* module ([example script](scripts/run_vrmlxpy_from_docker.py)).
+
+- The project supports these build configurations:
+
+	| Configuration     | Libraries | Tests | C++ Applications | Python Binding |
+	|------------------|-----------|-------|------------------|-----------------|
+	| **Debug**        | ✅         | ✅     | ✅                | ✅         |
+	| **Release**      | ✅         | ✅     | ✅                | ✅         |
+	| **Production**   | ✅         | ❌     | ✅                | ❌         |
+	| **LibrariesOnly** | ✅         | ❌     | ❌                | ❌        |
+
+
 ### Linux
-- You can choose to build the library based on two types of build configurations: **Debug**
+- You can choose to build the library based on four types of build configurations as seen above:
 
   ```
-	cmake --preset Debug
-  ```
-- or **Release**.
-  ```
-	cmake --preset Release
+	cmake --preset <BUILD_CONFIGURATION>
   ```
 - After necessary files are generated, you are able to build.
-- Note that ```out/build/Debug``` in the following command is folder for **Debug** built, for **Release**, use ```out/build/Release```.
 	```
-	cmake --build out/build/Debug
+	cmake --build out/build/<BUILD_CONFIGURATION>
 	```
 
 ### Windows
@@ -56,21 +60,13 @@ See the [LICENSE](LICENSE) file for details.
 
 ## Run C++ executable files
 ### Linux
-- If your system has *Valgrind* installed, you can run the following commands like this:
-
-  ```
-	valgrind --leak-check=full --show-reachable=yes --track-origins=yes <YOUR PROGRAM>
-  ```
-- You can use *CTest* which is a program that comes with *CMake*; it handles running the tests for the project.
-- Before running the command below, make sure that tests have access to configuration file ```testConfig.json``` which should
-  be inside ```vrmlxpy\out\build\Release\to_geom``` folder (or ```vrmlxpy\out\build\Debug\to_geom```) as one of the tests uses it.
-  The paths in the configuration file should point to directories with test data.
-- Run the following command (once again, note that you might need to exchange *Debug* with *Release* if you have built for this type):
-
-	```
-	ctest --test-dir out/build/Debug/vrml_proc
-	```
+- You can run unit tests using *CTest* which is a program that comes with *CMake*.
+- Before running the command below, make sure that tests have access to configuration file ```testConfig.json``` ([example file](testConfig.json.example)) which should
+  be inside ```vrmlxpy\out\build\<BUILD_CONFIGURATION>\to_geom``` folder. The paths in the configuration file should point to directories with test data (**test data are not part of repository yet!**).
+- Run the following commands: ```ctest --test-dir out/build/<BUILD_CONFIGURATION> vrml_proc``` and ```ctest --test-dir out/build/<BUILD_CONFIGURATION>/to_geom```.
 - You might want to use ```--verbose``` for the command above.
+<!-- Empty line here -->
+- Otherwise, you can run C++ applications *vrmlxpyConversionApp* and *vrmlxpyBulkConversionApp* the standart way.
 
 ### Windows
 - TODO

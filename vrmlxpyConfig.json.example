@@ -1,4 +1,6 @@
 {
     "ignoreUnknownNode": false,
-    "exportFormat": "stl"
+    "exportFormat": "stl",
+    "logFileDirectory: "some/path/"
+    "logFileName": "vrmlproc"
 }
