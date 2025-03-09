@@ -10,6 +10,7 @@
 - You can use following build arguments:
     - ```--build-arg BRANCH=<BRANCH_NAME>``` - specify the branch in this repository, image will be build from this branch.
     - ```--build-arg BUILD_CONFIGURATION=<NAME>``` - specify the type of [build configuration](../README.md#build).
+    - ``` --build-arg CACHEBUST=$(date +%s)``` - does not cache the *vrmlxpy* clone from repository and updates remote changes.
 - After the image is built, you should be able to create and run container.
 <!-- Empty line here -->
 - Before running the container, make sure you have created two folders ```input``` and ```output``` on your current path. It is because we have to bind folders where the converted data and data to convert will be searched for.
