@@ -1,5 +1,5 @@
 # Use Ubuntu as base image.
-FROM ubuntu:22.04
+FROM ubuntu:24.04 AS builder
 
 # Install prerequisities.
 RUN apt-get update && apt-get install -y \
@@ -15,19 +15,27 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /app
 
 # Clone the latest branch from GitHub.
-# ARG CACHEBUST=1 # If need to update branch.
+ARG CACHEBUST=1 # If need to update branch.
 ARG BRANCH=main
 RUN git clone --depth 1 --branch ${BRANCH} https://github.com/kerrambit/vrmlxpy.git .
 
-# Clone pybind11 from repository into vendor folder.
-RUN git clone --depth 1 https://github.com/pybind/pybind11.git ./vendor/pybind11
-
 # Build the project.
-RUN cmake --preset Release
-# Try 3 times if compilation fails because of 'c++: fatal error: Killed signal terminated program cc1plus'.
-RUN for i in 1 2 3; do cmake --build out/build/Release && break || sleep 3; done
+ARG BUILD_CONFIGURATION=Production
+RUN cmake --preset ${BUILD_CONFIGURATION}
+RUN cmake --build out/build/${BUILD_CONFIGURATION}
 
-# Copy script to build directory.
-RUN cp ./scripts/run_vrmlxpy_from_docker.py ./out/build/Release/
+# --------------------------------------- #
 
-CMD ["python3", "/app/out/build/Release/run_vrmlxpy_from_docker.py"]
+# Runtime.
+FROM ubuntu:24.04 AS runtime
+
+WORKDIR /app
+
+ARG BUILD_CONFIGURATION=Production
+
+COPY --from=builder /app/out/build/${BUILD_CONFIGURATION}/libtogeom.so /app/
+COPY --from=builder /app/out/build/${BUILD_CONFIGURATION}/libvrmlproc.so /app/
+COPY --from=builder /app/out/build/${BUILD_CONFIGURATION}/vrmlxpyConversionApp /app/
+COPY --from=builder /app/out/build/${BUILD_CONFIGURATION}/vrmlxpyBulkConversionApp /app/
+
+CMD ["/app/vrmlxpyBulkConversionApp", "arg1", "arg2"]

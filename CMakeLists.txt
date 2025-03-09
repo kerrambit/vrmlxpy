@@ -50,17 +50,42 @@ else()
     message(FATAL_ERROR "CGAL not found. Please set CGAL_DIR to the correct path.")
 endif()
 
+# If tests will be compiled, find Catch2 framework.
+if (INCLUDE_TESTS STREQUAL "ON")
+message(STATUS "Catch2 will be fetched")
+
+# Add Catch2 unit tests using FetchContent.
+include(FetchContent)
+FetchContent_Declare(
+    Catch2
+    GIT_REPOSITORY https://github.com/catchorg/Catch2.git
+    GIT_TAG v3.4.0
+)
+FetchContent_MakeAvailable(Catch2)
+
+endif()
+
 # Add the vrml_proc and to_geom directories.
 add_subdirectory(vrml_proc)
 add_subdirectory(to_geom)
 
-# Add pybind11 from local vendor folder.
-add_subdirectory(vendor/pybind11)
+# Create Python bindings.
+if (INCLUDE_PYTHON_BINDINGS STREQUAL "ON")
+message(STATUS "Python bindings will be included")
+
+# Add pybind11 using FetchContent.
+FetchContent_Declare(
+    pybind11
+    GIT_REPOSITORY https://github.com/pybind/pybind11.git
+    GIT_TAG v2.13.6
+)
+
+FetchContent_MakeAvailable(pybind11)
 
 # Create the Python bindings module.
-pybind11_add_module(vrmlxpy SHARED src/vrmlxpy.cpp)
+pybind11_add_module(vrmlxpy SHARED src/vrmlxpy.cpp src/bindings.cpp)
 
-# Link against your C++ libraries.
+# Link against C++ libraries.
 target_link_libraries(vrmlxpy PRIVATE vrmlproc togeom pybind11::module Boost::iostreams Boost::log Boost::date_time Boost::log_setup Boost::system Boost::thread)
 
 # Ensure vrmlxpy.cpp can access headers from vrml_proc, to_geom and pybind11 projects.
@@ -80,3 +105,49 @@ add_custom_command(TARGET vrmlxpy POST_BUILD
         "$<TARGET_FILE:togeom>"
         "$<TARGET_FILE_DIR:vrmlxpy>"
 )
+
+endif()
+
+# Create C++ runner application.
+if (INCLUDE_RUNNER STREQUAL "ON")
+message(STATUS "C++ CLI runners will be included")
+
+add_executable(vrmlxpyConversionApp "src/vrmlxpy.cpp" "src/ConvertVrmlToGeom.cpp")
+add_executable(vrmlxpyBulkConversionApp "src/vrmlxpy.cpp" "src/ConvertVrmlToGeomBulk.cpp")
+
+# Link against C++ libraries.
+target_link_libraries(vrmlxpyConversionApp PRIVATE vrmlproc togeom Boost::iostreams Boost::log Boost::date_time Boost::log_setup Boost::system Boost::thread)
+target_link_libraries(vrmlxpyBulkConversionApp PRIVATE vrmlproc togeom Boost::iostreams Boost::log Boost::date_time Boost::log_setup Boost::system Boost::thread)
+
+# Ensure vrmlxpy.cpp and runner.cpp can access headers from vrml_proc and to_geom projects.
+target_include_directories(vrmlxpyConversionApp PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/src
+    ${CMAKE_CURRENT_SOURCE_DIR}/vrml_proc
+    ${CMAKE_CURRENT_SOURCE_DIR}/to_geom
+)
+target_include_directories(vrmlxpyBulkConversionApp PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/src
+    ${CMAKE_CURRENT_SOURCE_DIR}/vrml_proc
+    ${CMAKE_CURRENT_SOURCE_DIR}/to_geom
+)
+
+# Copy vrmlproc.dll and togeom.dll to the folder for the runner to run.
+add_custom_command(TARGET vrmlxpyConversionApp POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "$<TARGET_FILE:vrmlproc>"
+        "$<TARGET_FILE_DIR:vrmlxpyConversionApp>"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "$<TARGET_FILE:togeom>"
+        "$<TARGET_FILE_DIR:vrmlxpyConversionApp>"
+)
+
+add_custom_command(TARGET vrmlxpyBulkConversionApp POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "$<TARGET_FILE:vrmlproc>"
+        "$<TARGET_FILE_DIR:vrmlxpyBulkConversionApp>"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "$<TARGET_FILE:togeom>"
+        "$<TARGET_FILE_DIR:vrmlxpyBulkConversionApp>"
+)
+
+endif()

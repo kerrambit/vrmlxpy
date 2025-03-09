@@ -1,7 +1,6 @@
 #pragma once
 
 #include <any>
-#include <cassert>
 #include <functional>
 #include <memory>
 
@@ -47,7 +46,9 @@ namespace to_geom::conversion_context {
                     std::any_cast<bool>(copyArgs[0]),
                     std::any_cast<vrml_proc::math::TransformationMatrix>(copyArgs[1])});
           }
-          assert(false && "Invalid arguments for BoxAction");
+
+          vrml_proc::core::logger::LogFatal("Invalid arguments for BoxAction!", LOGGING_INFO);
+          throw std::runtime_error("Invalid arguments for BoxAction");
         });
 
     actionMap.AddAction(
@@ -70,30 +71,8 @@ namespace to_geom::conversion_context {
             return std::make_shared<to_geom::action::GroupAction>(children, bboxCenter, bboxSize);
           }
 
-          assert(false && "Invalid arguments for GroupAction");
-        });
-
-    actionMap.AddAction(
-        "VRMLGroup", [](const vrml_proc::action::ConversionContextActionMap<
-                            to_geom::conversion_context::MeshTaskConversionContext>::ReferencedArguments& refArgs,
-                        const vrml_proc::action::ConversionContextActionMap<
-                            to_geom::conversion_context::MeshTaskConversionContext>::CopiedArguments& copyArgs) {
-          if (refArgs.size() == 2 &&
-              refArgs[0].get().type() == typeid(std::reference_wrapper<const vrml_proc::parser::Vec3f>) &&
-              refArgs[1].get().type() == typeid(std::reference_wrapper<const vrml_proc::parser::Vec3f>) &&
-              copyArgs.size() == 1 &&
-              copyArgs[0].type() ==
-                  typeid(std::vector<std::shared_ptr<to_geom::conversion_context::MeshTaskConversionContext>>)) {
-            auto children =
-                std::any_cast<std::vector<std::shared_ptr<to_geom::conversion_context::MeshTaskConversionContext>>>(
-                    copyArgs[0]);
-            auto bboxCenter = std::any_cast<std::reference_wrapper<const vrml_proc::parser::Vec3f>>(refArgs[0]);
-            auto bboxSize = std::any_cast<std::reference_wrapper<const vrml_proc::parser::Vec3f>>(refArgs[1]);
-
-            return std::make_shared<to_geom::action::GroupAction>(children, bboxCenter, bboxSize);
-          }
-
-          assert(false && "Invalid arguments for GroupAction");
+          vrml_proc::core::logger::LogFatal("Invalid arguments for GroupAction!", LOGGING_INFO);
+          throw std::runtime_error("Invalid arguments for GroupAction");
         });
 
     actionMap.AddAction(
@@ -126,7 +105,8 @@ namespace to_geom::conversion_context {
             return std::make_shared<to_geom::action::TransformAction>(properties);
           }
 
-          assert(false && "Invalid arguments for Transform");
+          vrml_proc::core::logger::LogFatal("Invalid arguments for TransformAction!", LOGGING_INFO);
+          throw std::runtime_error("Invalid arguments for TransformAction");
         });
 
     actionMap.AddAction(
@@ -142,7 +122,8 @@ namespace to_geom::conversion_context {
             return std::make_shared<to_geom::action::SwitchAction>(properties);
           }
 
-          assert(false && "Invalid arguments for SwitchAction");
+          vrml_proc::core::logger::LogFatal("Invalid arguments for SwitchAction!", LOGGING_INFO);
+          throw std::runtime_error("Invalid arguments for SwitchAction");
         });
 
     actionMap.AddAction(
@@ -161,127 +142,60 @@ namespace to_geom::conversion_context {
             return std::make_shared<to_geom::action::ShapeAction>(appearance, geometry);
           }
 
-          assert(false && "Invalid arguments for ShapeAction");
+          vrml_proc::core::logger::LogFatal("Invalid arguments for ShapeAction!", LOGGING_INFO);
+          throw std::runtime_error("Invalid arguments for ShapeAction");
         });
 
     actionMap.AddAction(
-        "VRMLShape", [](const vrml_proc::action::ConversionContextActionMap<
-                            to_geom::conversion_context::MeshTaskConversionContext>::ReferencedArguments& refArgs,
-                        const vrml_proc::action::ConversionContextActionMap<
-                            to_geom::conversion_context::MeshTaskConversionContext>::CopiedArguments& copyArgs) {
-          if (refArgs.size() == 0 && copyArgs.size() == 2 &&
-              copyArgs[0].type() == typeid(std::shared_ptr<to_geom::conversion_context::MeshTaskConversionContext>) &&
-              copyArgs[1].type() == typeid(std::shared_ptr<to_geom::conversion_context::MeshTaskConversionContext>)) {
-            auto appearance =
-                std::any_cast<std::shared_ptr<to_geom::conversion_context::MeshTaskConversionContext>>(copyArgs[0]);
-            auto geometry =
-                std::any_cast<std::shared_ptr<to_geom::conversion_context::MeshTaskConversionContext>>(copyArgs[1]);
+        "IndexedFaceSet", [](const vrml_proc::action::ConversionContextActionMap<
+                                 to_geom::conversion_context::MeshTaskConversionContext>::ReferencedArguments& refArgs,
+                             const vrml_proc::action::ConversionContextActionMap<
+                                 to_geom::conversion_context::MeshTaskConversionContext>::CopiedArguments& copyArgs) {
+          using vrml_proc::parser::VrmlNode;
+          using vrml_proc::parser::Int32Array;
+          using vrml_proc::parser::float32_t;
 
-            return std::make_shared<to_geom::action::ShapeAction>(appearance, geometry);
+          if (refArgs.size() == 14 && copyArgs.size() == 2 && copyArgs[0].type() == typeid(bool) &&
+              copyArgs[1].type() == typeid(vrml_proc::math::TransformationMatrix) &&
+              refArgs[0].get().type() == typeid(std::reference_wrapper<const VrmlNode>) &&
+              refArgs[1].get().type() == typeid(std::reference_wrapper<const VrmlNode>) &&
+              refArgs[2].get().type() == typeid(std::reference_wrapper<const VrmlNode>) &&
+              refArgs[3].get().type() == typeid(std::reference_wrapper<const VrmlNode>) &&
+              refArgs[4].get().type() == typeid(std::reference_wrapper<const bool>) &&
+              refArgs[5].get().type() == typeid(std::reference_wrapper<const Int32Array>) &&
+              refArgs[6].get().type() == typeid(std::reference_wrapper<const bool>) &&
+              refArgs[7].get().type() == typeid(std::reference_wrapper<const bool>) &&
+              refArgs[8].get().type() == typeid(std::reference_wrapper<const Int32Array>) &&
+              refArgs[9].get().type() == typeid(std::reference_wrapper<const float32_t>) &&
+              refArgs[10].get().type() == typeid(std::reference_wrapper<const Int32Array>) &&
+              refArgs[11].get().type() == typeid(std::reference_wrapper<const bool>) &&
+              refArgs[12].get().type() == typeid(std::reference_wrapper<const bool>) &&
+              refArgs[13].get().type() == typeid(std::reference_wrapper<const Int32Array>)) {
+            to_geom::action::IndexedFaceSetAction::Properties properties{
+                std::any_cast<std::reference_wrapper<const VrmlNode>>(refArgs[0]),
+                std::any_cast<std::reference_wrapper<const VrmlNode>>(refArgs[1]),
+                std::any_cast<std::reference_wrapper<const VrmlNode>>(refArgs[2]),
+                std::any_cast<std::reference_wrapper<const VrmlNode>>(refArgs[3]),
+                std::any_cast<std::reference_wrapper<const bool>>(refArgs[4]),
+                std::any_cast<std::reference_wrapper<const Int32Array>>(refArgs[5]),
+                std::any_cast<std::reference_wrapper<const bool>>(refArgs[6]),
+                std::any_cast<std::reference_wrapper<const bool>>(refArgs[7]),
+                std::any_cast<std::reference_wrapper<const Int32Array>>(refArgs[8]),
+                std::any_cast<std::reference_wrapper<const float32_t>>(refArgs[9]),
+                std::any_cast<std::reference_wrapper<const Int32Array>>(refArgs[10]),
+                std::any_cast<std::reference_wrapper<const bool>>(refArgs[11]),
+                std::any_cast<std::reference_wrapper<const bool>>(refArgs[12]),
+                std::any_cast<std::reference_wrapper<const Int32Array>>(refArgs[13])};
+
+            return std::make_shared<to_geom::action::IndexedFaceSetAction>(
+                properties, to_geom::action::GeometryAction::Properties{
+                                std::any_cast<bool>(copyArgs[0]),
+                                std::any_cast<vrml_proc::math::TransformationMatrix>(copyArgs[1])});
           }
 
-          assert(false && "Invalid arguments for ShapeAction");
+          vrml_proc::core::logger::LogFatal("Invalid arguments for IndexedFaceSetAction!", LOGGING_INFO);
+          throw std::runtime_error("Invalid arguments for IndexedFaceSetAction");
         });
-
-    actionMap.AddAction("IndexedFaceSet",
-                        [](const vrml_proc::action::ConversionContextActionMap<
-                               to_geom::conversion_context::MeshTaskConversionContext>::ReferencedArguments& refArgs,
-                           const vrml_proc::action::ConversionContextActionMap<
-                               to_geom::conversion_context::MeshTaskConversionContext>::CopiedArguments& copyArgs) {
-                          using vrml_proc::parser::VrmlNode;
-                          using vrml_proc::parser::Int32Array;
-                          using vrml_proc::parser::float32_t;
-
-                          if (refArgs.size() == 14 && copyArgs.size() == 2 && copyArgs[0].type() == typeid(bool) &&
-                              copyArgs[1].type() == typeid(vrml_proc::math::TransformationMatrix) &&
-                              refArgs[0].get().type() == typeid(std::reference_wrapper<const VrmlNode>) &&
-                              refArgs[1].get().type() == typeid(std::reference_wrapper<const VrmlNode>) &&
-                              refArgs[2].get().type() == typeid(std::reference_wrapper<const VrmlNode>) &&
-                              refArgs[3].get().type() == typeid(std::reference_wrapper<const VrmlNode>) &&
-                              refArgs[4].get().type() == typeid(std::reference_wrapper<const bool>) &&
-                              refArgs[5].get().type() == typeid(std::reference_wrapper<const Int32Array>) &&
-                              refArgs[6].get().type() == typeid(std::reference_wrapper<const bool>) &&
-                              refArgs[7].get().type() == typeid(std::reference_wrapper<const bool>) &&
-                              refArgs[8].get().type() == typeid(std::reference_wrapper<const Int32Array>) &&
-                              refArgs[9].get().type() == typeid(std::reference_wrapper<const float32_t>) &&
-                              refArgs[10].get().type() == typeid(std::reference_wrapper<const Int32Array>) &&
-                              refArgs[11].get().type() == typeid(std::reference_wrapper<const bool>) &&
-                              refArgs[12].get().type() == typeid(std::reference_wrapper<const bool>) &&
-                              refArgs[13].get().type() == typeid(std::reference_wrapper<const Int32Array>)) {
-                            to_geom::action::IndexedFaceSetAction::Properties properties{
-                                std::any_cast<std::reference_wrapper<const VrmlNode>>(refArgs[0]),
-                                std::any_cast<std::reference_wrapper<const VrmlNode>>(refArgs[1]),
-                                std::any_cast<std::reference_wrapper<const VrmlNode>>(refArgs[2]),
-                                std::any_cast<std::reference_wrapper<const VrmlNode>>(refArgs[3]),
-                                std::any_cast<std::reference_wrapper<const bool>>(refArgs[4]),
-                                std::any_cast<std::reference_wrapper<const Int32Array>>(refArgs[5]),
-                                std::any_cast<std::reference_wrapper<const bool>>(refArgs[6]),
-                                std::any_cast<std::reference_wrapper<const bool>>(refArgs[7]),
-                                std::any_cast<std::reference_wrapper<const Int32Array>>(refArgs[8]),
-                                std::any_cast<std::reference_wrapper<const float32_t>>(refArgs[9]),
-                                std::any_cast<std::reference_wrapper<const Int32Array>>(refArgs[10]),
-                                std::any_cast<std::reference_wrapper<const bool>>(refArgs[11]),
-                                std::any_cast<std::reference_wrapper<const bool>>(refArgs[12]),
-                                std::any_cast<std::reference_wrapper<const Int32Array>>(refArgs[13])};
-
-                            return std::make_shared<to_geom::action::IndexedFaceSetAction>(
-                                properties, to_geom::action::GeometryAction::Properties{
-                                                std::any_cast<bool>(copyArgs[0]),
-                                                std::any_cast<vrml_proc::math::TransformationMatrix>(copyArgs[1])});
-                          }
-
-                          assert(false && "Invalid arguments for IndexedFaceSet");
-                        });
-
-    actionMap.AddAction("VRMLIndexedFaceSet",
-                        [](const vrml_proc::action::ConversionContextActionMap<
-                               to_geom::conversion_context::MeshTaskConversionContext>::ReferencedArguments& refArgs,
-                           const vrml_proc::action::ConversionContextActionMap<
-                               to_geom::conversion_context::MeshTaskConversionContext>::CopiedArguments& copyArgs) {
-                          using vrml_proc::parser::VrmlNode;
-                          using vrml_proc::parser::Int32Array;
-                          using vrml_proc::parser::float32_t;
-
-                          if (refArgs.size() == 14 && copyArgs.size() == 2 && copyArgs[0].type() == typeid(bool) &&
-                              copyArgs[1].type() == typeid(vrml_proc::math::TransformationMatrix) &&
-                              refArgs[0].get().type() == typeid(std::reference_wrapper<const VrmlNode>) &&
-                              refArgs[1].get().type() == typeid(std::reference_wrapper<const VrmlNode>) &&
-                              refArgs[2].get().type() == typeid(std::reference_wrapper<const VrmlNode>) &&
-                              refArgs[3].get().type() == typeid(std::reference_wrapper<const VrmlNode>) &&
-                              refArgs[4].get().type() == typeid(std::reference_wrapper<const bool>) &&
-                              refArgs[5].get().type() == typeid(std::reference_wrapper<const Int32Array>) &&
-                              refArgs[6].get().type() == typeid(std::reference_wrapper<const bool>) &&
-                              refArgs[7].get().type() == typeid(std::reference_wrapper<const bool>) &&
-                              refArgs[8].get().type() == typeid(std::reference_wrapper<const Int32Array>) &&
-                              refArgs[9].get().type() == typeid(std::reference_wrapper<const float32_t>) &&
-                              refArgs[10].get().type() == typeid(std::reference_wrapper<const Int32Array>) &&
-                              refArgs[11].get().type() == typeid(std::reference_wrapper<const bool>) &&
-                              refArgs[12].get().type() == typeid(std::reference_wrapper<const bool>) &&
-                              refArgs[13].get().type() == typeid(std::reference_wrapper<const Int32Array>)) {
-                            to_geom::action::IndexedFaceSetAction::Properties properties{
-                                std::any_cast<std::reference_wrapper<const VrmlNode>>(refArgs[0]),
-                                std::any_cast<std::reference_wrapper<const VrmlNode>>(refArgs[1]),
-                                std::any_cast<std::reference_wrapper<const VrmlNode>>(refArgs[2]),
-                                std::any_cast<std::reference_wrapper<const VrmlNode>>(refArgs[3]),
-                                std::any_cast<std::reference_wrapper<const bool>>(refArgs[4]),
-                                std::any_cast<std::reference_wrapper<const Int32Array>>(refArgs[5]),
-                                std::any_cast<std::reference_wrapper<const bool>>(refArgs[6]),
-                                std::any_cast<std::reference_wrapper<const bool>>(refArgs[7]),
-                                std::any_cast<std::reference_wrapper<const Int32Array>>(refArgs[8]),
-                                std::any_cast<std::reference_wrapper<const float32_t>>(refArgs[9]),
-                                std::any_cast<std::reference_wrapper<const Int32Array>>(refArgs[10]),
-                                std::any_cast<std::reference_wrapper<const bool>>(refArgs[11]),
-                                std::any_cast<std::reference_wrapper<const bool>>(refArgs[12]),
-                                std::any_cast<std::reference_wrapper<const Int32Array>>(refArgs[13])};
-
-                            return std::make_shared<to_geom::action::IndexedFaceSetAction>(
-                                properties, to_geom::action::GeometryAction::Properties{
-                                                std::any_cast<bool>(copyArgs[0]),
-                                                std::any_cast<vrml_proc::math::TransformationMatrix>(copyArgs[1])});
-                          }
-
-                          assert(false && "Invalid arguments for IndexedFaceSet");
-                        });
 
     return actionMap;
   }

@@ -2,6 +2,7 @@
 
 #include <ios>
 #include <sstream>
+#include <vector>
 #include <string>
 
 #include <boost/date_time/posix_time/ptime.hpp>
@@ -25,17 +26,40 @@
 #include <boost/log/utility/setup/common_attributes.hpp>
 #include <boost/log/utility/setup/file.hpp>
 
+#include "FormatString.hpp"
+
+// --------------------------------------------------------------------------------- //
+
 namespace logging = boost::log;
 namespace keywords = boost::log::keywords;
 namespace expr = boost::log::expressions;
 namespace attrs = boost::log::attributes;
 namespace sinks = boost::log::sinks;
 
+struct BufferedMessage {
+  std::string text;
+  vrml_proc::core::logger::Level level;
+  std::string file;
+  int line;
+  std::string function;
+
+  BufferedMessage(std::string text, vrml_proc::core::logger::Level level, std::string file, int line,
+                  std::string function)
+      : text(text), level(level), file(file), line(line), function(function) {}
+};
+
+static std::vector<BufferedMessage> g_logBuffer;
+static bool g_loggingInitialized = false;
+
 BOOST_LOG_GLOBAL_LOGGER_INIT(Logger, boost::log::sources::severity_logger_mt<boost::log::trivial::severity_level>) {
   return boost::log::sources::severity_logger_mt<boost::log::trivial::severity_level>();
 }
 
+void LogBufferedMessages();
+
 void vrml_proc::core::logger::InitLogging() {
+  g_loggingInitialized = true;
+
   logging::add_file_log(
       keywords::file_name = "vrmlproc_%Y-%m-%d.log", keywords::open_mode = std::ios_base::app,
       keywords::time_based_rotation = sinks::file::rotation_at_time_point(0, 0, 0), keywords::auto_flush = true,
@@ -55,9 +79,13 @@ void vrml_proc::core::logger::InitLogging() {
 #ifdef DEBUG
   logging::core::get()->set_filter(logging::trivial::severity >= logging::trivial::trace);
 #endif
+
+  LogBufferedMessages();
 }
 
 void vrml_proc::core::logger::InitLogging(const std::string& loggingDirectory, const std::string& projectName) {
+  g_loggingInitialized = true;
+
   if (!boost::filesystem::exists(loggingDirectory)) {
     boost::filesystem::create_directories(loggingDirectory);
   }
@@ -82,11 +110,19 @@ void vrml_proc::core::logger::InitLogging(const std::string& loggingDirectory, c
 #ifdef DEBUG
   logging::core::get()->set_filter(logging::trivial::severity >= logging::trivial::trace);
 #endif
+
+  LogBufferedMessages();
 }
 
 void vrml_proc::core::logger::LogUnformattedText(const std::string& title, const std::string& text,
                                                  vrml_proc::core::logger::Level level, const std::string& file,
                                                  int line, const std::string& function) {
+  if (!g_loggingInitialized) {
+    g_logBuffer.push_back(
+        BufferedMessage(vrml_proc::core::utils::FormatString(title, ":\n", text), level, file, line, function));
+    return;
+  }
+
   switch (level) {
     case vrml_proc::core::logger::Level::Trace:
       BOOST_LOG_SEV(Logger::get(), boost::log::trivial::trace)
@@ -117,6 +153,11 @@ void vrml_proc::core::logger::LogUnformattedText(const std::string& title, const
 
 void vrml_proc::core::logger::Log(const std::string& text, Level level, const std::string& file, int line,
                                   const std::string& function) {
+  if (!g_loggingInitialized) {
+    g_logBuffer.push_back(BufferedMessage(text, level, file, line, function));
+    return;
+  }
+
   switch (level) {
     case vrml_proc::core::logger::Level::Trace:
       BOOST_LOG_SEV(Logger::get(), boost::log::trivial::trace)
@@ -175,4 +216,11 @@ void vrml_proc::core::logger::LogError(const std::string& text, const std::strin
 void vrml_proc::core::logger::LogFatal(const std::string& text, const std::string& file, int line,
                                        const std::string& function) {
   vrml_proc::core::logger::Log(text, vrml_proc::core::logger::Level::Fatal, file, line, function);
+}
+
+void LogBufferedMessages() {
+  for (const auto& message : g_logBuffer) {
+    vrml_proc::core::logger::Log(message.text, message.level, message.file, message.line, message.function);
+  }
+  g_logBuffer.clear();
 }

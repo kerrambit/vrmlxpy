@@ -3,15 +3,6 @@ set(CMAKE_CXX_STANDARD 20)
 
 project(vrmlproc)
 
-# Add Catch2 unit tests using FetchContent.
-include(FetchContent)
-FetchContent_Declare(
-    Catch2
-    GIT_REPOSITORY https://github.com/catchorg/Catch2.git
-    GIT_TAG v3.4.0
-)
-FetchContent_MakeAvailable(Catch2)
-
 # --------------------------------------------------------------------------------------- #
 
 # Create the DLL.
@@ -230,6 +221,9 @@ target_link_libraries(vrmlproc PRIVATE CGAL::CGAL Boost::iostreams Boost::log Bo
 
 # --------------------------------------------------------------------------------------- #
 
+if (INCLUDE_TESTS STREQUAL "ON")
+message(STATUS "Tests will be included")
+
 # Add the test executables.
 add_executable(VrmlFileGrammarUnitTests "tests/VrmlFileGrammarTest.cpp")
 add_executable(Vec3fGrammarUnitTests "tests/Vec3fGrammarTest.cpp")
@@ -254,3 +248,5 @@ add_test(NAME Vec4fGrammarUnitTests COMMAND Vec4fGrammarUnitTests)
 add_test(NAME Vec3fArrayGrammarUnitTests COMMAND Vec3fArrayGrammarUnitTests)
 add_test(NAME Int32ArrayGrammarUnitTests COMMAND Int32ArrayGrammarUnitTests)
 add_test(NAME VrmlFieldExtractorUnitTests COMMAND VrmlFieldExtractorUnitTests)
+
+endif()
