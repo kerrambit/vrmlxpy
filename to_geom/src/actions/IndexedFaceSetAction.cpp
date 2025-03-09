@@ -58,7 +58,8 @@ namespace to_geom {
           auto coord = std::any_cast<std::reference_wrapper<const vrml_proc::parser::Vec3fArray>>(refArgs[0]);
           return std::make_shared<HelperCoordAction>(coord);
         }
-        assert(false && "Invalid arguments for CoordinateAction");
+        vrml_proc::core::logger::LogFatal("Invalid arguments for CoordinateAction!", LOGGING_INFO);
+        throw std::runtime_error("Invalid arguments for CoordinateAction");
       });
 
       vrml_proc::core::config::VrmlProcConfig config;
