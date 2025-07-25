@@ -23,7 +23,7 @@ This project is licensed under the **GNU General Public License v3.0 or later** 
 ## [*Experimental*] Run as Python library
 - Please visit [official vrmlxpy PyPi page](https://pypi.org/project/vrmlxpy/) to read more.
 - Basically, the steps contain only the installation of *vrmlxpy* library via ```pip install vrmlxpy``` command.
-- To get the idea how to use the library in action, have a look at example [script](scripts/run_vrmlxpy.py).
+- To get the idea how to use the library in action, have a look at example [script](scripts/run_vrmlxpy.py) or study official manual page for its [API](docs/manual_python_api.md).
 - **Note:** this procedure has not been fully tested! It is possible that on Linux machine, you have to have certain *Boost* libraries installed. In theory, it should work out of box on Windows machines.
 
 ## Prerequisites
