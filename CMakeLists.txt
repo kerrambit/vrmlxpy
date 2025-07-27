@@ -115,6 +115,11 @@ FetchContent_MakeAvailable(pybind11)
 # Create the Python bindings module.
 pybind11_add_module(vrmlxpy SHARED src/vrmlx.cpp src/bindings.cpp)
 
+set_target_properties(vrmlxpy PROPERTIES
+    INSTALL_RPATH "$ORIGIN"
+    BUILD_WITH_INSTALL_RPATH TRUE
+)
+
 # Link against C++ libraries.
 target_link_libraries(vrmlxpy PRIVATE vrmlproc togeom pybind11::module Boost::iostreams Boost::log Boost::date_time Boost::log_setup Boost::system Boost::thread)
 
@@ -123,7 +128,6 @@ target_include_directories(vrmlxpy PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/src
     ${CMAKE_CURRENT_SOURCE_DIR}/vrml_proc
     ${CMAKE_CURRENT_SOURCE_DIR}/to_geom
-    #${CMAKE_CURRENT_SOURCE_DIR}/../vendor/pybind11/include/pybind11
 )
 
 # Copy vrmlproc.dll and togeom.dll to the folder for the binding to run.
