@@ -11,7 +11,7 @@ else:
 
 setup(
     name="vrmlxpy",
-    version="1.0.0",
+    version="1.0.4",
     author="Marek Eibel",
     description="Toolkit for VRML parsing and traversing. Includes a standalone VRML parser library and a conversion library for transforming VRML geometry into geometry format such as STL, with modular C++ backends and Python bindings.",
     long_description=open("README.md").read(),
@@ -24,6 +24,6 @@ setup(
         "Programming Language :: Python :: 3",
         "Operating System :: OS Independent",
     ],
-    python_requires=">=3.6",
+    python_requires=">=3.10",
     zip_safe=False,
 )
