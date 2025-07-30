@@ -17,6 +17,8 @@ classifiers = [
     "Operating System :: Microsoft :: Windows",
     "Operating System :: POSIX :: Linux",
 ]
+[project.urls]
+Homepage = "https://github.com/kerrambit/vrmlx"
 
 [tool.setuptools]
 packages = ["vrmlxpy"]
