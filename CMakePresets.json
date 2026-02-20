@@ -35,6 +35,17 @@
       }
     },
     {
+      "name": "ProductionWithBindings",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/out/build/ProductionWithBindings",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "INCLUDE_PYTHON_BINDINGS": "ON",
+        "INCLUDE_TESTS": "OFF",
+        "INCLUDE_RUNNER": "ON"
+      }
+    },
+    {
       "name": "LibrariesOnly",
       "generator": "Ninja",
       "binaryDir": "${sourceDir}/out/build/LibrariesOnly",
