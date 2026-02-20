@@ -1,23 +1,19 @@
 name: Build vrmlx
-
 on:
   push:
     branches: [ main, dev, vrmlproc#* ]
   pull_request:
     branches: [ main, dev ]
   workflow_dispatch:
-
 jobs:
   # Linux Build
   build-linux:
     name: Linux (${{ matrix.preset }})
     runs-on: ubuntu-24.04
-
     strategy:
       fail-fast: false
       matrix:
         preset: [ProductionWithBindings]
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -36,18 +32,14 @@ jobs:
             python3-dev \
             python3-pip
 
-      # Cache Boost (system install is fast, but CGAL headers can be large)
-      # CGAL is header-only on Linux when installed via apt, so no extra cache needed.
-
-      #  Python setup (needed for bindings presets) 
+      # Python setup (needed for bindings presets)
       - name: Set up Python
         if: matrix.preset == 'ProductionWithBindings'
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
-      #  CMake FetchContent cache 
-      # Cache the FetchContent downloads (Taskflow, Catch2, pybind11) to speed up CI.
+      # Cache the FetchContent downloads (Taskflow, pybind11) to speed up CI.
       - name: Cache CMake FetchContent
         uses: actions/cache@v4
         with:
@@ -60,24 +52,62 @@ jobs:
             linux-fetchcontent-${{ matrix.preset }}-
             linux-fetchcontent-
 
-      #  Configure 
+      # Configure
       - name: Configure (${{ matrix.preset }})
         run: cmake --preset ${{ matrix.preset }}
 
-      #  Build 
+      # Build
       - name: Build (${{ matrix.preset }})
         run: cmake --build out/build/${{ matrix.preset }} --parallel $(nproc)
 
-      #  Run tests (only for presets that build them) 
+      # Run tests (only for presets that build them)
       - name: Run vrml_proc tests
         if: matrix.preset == 'Release'
         run: ctest --test-dir out/build/${{ matrix.preset }}/vrml_proc --output-on-failure
-
       - name: Run to_geom tests
         if: matrix.preset == 'Release'
         run: ctest --test-dir out/build/${{ matrix.preset }}/to_geom --output-on-failure
 
-      #  Upload artifacts 
+      # Collect Boost .so files that the built binaries actually link against.
+      # Uses ldd to inspect each binary/library, filters for libboost entries,
+      # resolves the real paths, and copies them all into a boost_libs/ subdir.
+      - name: Collect Boost shared libraries
+        run: |
+          ARTIFACT_DIR="out/build/${{ matrix.preset }}/boost_libs"
+          mkdir -p "$ARTIFACT_DIR"
+
+          # Gather all built binaries and shared libraries in the output tree.
+          BINARIES=$(find out/build/${{ matrix.preset }} \
+            \( -name "vrmlxConversionApp" -o -name "*.so" -o -name "*.so.*" \) \
+            ! -path "*/boost_libs/*" \
+            ! -path "*/_deps/*")
+
+          echo "Scanning the following binaries for Boost dependencies:"
+          echo "$BINARIES"
+
+          # For each binary, run ldd and extract any libboost .so paths.
+          for BIN in $BINARIES; do
+            ldd "$BIN" 2>/dev/null \
+              | grep "libboost" \
+              | awk '{print $3}' \
+              | grep "^/" \
+              | while read -r SO_PATH; do
+                  # Resolve symlinks to get the real file and copy it.
+                  REAL=$(realpath "$SO_PATH")
+                  cp -n "$REAL" "$ARTIFACT_DIR/" || true
+                  # Also preserve the symlink name the binary was linked against
+                  # so the dynamic linker can find it at runtime.
+                  LINK_NAME=$(basename "$SO_PATH")
+                  if [ ! -e "$ARTIFACT_DIR/$LINK_NAME" ]; then
+                    ln -s "$(basename "$REAL")" "$ARTIFACT_DIR/$LINK_NAME"
+                  fi
+                done
+          done
+
+          echo "Collected Boost libraries:"
+          ls -lh "$ARTIFACT_DIR"
+
+      # Upload artifacts
       - name: Upload Linux binaries (${{ matrix.preset }})
         uses: actions/upload-artifact@v4
         with:
@@ -85,8 +115,10 @@ jobs:
           path: |
             out/build/${{ matrix.preset }}/vrmlxConversionApp
             out/build/${{ matrix.preset }}/*.so
+            out/build/${{ matrix.preset }}/*.so.*
             out/build/${{ matrix.preset }}/vrml_proc/*.so
             out/build/${{ matrix.preset }}/to_geom/*.so
+            out/build/${{ matrix.preset }}/boost_libs/
           if-no-files-found: warn
           retention-days: 7
 
