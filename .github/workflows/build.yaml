@@ -218,8 +218,8 @@ jobs:
           Copy-Item "C:\local\cgal_aux\auxiliary\gmp\include\*" "C:\local\gmp\include\" -Recurse -Force
           Copy-Item "C:\local\cgal_aux\auxiliary\gmp\lib\*"     "C:\local\gmp\lib\"     -Recurse -Force
           # Copy MPFR files
-          Copy-Item "C:\local\cgal_aux\auxiliary\mpfr\include\*" "C:\local\mpfr\include\" -Recurse -Force
-          Copy-Item "C:\local\cgal_aux\auxiliary\mpfr\lib\*"     "C:\local\mpfr\lib\"     -Recurse -Force
+          Copy-Item "C:\local\cgal_aux\auxiliary\gmp\include\*" "C:\local\mpfr\include\" -Recurse -Force
+          Copy-Item "C:\local\cgal_aux\auxiliary\gmp\lib\*"     "C:\local\mpfr\lib\"     -Recurse -Force
 
       - name: Set GMP_DIR / MPFR_DIR
         shell: pwsh
