@@ -123,36 +123,21 @@ jobs:
           path: C:\local\boost_${{ env.BOOST_VERSION_UNDERSCORED }}
           key: windows-boost-${{ env.BOOST_VERSION }}-msvc${{ env.BOOST_MSVC_VER }}-prebuilt
 
-      - name: Download Boost prebuilt MSVC binaries
-        if: steps.cache-boost.outputs.cache-hit != 'true'
-        shell: pwsh
-        run: |
-          $ver     = "${{ env.BOOST_VERSION }}"
-          $verU    = "${{ env.BOOST_VERSION_UNDERSCORED }}"
-          $msvcVer = "${{ env.BOOST_MSVC_VER }}"
-
-          # Official prebuilt installer from sourceforge
-          $installerUrl = "https://sourceforge.net/projects/boost/files/boost-binaries/${ver}/boost_${verU}-msvc-${msvcVer}-64.exe/download"
-          $installerPath = "C:\local\boost_installer.exe"
-
-          New-Item -ItemType Directory -Force -Path "C:\local" | Out-Null
-          Write-Host "Downloading Boost prebuilt from: $installerUrl"
-          Invoke-WebRequest -Uri $installerUrl -OutFile $installerPath -UseBasicParsing
-
-          Write-Host "Installing Boost silently to C:\local\boost_${verU}..."
-          Start-Process -FilePath $installerPath -ArgumentList "/SILENT", "/SP-", "/DIR=C:\local\boost_${verU}" -Wait -NoNewWindow
-          Remove-Item $installerPath
-
-          Write-Host "Boost installed. Contents of lib dir:"
-          Get-ChildItem "C:\local\boost_${verU}\lib64-msvc-${msvcVer}" | Select-Object -First 20
+      - name: Install Boost 1.87.0
+        uses: MarkusJx/install-boost@v2
+        id: install-boost
+        with:
+            boost_version: 1.87.0
+            platform_version: 2022
+            toolset: msvc
+            link: static
+            arch: x86
 
       - name: Set Boost environment variables
         shell: pwsh
         run: |
-          $verU    = "${{ env.BOOST_VERSION_UNDERSCORED }}"
-          $msvcVer = "${{ env.BOOST_MSVC_VER }}"
-          echo "BOOST_ROOT=C:\local\boost_${verU}"                         >> $env:GITHUB_ENV
-          echo "BOOST_LIBRARYDIR=C:\local\boost_${verU}\lib64-msvc-${msvcVer}" >> $env:GITHUB_ENV
+            echo "BOOST_ROOT=${{ steps.install-boost.outputs.BOOST_ROOT }}" >> $env:GITHUB_ENV
+            echo "BOOST_LIBRARYDIR=${{ steps.install-boost.outputs.BOOST_ROOT }}\lib" >> $env:GITHUB_ENV
 
       #  GMP / MPFR 
       - name: Cache GMP/MPFR
