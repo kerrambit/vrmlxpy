@@ -78,6 +78,9 @@ FetchContent_Declare(
   GIT_REPOSITORY https://github.com/taskflow/taskflow.git
   GIT_TAG        master
 )
+set(TF_BUILD_EXAMPLES  OFF CACHE BOOL "" FORCE)
+set(TF_BUILD_TESTS     OFF CACHE BOOL "" FORCE)
+set(TF_BUILD_BENCHMARK OFF CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(taskflow)
 
 # If tests will be compiled, find Catch2 framework.
