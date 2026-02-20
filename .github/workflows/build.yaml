@@ -101,59 +101,60 @@ jobs:
       BOOST_VERSION: "1.87.0"
       BOOST_VERSION_UNDERSCORED: "1_87_0"
       CGAL_VERSION: "6.0.1"
+      BOOST_MSVC_VER: "14.3"
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install CMake 3.27
-        uses: jwlawson/actions-setup-cmake@v2
-        with:
-            cmake-version: '3.27.x'
-
-      #  Python setup (needed for pybind11 presets) 
       - name: Set up Python
         if: matrix.preset == 'ProductionWithBindings'
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
-      #  Cache Boost 
-      - name: Cache Boost
+      #  Boost: download prebuilt MSVC binaries (same as dev machine) 
+      # Uses the official prebuilt Windows binaries from sourceforge, identical
+      # layout to what you have locally under vendor/boost (lib64-msvc-14.3).
+      - name: Cache Boost prebuilt
         id: cache-boost
         uses: actions/cache@v4
         with:
           path: C:\local\boost_${{ env.BOOST_VERSION_UNDERSCORED }}
-          key: windows-boost-${{ env.BOOST_VERSION }}-msvc2022-static
+          key: windows-boost-${{ env.BOOST_VERSION }}-msvc${{ env.BOOST_MSVC_VER }}-prebuilt
 
-      - name: Download and build Boost (static)
+      - name: Download Boost prebuilt MSVC binaries
         if: steps.cache-boost.outputs.cache-hit != 'true'
         shell: pwsh
         run: |
-          $boostUrl = "https://archives.boost.io/release/${{ env.BOOST_VERSION }}/source/boost_${{ env.BOOST_VERSION_UNDERSCORED }}.zip"
-          $boostZip = "C:\local\boost.zip"
+          $ver     = "${{ env.BOOST_VERSION }}"
+          $verU    = "${{ env.BOOST_VERSION_UNDERSCORED }}"
+          $msvcVer = "${{ env.BOOST_MSVC_VER }}"
+
+          # Official prebuilt installer from sourceforge
+          $installerUrl = "https://sourceforge.net/projects/boost/files/boost-binaries/${ver}/boost_${verU}-msvc-${msvcVer}-64.exe/download"
+          $installerPath = "C:\local\boost_installer.exe"
+
           New-Item -ItemType Directory -Force -Path "C:\local" | Out-Null
-          Write-Host "Downloading Boost from $boostUrl"
-          Invoke-WebRequest -Uri $boostUrl -OutFile $boostZip -UseBasicParsing
-          Write-Host "Extracting Boost..."
-          Expand-Archive -LiteralPath $boostZip -DestinationPath "C:\local" -Force
-          Remove-Item $boostZip
+          Write-Host "Downloading Boost prebuilt from: $installerUrl"
+          Invoke-WebRequest -Uri $installerUrl -OutFile $installerPath -UseBasicParsing
 
-          $boostDir = "C:\local\boost_${{ env.BOOST_VERSION_UNDERSCORED }}"
-          Push-Location $boostDir
-          .\bootstrap.bat
-          .\b2.exe --with-iostreams --with-log --with-date_time --with-thread --with-system `
-            address-model=64 threading=multi link=static runtime-link=shared `
-            variant=release,debug -j4
-          Pop-Location
+          Write-Host "Installing Boost silently to C:\local\boost_${verU}..."
+          Start-Process -FilePath $installerPath -ArgumentList "/SILENT", "/SP-", "/DIR=C:\local\boost_${verU}" -Wait -NoNewWindow
+          Remove-Item $installerPath
 
-      - name: Set BOOST_ROOT
+          Write-Host "Boost installed. Contents of lib dir:"
+          Get-ChildItem "C:\local\boost_${verU}\lib64-msvc-${msvcVer}" | Select-Object -First 20
+
+      - name: Set Boost environment variables
         shell: pwsh
         run: |
-          echo "BOOST_ROOT=C:\local\boost_${{ env.BOOST_VERSION_UNDERSCORED }}" >> $env:GITHUB_ENV
+          $verU    = "${{ env.BOOST_VERSION_UNDERSCORED }}"
+          $msvcVer = "${{ env.BOOST_MSVC_VER }}"
+          echo "BOOST_ROOT=C:\local\boost_${verU}"                         >> $env:GITHUB_ENV
+          echo "BOOST_LIBRARYDIR=C:\local\boost_${verU}\lib64-msvc-${msvcVer}" >> $env:GITHUB_ENV
 
-      #  Cache GMP & MPFR 
-      # CGAL on Windows requires pre-built GMP and MPFR. Use the official CGAL auxiliary binaries.
+      #  GMP / MPFR 
       - name: Cache GMP/MPFR
         id: cache-gmp-mpfr
         uses: actions/cache@v4
@@ -167,25 +168,21 @@ jobs:
         if: steps.cache-gmp-mpfr.outputs.cache-hit != 'true'
         shell: pwsh
         run: |
-          # CGAL ships auxiliary GMP/MPFR binaries for Windows.
           $auxUrl = "https://github.com/CGAL/cgal/releases/download/v${{ env.CGAL_VERSION }}/CGAL-${{ env.CGAL_VERSION }}-win64-auxiliary-libraries-gmp-mpfr.zip"
           $auxZip = "C:\local\cgal_aux.zip"
           New-Item -ItemType Directory -Force -Path "C:\local" | Out-Null
-          Write-Host "Downloading GMP/MPFR from: $auxUrl"
           Invoke-WebRequest -Uri $auxUrl -OutFile $auxZip -UseBasicParsing
           Expand-Archive -LiteralPath $auxZip -DestinationPath "C:\local\cgal_aux" -Force
           Remove-Item $auxZip
 
-          # Normalize to expected layout: include/ and lib/
-          New-Item -ItemType Directory -Force -Path "C:\local\gmp\include" | Out-Null
-          New-Item -ItemType Directory -Force -Path "C:\local\gmp\lib"     | Out-Null
+          New-Item -ItemType Directory -Force -Path "C:\local\gmp\include"  | Out-Null
+          New-Item -ItemType Directory -Force -Path "C:\local\gmp\lib"      | Out-Null
           New-Item -ItemType Directory -Force -Path "C:\local\mpfr\include" | Out-Null
-          New-Item -ItemType Directory -Force -Path "C:\local\mpfr\lib"    | Out-Null
+          New-Item -ItemType Directory -Force -Path "C:\local\mpfr\lib"     | Out-Null
 
-          # Copy GMP files
-          Copy-Item "C:\local\cgal_aux\auxiliary\gmp\include\*" "C:\local\gmp\include\" -Recurse -Force
-          Copy-Item "C:\local\cgal_aux\auxiliary\gmp\lib\*"     "C:\local\gmp\lib\"     -Recurse -Force
-          # Copy MPFR files
+          # All GMP and MPFR files are inside auxiliary\gmp\
+          Copy-Item "C:\local\cgal_aux\auxiliary\gmp\include\*" "C:\local\gmp\include\"  -Recurse -Force
+          Copy-Item "C:\local\cgal_aux\auxiliary\gmp\lib\*"     "C:\local\gmp\lib\"      -Recurse -Force
           Copy-Item "C:\local\cgal_aux\auxiliary\gmp\include\*" "C:\local\mpfr\include\" -Recurse -Force
           Copy-Item "C:\local\cgal_aux\auxiliary\gmp\lib\*"     "C:\local\mpfr\lib\"     -Recurse -Force
 
@@ -232,22 +229,24 @@ jobs:
             windows-fetchcontent-${{ matrix.preset }}-
             windows-fetchcontent-
 
-      #  Configure 
+      # Configure
+      # Pass BOOST_ROOT and BOOST_LIBRARYDIR explicitly so FindBoost locates
+      # the correct msvc-14.3 prebuilt libs. GMP_DIR/MPFR_DIR are read from
+      # the environment directly by CMakeLists.txt via $ENV{}.
       - name: Configure (${{ matrix.preset }})
         shell: pwsh
         run: |
           cmake --preset ${{ matrix.preset }} `
             -DBOOST_ROOT="$env:BOOST_ROOT" `
+            -DBOOST_LIBRARYDIR="$env:BOOST_LIBRARYDIR" `
             -DCGAL_DIR="$env:CGAL_DIR"
-        # GMP_DIR and MPFR_DIR are picked up from environment variables directly
-        # by CMakeLists.txt via $ENV{GMP_DIR} / $ENV{MPFR_DIR}
 
-      #  Build 
+      # Build
       - name: Build (${{ matrix.preset }})
         shell: pwsh
         run: cmake --build out/build/${{ matrix.preset }} --parallel 4
 
-      #  Run tests 
+      # Tests
       - name: Run vrml_proc tests
         if: matrix.preset == 'Release'
         shell: pwsh
@@ -258,7 +257,7 @@ jobs:
         shell: pwsh
         run: ctest --test-dir out/build/${{ matrix.preset }}/to_geom --output-on-failure
 
-      #  Upload artifacts 
+      # Artifacts
       - name: Upload Windows binaries (${{ matrix.preset }})
         uses: actions/upload-artifact@v4
         with:
