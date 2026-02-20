@@ -55,6 +55,13 @@
         "INCLUDE_TESTS": "OFF",
         "INCLUDE_RUNNER": "OFF"
       }
+    },
+    {
+      "name": "ProductionWithBindings-ServerBuildForMSVC",
+      "inherits": "ProductionWithBindings",
+      "generator": "Visual Studio 17 2022",
+      "toolset": "host=x64",
+      "architecture": "x64"
     }
   ]
 }

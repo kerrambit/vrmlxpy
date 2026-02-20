@@ -95,7 +95,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        preset: [ProductionWithBindings]
+        preset: [ProductionWithBindings-ServerBuildForMSVC]
 
     env:
       BOOST_VERSION: "1.87.0"
@@ -244,7 +244,7 @@ jobs:
       # Build
       - name: Build (${{ matrix.preset }})
         shell: pwsh
-        run: cmake --build out/build/${{ matrix.preset }} --parallel 4
+        run: cmake --build out/build/${{ matrix.preset }} --config Release --parallel 4
 
       # Tests
       - name: Run vrml_proc tests
@@ -263,8 +263,8 @@ jobs:
         with:
           name: windows-${{ matrix.preset }}
           path: |
-            out/build/${{ matrix.preset }}/vrmlxConversionApp.exe
-            out/build/${{ matrix.preset }}/*.dll
-            out/build/${{ matrix.preset }}/*.pyd
+              out/build/${{ matrix.preset }}/Release/vrmlxConversionApp.exe
+              out/build/${{ matrix.preset }}/Release/*.dll
+              out/build/${{ matrix.preset }}/Release/*.pyd
           if-no-files-found: warn
           retention-days: 7
