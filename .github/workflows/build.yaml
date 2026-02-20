@@ -1,0 +1,271 @@
+name: Build vrmlx
+
+on:
+  push:
+    branches: [ main, dev, vrmlproc#* ]
+  pull_request:
+    branches: [ main, dev ]
+  workflow_dispatch:
+
+jobs:
+  # Linux Build
+  build-linux:
+    name: Linux (${{ matrix.preset }})
+    runs-on: ubuntu-24.04
+
+    strategy:
+      fail-fast: false
+      matrix:
+        preset: [ProductionWithBindings]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # System dependencies
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            ninja-build \
+            cmake \
+            libboost-all-dev \
+            libgmp-dev \
+            libmpfr-dev \
+            libcgal-dev \
+            python3-dev \
+            python3-pip
+
+      # Cache Boost (system install is fast, but CGAL headers can be large)
+      # CGAL is header-only on Linux when installed via apt, so no extra cache needed.
+
+      #  Python setup (needed for bindings presets) 
+      - name: Set up Python
+        if: matrix.preset == 'ProductionWithBindings'
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      #  CMake FetchContent cache 
+      # Cache the FetchContent downloads (Taskflow, Catch2, pybind11) to speed up CI.
+      - name: Cache CMake FetchContent
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cmake
+            ${{ github.workspace }}/_deps
+            ${{ github.workspace }}/out/build/${{ matrix.preset }}/_deps
+          key: linux-fetchcontent-${{ matrix.preset }}-${{ hashFiles('CMakeLists.txt') }}
+          restore-keys: |
+            linux-fetchcontent-${{ matrix.preset }}-
+            linux-fetchcontent-
+
+      #  Configure 
+      - name: Configure (${{ matrix.preset }})
+        run: cmake --preset ${{ matrix.preset }}
+
+      #  Build 
+      - name: Build (${{ matrix.preset }})
+        run: cmake --build out/build/${{ matrix.preset }} --parallel $(nproc)
+
+      #  Run tests (only for presets that build them) 
+      - name: Run vrml_proc tests
+        if: matrix.preset == 'Release'
+        run: ctest --test-dir out/build/${{ matrix.preset }}/vrml_proc --output-on-failure
+
+      - name: Run to_geom tests
+        if: matrix.preset == 'Release'
+        run: ctest --test-dir out/build/${{ matrix.preset }}/to_geom --output-on-failure
+
+      #  Upload artifacts 
+      - name: Upload Linux binaries (${{ matrix.preset }})
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-${{ matrix.preset }}
+          path: |
+            out/build/${{ matrix.preset }}/vrmlxConversionApp
+            out/build/${{ matrix.preset }}/*.so
+            out/build/${{ matrix.preset }}/vrml_proc/*.so
+            out/build/${{ matrix.preset }}/to_geom/*.so
+          if-no-files-found: warn
+          retention-days: 7
+
+  # 
+  # Windows Build
+  # 
+  build-windows:
+    name: Windows (${{ matrix.preset }})
+    runs-on: windows-2022
+
+    strategy:
+      fail-fast: false
+      matrix:
+        preset: [ProductionWithBindings]
+
+    env:
+      BOOST_VERSION: "1.87.0"
+      BOOST_VERSION_UNDERSCORED: "1_87_0"
+      CGAL_VERSION: "6.0.1"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      #  Python setup (needed for pybind11 presets) 
+      - name: Set up Python
+        if: matrix.preset == 'ProductionWithBindings'
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      #  Cache Boost 
+      - name: Cache Boost
+        id: cache-boost
+        uses: actions/cache@v4
+        with:
+          path: C:\local\boost_${{ env.BOOST_VERSION_UNDERSCORED }}
+          key: windows-boost-${{ env.BOOST_VERSION }}-msvc2022-static
+
+      - name: Download and build Boost (static)
+        if: steps.cache-boost.outputs.cache-hit != 'true'
+        shell: pwsh
+        run: |
+          $boostUrl = "https://archives.boost.io/release/${{ env.BOOST_VERSION }}/source/boost_${{ env.BOOST_VERSION_UNDERSCORED }}.zip"
+          $boostZip = "C:\local\boost.zip"
+          New-Item -ItemType Directory -Force -Path "C:\local" | Out-Null
+          Write-Host "Downloading Boost from $boostUrl"
+          Invoke-WebRequest -Uri $boostUrl -OutFile $boostZip -UseBasicParsing
+          Write-Host "Extracting Boost..."
+          Expand-Archive -LiteralPath $boostZip -DestinationPath "C:\local" -Force
+          Remove-Item $boostZip
+
+          $boostDir = "C:\local\boost_${{ env.BOOST_VERSION_UNDERSCORED }}"
+          Push-Location $boostDir
+          .\bootstrap.bat
+          .\b2.exe --with-iostreams --with-log --with-date_time --with-thread --with-system `
+            address-model=64 threading=multi link=static runtime-link=shared `
+            variant=release,debug -j4
+          Pop-Location
+
+      - name: Set BOOST_ROOT
+        shell: pwsh
+        run: |
+          echo "BOOST_ROOT=C:\local\boost_${{ env.BOOST_VERSION_UNDERSCORED }}" >> $env:GITHUB_ENV
+
+      #  Cache GMP & MPFR 
+      # CGAL on Windows requires pre-built GMP and MPFR. Use the official CGAL auxiliary binaries.
+      - name: Cache GMP/MPFR
+        id: cache-gmp-mpfr
+        uses: actions/cache@v4
+        with:
+          path: |
+            C:\local\gmp
+            C:\local\mpfr
+          key: windows-gmp-mpfr-cgal-${{ env.CGAL_VERSION }}
+
+      - name: Download GMP/MPFR auxiliary libraries
+        if: steps.cache-gmp-mpfr.outputs.cache-hit != 'true'
+        shell: pwsh
+        run: |
+          # CGAL ships auxiliary GMP/MPFR binaries for Windows.
+          $auxUrl = "https://github.com/CGAL/cgal/releases/download/v${{ env.CGAL_VERSION }}/CGAL-${{ env.CGAL_VERSION }}-win64-auxiliary-libraries-gmp-mpfr.zip"
+          $auxZip = "C:\local\cgal_aux.zip"
+          New-Item -ItemType Directory -Force -Path "C:\local" | Out-Null
+          Write-Host "Downloading GMP/MPFR from: $auxUrl"
+          Invoke-WebRequest -Uri $auxUrl -OutFile $auxZip -UseBasicParsing
+          Expand-Archive -LiteralPath $auxZip -DestinationPath "C:\local\cgal_aux" -Force
+          Remove-Item $auxZip
+
+          # Normalize to expected layout: include/ and lib/
+          New-Item -ItemType Directory -Force -Path "C:\local\gmp\include" | Out-Null
+          New-Item -ItemType Directory -Force -Path "C:\local\gmp\lib"     | Out-Null
+          New-Item -ItemType Directory -Force -Path "C:\local\mpfr\include" | Out-Null
+          New-Item -ItemType Directory -Force -Path "C:\local\mpfr\lib"    | Out-Null
+
+          # Copy GMP files
+          Copy-Item "C:\local\cgal_aux\auxiliary\gmp\include\*" "C:\local\gmp\include\" -Recurse -Force
+          Copy-Item "C:\local\cgal_aux\auxiliary\gmp\lib\*"     "C:\local\gmp\lib\"     -Recurse -Force
+          # Copy MPFR files
+          Copy-Item "C:\local\cgal_aux\auxiliary\mpfr\include\*" "C:\local\mpfr\include\" -Recurse -Force
+          Copy-Item "C:\local\cgal_aux\auxiliary\mpfr\lib\*"     "C:\local\mpfr\lib\"     -Recurse -Force
+
+      - name: Set GMP_DIR / MPFR_DIR
+        shell: pwsh
+        run: |
+          echo "GMP_DIR=C:\local\gmp"   >> $env:GITHUB_ENV
+          echo "MPFR_DIR=C:\local\mpfr" >> $env:GITHUB_ENV
+
+      #  Cache CGAL 
+      - name: Cache CGAL
+        id: cache-cgal
+        uses: actions/cache@v4
+        with:
+          path: C:\local\CGAL-${{ env.CGAL_VERSION }}
+          key: windows-cgal-${{ env.CGAL_VERSION }}-headers
+
+      - name: Download and install CGAL
+        if: steps.cache-cgal.outputs.cache-hit != 'true'
+        shell: pwsh
+        run: |
+          # CGAL is header-only (+ CMake config). Download the release zip.
+          $cgalUrl = "https://github.com/CGAL/cgal/releases/download/v${{ env.CGAL_VERSION }}/CGAL-${{ env.CGAL_VERSION }}.zip"
+          $cgalZip = "C:\local\cgal.zip"
+          New-Item -ItemType Directory -Force -Path "C:\local" | Out-Null
+          Write-Host "Downloading CGAL from: $cgalUrl"
+          Invoke-WebRequest -Uri $cgalUrl -OutFile $cgalZip -UseBasicParsing
+          Expand-Archive -LiteralPath $cgalZip -DestinationPath "C:\local" -Force
+          Remove-Item $cgalZip
+
+      - name: Set CGAL_DIR
+        shell: pwsh
+        run: |
+          echo "CGAL_DIR=C:\local\CGAL-${{ env.CGAL_VERSION }}" >> $env:GITHUB_ENV
+
+      #  CMake FetchContent cache 
+      - name: Cache CMake FetchContent
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ github.workspace }}/out/build/${{ matrix.preset }}/_deps
+          key: windows-fetchcontent-${{ matrix.preset }}-${{ hashFiles('CMakeLists.txt') }}
+          restore-keys: |
+            windows-fetchcontent-${{ matrix.preset }}-
+            windows-fetchcontent-
+
+      #  Configure 
+      - name: Configure (${{ matrix.preset }})
+        shell: pwsh
+        run: |
+          cmake --preset ${{ matrix.preset }} `
+            -DBOOST_ROOT="$env:BOOST_ROOT" `
+            -DCGAL_DIR="$env:CGAL_DIR"
+        # GMP_DIR and MPFR_DIR are picked up from environment variables directly
+        # by CMakeLists.txt via $ENV{GMP_DIR} / $ENV{MPFR_DIR}
+
+      #  Build 
+      - name: Build (${{ matrix.preset }})
+        shell: pwsh
+        run: cmake --build out/build/${{ matrix.preset }} --parallel 4
+
+      #  Run tests 
+      - name: Run vrml_proc tests
+        if: matrix.preset == 'Release'
+        shell: pwsh
+        run: ctest --test-dir out/build/${{ matrix.preset }}/vrml_proc --output-on-failure
+
+      - name: Run to_geom tests
+        if: matrix.preset == 'Release'
+        shell: pwsh
+        run: ctest --test-dir out/build/${{ matrix.preset }}/to_geom --output-on-failure
+
+      #  Upload artifacts 
+      - name: Upload Windows binaries (${{ matrix.preset }})
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-${{ matrix.preset }}
+          path: |
+            out/build/${{ matrix.preset }}/vrmlxConversionApp.exe
+            out/build/${{ matrix.preset }}/*.dll
+            out/build/${{ matrix.preset }}/*.pyd
+          if-no-files-found: warn
+          retention-days: 7
