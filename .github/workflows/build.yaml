@@ -1,10 +1,12 @@
 name: Build vrmlx
+
 on:
   push:
     branches: [ main, dev, vrmlproc#* ]
   pull_request:
     branches: [ main, dev ]
   workflow_dispatch:
+
 jobs:
   # Linux Build
   build-linux:
@@ -14,6 +16,7 @@ jobs:
       fail-fast: false
       matrix:
         preset: [ProductionWithBindings]
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -64,48 +67,10 @@ jobs:
       - name: Run vrml_proc tests
         if: matrix.preset == 'Release'
         run: ctest --test-dir out/build/${{ matrix.preset }}/vrml_proc --output-on-failure
+
       - name: Run to_geom tests
         if: matrix.preset == 'Release'
         run: ctest --test-dir out/build/${{ matrix.preset }}/to_geom --output-on-failure
-
-      # Collect Boost .so files that the built binaries actually link against.
-      # Uses ldd to inspect each binary/library, filters for libboost entries,
-      # resolves the real paths, and copies them all into a boost_libs/ subdir.
-      - name: Collect Boost shared libraries
-        run: |
-          ARTIFACT_DIR="out/build/${{ matrix.preset }}/boost_libs"
-          mkdir -p "$ARTIFACT_DIR"
-
-          # Gather all built binaries and shared libraries in the output tree.
-          BINARIES=$(find out/build/${{ matrix.preset }} \
-            \( -name "vrmlxConversionApp" -o -name "*.so" -o -name "*.so.*" \) \
-            ! -path "*/boost_libs/*" \
-            ! -path "*/_deps/*")
-
-          echo "Scanning the following binaries for Boost dependencies:"
-          echo "$BINARIES"
-
-          # For each binary, run ldd and extract any libboost .so paths.
-          for BIN in $BINARIES; do
-            ldd "$BIN" 2>/dev/null \
-              | grep "libboost" \
-              | awk '{print $3}' \
-              | grep "^/" \
-              | while read -r SO_PATH; do
-                  # Resolve symlinks to get the real file and copy it.
-                  REAL=$(realpath "$SO_PATH")
-                  cp -n "$REAL" "$ARTIFACT_DIR/" || true
-                  # Also preserve the symlink name the binary was linked against
-                  # so the dynamic linker can find it at runtime.
-                  LINK_NAME=$(basename "$SO_PATH")
-                  if [ ! -e "$ARTIFACT_DIR/$LINK_NAME" ]; then
-                    ln -s "$(basename "$REAL")" "$ARTIFACT_DIR/$LINK_NAME"
-                  fi
-                done
-          done
-
-          echo "Collected Boost libraries:"
-          ls -lh "$ARTIFACT_DIR"
 
       # Upload artifacts
       - name: Upload Linux binaries (${{ matrix.preset }})
@@ -115,10 +80,8 @@ jobs:
           path: |
             out/build/${{ matrix.preset }}/vrmlxConversionApp
             out/build/${{ matrix.preset }}/*.so
-            out/build/${{ matrix.preset }}/*.so.*
             out/build/${{ matrix.preset }}/vrml_proc/*.so
             out/build/${{ matrix.preset }}/to_geom/*.so
-            out/build/${{ matrix.preset }}/boost_libs/
           if-no-files-found: warn
           retention-days: 7
 
