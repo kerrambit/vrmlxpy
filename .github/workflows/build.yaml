@@ -3,6 +3,8 @@ name: Build vrmlx
 on:
   push:
     branches: [ main, dev, vrmlproc#* ]
+    tags:
+        - 'Release-*'
   pull_request:
     branches: [ main, dev ]
   workflow_dispatch:
@@ -105,6 +107,16 @@ jobs:
             out/build/${{ matrix.preset }}/*.so
           if-no-files-found: warn
           retention-days: 7
+
+      - name: Upload to GitHub Release
+        if: startsWith(github.ref, 'refs/tags/Release-')
+        uses: softprops/action-gh-release@v2
+        with:
+            tag_name: ${{ github.ref_name }}
+            name: ${{ github.ref_name }}
+            files: |
+                out/build/${{ matrix.preset }}/vrmlxConversionApp
+                out/build/${{ matrix.preset }}/*.so
 
   build-windows:
     name: Windows (${{ matrix.preset }})
@@ -248,3 +260,14 @@ jobs:
               out/build/${{ matrix.preset }}/Release/*.pyd
           if-no-files-found: warn
           retention-days: 7
+
+      - name: Upload to GitHub Release
+        if: startsWith(github.ref, 'refs/tags/Release-')
+        uses: softprops/action-gh-release@v2
+        with:
+            tag_name: ${{ github.ref_name }}
+            name: ${{ github.ref_name }}
+            files: |
+                out/build/${{ matrix.preset }}/Release/vrmlxConversionApp.exe
+                out/build/${{ matrix.preset }}/Release/*.dll
+                out/build/${{ matrix.preset }}/Release/*.pyd
