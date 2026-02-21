@@ -103,8 +103,6 @@ jobs:
           path: |
             out/build/${{ matrix.preset }}/vrmlxConversionApp
             out/build/${{ matrix.preset }}/*.so
-            # out/build/${{ matrix.preset }}/vrml_proc/*.so
-            # out/build/${{ matrix.preset }}/to_geom/*.so
           if-no-files-found: warn
           retention-days: 7
 
