@@ -14,7 +14,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        preset: [ProductionWithBindings]
+        preset: [ProductionWithBindings-ServerBuildForLinux]
 
     env:
       BOOST_VERSION: "1.87.0"
@@ -37,7 +37,7 @@ jobs:
             python3-pip
 
       - name: Set up Python
-        if: matrix.preset == 'ProductionWithBindings'
+        if: matrix.preset == 'ProductionWithBindings-ServerBuildForLinux'
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"

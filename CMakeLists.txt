@@ -7,19 +7,15 @@ if (MSVC)
     add_compile_options(/bigobj)
 endif()
 
-if(WIN32)
-    # On Windows, use static Boost libraries to avoid DLL dependency issues.
-    # This ensures that Boost is linked statically into the executable, making distribution easier.
+option(USE_STATIC_LINKING_FOR_BOOST "Link Boost statically" OFF)
+
+if(WIN32 OR USE_STATIC_LINKING_FOR_BOOST)
     set(Boost_USE_STATIC_LIBS ON)
-    set(Boost_USE_MULTITHREADED ON)
-    set(Boost_USE_STATIC_RUNTIME OFF)
 else()
-    # On Linux, prefer dynamic Boost libraries for better compatibility and smaller binaries.
-    # Most Linux distributions provide Boost as shared libraries, making this the default.
-    set(Boost_USE_STATIC_LIBS ON)
-    set(Boost_USE_MULTITHREADED ON)
-    set(Boost_USE_STATIC_RUNTIME OFF)
+    set(Boost_USE_STATIC_LIBS OFF)
 endif()
+set(Boost_USE_MULTITHREADED ON)
+set(Boost_USE_STATIC_RUNTIME OFF)
 
 # CMake will look for Boost libraries specified by BOOST_ROOT variable.
 find_package(Boost REQUIRED COMPONENTS iostreams log date_time log_setup thread system)

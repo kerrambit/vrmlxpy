@@ -63,6 +63,18 @@
       "binaryDir": "${sourceDir}/out/build/ProductionWithBindings-ServerBuildForMSVC",
       "toolset": "host=x64",
       "architecture": "x64"
+    },
+    {
+      "name": "ProductionWithBindings-ServerBuildForLinux",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/out/build/ProductionWithBindings-ServerBuildForLinux",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "INCLUDE_PYTHON_BINDINGS": "ON",
+        "INCLUDE_TESTS": "OFF",
+        "INCLUDE_RUNNER": "ON",
+        "USE_STATIC_LINKING_FOR_BOOST": "ON"
+      }
     }
   ]
 }
