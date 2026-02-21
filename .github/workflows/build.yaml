@@ -16,6 +16,10 @@ jobs:
       matrix:
         preset: [ProductionWithBindings]
 
+    env:
+      BOOST_VERSION: "1.87.0"
+      BOOST_VERSION_UNDERSCORED: "1_87_0"
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -26,7 +30,6 @@ jobs:
           sudo apt-get install -y \
             ninja-build \
             cmake \
-            libboost-all-dev \
             libgmp-dev \
             libmpfr-dev \
             libcgal-dev \
@@ -38,6 +41,25 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+
+      - name: Cache Boost static
+        id: cache-boost
+        uses: actions/cache@v4
+        with:
+          path: ~/boost-static
+          key: linux-boost-${{ env.BOOST_VERSION }}-static-ubuntu22
+
+      - name: Build Boost static libraries
+        if: steps.cache-boost.outputs.cache-hit != 'true'
+        run: |
+          wget -q "https://archives.boost.io/release/${{ env.BOOST_VERSION }}/source/boost_${{ env.BOOST_VERSION_UNDERSCORED }}.tar.gz" -O /tmp/boost.tar.gz
+          tar -xzf /tmp/boost.tar.gz -C /tmp
+          cd /tmp/boost_${{ env.BOOST_VERSION_UNDERSCORED }}
+          ./bootstrap.sh --with-libraries=iostreams,log,date_time,thread,system,filesystem
+          ./b2 link=static threading=multi runtime-link=shared variant=release address-model=64 -j$(nproc) --prefix=$HOME/boost-static install
+
+      - name: Set BOOST_ROOT
+        run: echo "BOOST_ROOT=$HOME/boost-static" >> $GITHUB_ENV
 
       - name: Cache CMake FetchContent
         uses: actions/cache@v4
@@ -52,7 +74,7 @@ jobs:
             linux-fetchcontent-
 
       - name: Configure (${{ matrix.preset }})
-        run: cmake --preset ${{ matrix.preset }}
+        run: cmake --preset ${{ matrix.preset }} -DBOOST_ROOT="$BOOST_ROOT"
 
       - name: Build (${{ matrix.preset }})
         run: cmake --build out/build/${{ matrix.preset }} --parallel $(nproc)
@@ -64,150 +86,150 @@ jobs:
           path: |
             out/build/${{ matrix.preset }}/vrmlxConversionApp
             out/build/${{ matrix.preset }}/*.so
-            out/build/${{ matrix.preset }}/vrml_proc/*.so
-            out/build/${{ matrix.preset }}/to_geom/*.so
+            # out/build/${{ matrix.preset }}/vrml_proc/*.so
+            # out/build/${{ matrix.preset }}/to_geom/*.so
           if-no-files-found: warn
           retention-days: 7
 
-  build-windows:
-    name: Windows (${{ matrix.preset }})
-    runs-on: windows-2022
+  # build-windows:
+  #   name: Windows (${{ matrix.preset }})
+  #   runs-on: windows-2022
 
-    strategy:
-      fail-fast: false
-      matrix:
-        preset: [ProductionWithBindings-ServerBuildForMSVC]
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       preset: [ProductionWithBindings-ServerBuildForMSVC]
 
-    env:
-      BOOST_VERSION: "1.87.0"
-      BOOST_VERSION_UNDERSCORED: "1_87_0"
-      CGAL_VERSION: "6.0.1"
-      BOOST_MSVC_VER: "14.3"
+  #   env:
+  #     BOOST_VERSION: "1.87.0"
+  #     BOOST_VERSION_UNDERSCORED: "1_87_0"
+  #     CGAL_VERSION: "6.0.1"
+  #     BOOST_MSVC_VER: "14.3"
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+  #   steps:
+  #     - name: Checkout repository
+  #       uses: actions/checkout@v4
 
-      - name: Set up Python
-        if: matrix.preset == 'ProductionWithBindings'
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
+  #     - name: Set up Python
+  #       if: matrix.preset == 'ProductionWithBindings'
+  #       uses: actions/setup-python@v5
+  #       with:
+  #         python-version: "3.12"
 
-      # Boost: download prebuilt MSVC binaries (same as dev machine), identical layout to what we have locally under vendor/boost (lib64-msvc-14.3).
-      - name: Cache Boost prebuilt
-        id: cache-boost
-        uses: actions/cache@v4
-        with:
-          path: C:\local\boost_${{ env.BOOST_VERSION_UNDERSCORED }}
-          key: windows-boost-${{ env.BOOST_VERSION }}-msvc${{ env.BOOST_MSVC_VER }}-prebuilt
+  #     # Boost: download prebuilt MSVC binaries (same as dev machine), identical layout to what we have locally under vendor/boost (lib64-msvc-14.3).
+  #     - name: Cache Boost prebuilt
+  #       id: cache-boost
+  #       uses: actions/cache@v4
+  #       with:
+  #         path: C:\local\boost_${{ env.BOOST_VERSION_UNDERSCORED }}
+  #         key: windows-boost-${{ env.BOOST_VERSION }}-msvc${{ env.BOOST_MSVC_VER }}-prebuilt
 
-      - name: Install Boost 1.87.0
-        uses: MarkusJx/install-boost@v2
-        id: install-boost
-        with:
-            boost_version: 1.87.0
-            platform_version: 2022
-            toolset: msvc
-            link: static
-            arch: x86
+  #     - name: Install Boost 1.87.0
+  #       uses: MarkusJx/install-boost@v2
+  #       id: install-boost
+  #       with:
+  #           boost_version: 1.87.0
+  #           platform_version: 2022
+  #           toolset: msvc
+  #           link: static
+  #           arch: x86
 
-      - name: Set Boost environment variables
-        shell: pwsh
-        run: |
-            echo "BOOST_ROOT=${{ steps.install-boost.outputs.BOOST_ROOT }}" >> $env:GITHUB_ENV
-            echo "BOOST_LIBRARYDIR=${{ steps.install-boost.outputs.BOOST_ROOT }}\lib" >> $env:GITHUB_ENV
+  #     - name: Set Boost environment variables
+  #       shell: pwsh
+  #       run: |
+  #           echo "BOOST_ROOT=${{ steps.install-boost.outputs.BOOST_ROOT }}" >> $env:GITHUB_ENV
+  #           echo "BOOST_LIBRARYDIR=${{ steps.install-boost.outputs.BOOST_ROOT }}\lib" >> $env:GITHUB_ENV
 
-      - name: Cache GMP/MPFR
-        id: cache-gmp-mpfr
-        uses: actions/cache@v4
-        with:
-          path: |
-            C:\local\gmp
-            C:\local\mpfr
-          key: windows-gmp-mpfr-cgal-${{ env.CGAL_VERSION }}
+  #     - name: Cache GMP/MPFR
+  #       id: cache-gmp-mpfr
+  #       uses: actions/cache@v4
+  #       with:
+  #         path: |
+  #           C:\local\gmp
+  #           C:\local\mpfr
+  #         key: windows-gmp-mpfr-cgal-${{ env.CGAL_VERSION }}
 
-      - name: Download GMP/MPFR auxiliary libraries
-        if: steps.cache-gmp-mpfr.outputs.cache-hit != 'true'
-        shell: pwsh
-        run: |
-          $auxUrl = "https://github.com/CGAL/cgal/releases/download/v${{ env.CGAL_VERSION }}/CGAL-${{ env.CGAL_VERSION }}-win64-auxiliary-libraries-gmp-mpfr.zip"
-          $auxZip = "C:\local\cgal_aux.zip"
-          New-Item -ItemType Directory -Force -Path "C:\local" | Out-Null
-          Invoke-WebRequest -Uri $auxUrl -OutFile $auxZip -UseBasicParsing
-          Expand-Archive -LiteralPath $auxZip -DestinationPath "C:\local\cgal_aux" -Force
-          Remove-Item $auxZip
+  #     - name: Download GMP/MPFR auxiliary libraries
+  #       if: steps.cache-gmp-mpfr.outputs.cache-hit != 'true'
+  #       shell: pwsh
+  #       run: |
+  #         $auxUrl = "https://github.com/CGAL/cgal/releases/download/v${{ env.CGAL_VERSION }}/CGAL-${{ env.CGAL_VERSION }}-win64-auxiliary-libraries-gmp-mpfr.zip"
+  #         $auxZip = "C:\local\cgal_aux.zip"
+  #         New-Item -ItemType Directory -Force -Path "C:\local" | Out-Null
+  #         Invoke-WebRequest -Uri $auxUrl -OutFile $auxZip -UseBasicParsing
+  #         Expand-Archive -LiteralPath $auxZip -DestinationPath "C:\local\cgal_aux" -Force
+  #         Remove-Item $auxZip
 
-          New-Item -ItemType Directory -Force -Path "C:\local\gmp\include"  | Out-Null
-          New-Item -ItemType Directory -Force -Path "C:\local\gmp\lib"      | Out-Null
-          New-Item -ItemType Directory -Force -Path "C:\local\mpfr\include" | Out-Null
-          New-Item -ItemType Directory -Force -Path "C:\local\mpfr\lib"     | Out-Null
+  #         New-Item -ItemType Directory -Force -Path "C:\local\gmp\include"  | Out-Null
+  #         New-Item -ItemType Directory -Force -Path "C:\local\gmp\lib"      | Out-Null
+  #         New-Item -ItemType Directory -Force -Path "C:\local\mpfr\include" | Out-Null
+  #         New-Item -ItemType Directory -Force -Path "C:\local\mpfr\lib"     | Out-Null
 
-          # All GMP and MPFR files are inside auxiliary\gmp\.
-          Copy-Item "C:\local\cgal_aux\auxiliary\gmp\include\*" "C:\local\gmp\include\"  -Recurse -Force
-          Copy-Item "C:\local\cgal_aux\auxiliary\gmp\lib\*"     "C:\local\gmp\lib\"      -Recurse -Force
-          Copy-Item "C:\local\cgal_aux\auxiliary\gmp\include\*" "C:\local\mpfr\include\" -Recurse -Force
-          Copy-Item "C:\local\cgal_aux\auxiliary\gmp\lib\*"     "C:\local\mpfr\lib\"     -Recurse -Force
+  #         # All GMP and MPFR files are inside auxiliary\gmp\.
+  #         Copy-Item "C:\local\cgal_aux\auxiliary\gmp\include\*" "C:\local\gmp\include\"  -Recurse -Force
+  #         Copy-Item "C:\local\cgal_aux\auxiliary\gmp\lib\*"     "C:\local\gmp\lib\"      -Recurse -Force
+  #         Copy-Item "C:\local\cgal_aux\auxiliary\gmp\include\*" "C:\local\mpfr\include\" -Recurse -Force
+  #         Copy-Item "C:\local\cgal_aux\auxiliary\gmp\lib\*"     "C:\local\mpfr\lib\"     -Recurse -Force
 
-      - name: Set GMP_DIR / MPFR_DIR
-        shell: pwsh
-        run: |
-          echo "GMP_DIR=C:\local\gmp"   >> $env:GITHUB_ENV
-          echo "MPFR_DIR=C:\local\mpfr" >> $env:GITHUB_ENV
+  #     - name: Set GMP_DIR / MPFR_DIR
+  #       shell: pwsh
+  #       run: |
+  #         echo "GMP_DIR=C:\local\gmp"   >> $env:GITHUB_ENV
+  #         echo "MPFR_DIR=C:\local\mpfr" >> $env:GITHUB_ENV
 
-      - name: Cache CGAL
-        id: cache-cgal
-        uses: actions/cache@v4
-        with:
-          path: C:\local\CGAL-${{ env.CGAL_VERSION }}
-          key: windows-cgal-${{ env.CGAL_VERSION }}-headers
+  #     - name: Cache CGAL
+  #       id: cache-cgal
+  #       uses: actions/cache@v4
+  #       with:
+  #         path: C:\local\CGAL-${{ env.CGAL_VERSION }}
+  #         key: windows-cgal-${{ env.CGAL_VERSION }}-headers
 
-      - name: Download and install CGAL
-        if: steps.cache-cgal.outputs.cache-hit != 'true'
-        shell: pwsh
-        run: |
-          $cgalUrl = "https://github.com/CGAL/cgal/releases/download/v${{ env.CGAL_VERSION }}/CGAL-${{ env.CGAL_VERSION }}.zip"
-          $cgalZip = "C:\local\cgal.zip"
-          New-Item -ItemType Directory -Force -Path "C:\local" | Out-Null
-          Write-Host "Downloading CGAL from: $cgalUrl"
-          Invoke-WebRequest -Uri $cgalUrl -OutFile $cgalZip -UseBasicParsing
-          Expand-Archive -LiteralPath $cgalZip -DestinationPath "C:\local" -Force
-          Remove-Item $cgalZip
+  #     - name: Download and install CGAL
+  #       if: steps.cache-cgal.outputs.cache-hit != 'true'
+  #       shell: pwsh
+  #       run: |
+  #         $cgalUrl = "https://github.com/CGAL/cgal/releases/download/v${{ env.CGAL_VERSION }}/CGAL-${{ env.CGAL_VERSION }}.zip"
+  #         $cgalZip = "C:\local\cgal.zip"
+  #         New-Item -ItemType Directory -Force -Path "C:\local" | Out-Null
+  #         Write-Host "Downloading CGAL from: $cgalUrl"
+  #         Invoke-WebRequest -Uri $cgalUrl -OutFile $cgalZip -UseBasicParsing
+  #         Expand-Archive -LiteralPath $cgalZip -DestinationPath "C:\local" -Force
+  #         Remove-Item $cgalZip
 
-      - name: Set CGAL_DIR
-        shell: pwsh
-        run: |
-          echo "CGAL_DIR=C:\local\CGAL-${{ env.CGAL_VERSION }}" >> $env:GITHUB_ENV
+  #     - name: Set CGAL_DIR
+  #       shell: pwsh
+  #       run: |
+  #         echo "CGAL_DIR=C:\local\CGAL-${{ env.CGAL_VERSION }}" >> $env:GITHUB_ENV
 
-      - name: Cache CMake FetchContent
-        uses: actions/cache@v4
-        with:
-          path: |
-            ${{ github.workspace }}/out/build/${{ matrix.preset }}/_deps
-          key: windows-fetchcontent-${{ matrix.preset }}-${{ hashFiles('CMakeLists.txt') }}
-          restore-keys: |
-            windows-fetchcontent-${{ matrix.preset }}-
-            windows-fetchcontent-
+  #     - name: Cache CMake FetchContent
+  #       uses: actions/cache@v4
+  #       with:
+  #         path: |
+  #           ${{ github.workspace }}/out/build/${{ matrix.preset }}/_deps
+  #         key: windows-fetchcontent-${{ matrix.preset }}-${{ hashFiles('CMakeLists.txt') }}
+  #         restore-keys: |
+  #           windows-fetchcontent-${{ matrix.preset }}-
+  #           windows-fetchcontent-
 
-      - name: Configure (${{ matrix.preset }})
-        shell: pwsh
-        run: |
-          cmake --preset ${{ matrix.preset }} `
-            -DBOOST_ROOT="$env:BOOST_ROOT" `
-            -DBOOST_LIBRARYDIR="$env:BOOST_LIBRARYDIR" `
-            -DCGAL_DIR="$env:CGAL_DIR"
+  #     - name: Configure (${{ matrix.preset }})
+  #       shell: pwsh
+  #       run: |
+  #         cmake --preset ${{ matrix.preset }} `
+  #           -DBOOST_ROOT="$env:BOOST_ROOT" `
+  #           -DBOOST_LIBRARYDIR="$env:BOOST_LIBRARYDIR" `
+  #           -DCGAL_DIR="$env:CGAL_DIR"
 
-      - name: Build (${{ matrix.preset }})
-        shell: pwsh
-        run: cmake --build out/build/${{ matrix.preset }} --config Release --parallel 4
+  #     - name: Build (${{ matrix.preset }})
+  #       shell: pwsh
+  #       run: cmake --build out/build/${{ matrix.preset }} --config Release --parallel 4
 
-      - name: Upload Windows binaries (${{ matrix.preset }})
-        uses: actions/upload-artifact@v4
-        with:
-          name: windows-${{ matrix.preset }}
-          path: |
-              out/build/${{ matrix.preset }}/Release/vrmlxConversionApp.exe
-              out/build/${{ matrix.preset }}/Release/*.dll
-              out/build/${{ matrix.preset }}/Release/*.pyd
-          if-no-files-found: warn
-          retention-days: 7
+  #     - name: Upload Windows binaries (${{ matrix.preset }})
+  #       uses: actions/upload-artifact@v4
+  #       with:
+  #         name: windows-${{ matrix.preset }}
+  #         path: |
+  #             out/build/${{ matrix.preset }}/Release/vrmlxConversionApp.exe
+  #             out/build/${{ matrix.preset }}/Release/*.dll
+  #             out/build/${{ matrix.preset }}/Release/*.pyd
+  #         if-no-files-found: warn
+  #         retention-days: 7

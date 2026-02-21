@@ -16,7 +16,7 @@ if(WIN32)
 else()
     # On Linux, prefer dynamic Boost libraries for better compatibility and smaller binaries.
     # Most Linux distributions provide Boost as shared libraries, making this the default.
-    set(Boost_USE_STATIC_LIBS OFF)
+    set(Boost_USE_STATIC_LIBS ON)
     set(Boost_USE_MULTITHREADED ON)
     set(Boost_USE_STATIC_RUNTIME OFF)
 endif()
