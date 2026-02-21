@@ -19,6 +19,7 @@ jobs:
     env:
       BOOST_VERSION: "1.87.0"
       BOOST_VERSION_UNDERSCORED: "1_87_0"
+      CGAL_VERSION: "6.0.1"
 
     steps:
       - name: Checkout repository
@@ -32,7 +33,6 @@ jobs:
             cmake \
             libgmp-dev \
             libmpfr-dev \
-            libcgal-dev \
             python3-dev \
             python3-pip
 
@@ -61,6 +61,23 @@ jobs:
       - name: Set BOOST_ROOT
         run: echo "BOOST_ROOT=$HOME/boost-static" >> $GITHUB_ENV
 
+      - name: Cache CGAL
+        id: cache-cgal
+        uses: actions/cache@v4
+        with:
+            path: ~/cgal
+            key: linux-cgal-${{ env.CGAL_VERSION }}
+
+      - name: Download CGAL
+        if: steps.cache-cgal.outputs.cache-hit != 'true'
+        run: |
+            wget -q "https://github.com/CGAL/cgal/releases/download/v${{ env.CGAL_VERSION }}/CGAL-${{ env.CGAL_VERSION }}.zip" -O /tmp/cgal.zip
+            unzip -q /tmp/cgal.zip -d ~/
+            mv ~/CGAL-${{ env.CGAL_VERSION }} ~/cgal
+
+      - name: Set CGAL_DIR
+        run: echo "CGAL_DIR=$HOME/cgal" >> $GITHUB_ENV
+
       - name: Cache CMake FetchContent
         uses: actions/cache@v4
         with:
@@ -74,7 +91,7 @@ jobs:
             linux-fetchcontent-
 
       - name: Configure (${{ matrix.preset }})
-        run: cmake --preset ${{ matrix.preset }} -DBOOST_ROOT="$BOOST_ROOT"
+        run: cmake --preset ${{ matrix.preset }} -DBOOST_ROOT="$BOOST_ROOT" -DCGAL_DIR="$CGAL_DIR"
 
       - name: Build (${{ matrix.preset }})
         run: cmake --build out/build/${{ matrix.preset }} --parallel $(nproc)
