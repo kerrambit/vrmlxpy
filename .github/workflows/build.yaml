@@ -47,16 +47,16 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/boost-static
-          key: linux-boost-${{ env.BOOST_VERSION }}-static-ubuntu22
+          key: linux-boost-${{ env.BOOST_VERSION }}-static-fPIC-ubuntu22
 
       - name: Build Boost static libraries
         if: steps.cache-boost.outputs.cache-hit != 'true'
         run: |
-          wget -q "https://archives.boost.io/release/${{ env.BOOST_VERSION }}/source/boost_${{ env.BOOST_VERSION_UNDERSCORED }}.tar.gz" -O /tmp/boost.tar.gz
-          tar -xzf /tmp/boost.tar.gz -C /tmp
-          cd /tmp/boost_${{ env.BOOST_VERSION_UNDERSCORED }}
-          ./bootstrap.sh --with-libraries=iostreams,log,date_time,thread,system,filesystem
-          ./b2 link=static threading=multi runtime-link=shared variant=release address-model=64 -j$(nproc) --prefix=$HOME/boost-static install
+            wget -q "https://archives.boost.io/release/${{ env.BOOST_VERSION }}/source/boost_${{ env.BOOST_VERSION_UNDERSCORED }}.tar.gz" -O /tmp/boost.tar.gz
+            tar -xzf /tmp/boost.tar.gz -C /tmp
+            cd /tmp/boost_${{ env.BOOST_VERSION_UNDERSCORED }}
+            ./bootstrap.sh --with-libraries=iostreams,log,date_time,thread,system,filesystem
+            ./b2 link=static threading=multi runtime-link=shared variant=release address-model=64 cxxflags=-fPIC linkflags=-fPIC -j$(nproc) --prefix=$HOME/boost-static install
 
       - name: Set BOOST_ROOT
         run: echo "BOOST_ROOT=$HOME/boost-static" >> $GITHUB_ENV
