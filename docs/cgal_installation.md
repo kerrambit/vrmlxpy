@@ -35,16 +35,26 @@ Before you can build this project, you'll need to have the CGAL libraries instal
 ---
 
 ### Linux Installation
-
 1. **Install Boost via package manager**:
 - On most Linux distributions, you can install CGAL via your package manager. For example:
-
   **Ubuntu/Debian**:
-  ```
+```
   sudo apt-get install libcgal-dev
-  ```
+```
 - It pulls in a bunch of required packages, including: ```libgmp-dev``` for the GMP development and ```libmpfr-dev``` for the MPFR development.
----
+- **Note:** Package managers typically install an older version of CGAL tied to your distro. If you need a specific version, see the alternative below.
+2. **Alternatively, download CGAL from source**:
+- If you need a specific version (for example to match the official builds):
+  1. Download the CGAL zip from the [CGAL Releases Page](https://github.com/CGAL/cgal/releases).
+  2. Extract it:
+```
+     unzip CGAL-6.0.1.zip
+```
+  3. Point CMake to it via `CGAL_DIR`:
+```
+     cmake --preset <BUILD_CONFIGURATION> -DCGAL_DIR=/path/to/CGAL-6.0.1
+```
+- CGAL is header-only so no compilation step is needed — just extraction and pointing CMake at the right directory.
 
 ## CMake Configuration
 

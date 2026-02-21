@@ -17,7 +17,6 @@ This project is licensed under the **GNU General Public License v3.0 or later** 
 
 ## Run as Executables
 - Whether you build the project yourself or use the executable from the **Releases** tab, running an executable is straightforward.
-- However, unlike using Docker, running the binary directly might expose you to platform-specific issues — for example, missing shared libraries (DLLs or `.so` files).
 - **Tip:** When running the application on Linux, you need to configure the dynamic linker to look for shared libraries in the current directory  ```LD_LIBRARY_PATH=. ./vrmlxConversionApp```
 
 ## [*Experimental*] Run as Python library
@@ -40,7 +39,7 @@ This project is licensed under the **GNU General Public License v3.0 or later** 
 	- Additionally, you can build and link C++ application: *vrmlxConversionApp* (more details [here](docs/docker_steps.md)).
 	- Lastly, there is a *Python* binding that allows you to use *vrmlx* as a *Python* module ([example script](scripts/run_vrmlxpy_from_docker.py)).
 
-- The project supports these build configurations:
+- The project supports these build configurations (plus two more dedicated to the automatic server builds):
 
 	| Configuration     | Libraries | Tests | C++ Applications | Python Binding |
 	|------------------|-----------|-------|------------------|-----------------|
@@ -61,6 +60,12 @@ This project is licensed under the **GNU General Public License v3.0 or later** 
 	```
 	cmake --build out/build/<BUILD_CONFIGURATION>
 	```
+- **Note:** all five presets link Boost dynamically. This is fine for local development, but if you intend to distribute the binaries to other machines,
+  you should use static Boost linking instead to avoid runtime dependency issues.
+  
+  See [Boost installation guide](docs/boost_installation.md) for details on building Boost statically with `-fPIC`.
+  Or have a look at our [GitHub action](../.github/workflows/build.yaml), where we build the libraries using static Boost as well.
+- Just to add, on Windows, we do not care about this at all, and link statically always. Only on Linux, you have a choice.
 
 ### Windows
 - It is recommended to develop in *Visual Studio*.

@@ -76,6 +76,7 @@ Before you can build this project, you'll need to have the Boost libraries insta
   ```
   sudo pacman -S boost
   ```
+- This is the way when we are developing the application, however, for the official builds we use the alternative way, see below.
 
 2. **Alternatively, build Boost from source**:
 - If you prefer to build Boost from source or need a specific version:
@@ -93,6 +94,10 @@ Before you can build this project, you'll need to have the Boost libraries insta
      ./bootstrap.sh
      ./b2
      ```
+ - **Note:** If you are linking Boost statically into a shared library (`.so`) or Python binding, you must compile Boost with position-independent code, otherwise the linker will fail. Pass the following flags to `b2`:
+```
+     ./b2 cxxflags=-fPIC linkflags=-fPIC
+```
 
 3. **Set the `BOOST_ROOT` environment variable**:
 - You might need to set `BOOST_ROOT` environment variable when building Boost from source files.
