@@ -106,6 +106,20 @@ jobs:
           python3.12 -m pip install build
           python3.12 -m build --wheel
 
+      - name: Build Python wheel
+        if: matrix.preset == 'ProductionWithBindings-ServerBuildForLinux'
+        run: |
+          sudo apt-get install -y patchelf
+          pip install auditwheel
+          cp out/build/${{ matrix.preset }}/*.so pypi/vrmlxpy/
+          cd pypi
+          python3.12 -m pip install build
+          python3.12 -m build --wheel
+          python3.12 -m zipfile -e dist/*.whl extracted/
+          export LD_LIBRARY_PATH=$(pwd)/extracted/vrmlxpy:$LD_LIBRARY_PATH
+          auditwheel repair dist/*linux_x86_64.whl --wheel-dir dist/
+          rm dist/*-cp312-cp312-linux_x86_64.whl
+
       - name: Upload Linux binaries (${{ matrix.preset }})
         uses: actions/upload-artifact@v4
         with:
