@@ -1,4 +1,4 @@
-from vrmlxpy.vrmlxpy import *
+from vrmlxpy import print_version, convert_vrml
 import sys
 
 if len(sys.argv) != 4:
@@ -9,5 +9,5 @@ input_filename = sys.argv[1]
 output_filename = sys.argv[2]
 config_filename = sys.argv[3]
 
-vrmlxpy.vrmlxpy.print_version()
-vrmlxpy.vrmlxpy.convert_vrml(input_filename, output_filename, config_filename)
+print_version()
+convert_vrml(input_filename, output_filename, config_filename)
