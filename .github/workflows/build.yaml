@@ -2,11 +2,11 @@ name: Build vrmlx
 
 on:
   push:
-    branches: [ main, dev, vrmlproc#* ]
+    branches: [main, dev, vrmlproc#*]
     tags:
-        - 'Release-*'
+      - "Release-*"
   pull_request:
-    branches: [ main, dev ]
+    branches: [main, dev]
   workflow_dispatch:
 
 jobs:
@@ -54,11 +54,11 @@ jobs:
       - name: Build Boost static libraries
         if: steps.cache-boost.outputs.cache-hit != 'true'
         run: |
-            wget -q "https://archives.boost.io/release/${{ env.BOOST_VERSION }}/source/boost_${{ env.BOOST_VERSION_UNDERSCORED }}.tar.gz" -O /tmp/boost.tar.gz
-            tar -xzf /tmp/boost.tar.gz -C /tmp
-            cd /tmp/boost_${{ env.BOOST_VERSION_UNDERSCORED }}
-            ./bootstrap.sh --with-libraries=iostreams,log,date_time,thread,system,filesystem
-            ./b2 link=static threading=multi runtime-link=shared variant=release address-model=64 cxxflags=-fPIC linkflags=-fPIC -j$(nproc) --prefix=$HOME/boost-static install
+          wget -q "https://archives.boost.io/release/${{ env.BOOST_VERSION }}/source/boost_${{ env.BOOST_VERSION_UNDERSCORED }}.tar.gz" -O /tmp/boost.tar.gz
+          tar -xzf /tmp/boost.tar.gz -C /tmp
+          cd /tmp/boost_${{ env.BOOST_VERSION_UNDERSCORED }}
+          ./bootstrap.sh --with-libraries=iostreams,log,date_time,thread,system,filesystem
+          ./b2 link=static threading=multi runtime-link=shared variant=release address-model=64 cxxflags=-fPIC linkflags=-fPIC -j$(nproc) --prefix=$HOME/boost-static install
 
       - name: Set BOOST_ROOT
         run: echo "BOOST_ROOT=$HOME/boost-static" >> $GITHUB_ENV
@@ -67,15 +67,15 @@ jobs:
         id: cache-cgal
         uses: actions/cache@v4
         with:
-            path: ~/cgal
-            key: linux-cgal-${{ env.CGAL_VERSION }}
+          path: ~/cgal
+          key: linux-cgal-${{ env.CGAL_VERSION }}
 
       - name: Download CGAL
         if: steps.cache-cgal.outputs.cache-hit != 'true'
         run: |
-            wget -q "https://github.com/CGAL/cgal/releases/download/v${{ env.CGAL_VERSION }}/CGAL-${{ env.CGAL_VERSION }}.zip" -O /tmp/cgal.zip
-            unzip -q /tmp/cgal.zip -d ~/
-            mv ~/CGAL-${{ env.CGAL_VERSION }} ~/cgal
+          wget -q "https://github.com/CGAL/cgal/releases/download/v${{ env.CGAL_VERSION }}/CGAL-${{ env.CGAL_VERSION }}.zip" -O /tmp/cgal.zip
+          unzip -q /tmp/cgal.zip -d ~/
+          mv ~/CGAL-${{ env.CGAL_VERSION }} ~/cgal
 
       - name: Set CGAL_DIR
         run: echo "CGAL_DIR=$HOME/cgal" >> $GITHUB_ENV
@@ -98,6 +98,14 @@ jobs:
       - name: Build (${{ matrix.preset }})
         run: cmake --build out/build/${{ matrix.preset }} --parallel $(nproc)
 
+      - name: Build Python wheel
+        if: matrix.preset == 'ProductionWithBindings-ServerBuildForLinux'
+        run: |
+          cp out/build/${{ matrix.preset }}/*.so pypi/vrmlxpy/
+          cd pypi
+          python3.12 -m pip install build
+          python3.12 -m build --wheel
+
       - name: Upload Linux binaries (${{ matrix.preset }})
         uses: actions/upload-artifact@v4
         with:
@@ -108,15 +116,24 @@ jobs:
           if-no-files-found: warn
           retention-days: 7
 
+      - name: Upload Python wheel
+        if: matrix.preset == 'ProductionWithBindings-ServerBuildForLinux'
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-wheel
+          path: pypi/dist/*.whl
+          if-no-files-found: warn
+          retention-days: 7
+
       - name: Upload to GitHub Release
         if: startsWith(github.ref, 'refs/tags/Release-')
         uses: softprops/action-gh-release@v2
         with:
-            tag_name: ${{ github.ref_name }}
-            name: ${{ github.ref_name }}
-            files: |
-                out/build/${{ matrix.preset }}/vrmlxConversionApp
-                out/build/${{ matrix.preset }}/*.so
+          tag_name: ${{ github.ref_name }}
+          name: ${{ github.ref_name }}
+          files: |
+            out/build/${{ matrix.preset }}/vrmlxConversionApp
+            out/build/${{ matrix.preset }}/*.so
 
   build-windows:
     name: Windows (${{ matrix.preset }})
@@ -138,7 +155,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up Python
-        if: matrix.preset == 'ProductionWithBindings'
+        if: matrix.preset == 'ProductionWithBindings-ServerBuildForMSVC'
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -155,17 +172,17 @@ jobs:
         uses: MarkusJx/install-boost@v2
         id: install-boost
         with:
-            boost_version: 1.87.0
-            platform_version: 2022
-            toolset: msvc
-            link: static
-            arch: x86
+          boost_version: 1.87.0
+          platform_version: 2022
+          toolset: msvc
+          link: static
+          arch: x86
 
       - name: Set Boost environment variables
         shell: pwsh
         run: |
-            echo "BOOST_ROOT=${{ steps.install-boost.outputs.BOOST_ROOT }}" >> $env:GITHUB_ENV
-            echo "BOOST_LIBRARYDIR=${{ steps.install-boost.outputs.BOOST_ROOT }}\lib" >> $env:GITHUB_ENV
+          echo "BOOST_ROOT=${{ steps.install-boost.outputs.BOOST_ROOT }}" >> $env:GITHUB_ENV
+          echo "BOOST_LIBRARYDIR=${{ steps.install-boost.outputs.BOOST_ROOT }}\lib" >> $env:GITHUB_ENV
 
       - name: Cache GMP/MPFR
         id: cache-gmp-mpfr
@@ -250,14 +267,33 @@ jobs:
         shell: pwsh
         run: cmake --build out/build/${{ matrix.preset }} --config Release --parallel 4
 
+      - name: Build Python wheel
+        if: matrix.preset == 'ProductionWithBindings-ServerBuildForMSVC'
+        shell: pwsh
+        run: |
+          Copy-Item "out/build/${{ matrix.preset }}/Release/*.dll" "pypi/vrmlxpy/"
+          Copy-Item "out/build/${{ matrix.preset }}/Release/*.pyd" "pypi/vrmlxpy/"
+          cd pypi
+          python -m pip install build
+          python -m build --wheel
+
       - name: Upload Windows binaries (${{ matrix.preset }})
         uses: actions/upload-artifact@v4
         with:
           name: windows-${{ matrix.preset }}
           path: |
-              out/build/${{ matrix.preset }}/Release/vrmlxConversionApp.exe
-              out/build/${{ matrix.preset }}/Release/*.dll
-              out/build/${{ matrix.preset }}/Release/*.pyd
+            out/build/${{ matrix.preset }}/Release/vrmlxConversionApp.exe
+            out/build/${{ matrix.preset }}/Release/*.dll
+            out/build/${{ matrix.preset }}/Release/*.pyd
+          if-no-files-found: warn
+          retention-days: 7
+
+      - name: Upload Python wheel
+        if: matrix.preset == 'ProductionWithBindings-ServerBuildForMSVC'
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-wheel
+          path: pypi/dist/*.whl
           if-no-files-found: warn
           retention-days: 7
 
@@ -265,9 +301,9 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/Release-')
         uses: softprops/action-gh-release@v2
         with:
-            tag_name: ${{ github.ref_name }}
-            name: ${{ github.ref_name }}
-            files: |
-                out/build/${{ matrix.preset }}/Release/vrmlxConversionApp.exe
-                out/build/${{ matrix.preset }}/Release/*.dll
-                out/build/${{ matrix.preset }}/Release/*.pyd
+          tag_name: ${{ github.ref_name }}
+          name: ${{ github.ref_name }}
+          files: |
+            out/build/${{ matrix.preset }}/Release/vrmlxConversionApp.exe
+            out/build/${{ matrix.preset }}/Release/*.dll
+            out/build/${{ matrix.preset }}/Release/*.pyd
