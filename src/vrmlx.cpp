@@ -39,6 +39,11 @@ static void PrintApplicationError(std::shared_ptr<vrml_proc::core::error::Error>
   g_task = 1;
 }
 
+static void PrintApplicationError(const std::string& error) {
+  std::cout << "Caught an application error:\n" << error << std::endl;
+  g_task = 1;
+}
+
 static void PrintProgressInformation(const std::string& information) {
   std::cout << "[" << g_task << "/7]: " << information << std::endl;
   g_task++;
@@ -215,30 +220,42 @@ namespace vrmlx {
       runner.Run(convertResult.value()->GetData(), submeshesResults);
     }
 
-    to_geom::core::Mesh mesh;
-    for (auto& submeshResult : submeshesResults) {
-      if (submeshResult.has_value()) {
-        auto submesh = submeshResult.value();
-        mesh.join(*submesh);
-        submesh.reset();
-      } else {
-        PrintInvalidSubmeshMessage(submeshResult);
+    std::vector<std::shared_ptr<to_geom::core::Mesh>> meshes;
+    if (!config->exportFormatOptions.mergeSubmeshes) {
+      meshes.reserve(submeshesResults.size());
+      for (auto& submeshResult : submeshesResults) {
+        if (submeshResult.has_value()) {
+          meshes.push_back(submeshResult.value());
+        } else {
+          PrintInvalidSubmeshMessage(submeshResult);
+        }
+      }
+    } else {
+      meshes.push_back(std::make_shared<to_geom::core::Mesh>());
+      for (auto& submeshResult : submeshesResults) {
+        if (submeshResult.has_value()) {
+          meshes[0]->join(*submeshResult.value());
+        } else {
+          PrintInvalidSubmeshMessage(submeshResult);
+        }
       }
     }
 
     double time = timer.End();
-    LogInfo(
-        FormatString("Generation and merging of meshes ended. The generation took ", time, " seconds."), LOGGING_INFO);
+    LogInfo(FormatString("Generation (and merging) of meshes ended. The generation took ", time, " seconds."),
+        LOGGING_INFO);
 
     // -------------------------------------------------------------------------------------------------------------
 
     if (config->meshSimplificationSettings.active) {
-      to_geom::calculator::MeshSimplificator::SimplifyMesh(
-          mesh, config->meshSimplificationSettings.percentageOfAllEdgesToSimplify.GetComplement());
+      for (auto& mesh : meshes) {
+        to_geom::calculator::MeshSimplificator::SimplifyMesh(
+            *mesh, config->meshSimplificationSettings.percentageOfAllEdgesToSimplify.GetComplement());
+      }
     }
 
     PrintProgressInformation(FormatString(
-        "mesh was succesfully generated", ((config->meshSimplificationSettings.active) ? " and simplified." : ".")));
+        "meshes were succesfully generated", ((config->meshSimplificationSettings.active) ? " and simplified." : ".")));
 
     // -------------------------------------------------------------------------------------------------------------
 
@@ -258,13 +275,35 @@ namespace vrmlx {
         break;
     }
 
-    auto writeResult = writer->Write(path(outputFilename), mesh);
-    if (writeResult.has_error()) {
-      PrintApplicationError(writeResult.error());
-      return false;
-    }
+    if (config->exportFormatOptions.mergeSubmeshes) {
+      auto writeResult = writer->Write(path(outputFilename), *meshes[0]);
+      if (writeResult.has_error()) {
+        PrintApplicationError(writeResult.error());
+        return false;
+      }
+      PrintProgressInformation(FormatString("file <", path(outputFilename).string(), "> was succesfully written."));
+    } else {
+      constexpr size_t MAX_SUBMESH_FILES = 10000;
+      if (meshes.size() > MAX_SUBMESH_FILES) {
+        PrintApplicationError(FormatString("Cannot write ", meshes.size(), " mesh files — limit is ", MAX_SUBMESH_FILES,
+            ". Consider enabling mergeSubmeshes."));
+        return false;
+      }
 
-    PrintProgressInformation(FormatString("file <", path(outputFilename).string(), "> was succesfully written."));
+      int i = 1;
+      for (auto& mesh : meshes) {
+        auto p = path(outputFilename);
+        auto writeResult =
+            writer->Write(p.parent_path() / FormatString(p.stem().string(), "_", i, p.extension().string()), *mesh);
+        if (writeResult.has_error()) {
+          PrintApplicationError(writeResult.error());
+          return false;
+        }
+        i++;
+      }
+      PrintProgressInformation(FormatString(meshes.size(), " mesh files were successfully written to <",
+          path(outputFilename).parent_path().string(), ">."));
+    }
 
     // -------------------------------------------------------------------------------------------------------------
 
