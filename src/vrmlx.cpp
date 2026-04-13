@@ -71,7 +71,7 @@ namespace vrmlx {
 
   void PrintVersion() {
     std::cout << Logo << R"(
-     vrmlx    (version 1.0)
+     vrmlx    (version 1.0.6)
      vrmlproc (version 1.0)
      togeom   (version 1.0))"
               << std::endl;
