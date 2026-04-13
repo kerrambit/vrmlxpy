@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "vrmlxpy"
-version = "1.0.6"
+version = "1.0.7"
 description = "Toolkit for VRML parsing and traversing. Includes a standalone VRML parser library and a conversion library for transforming VRML geometry into geometry format such as STL, with modular C++ backends and Python bindings."
 readme = "README.md"
 authors = [{ name = "Marek Eibel" }]
