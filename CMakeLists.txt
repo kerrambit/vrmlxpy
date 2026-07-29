@@ -38,7 +38,7 @@ if(WIN32)
     set(GMP_INCLUDE_DIR "${GMP_ROOT}/include")
     set(GMP_LIBRARY "${GMP_ROOT}/lib/gmp.lib")
     set(MPFR_INCLUDE_DIR "${MPFR_ROOT}/include")
-    set(MPFR_LIBRARY "${GMP_ROOT}/lib/mpfr.lib")
+    set(MPFR_LIBRARY "${MPFR_ROOT}/lib/mpfr.lib")
 endif()
 
 set(CGAL_CMAKE_EXACT_NT_BACKEND "GMP")
@@ -120,7 +120,8 @@ set_target_properties(vrmlxpy PROPERTIES
 )
 
 # Link against C++ libraries.
-target_link_libraries(vrmlxpy PRIVATE vrmlproc togeom pybind11::module Boost::iostreams Boost::log Boost::date_time Boost::log_setup Boost::system Boost::thread)
+target_link_libraries(vrmlxpy PRIVATE vrmlproc togeom pybind11::module Boost::iostreams Boost::log Boost::date_time Boost::log_setup Boost::system Boost::thread ${CGAL_GMP_LIBRARIES}
+    ${CGAL_MPFR_LIBRARIES})
 
 # Ensure vrmlx.cpp can access headers from vrml_proc, to_geom and pybind11 projects.
 target_include_directories(vrmlxpy PRIVATE
@@ -148,7 +149,8 @@ message(STATUS "C++ CLI runners will be included")
 add_executable(vrmlxConversionApp "src/vrmlx.cpp" "src/vrmlxConversionApp.cpp")
 
 # Link against C++ libraries.
-target_link_libraries(vrmlxConversionApp PRIVATE vrmlproc togeom Boost::iostreams Boost::log Boost::date_time Boost::log_setup Boost::system Boost::thread)
+target_link_libraries(vrmlxConversionApp PRIVATE vrmlproc togeom Boost::iostreams Boost::log Boost::date_time Boost::log_setup Boost::system Boost::thread ${CGAL_GMP_LIBRARIES}
+    ${CGAL_MPFR_LIBRARIES})
 
 # Ensure vrmlx.cpp and vrmlxConversionApp.cpp can access headers from vrml_proc and to_geom projects.
 target_include_directories(vrmlxConversionApp PRIVATE

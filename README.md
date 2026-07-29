@@ -30,6 +30,7 @@ This project is licensed under the **GNU General Public License v3.0 or later** 
 - [CGAL](https://www.cgal.org/) - study instructions [here](docs/cgal_installation.md)
 - [CMake](https://cmake.org/)
 - [Ninja](https://ninja-build.org/)
+- Python 3.10 or later (for Python bindings)
 - C++ compiler supporting C++20
 
 ## Build
@@ -105,3 +106,5 @@ This project includes C++ unit tests that can be executed using either *CTest* o
 - Documentation is available at https://kerrambit.github.io/vrmlx/gh_pages/doxygen/index.html.
 
 ## Troubleshooting
+- If you build on Windows as **Debug** and encounter error when running the convertor application `The code execution cannot proceed because gmp-10.dll was not found.`, copy 
+  missing dependencies from `path\to\vendor\CGAL-<version>\auxiliary\gmp\debug\bin` to the directory where the executable is located. This should resolve the issue.

@@ -42,7 +42,7 @@ Before you can build this project, you'll need to have the Boost libraries insta
         b2
         ```
 
-4. **Set the `BOOST_ROOT` environment variable**:
+4. **Set the `BOOST_ROOT` and `Boost_DIR` environment variables**:
    - Set the `BOOST_ROOT` environment variable to the Boost installation directory.
    - This step is important, because CMake uses `BOOST_ROOT` environment variable to set up the project.
    - If you do not know how to set up environment variables, see the following steps:
@@ -50,6 +50,8 @@ Before you can build this project, you'll need to have the Boost libraries insta
         - Under **System variables**, click **New** and add:
             - **Variable Name**: `BOOST_ROOT`
             - **Variable Value**: `C:\path\to\your\boost`
+            - **Variable Name**: `Boost_DIR`
+            - **Variable Value**: `C:\path\to\your\boost\lib-<build>\cmake\Boost-<version>`
 
 5. **Verify the setup**:
 - To verify that Boost is correctly set up, you can run the CMake command in your project directory. It should detect Boost automatically if `BOOST_ROOT` is set.

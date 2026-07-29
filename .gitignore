@@ -42,6 +42,7 @@ pypi/vrmlxpy/libboost_thread.so.1.74.0
 pypi/vrmlxpy/libboost_iostreams.so.1.74.0
 vendor/pybind11
 vendor/CGAL-6.0.1
+vendor/CGAL-6.2
 vendor/boost
 testConfigWindows.json
 testConfigLinux.json
