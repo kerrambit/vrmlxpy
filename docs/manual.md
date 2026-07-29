@@ -36,7 +36,8 @@ The `<config_file>` is a JSON file that defines behavior for the application. Al
   "exportFormat": {
     "format": "stl",
     "options": {
-      "binary": true
+      "binary": true,
+      "mergeSubmeshes": true
     }
   },
 
@@ -66,6 +67,8 @@ The `<config_file>` is a JSON file that defines behavior for the application. Al
 #### `exportFormat`
 - **`format`**: Output format (`"stl"` by default). Possible values: `"stl"`, `"ply"`, `"obj"`.
 - **`options.binary`**: If exporting STL, whether to use binary format (`true` by default).
+- **`options.mergeSubmeshes`**: If file contains more individual submeshes, this option allows to join them into one resuling mesh (`true` by default).
+    - ```<input_file>``` will be used as a base name with the submesh index appended before the extension (e.g. ```model.stl``` => ```model_1.stl```, ```model_2.stl```, …).
 
 #### `parallelismSettings`
 - **`active`**: Enable parallel execution (`true` by default).

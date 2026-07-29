@@ -84,6 +84,7 @@ namespace to_geom::core::config {
      */
     struct ExportFormatOptions {
       bool binary = true;
+      bool mergeSubmeshes = true;
     };
 
     /**
@@ -125,6 +126,7 @@ namespace to_geom::core::config {
             if (exportFormat.contains("options") && exportFormat["options"].is_object()) {
               const auto& options = exportFormat["options"];
               exportFormatOptions.binary = options.value("binary", true);
+              exportFormatOptions.mergeSubmeshes = options.value("mergeSubmeshes", true);
             }
           }
 

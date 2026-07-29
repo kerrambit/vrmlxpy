@@ -25,6 +25,11 @@ static inline void PrintHelp(const std::string& app) {
       << "    \"format\": The output format. Possible values are \"stl\", \"ply\", and \"obj\" (default: \"stl\").\n";
   std::cout << "    \"options\":\n";
   std::cout << "      \"binary\": Whether to export binary STL instead of ASCII (default: true).\n";
+  std::cout
+      << "      \"mergeSubmeshes\": If file contains more individual submeshes, this option allows to join them into "
+         "one resuling mesh (`true` by default). The argument <input_file> will be used as a base name with the "
+         "submesh index "
+         "appended before the extension (e.g. model.stl => model_1.stl, model_2.stl, ...).\n";
 
   std::cout << "  \"parallelismSettings\":\n";
   std::cout << "    \"active\": Enable parallel execution of conversion tasks (default: true).\n";
